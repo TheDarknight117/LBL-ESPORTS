@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Equipos Oficiales | LBL 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
+        
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
+        .glass-panel { background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .tab-active-t1 { background-color: #eab308; color: #000; font-weight: 900; border-color: #eab308; box-shadow: 0 0 20px rgba(234,179,8,0.4); }
+        .tab-active-t2 { background-color: #3b82f6; color: #fff; font-weight: 900; border-color: #3b82f6; box-shadow: 0 0 20px rgba(59,130,246,0.4); }
+        .tab-inactive { background-color: rgba(255,255,255,0.05); color: #9ca3af; border-color: transparent; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
+
+    <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
+        <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-10 w-auto object-contain">
+            <span class="text-xl font-black tracking-widest uppercase italic hidden sm:block"><span class="text-blue-500">LBL</span></span>
+        </a>
+        <a href="index.html" class="text-gray-400 hover:text-white font-bold text-sm transition-colors py-2"><i class="fas fa-home mr-1"></i> Inicio</a>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 pt-10 pb-20">
+        
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mb-4"><span class="text-blue-500">ROSTERS</span> OFICIALES</h1>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto">Conoce a los equipos aceptados en la LBL. Contacta a los representantes para organizar scrims y mira las estadísticas de los jugadores.</p>
+        </div>
+
+        <div class="flex justify-center gap-4 mb-12">
+            <button id="btn-t1" onclick="cambiarTier('Tier 1')" class="px-8 py-3 rounded-2xl border transition-all tab-active-t1 flex items-center gap-2">
+                <i class="fas fa-trophy"></i> TIER 1
+            </button>
+            <button id="btn-t2" onclick="cambiarTier('Tier 2')" class="px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10">
+                <i class="fas fa-level-up-alt"></i> TIER 2
+            </button>
+        </div>
+
+        <div id="loading-spinner" class="text-center py-20 text-blue-500">
+            <i class="fas fa-circle-notch fa-spin text-5xl mb-4"></i>
+            <p class="font-bold tracking-widest uppercase text-sm">Cargando base de datos...</p>
+        </div>
+
+        <div id="teams-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
+            </div>
+
+        <div id="empty-state" class="text-center py-20 hidden">
+            <i class="fas fa-ghost text-6xl text-gray-800 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-500">Aún no hay equipos aceptados en este Tier.</h3>
+        </div>
+    </main>
+
+    <div id="team-modal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-2 md:p-4 backdrop-blur-md">
+        <div class="bg-[#050505] border border-gray-800 rounded-3xl max-w-3xl w-full max-h-[95vh] flex flex-col relative shadow-2xl shadow-blue-900/20">
+            
+            <button onclick="cerrarModal()" class="absolute top-4 right-4 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500 transition-colors z-10 border border-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div id="modal-header" class="p-6 md:p-8 border-b border-gray-800 flex items-center gap-6 shrink-0 relative overflow-hidden rounded-t-3xl">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent -z-10"></div>
+                <img id="modal-logo" src="" class="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-xl bg-black/50 p-2 border border-gray-800">
+                <div class="w-full">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="modal-tier" class="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 uppercase">Tier</span>
+                    </div>
+                    <h2 id="modal-name" class="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white mb-3">Nombre</h2>
+                    
+                    <div id="modal-rep" class="flex flex-wrap gap-2 mb-3">
+                        </div>
+
+                    <div id="modal-socials" class="flex gap-3">
+                        </div>
+                </div>
+            </div>
+
+            <div id="modal-roster" class="p-6 md:p-8 overflow-y-auto flex-grow space-y-8">
+                </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js"; 
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let todosLosEquipos = [];
+        let tierActual = 'Tier 1';
+        
+        const roleIcons = {
+            'TOP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-top.svg',
+            'JG': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-jungle.svg',
+            'MID': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-middle.svg',
+            'ADC': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-bottom.svg',
+            'SUPP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-utility.svg',
+            'SUPLENTE': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-fill.svg',
+            'COACH': 'fas fa-chalkboard-user'
+        };
+
+        // 1. CARGAR DATOS
+        async function cargarEquipos() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "inscripciones_pendientes"));
+                todosLosEquipos = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.estado === "Aceptado") todosLosEquipos.push({ id: doc.id, ...data });
+                });
+                document.getElementById('loading-spinner').classList.add('hidden');
+                renderizarGrilla(tierActual);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold">Error de conexión.</p>`;
+            }
+        }
+
+        // 2. RENDERIZAR TARJETAS EN PANTALLA
+        function renderizarGrilla(tier) {
+            const grid = document.getElementById('teams-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            const equiposFiltrados = todosLosEquipos.filter(eq => eq.equipo?.tier === tier);
+
+            if (equiposFiltrados.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            equiposFiltrados.forEach(eq => {
+                const rep1 = (eq.representantes && eq.representantes.length > 0) ? eq.representantes[0] : null;
+                const repName = rep1 ? rep1.nombre : 'Staff';
+                const repTelDisplay = rep1 && rep1.tel ? rep1.tel : 'Sin número';
+                const repTelLink = rep1 && rep1.tel ? rep1.tel.replace(/[^0-9]/g, '') : '';
+                
+                const btnWapp = repTelLink 
+                    ? `<button onclick="event.stopPropagation(); window.open('https://wa.me/${repTelLink}', '_blank')" class="text-green-400 hover:text-white bg-green-900/20 hover:bg-green-600 px-3 py-1.5 rounded-lg text-[10px] uppercase font-black transition-all border border-green-800 hover:border-green-500"><i class="fab fa-whatsapp text-sm mr-1"></i> Contactar</button>` 
+                    : '';
+
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-3xl p-5 text-center group cursor-pointer hover:-translate-y-2 hover:bg-[#111] transition-all duration-300 relative overflow-hidden fade-in flex flex-col justify-between";
+                const borderColor = tier === 'Tier 1' ? 'border-yellow-500/50' : 'border-blue-500/50';
+                card.classList.add('border-t-4', borderColor);
+
+                const logoAUsar = eq.equipo.logo || "https://ui-avatars.com/api/?name=" + eq.equipo.nombre + "&background=0D0D0D&color=fff";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center w-full mb-4">
+                        <span class="text-[10px] font-black uppercase px-2 py-1 rounded bg-[#050505] text-gray-300 border border-gray-800">${eq.equipo.tier}</span>
+                        ${btnWapp}
+                    </div>
+                    <div class="w-24 h-24 mx-auto mb-4 bg-black p-2 rounded-2xl border border-gray-800 group-hover:border-gray-600 transition-colors shadow-inner">
+                        <img src="${logoAUsar}" onerror="this.src='https://ui-avatars.com/api/?name=${eq.equipo.nombre}&background=0D0D0D&color=fff'" class="w-full h-full object-contain drop-shadow-lg">
+                    </div>
+                    <h3 class="text-xl font-black uppercase tracking-tight mb-2 truncate px-2 text-white">${eq.equipo.nombre}</h3>
+                    
+                    <div class="mb-5 bg-[#050505] border border-gray-800/50 rounded-lg py-2 px-1">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest"><i class="fas fa-user-tie"></i> ${repName}</p>
+                        <p class="text-xs text-green-400 font-black mt-0.5"><i class="fab fa-whatsapp"></i> ${repTelDisplay}</p>
+                    </div>
+                    
+                    <div class="w-full bg-blue-600/10 border border-blue-900/50 text-blue-400 text-xs font-black px-4 py-3 rounded-xl uppercase tracking-widest group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        VER ROSTER COMPLETO
+                    </div>
+                `;
+
+                card.onclick = () => abrirModal(eq);
+                grid.appendChild(card);
+            });
+        }
+
+        window.cambiarTier = (tier) => {
+            tierActual = tier;
+            document.getElementById('btn-t1').className = tier === 'Tier 1' ? "px-8 py-3 rounded-2xl border transition-all tab-active-t1 flex items-center gap-2" : "px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10";
+            document.getElementById('btn-t2').className = tier === 'Tier 2' ? "px-8 py-3 rounded-2xl border transition-all tab-active-t2 flex items-center gap-2" : "px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10";
+            renderizarGrilla(tier);
+        };
+
+        // 4. GENERADOR SEGURO DE JUGADORES
+        function crearFilaJugador(rolNombre, iconKey, jugadorData, isCapitan = false) {
+            if (!jugadorData || !jugadorData.riotId) return '';
+
+            const isFontAwesome = iconKey.includes('fas ');
+            const iconHTML = isFontAwesome ? `<i class="${iconKey} text-gray-500 text-2xl w-8 text-center drop-shadow-md"></i>` : `<img src="${iconKey}" class="w-8 h-8 object-contain opacity-90 drop-shadow-md" alt="${rolNombre}">`;
+            const badgeCapitan = isCapitan ? `<span class="bg-yellow-500 text-black text-[9px] font-black px-2 py-0.5 rounded uppercase ml-2 shadow-[0_0_10px_rgba(234,179,8,0.5)]">CAPITÁN</span>` : '';
+
+            let linkSecundarioHTML = '';
+            if(jugadorData.cuenta_secundaria && jugadorData.cuenta_secundaria.riotId2) {
+                linkSecundarioHTML = `<a href="${jugadorData.cuenta_secundaria.opgg2}" target="_blank" class="text-[11px] text-purple-400 hover:text-purple-300 font-bold block mt-1"><i class="fas fa-link mr-1"></i> ${jugadorData.cuenta_secundaria.riotId2} (${jugadorData.cuenta_secundaria.servidor.toUpperCase()})</a>`;
+            }
+
+            return `
+                <div class="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-2xl border border-gray-800 hover:border-gray-600 transition-colors shadow-lg">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-[#050505] p-2 rounded-xl border border-gray-800 flex items-center justify-center shrink-0">
+                            ${iconHTML}
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 font-black tracking-widest uppercase mb-0.5">${rolNombre} ${badgeCapitan}</p>
+                            <p class="text-white font-bold text-sm md:text-lg tracking-tight">${jugadorData.riotId}</p>
+                            ${linkSecundarioHTML}
+                        </div>
+                    </div>
+                    <a href="${jugadorData.opgg}" target="_blank" class="bg-blue-600/10 text-blue-400 border border-blue-900/50 hover:bg-blue-600 hover:text-white w-12 h-12 rounded-xl flex items-center justify-center transition-all shrink-0 text-lg shadow-inner" title="Ver OP.GG">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            `;
+        }
+
+        // 5. ABRIR MODAL
+        window.abrirModal = (equipo) => {
+            const modal = document.getElementById('team-modal');
+            document.getElementById('modal-logo').src = equipo.equipo.logo || "https://ui-avatars.com/api/?name=" + equipo.equipo.nombre + "&background=0D0D0D&color=fff";
+            document.getElementById('modal-name').innerText = equipo.equipo.nombre;
+            document.getElementById('modal-tier').innerText = equipo.equipo.tier;
+
+            // Inyectar Representantes EXPLÍCITAMENTE en el Modal
+            let repsInfoHTML = '';
+            if (equipo.representantes && equipo.representantes.length > 0) {
+                equipo.representantes.forEach((rep, idx) => {
+                    if (rep.nombre && rep.tel) {
+                        const numLink = rep.tel.replace(/[^0-9]/g, '');
+                        repsInfoHTML += `
+                            <div class="text-[11px] font-bold text-gray-300 bg-[#0a0a0a] px-3 py-2 rounded-xl border border-gray-700 flex items-center gap-2">
+                                <i class="fas fa-user-tie text-gray-500"></i> 
+                                ${rep.nombre} 
+                                <a href="https://wa.me/${numLink}" target="_blank" class="text-green-400 hover:text-green-300 ml-1 bg-green-900/20 px-2 py-0.5 rounded border border-green-800 transition-colors">
+                                    <i class="fab fa-whatsapp"></i> ${rep.tel}
+                                </a>
+                            </div>`;
+                    }
+                });
+            }
+            document.getElementById('modal-rep').innerHTML = repsInfoHTML;
+
+            // Redes Sociales del Equipo
+            let redesHTML = '';
+            if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-blue-400 hover:text-white bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50 text-xs font-bold transition-colors"><i class="fas fa-video mr-1"></i> Stream</a>`;
+            if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-900/20 px-3 py-1.5 rounded-lg border border-pink-900/50 text-xs font-bold transition-colors"><i class="fab fa-instagram mr-1"></i> Instagram</a>`;
+            document.getElementById('modal-socials').innerHTML = redesHTML;
+
+            const r = equipo.roster || {};
+            
+            // SECCIÓN: TITULARES
+            let rosterHTML = `
+                <div>
+                    <h4 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-gamepad mr-2"></i> Roster Titular</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        ${crearFilaJugador('Top', roleIcons['TOP'], r.TOP, equipo.capitan === 'TOP')}
+                        ${crearFilaJugador('Jungla', roleIcons['JG'], r.JG, equipo.capitan === 'JG')}
+                        ${crearFilaJugador('Mid', roleIcons['MID'], r.MID, equipo.capitan === 'MID')}
+                        ${crearFilaJugador('ADC', roleIcons['ADC'], r.ADC, equipo.capitan === 'ADC')}
+                        ${crearFilaJugador('Soporte', roleIcons['SUPP'], r.SUPP, equipo.capitan === 'SUPP')}
+                    </div>
+                </div>`;
+
+            // SECCIÓN: SUPLENTES
+            if (equipo.suplentes && equipo.suplentes.length > 0) {
+                rosterHTML += `
+                <div class="mt-8">
+                    <h4 class="text-sm font-black text-teal-400 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-user-clock mr-2"></i> Suplentes Autorizados</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                equipo.suplentes.forEach(sup => {
+                    let iconCode = 'SUPLENTE';
+                    if (sup.rol_seleccionado) {
+                        if(sup.rol_seleccionado.includes('TOP')) iconCode = 'TOP';
+                        else if(sup.rol_seleccionado.includes('JG')) iconCode = 'JG';
+                        else if(sup.rol_seleccionado.includes('MID')) iconCode = 'MID';
+                        else if(sup.rol_seleccionado.includes('ADC')) iconCode = 'ADC';
+                        else if(sup.rol_seleccionado.includes('SUPP')) iconCode = 'SUPP';
+                    }
+                    rosterHTML += crearFilaJugador(`Suplente (${sup.rol_seleccionado || 'Fill'})`, roleIcons[iconCode], sup);
+                });
+                rosterHTML += `</div></div>`;
+            }
+
+            // SECCIÓN: COACHES
+            if (equipo.coaches && equipo.coaches.length > 0) {
+                rosterHTML += `
+                <div class="mt-8">
+                    <h4 class="text-sm font-black text-rose-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-chalkboard-user mr-2"></i> Staff Técnico</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                equipo.coaches.forEach(coach => {
+                    rosterHTML += crearFilaJugador('Coach Estratégico', roleIcons['COACH'], coach);
+                });
+                rosterHTML += `</div></div>`;
+            }
+
+            document.getElementById('modal-roster').innerHTML = rosterHTML;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.cerrarModal = () => {
+            document.getElementById('team-modal').classList.add('hidden');
+            document.getElementById('team-modal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        };
+
+        cargarEquipos();
+    </script>
+</body>
+</html>

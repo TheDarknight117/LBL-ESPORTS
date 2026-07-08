@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registro LBL 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideInRight { 0% { opacity: 0; transform: translateX(30px); } 100% { opacity: 1; transform: translateX(0); } }
+        
+        .input-lbl { background-color: #0a0a0a; border: 1px solid #1f2937; padding: 0.75rem 1rem; border-radius: 0.5rem; outline: none; transition: all 0.3s; width: 100%; font-size: 15px; color: #fff; }
+        .input-lbl:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); background-color: #000; border-color: #3b82f6; }
+        .input-lbl:read-only { background-color: #050505; color: #6b7280; border-color: #111; cursor: default; }
+        select.input-lbl option { background-color: #0a0a0a; color: #ffffff; font-weight: bold; }
+        
+        .card-panel { background: linear-gradient(145deg, #050505, #0a0a0a); border: 1px solid #1a1a1a; }
+        .label-text { font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: block; }
+        .label-secondary { color: #a855f7; }
+
+        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-purple { background: linear-gradient(to right, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-green { background: linear-gradient(to right, #22c55e, #14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-gold { background: linear-gradient(to right, #eab308, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-teal { background: linear-gradient(to right, #14b8a6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-rose { background: linear-gradient(to right, #f43f5e, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        #success-modal { display: none; }
+        #success-modal.flex { display: flex; animation: fadeInModal 0.3s ease forwards; }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        
+        .select-rol { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232dd4bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; padding-right: 2.5rem; }
+    </style>
+</head>
+<body class="font-sans pb-24 antialiased selection:bg-blue-500 selection:text-white">
+
+    <header class="w-full bg-[#020202]/95 backdrop-blur-md border-b border-blue-900/30 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+            <h1 class="text-xl font-black tracking-tighter uppercase italic hidden sm:block"><span class="text-blue-500">LBL</span></h1>
+        </div>
+        <div class="flex items-center gap-3 bg-gray-900/80 px-3 py-1.5 rounded-full border border-gray-800">
+            <div class="flex gap-1.5">
+                <div id="dot-1" class="w-2.5 h-2.5 rounded-full bg-blue-500 transition-colors"></div>
+                <div id="dot-2" class="w-2.5 h-2.5 rounded-full bg-gray-800 transition-colors"></div>
+                <div id="dot-3" class="w-2.5 h-2.5 rounded-full bg-gray-800 transition-colors"></div>
+                <div id="dot-4" class="w-2.5 h-2.5 rounded-full bg-gray-800 transition-colors"></div>
+                <div id="dot-5" class="w-2.5 h-2.5 rounded-full bg-gray-800 transition-colors"></div>
+            </div>
+            <span id="step-indicator" class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Paso 1</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto p-4 mt-4">
+        <form id="lbl-form" novalidate onkeydown="return event.key != 'Enter';">
+            <section id="step-1" class="step-content active">
+                <div class="card-panel p-5 md:p-8 rounded-3xl mb-6 border-t-4 border-blue-500/50">
+                    <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fas fa-shield-halved text-blue-500"></i> <span class="text-gradient-blue">IDENTIDAD DEL EQUIPO</span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-1"><label class="label-text">Nombre del Equipo *</label><input type="text" id="teamName" class="input-lbl focus:border-blue-500" placeholder="Ej: Equipo Competitivo" required></div>
+                        <div class="md:col-span-1"><label class="label-text">Tag del Equipo (Acrónimo) *</label><input type="text" id="teamTag" class="input-lbl focus:border-blue-500" placeholder="Ej: EQC" maxlength="5" style="text-transform: uppercase;" required></div>
+                        
+                        <div><label class="label-text">Tier de Liga *</label>
+                            <select id="teamTier" class="input-lbl text-white focus:border-blue-500" required>
+                                <option value="Tier 1" class="bg-[#0a0a0a]">Tier 1</option>
+                                <option value="Tier 2" class="bg-[#0a0a0a]">Tier 2</option>
+                            </select>
+                        </div>
+                        <div><label class="label-text">Link del Logo (Imagen) *</label><input type="url" id="teamLogo" class="input-lbl focus:border-blue-500" placeholder="https://imgur.com/..." required></div>
+                    </div>
+                </div>
+
+                <div class="card-panel p-5 md:p-8 rounded-3xl border-t-4 border-purple-500/50">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-black flex items-center gap-3"><i class="fas fa-video text-purple-500"></i> <span class="text-gradient-purple">STREAMERS & REDES</span></h2>
+                    </div>
+                    
+                    <div id="streamers-container" class="space-y-4 mb-6">
+                        <div class="bg-[#0a0a0a] p-4 rounded-2xl border border-gray-800 streamer-row grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2 border-b border-gray-800 pb-2 mb-2"><span class="text-[10px] font-black text-purple-400 uppercase tracking-widest"><i class="fas fa-star mr-1"></i> Streamer Principal</span></div>
+                            <div><label class="label-text">Nombre del Canal *</label><input type="text" id="streamerName_1" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalOficial" required></div>
+                            <div><label class="label-text">Link del Canal *</label><input type="url" id="streamLink_1" class="input-lbl focus:border-purple-500" placeholder="Twitch / YouTube / Kick" required></div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="agregarStreamer()" class="mb-6 text-xs font-bold text-purple-400 bg-purple-900/20 border border-purple-900 hover:bg-purple-600 hover:text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <i class="fas fa-plus"></i> AÑADIR OTRO STREAMER
+                    </button>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6 border-t border-gray-800">
+                        <div class="md:col-span-2 mb-2"><span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Redes Oficiales del Equipo</span></div>
+                        <div><label class="label-text">Instagram del Equipo</label><input type="text" id="socialIG" class="input-lbl focus:border-purple-500" placeholder="@usuario_equipo"></div>
+                        <div><label class="label-text">TikTok del Equipo</label><input type="text" id="socialTK" class="input-lbl focus:border-purple-500" placeholder="@usuario_equipo"></div>
+                    </div>
+                </div>
+
+                <button type="button" onclick="goToStep(2)" class="w-full mt-8 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-lg shadow-blue-900/20">SIGUIENTE PASO <i class="fas fa-arrow-right ml-2"></i></button>
+            </section>
+
+            <section id="step-2" class="step-content">
+                <h2 class="text-2xl font-black mb-6 px-2 flex items-center gap-3"><i class="fas fa-user-tie text-green-500"></i> <span class="text-gradient-green">REPRESENTANTES LEGALES</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card-panel p-6 rounded-3xl border-t-4 border-green-500">
+                        <h4 class="font-bold text-green-400 mb-5 text-sm tracking-widest">RESPONSABLE #1</h4>
+                        <div class="space-y-4">
+                            <div><label class="label-text text-green-400">Nombre Completo *</label><input type="text" id="rep1Nombre" class="input-lbl focus:border-green-500" placeholder="Nombre real" required></div>
+                            <div class="flex gap-2">
+                                <div class="w-2/3"><label class="label-text text-green-400">C.I. * (Solo Números)</label><input type="text" id="rep1CI" class="input-lbl focus:border-green-500" placeholder="Ej: 1234567" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                                <div class="w-1/3"><label class="label-text text-green-400">COMP.</label><input type="text" id="rep1CIComp" class="input-lbl focus:border-green-500" placeholder="Ej: 1A" maxlength="3"></div>
+                            </div>
+                            <div><label class="label-text text-green-400">Correo Electrónico *</label><input type="email" id="rep1Mail" class="input-lbl focus:border-green-500" placeholder="correo@ejemplo.com" required></div>
+                            <div><label class="label-text text-green-400">WhatsApp * (Solo Números)</label><input type="tel" id="rep1Tel" class="input-lbl focus:border-green-500" placeholder="Ej: 77712345" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                            <div>
+                                <label class="label-text text-green-400">Departamento / Residencia *</label>
+                                <select id="rep1Dep" class="input-lbl focus:border-green-500 text-white" required onchange="toggleDepOther('rep1')">
+                                    <option value="" hidden selected>Selecciona...</option>
+                                    <option value="Cochabamba">Cochabamba</option><option value="La Paz">La Paz</option><option value="Santa Cruz">Santa Cruz</option><option value="Oruro">Oruro</option><option value="Potosí">Potosí</option><option value="Tarija">Tarija</option><option value="Chuquisaca">Chuquisaca</option><option value="Beni">Beni</option><option value="Pando">Pando</option><option value="Otro">Otro (Extranjero/etc)</option>
+                                </select>
+                                <input type="text" id="rep1DepOtro" class="input-lbl mt-2 hidden focus:border-green-500" placeholder="Especifica tu ciudad/país">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-panel p-6 rounded-3xl border-t-4 border-green-700/50">
+                        <h4 class="font-bold text-green-600 mb-5 text-sm tracking-widest">RESPONSABLE #2</h4>
+                        <div class="space-y-4">
+                            <div><label class="label-text text-green-600">Nombre Completo *</label><input type="text" id="rep2Nombre" class="input-lbl focus:border-green-600" placeholder="Nombre real" required></div>
+                            <div class="flex gap-2">
+                                <div class="w-2/3"><label class="label-text text-green-600">C.I. *</label><input type="text" id="rep2CI" class="input-lbl focus:border-green-600" placeholder="Ej: 1234567" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                                <div class="w-1/3"><label class="label-text text-green-600">COMP.</label><input type="text" id="rep2CIComp" class="input-lbl focus:border-green-600" placeholder="Ej: 1A" maxlength="3"></div>
+                            </div>
+                            <div><label class="label-text text-green-600">Correo Electrónico *</label><input type="email" id="rep2Mail" class="input-lbl focus:border-green-600" placeholder="correo@ejemplo.com" required></div>
+                            <div><label class="label-text text-green-600">WhatsApp *</label><input type="tel" id="rep2Tel" class="input-lbl focus:border-green-600" placeholder="Ej: 77712345" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                            <div>
+                                <label class="label-text text-green-600">Departamento / Residencia *</label>
+                                <select id="rep2Dep" class="input-lbl focus:border-green-600 text-white" required onchange="toggleDepOther('rep2')">
+                                    <option value="" hidden selected>Selecciona...</option>
+                                    <option value="Cochabamba">Cochabamba</option><option value="La Paz">La Paz</option><option value="Santa Cruz">Santa Cruz</option><option value="Oruro">Oruro</option><option value="Potosí">Potosí</option><option value="Tarija">Tarija</option><option value="Chuquisaca">Chuquisaca</option><option value="Beni">Beni</option><option value="Pando">Pando</option><option value="Otro">Otro</option>
+                                </select>
+                                <input type="text" id="rep2DepOtro" class="input-lbl mt-2 hidden focus:border-green-600" placeholder="Especifica tu ciudad/país">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex gap-4">
+                    <button type="button" onclick="goToStep(1)" class="w-1/3 text-gray-400 py-4 font-bold border border-gray-800 rounded-2xl">ATRÁS</button>
+                    <button type="button" onclick="goToStep(3)" class="w-2/3 bg-green-600 text-white py-4 rounded-2xl font-black text-lg">CONTINUAR</button>
+                </div>
+            </section>
+
+            <section id="step-3" class="step-content">
+                <h2 class="text-2xl font-black mb-6 px-2 flex items-center gap-3"><i class="fas fa-gamepad text-yellow-500"></i> <span class="text-gradient-gold">ROSTER TITULAR</span></h2>
+                <div id="titulares-container" class="space-y-6"></div>
+                <div class="mt-8 flex gap-4">
+                    <button type="button" onclick="goToStep(2)" class="w-1/3 text-gray-400 py-4 font-bold border border-gray-800 rounded-2xl">ATRÁS</button>
+                    <button type="button" onclick="goToStep(4)" class="w-2/3 bg-yellow-600 text-white py-4 rounded-2xl font-black text-lg">SUPLENTES</button>
+                </div>
+            </section>
+
+            <section id="step-4" class="step-content">
+                <h2 class="text-2xl font-black mb-6 px-2 flex items-center gap-3"><i class="fas fa-user-clock text-teal-400"></i> <span class="text-gradient-teal">SUPLENTES (OPCIONAL)</span></h2>
+                <div id="suplentes-container" class="space-y-6 mb-6"></div>
+                <div class="mt-8 flex gap-4">
+                    <button type="button" onclick="goToStep(3)" class="w-1/3 text-gray-400 py-4 font-bold border border-gray-800 rounded-2xl">ATRÁS</button>
+                    <button type="button" onclick="goToStep(5)" class="w-2/3 bg-teal-600 text-white py-4 rounded-2xl font-black text-lg">COACHES Y ENVÍO</button>
+                </div>
+            </section>
+
+            <section id="step-5" class="step-content">
+                <h2 class="text-2xl font-black mb-6 px-2 flex items-center gap-3"><i class="fas fa-chalkboard-user text-rose-500"></i> <span class="text-gradient-rose">STAFF TÉCNICO (OPCIONAL)</span></h2>
+                <div id="coaches-container" class="space-y-6 mb-12"></div>
+
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-8 md:p-10 rounded-[2rem] text-center shadow-2xl relative overflow-hidden">
+                    <h3 class="text-2xl md:text-3xl font-black text-white mb-2">FINALIZAR INSCRIPCIÓN</h3>
+                    <button type="submit" id="btn-final-submit" class="w-full bg-white text-blue-900 px-6 py-5 rounded-2xl font-black text-xl active:scale-95 transition-transform mt-4">
+                        ENVIAR FORMULARIO AHORA <i class="fas fa-paper-plane ml-2"></i>
+                    </button>
+                </div>
+                <div class="mt-6 flex gap-4">
+                    <button type="button" onclick="goToStep(4)" class="w-full text-gray-500 py-4 font-bold border border-gray-800 rounded-2xl">Revisar Suplentes</button>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <div id="success-modal" class="fixed inset-0 bg-black/90 z-50 items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-[#0a0a0a] border border-gray-800 p-8 rounded-[2rem] max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+            <h2 class="text-3xl font-black text-white mb-2">¡REGISTRADO!</h2>
+            <p class="text-gray-400 text-sm mb-8">El equipo <span id="modal-team-name" class="text-blue-400 font-bold"></span> está en proceso de revisión.</p>
+            <a id="whatsapp-btn" href="#" target="_blank" class="block w-full bg-green-600 text-white font-black py-5 rounded-2xl text-lg shadow-lg">IR A WHATSAPP</a>
+        </div>
+    </div>
+
+    <script>
+        const iconBase = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-";
+
+        // LÓGICA PARA AÑADIR MULTIPLES STREAMERS
+        let streamerCount = 1;
+        window.agregarStreamer = () => {
+            if(streamerCount >= 5) { alert("Máximo 5 streamers permitidos."); return; }
+            streamerCount++;
+            
+            const container = document.getElementById('streamers-container');
+            const newRow = document.createElement('div');
+            newRow.className = "bg-[#050505] p-4 rounded-2xl border border-gray-800 grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 animate-[fadeIn_0.3s_ease]";
+            newRow.id = `streamer-row-${streamerCount}`;
+            
+            newRow.innerHTML = `
+                <div class="md:col-span-2 flex justify-between items-center border-b border-gray-800 pb-2 mb-2">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Streamer #${streamerCount}</span>
+                    <button type="button" onclick="removerStreamer(${streamerCount})" class="text-red-500 hover:text-red-400 text-xs font-bold"><i class="fas fa-trash"></i> Eliminar</button>
+                </div>
+                <div><label class="label-text">Nombre del Canal</label><input type="text" id="streamerName_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalSecundario" required></div>
+                <div><label class="label-text">Link del Canal</label><input type="url" id="streamLink_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="URL" required></div>
+            `;
+            container.appendChild(newRow);
+        };
+
+        window.removerStreamer = (id) => {
+            const row = document.getElementById(`streamer-row-${id}`);
+            if(row) row.remove();
+        };
+
+
+        window.toggleDepOther = (prefix) => {
+            const select = document.getElementById(`${prefix}Dep`);
+            const inputOtro = document.getElementById(`${prefix}DepOtro`);
+            if (select.value === 'Otro') {
+                inputOtro.classList.remove('hidden');
+                inputOtro.required = true;
+            } else {
+                inputOtro.classList.add('hidden');
+                inputOtro.required = false;
+                inputOtro.value = '';
+            }
+        };
+
+        window.cambiarIconoRol = (selectElement, idPrefix) => {
+            const imgEl = document.getElementById(`icon_${idPrefix}`);
+            const defaultIcon = document.getElementById(`default_icon_${idPrefix}`);
+            
+            if (selectElement.value !== "") {
+                if(imgEl) { imgEl.src = `${iconBase}${selectElement.value}.svg`; imgEl.classList.remove('hidden'); }
+                if(defaultIcon) defaultIcon.classList.add('hidden');
+                selectElement.classList.add('border-teal-400', 'text-white');
+            }
+            selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+
+        const createPlayerForm = (idPrefix, title, typeConfig) => {
+            const isTitular = typeConfig.type === 'titular';
+            const isSuplente = typeConfig.type === 'suplente';
+            const isCoach = typeConfig.type === 'coach';
+
+            let borderColor = 'border-gray-800'; let titleColor = 'text-gray-500'; let focusColor = 'focus:border-blue-500'; let labelColor = 'text-blue-400';
+            if(isTitular) { borderColor = 'border-yellow-600/50'; titleColor = 'text-yellow-500'; focusColor = 'focus:border-yellow-500'; labelColor = 'text-yellow-400'; }
+            if(isSuplente) { borderColor = 'border-teal-600/50'; titleColor = 'text-teal-400'; focusColor = 'focus:border-teal-500'; labelColor = 'text-teal-400'; }
+            if(isCoach) { borderColor = 'border-rose-600/50'; titleColor = 'text-rose-400'; focusColor = 'focus:border-rose-500'; labelColor = 'text-rose-400'; }
+
+            const radioCapitan = isTitular ? `<label class="flex items-center text-[10px] md:text-xs font-bold text-gray-300 bg-gray-900/80 px-3 py-2 rounded-xl cursor-pointer border border-gray-700/50 hover:border-yellow-500 transition-all"><input type="radio" name="capitan" value="${idPrefix}" class="mr-2 accent-yellow-500 w-4 h-4" required> CAPITÁN</label>` : '';
+
+            let headerVisual = '';
+            if (isTitular) { headerVisual = `<img src="${iconBase}${typeConfig.iconUrl}.svg" class="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(234,179,8,0.6)]" alt="Rol"> ${title}`; } 
+            else if (isSuplente) {
+                headerVisual = `
+                    <div class="flex items-center gap-3 w-full">
+                        <i id="default_icon_${idPrefix}" class="fas fa-user-clock text-teal-500 text-2xl drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]"></i>
+                        <img id="icon_${idPrefix}" src="" class="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(45,212,191,0.6)] hidden" alt="Rol"> 
+                        <select id="${idPrefix}_rol" class="select-rol bg-[#0a0a0a] border border-teal-800 text-teal-300 rounded-xl px-4 py-2 outline-none font-black uppercase cursor-pointer hover:border-teal-500 transition-all text-sm md:text-base w-full max-w-[250px]" onchange="cambiarIconoRol(this, '${idPrefix}')">
+                            <option value="" hidden selected class="bg-[#0a0a0a] text-gray-500">👉 ESCOGE EL ROL</option>
+                            <option value="top">Carril Superior (TOP)</option><option value="jungle">Jungla (JG)</option><option value="middle">Carril Central (MID)</option><option value="bottom">Tirador (ADC)</option><option value="utility">Soporte (SUPP)</option>
+                        </select>
+                    </div>`;
+            } else if (isCoach) { headerVisual = `<i class="fas fa-chalkboard-user text-rose-500 text-2xl drop-shadow-[0_0_10px_rgba(244,63,94,0.6)]"></i> ${title}`; }
+
+            const req = isTitular ? 'required' : '';
+            return `
+                <div class="card-panel p-5 md:p-6 rounded-3xl border-l-4 ${borderColor} shadow-lg shadow-black/20">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-800/50 pb-4">
+                        <h4 class="font-black text-lg ${titleColor} flex items-center gap-3 uppercase tracking-wider w-full md:w-auto">${headerVisual}</h4>
+                        ${radioCapitan}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                        <div class="md:col-span-2"><label class="label-text ${labelColor}">Nombre Completo ${isTitular ? '*' : ''}</label><input type="text" id="${idPrefix}_nombre" class="input-lbl ${focusColor}" placeholder="Nombre real" ${req}></div>
+                        
+                        <div class="md:col-span-1 flex gap-2">
+                            <div class="w-2/3"><label class="label-text ${labelColor}">C.I. ${isTitular ? '*' : ''}</label><input type="text" id="${idPrefix}_ci" class="input-lbl ${focusColor}" placeholder="Número" ${req} oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                            <div class="w-1/3"><label class="label-text ${labelColor}">Comp.</label><input type="text" id="${idPrefix}_ciComp" class="input-lbl ${focusColor}" placeholder="1A" maxlength="3"></div>
+                        </div>
+
+                        <div class="md:col-span-1"><label class="label-text ${labelColor}">WhatsApp ${isTitular ? '*' : ''}</label><input type="tel" id="${idPrefix}_tel" class="input-lbl ${focusColor}" placeholder="Ej: 77712345" ${req} oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        
+                        <div class="md:col-span-2"><label class="label-text ${labelColor}">Correo Electrónico ${isTitular ? '*' : ''}</label><input type="email" id="${idPrefix}_mail" class="input-lbl ${focusColor}" placeholder="correo@ejemplo.com" ${req}></div>
+                        
+                        <div class="md:col-span-1">
+                            <label class="label-text ${labelColor}">Departamento ${isTitular ? '*' : ''}</label>
+                            <select id="${idPrefix}Dep" class="input-lbl text-white ${focusColor}" ${req} onchange="toggleDepOther('${idPrefix}')">
+                                <option value="" hidden selected>Selecciona...</option>
+                                <option value="Cochabamba">Cochabamba</option><option value="La Paz">La Paz</option><option value="Santa Cruz">Santa Cruz</option><option value="Oruro">Oruro</option><option value="Potosí">Potosí</option><option value="Tarija">Tarija</option><option value="Chuquisaca">Chuquisaca</option><option value="Beni">Beni</option><option value="Pando">Pando</option><option value="Otro">Otro</option>
+                            </select>
+                            <input type="text" id="${idPrefix}DepOtro" class="input-lbl mt-2 hidden ${focusColor}" placeholder="Especifica ciudad">
+                        </div>
+
+                        <div class="md:col-span-1"><label class="label-text ${labelColor}">Discord ID ${isTitular ? '*' : ''}</label><input type="text" id="${idPrefix}_discord" class="input-lbl ${focusColor}" placeholder="usuario#0000" ${req}></div>
+                        
+                        <div class="md:col-span-2 mt-2 p-4 bg-[#0a0a0a] rounded-2xl border border-gray-800">
+                            <label class="label-text ${labelColor}">Riot ID Principal (LAS) ${isTitular ? '*' : ''}</label>
+                            <input type="text" id="${idPrefix}_riot" class="input-lbl border-gray-700 bg-[#050505] ${focusColor}" placeholder="Ej: Jugador#LAS" ${req}>
+                        </div>
+                        <div class="md:col-span-2 mt-2 p-4 bg-[#0a0a0a] rounded-2xl border border-gray-800">
+                            <label class="label-text ${labelColor}">OP.GG Principal</label>
+                            <input type="url" id="${idPrefix}_opgg" class="input-lbl bg-[#050505] cursor-not-allowed opacity-80 border-gray-700 text-blue-300" placeholder="Se autocompleta..." readonly>
+                        </div>
+
+                        <div class="md:col-span-4 bg-[#050505] border border-gray-800/50 p-5 rounded-2xl mt-3 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-inner">
+                            <div class="md:col-span-4"><p class="text-[11px] text-purple-400 font-bold uppercase tracking-widest border-b border-gray-800/50 pb-2 flex items-center"><i class="fas fa-plus-circle mr-2"></i> Cuenta Secundaria (Opcional)</p></div>
+                            <div class="md:col-span-1">
+                                <label class="label-text label-secondary">Servidor</label>
+                                <select id="${idPrefix}_region2" class="input-lbl text-white bg-[#0a0a0a] focus:border-purple-500">
+                                    <option value="las">LAS</option><option value="lan">LAN</option><option value="br">BR</option><option value="na">NA</option><option value="euw">EUW</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-1"><label class="label-text label-secondary">Riot ID</label><input type="text" id="${idPrefix}_riot2" class="input-lbl bg-[#0a0a0a] focus:border-purple-500" placeholder="Smurf#Tag"></div>
+                            <div class="md:col-span-2"><label class="label-text label-secondary">OP.GG Secundario</label><input type="url" id="${idPrefix}_opgg2" class="input-lbl bg-[#0a0a0a] cursor-not-allowed opacity-80 border-gray-700 text-purple-300" placeholder="Automático..." readonly></div>
+                        </div>
+                    </div>
+                </div>`;
+        };
+
+        document.getElementById('titulares-container').innerHTML = [
+            { id: 'TOP', name: 'Carril Superior', icon: 'top' }, { id: 'JG', name: 'Jungla', icon: 'jungle' }, { id: 'MID', name: 'Carril Central', icon: 'middle' }, { id: 'ADC', name: 'Tirador (ADC)', icon: 'bottom' }, { id: 'SUPP', name: 'Soporte', icon: 'utility' }
+        ].map(r => createPlayerForm(r.id, r.name, { type: 'titular', iconUrl: r.icon })).join('');
+
+        let supHTML = '';
+        for (let i = 1; i <= 3; i++) supHTML += createPlayerForm(`SUP${i}`, `Suplente #${i}`, { type: 'suplente' });
+        document.getElementById('suplentes-container').innerHTML = supHTML;
+
+        let coachHTML = '';
+        for (let i = 1; i <= 2; i++) coachHTML += createPlayerForm(`COACH${i}`, `Coach #${i}`, { type: 'coach' });
+        document.getElementById('coaches-container').innerHTML = coachHTML;
+    </script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scouting & Agencia Libre | LBL 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
+        
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
+        .glass-panel { background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        .search-box { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px 20px; border-radius: 12px; outline: none; transition: 0.3s; width: 100%; font-weight: bold; }
+        .search-box:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
+        
+        .rank-badge { background: #1a1a1a; border: 1px solid #333; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #eab308; }
+        
+        /* Estilo especial para los escudos con TAG */
+        .tag-shield {
+            background: linear-gradient(135deg, rgba(8,145,178,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            border: 1px solid rgba(6,182,212,0.4);
+            box-shadow: 0 0 15px rgba(6,182,212,0.2);
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            letter-spacing: -1px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
+
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
+        <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">   
+            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-10 w-auto object-contain">
+            <span class="text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-cyan-400">LEAGUE OF LEGENDS</span></span>
+        </a>
+        <a href="equipos.html" class="text-gray-400 hover:text-white font-bold text-sm transition-colors py-2"><i class="fas fa-list-ul mr-1"></i> Ver Liga Principal</a>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 pt-10 pb-20">
+        
+        <div class="text-center mb-8">
+            <div class="inline-block px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-4">
+                <i class="fas fa-search-location mr-1"></i> Base de Datos Externa
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mb-4">TORNEO DE <span class="text-cyan-400">SCOUTING</span></h1>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto">Explora la base de datos de los equipos y jugadores que participaron en el Scouting. Ideal para reclutar agentes libres o completar tu roster.</p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mb-12 relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+            <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Nombre, TAG, Rango...">
+        </div>
+
+        <div id="loading-spinner" class="text-center py-20 text-cyan-500">
+            <i class="fas fa-satellite-dish fa-spin text-5xl mb-4"></i>
+            <p class="font-bold tracking-widest uppercase text-sm">Conectando con Google Servers...</p>
+        </div>
+
+        <div id="teams-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            </div>
+
+        <div id="empty-state" class="text-center py-20 hidden">
+            <i class="fas fa-user-slash text-6xl text-gray-800 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-500">No se encontraron resultados.</h3>
+        </div>
+    </main>
+
+    <div id="team-modal" class="fixed inset-0 bg-black/95 z-[100] hidden items-center justify-center p-2 md:p-4 backdrop-blur-md">
+        <div class="bg-[#050505] border border-cyan-900/50 rounded-3xl max-w-3xl w-full max-h-[95vh] flex flex-col relative shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+            
+            <button onclick="cerrarModal()" class="absolute top-4 right-4 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500 transition-colors z-10 border border-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="p-6 border-b border-gray-800 flex items-center gap-5 shrink-0 bg-[#0a0a0a] rounded-t-3xl">
+                <div class="tag-shield w-20 h-20 rounded-xl flex items-center justify-center text-cyan-400 font-black text-2xl italic shrink-0" id="modal-initial">
+                    TAG
+                </div>
+                <div>
+                    <span class="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 uppercase mb-1 inline-block">Equipo Scouting</span>
+                    <div class="flex items-baseline gap-2">
+                        <h2 id="modal-name" class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white leading-none">Nombre</h2>
+                        <span id="modal-tag" class="text-gray-500 font-black text-xl italic"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-roster" class="p-4 md:p-6 overflow-y-auto flex-grow space-y-4 bg-[#020202] rounded-b-3xl">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxu9funupVszSkq-kR3czuW_uTDKUjO13-jY3NtQluWG4y7XAeOh5T6qed6YJL5dGL3w/exec";
+        
+        let scoutingTeams = [];
+        
+        const roleIcons = {
+            'TOP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-top.svg',
+            'JG': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-jungle.svg',
+            'MID': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-middle.svg',
+            'ADC': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-bottom.svg',
+            'SUPP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-utility.svg',
+            // El logo de 'Fill' ya no se usa como suplente por defecto.
+            'SUB': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-fill.svg'
+        };
+
+        // 1. CARGAR Y MAPEAR DATOS
+        function fetchScoutingData() {
+            fetch(GOOGLE_SCRIPT_URL)
+            .then(res => res.json())
+            .then(dataRows => {
+                if(!dataRows || dataRows.length < 2) throw new Error("Sin datos");
+                
+                scoutingTeams = dataRows.slice(1).map((row, index) => {
+                    const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
+                    
+                    let subsArray = [];
+                    if(v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
+                    if(v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
+                    if(v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
+                    
+                    return {
+                        id: index + 1, 
+                        name: v(7) || 'Equipo Sin Nombre', 
+                        tag: v(8),
+                        top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
+                        jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
+                        mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
+                        adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
+                        supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
+                        subs: subsArray
+                    };
+                }).filter(t => t.name.length > 1);
+
+                document.getElementById('loading-spinner').classList.add('hidden');
+                renderizarGrilla(scoutingTeams);
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Error al cargar datos.</p>`;
+            });
+        }
+
+        // 2. RENDERIZAR TARJETAS (Escudo TAG y Click Seguro)
+        function renderizarGrilla(data) {
+            const grid = document.getElementById('teams-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            data.forEach(eq => {
+                const displayTag = eq.tag ? eq.tag.substring(0,4).toUpperCase() : (eq.name ? eq.name.substring(0,3).toUpperCase() : 'TBD');
+
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden fade-in";
+                
+                card.onclick = () => abrirModalSeguro(eq);
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="tag-shield w-14 h-14 rounded-xl flex items-center justify-center text-cyan-400 font-black text-lg italic shrink-0 group-hover:bg-cyan-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300">
+                            ${displayTag}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="text-lg font-black uppercase tracking-tight text-white truncate">${eq.name}</h3>
+                            <span class="text-[10px] text-gray-500 font-bold bg-gray-900 px-2 py-0.5 rounded border border-gray-700">${eq.tag ? '['+eq.tag+']' : 'Sin Tag'}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-gray-800 pt-3">
+                        <span class="text-xs text-gray-400 font-bold"><i class="fas fa-users mr-1"></i> ${5 + eq.subs.length} Jugadores</span>
+                        <button class="text-cyan-400 text-[10px] font-black uppercase tracking-widest group-hover:bg-cyan-900/30 px-3 py-1.5 rounded transition-colors border border-transparent group-hover:border-cyan-800">
+                            Ver Talentos <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. BUSCADOR EN TIEMPO REAL
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = scoutingTeams.filter(t => {
+                if (t.name && t.name.toLowerCase().includes(term)) return true;
+                if (t.tag && t.tag.toLowerCase().includes(term)) return true;
+                
+                const allPlayers = [t.top, t.jg, t.mid, t.adc, t.supp, ...t.subs];
+                return allPlayers.some(p => {
+                    if (!p) return false;
+                    if (p.name && p.name.toLowerCase().includes(term)) return true;
+                    if (p.lol_id && p.lol_id.toLowerCase().includes(term)) return true;
+                    if (p.rank && p.rank.toLowerCase().includes(term)) return true;
+                    return false;
+                });
+            });
+            renderizarGrilla(filtered);
+        });
+
+        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS
+        function crearFilaScouting(rolNombre, iconKey, j) {
+            if (!j || !j.name || j.name.trim() === '') return '';
+
+            // SOLUCIÓN: Usamos un icono de banca de FontAwesome distintivo para Suplentes, no un logo de posición.
+            let iconHTML = `<img src="${iconKey}" class="w-8 h-8 object-contain opacity-80 drop-shadow-md" alt="${rolNombre}">`;
+            
+            if (rolNombre.toUpperCase() === 'SUPLENTE' || iconKey === roleIcons['SUB']) {
+                // Un icono de persona esperando/banca con destello neón
+                iconHTML = `<div class="w-8 h-8 flex items-center justify-center text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]"><i class="fas fa-users-cog text-3xl"></i></div>`;
+            }
+
+            const rankDisplay = j.rank ? `<span class="rank-badge">${j.rank}</span>` : '<span class="rank-badge text-gray-500 border-gray-700">Sin Rango</span>';
+            const secRoleDisplay = j.sec_role ? `<span class="text-[10px] text-gray-500 font-bold ml-2 hidden sm:inline-block">2do: ${j.sec_role}</span>` : '';
+            
+            const jPhone = String(j.phone || '');
+            const jDiscord = String(j.discord || '');
+            const jOpgg = String(j.opgg || '');
+
+            const btnWapp = (jPhone.length > 5) ? `<a href="https://wa.me/${jPhone.replace(/[^0-9]/g, '')}" target="_blank" class="bg-green-900/20 text-green-400 hover:bg-green-600 hover:text-white px-2 py-1 rounded border border-green-800 transition-colors text-[10px] font-bold"><i class="fab fa-whatsapp"></i> Chat</a>` : '';
+            const btnDisc = (jDiscord) ? `<span class="bg-indigo-900/20 text-indigo-400 px-2 py-1 rounded border border-indigo-900/50 text-[10px] font-bold cursor-help" title="${jDiscord}"><i class="fab fa-discord"></i> ${jDiscord.split('#')[0]}</span>` : '';
+            const btnOpgg = (jOpgg.length > 5) ? `<a href="${jOpgg}" target="_blank" class="bg-blue-900/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2 py-1 rounded border border-blue-800 transition-colors text-[10px] font-bold"><i class="fas fa-external-link-alt"></i> OP.GG</a>` : '';
+
+            return `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#0a0a0a] rounded-xl border border-gray-800 hover:border-cyan-900 transition-colors gap-4 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-[#050505] p-2 rounded-lg border border-gray-800 shrink-0">
+                            ${iconHTML}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <p class="text-[10px] text-cyan-500 font-black tracking-widest uppercase">${rolNombre}</p>
+                                ${rankDisplay}
+                            </div>
+                            <p class="text-white font-black text-lg leading-none mb-1">${j.lol_id || j.name}</p>
+                            <p class="text-xs text-gray-500"><i class="fas fa-user text-gray-700 mr-1"></i> ${j.name} ${secRoleDisplay}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-2 sm:ml-auto">
+                        ${btnDisc}
+                        ${btnWapp}
+                        ${btnOpgg}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. ABRIR MODAL SEGURO (Recibe el objeto directamente)
+        window.abrirModalSeguro = (equipo) => {
+            try {
+                if(!equipo) return;
+
+                const modal = document.getElementById('team-modal');
+                
+                // Asignar el Escudo TAG
+                const displayTag = equipo.tag ? equipo.tag.substring(0,4).toUpperCase() : (equipo.name ? equipo.name.substring(0,3).toUpperCase() : 'TBD');
+                document.getElementById('modal-initial').innerText = displayTag;
+                
+                document.getElementById('modal-name').innerText = equipo.name;
+                document.getElementById('modal-tag').innerText = equipo.tag ? `[${equipo.tag}]` : '';
+
+                let rosterHTML = '';
+                rosterHTML += crearFilaScouting('Top', roleIcons['TOP'], equipo.top);
+                rosterHTML += crearFilaScouting('Jungla', roleIcons['JG'], equipo.jg);
+                rosterHTML += crearFilaScouting('Mid', roleIcons['MID'], equipo.mid);
+                rosterHTML += crearFilaScouting('ADC', roleIcons['ADC'], equipo.adc);
+                rosterHTML += crearFilaScouting('Soporte', roleIcons['SUPP'], equipo.supp);
+
+                if (equipo.subs && equipo.subs.length > 0) {
+                    rosterHTML += `<div class="w-full h-px bg-gray-800 my-4"></div><h4 class="text-xs font-black text-cyan-500 uppercase tracking-widest mb-2"><i class="fas fa-user-clock mr-1"></i> Jugadores Suplentes</h4>`;
+                    equipo.subs.forEach(s => {
+                        rosterHTML += crearFilaScouting('Suplente', roleIcons['SUB'], s);
+                    });
+                }
+
+                if(rosterHTML === '') rosterHTML = '<p class="text-gray-500 text-center py-4">No hay jugadores legibles en este equipo.</p>';
+                
+                document.getElementById('modal-roster').innerHTML = rosterHTML;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } catch(e) {
+                console.error("Error al abrir modal:", e);
+                alert("Hubo un error al leer los datos. Intenta recargar la página.");
+            }
+        };
+
+        // CERRAR MODAL
+        window.cerrarModal = () => {
+            const modal = document.getElementById('team-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        };
+
+        // Iniciar
+        fetchScoutingData();
+    </script>
+</body>
+</html>

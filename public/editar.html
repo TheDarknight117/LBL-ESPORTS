@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Edición de Equipo | LBL 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #020202; color: #e5e7eb; }
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
+        .glass-panel { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .input-login { background-color: #0a0a0a; border: 1px solid #333; padding: 0.875rem; border-radius: 0.5rem; outline: none; transition: all 0.3s; width: 100%; color: white; }
+        .input-login:focus { border-color: #eab308; box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); }
+        .input-login:disabled { background-color: #050505; color: #666; cursor: not-allowed; }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
+
+    <div class="absolute top-0 left-0 w-full h-[500px] bg-yellow-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
+        <a href="index.html" class="flex items-center gap-3">
+            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=EAB308'" alt="LBL" class="h-10 w-auto object-contain">
+            <span class="text-xl font-black tracking-widest uppercase italic">PORTAL DE <span class="text-yellow-500">EDICIÓN</span></span>
+        </a>
+        <a href="index.html" class="text-gray-400 hover:text-white font-bold text-sm transition-colors py-2"><i class="fas fa-home mr-1"></i> Inicio</a>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4">
+        
+        <div id="access-screen" class="glass-panel p-8 rounded-3xl max-w-md w-full border-t-4 border-yellow-500 shadow-[0_0_50px_rgba(234,179,8,0.15)] text-center fade-in">
+            <i class="fas fa-key text-5xl text-yellow-500 mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]"></i>
+            <h1 class="text-2xl font-black uppercase tracking-widest text-white mb-2">Llave de Acceso</h1>
+            <p class="text-gray-400 text-sm mb-6">Ingresa el código temporal proporcionado por el Staff. Recuerda que este código tiene una vigencia de 48 horas.</p>
+            
+            <form id="form-access" class="space-y-4">
+                <input type="text" id="access-code" class="input-login text-center font-black text-xl tracking-widest uppercase" placeholder="LBL-XXXXXX" required>
+                <p id="access-error" class="text-red-500 text-xs font-bold hidden"><i class="fas fa-exclamation-triangle"></i> Código inválido o expirado.</p>
+                <button type="submit" id="btn-verify" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-yellow-500/20">ENTRAR</button>
+            </form>
+        </div>
+
+        <div id="edit-screen" class="hidden w-full max-w-5xl fade-in mt-6 mb-20">
+            <div class="bg-yellow-900/20 border border-yellow-700/50 p-4 rounded-xl text-yellow-500 text-sm font-bold flex items-start gap-3 mb-6">
+                <i class="fas fa-info-circle text-2xl mt-1"></i>
+                <p>Estás editando la información oficial de tu equipo. <br><span class="text-white">Para eliminar a un suplente, simplemente borra su "Nombre" y su "Riot ID" y dale a guardar.</span></p>
+            </div>
+
+            <div id="dynamic-edit-container" class="space-y-6"></div>
+
+            <div class="flex justify-end mt-8 border-t border-gray-800 pt-6">
+                <button id="btn-save-team" class="bg-yellow-600 hover:bg-yellow-500 text-black px-8 py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] flex items-center gap-2">
+                    <i class="fas fa-save"></i> ACTUALIZAR INFORMACIÓN
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { db } from "./firebase-config.js"; 
+        import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let currentTeamId = null;
+        let currentTeamData = null;
+
+        // VERIFICAR CÓDIGO Y TIEMPO
+        document.getElementById('form-access').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-verify');
+            const codeInput = document.getElementById('access-code').value.trim().toUpperCase();
+            const errorMsg = document.getElementById('access-error');
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFICANDO...';
+            errorMsg.classList.add('hidden');
+
+            try {
+                const q = query(collection(db, "inscripciones_pendientes"), where("editToken", "==", codeInput));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Código incorrecto o revocado.';
+                    errorMsg.classList.remove('hidden');
+                    btn.innerHTML = 'ENTRAR';
+                    return;
+                }
+
+                const teamDoc = snapshot.docs[0];
+                const data = teamDoc.data();
+                
+                const now = new Date().getTime();
+                if (data.editTokenExp && now > data.editTokenExp) {
+                    errorMsg.innerHTML = '<i class="fas fa-clock"></i> Este código expiró. Pide uno nuevo al Staff.';
+                    errorMsg.classList.remove('hidden');
+                    btn.innerHTML = 'ENTRAR';
+                    return;
+                }
+
+                currentTeamId = teamDoc.id;
+                currentTeamData = data;
+
+                document.getElementById('access-screen').classList.add('hidden');
+                document.getElementById('edit-screen').classList.remove('hidden');
+                
+                generarFormulario(currentTeamData);
+
+            } catch (error) {
+                console.error(error);
+                errorMsg.innerText = "Error de conexión con el servidor.";
+                errorMsg.classList.remove('hidden');
+                btn.innerHTML = 'ENTRAR';
+            }
+        });
+
+        // GENERADOR DE BLOQUES DE FORMULARIO
+        const buildPlayerBlock = (title, prefix, p, isSub = false) => {
+            if(!p) p = { nombre: '', riotId: '', ci: '', tel: '', discordId: '', departamento: '', rol_seleccionado: '' }; // Base vacía
+
+            const subRoleHTML = isSub ? `
+                <div class="md:col-span-4 mb-2">
+                    <label class="text-[10px] text-teal-500 font-bold uppercase tracking-widest">Rol del Suplente</label>
+                    <select id="${prefix}_rol" class="input-login p-3 text-sm h-12 text-white bg-[#0a0a0a] border border-teal-900/50">
+                        <option value="" hidden ${!p.rol_seleccionado ? 'selected' : ''}>Selecciona el Rol...</option>
+                        <option value="top" ${p.rol_seleccionado==='top'?'selected':''}>Carril Superior (TOP)</option>
+                        <option value="jungle" ${p.rol_seleccionado==='jungle'?'selected':''}>Jungla (JG)</option>
+                        <option value="middle" ${p.rol_seleccionado==='middle'?'selected':''}>Carril Central (MID)</option>
+                        <option value="bottom" ${p.rol_seleccionado==='bottom'?'selected':''}>Tirador (ADC)</option>
+                        <option value="utility" ${p.rol_seleccionado==='utility'?'selected':''}>Soporte (SUPP)</option>
+                    </select>
+                </div>
+            ` : '';
+
+            return `
+            <div class="bg-[#111] p-5 rounded-2xl border border-gray-800">
+                <h4 class="${isSub ? 'text-teal-400' : 'text-white'} font-black text-sm mb-4 uppercase tracking-widest border-b border-gray-800 pb-2">${title}</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    ${subRoleHTML}
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label><input id="${prefix}_nombre" value="${p.nombre||''}" class="input-login p-3 text-sm h-12" placeholder="${isSub ? 'Dejar vacío para eliminar suplente' : ''}"></div>
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID (Ej: Jugador#LAS)</label><input id="${prefix}_riotId" value="${p.riotId||''}" class="input-login p-3 text-sm h-12 text-blue-400 font-bold border-blue-900/50"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label><input id="${prefix}_ci" value="${p.ci||''}" class="input-login p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label><input id="${prefix}_tel" value="${p.tel||''}" class="input-login p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label><input id="${prefix}_discordId" value="${p.discordId||''}" class="input-login p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad</label><input id="${prefix}_departamento" value="${p.departamento||''}" class="input-login p-3 text-sm h-12"></div>
+                </div>
+            </div>`;
+        };
+
+        function generarFormulario(eq) {
+            let html = `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6"><i class="fas fa-shield-alt text-blue-500 mr-2"></i> Identidad del Equipo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Equipo</label><input id="edit_eq_nombre" value="${eq.equipo.nombre||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">TAG</label><input id="edit_eq_tag" value="${eq.equipo.tag||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div class="md:col-span-3"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">URL del Logo</label><input id="edit_eq_logo" value="${eq.equipo.logo||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Tier (No editable)</label><input value="${eq.equipo.tier||''}" class="input-login mt-1 p-3 text-sm h-12" disabled></div>
+                </div>
+            </div>
+            
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6"><i class="fas fa-gamepad text-yellow-500 mr-2"></i> Roster Titular</h3>
+                <div class="space-y-6">`;
+            
+            if(eq.roster) {
+                html += buildPlayerBlock('Carril Superior (TOP)', 'edit_TOP', eq.roster.TOP);
+                html += buildPlayerBlock('Jungla (JG)', 'edit_JG', eq.roster.JG);
+                html += buildPlayerBlock('Carril Central (MID)', 'edit_MID', eq.roster.MID);
+                html += buildPlayerBlock('Tirador (ADC)', 'edit_ADC', eq.roster.ADC);
+                html += buildPlayerBlock('Soporte (SUPP)', 'edit_SUPP', eq.roster.SUPP);
+            }
+            html += `</div></div>`;
+
+            // SIEMPRE MOSTRAR 3 SLOTS DE SUPLENTES
+            html += `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-2">
+                    <h3 class="text-lg font-black text-white uppercase tracking-widest"><i class="fas fa-user-clock text-teal-400 mr-2"></i> Suplentes</h3>
+                    <span class="text-xs text-gray-500 font-bold">Máximo 3 permitidos</span>
+                </div>
+                <div class="space-y-6">`;
+            
+            for(let i = 0; i < 3; i++) {
+                const s = (eq.suplentes && eq.suplentes[i]) ? eq.suplentes[i] : null;
+                html += buildPlayerBlock(`Espacio de Suplente #${i+1}`, `edit_SUP_${i}`, s, true);
+            }
+            
+            html += `</div></div>`;
+
+            document.getElementById('dynamic-edit-container').innerHTML = html;
+        }
+
+        // GUARDAR DATOS Y VALIDAR SUPLENTES
+        document.getElementById('btn-save-team').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-save-team');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> ENVIANDO DATOS...';
+            btn.disabled = true;
+
+            const extractPlayer = (prefix, original, isSub = false) => {
+                const elRiot = document.getElementById(`${prefix}_riotId`);
+                if(!elRiot) return original || null;
+
+                const newRiot = elRiot.value.trim();
+                const nombre = document.getElementById(`${prefix}_nombre`).value.trim();
+
+                // Si el espacio está vacío (no hay nombre ni riotID), se descarta el jugador
+                if(nombre === "" && newRiot === "") return null;
+
+                let newOpgg = original?.opgg || '';
+                if(newRiot !== original?.riotId && newRiot.includes('#')) {
+                    newOpgg = `https://www.op.gg/summoners/las/${newRiot.replace('#', '-').replace(/\s+/g, '%20')}`;
+                }
+                
+                const data = {
+                    ...(original || {}), 
+                    nombre: nombre,
+                    riotId: newRiot,
+                    opgg: newOpgg,
+                    ci: document.getElementById(`${prefix}_ci`).value.trim(),
+                    tel: document.getElementById(`${prefix}_tel`).value.trim(),
+                    discordId: document.getElementById(`${prefix}_discordId`).value.trim(),
+                    departamento: document.getElementById(`${prefix}_departamento`).value.trim()
+                };
+
+                if(isSub) {
+                    const elRol = document.getElementById(`${prefix}_rol`);
+                    if(elRol) data.rol_seleccionado = elRol.value;
+                }
+
+                return data;
+            };
+
+            try {
+                const nuevoEquipo = { ...currentTeamData.equipo };
+                nuevoEquipo.nombre = document.getElementById('edit_eq_nombre').value;
+                nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.toUpperCase();
+                nuevoEquipo.logo = document.getElementById('edit_eq_logo').value;
+
+                const nuevoRoster = {
+                    TOP: extractPlayer('edit_TOP', currentTeamData.roster?.TOP),
+                    JG: extractPlayer('edit_JG', currentTeamData.roster?.JG),
+                    MID: extractPlayer('edit_MID', currentTeamData.roster?.MID),
+                    ADC: extractPlayer('edit_ADC', currentTeamData.roster?.ADC),
+                    SUPP: extractPlayer('edit_SUPP', currentTeamData.roster?.SUPP),
+                };
+
+                // Extraemos los 3 posibles suplentes y filtramos los nulos (espacios vacíos)
+                const nuevosSubs = [];
+                for(let i=0; i<3; i++) {
+                    const subOriginal = (currentTeamData.suplentes && currentTeamData.suplentes[i]) ? currentTeamData.suplentes[i] : null;
+                    const dataExtraida = extractPlayer(`edit_SUP_${i}`, subOriginal, true);
+                    if(dataExtraida) nuevosSubs.push(dataExtraida);
+                }
+
+                const docRef = doc(db, "inscripciones_pendientes", currentTeamId);
+                
+                await updateDoc(docRef, {
+                    equipo: nuevoEquipo,
+                    roster: nuevoRoster,
+                    suplentes: nuevosSubs
+                });
+                
+                alert("✅ ¡Tus datos han sido actualizados con éxito en la LBL!\n\nPuedes seguir editando mientras tu código no haya expirado.");
+                
+                currentTeamData.equipo = nuevoEquipo;
+                currentTeamData.roster = nuevoRoster;
+                currentTeamData.suplentes = nuevosSubs;
+
+            } catch(e) {
+                console.error(e);
+                alert("❌ Ocurrió un error al guardar los cambios.");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR INFORMACIÓN';
+                btn.disabled = false;
+            }
+        });
+
+    </script>
+</body>
+</html>

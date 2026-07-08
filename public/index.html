@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LBL 2026 | Liga Boliviana de League of Legends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            background-color: #020202; 
+            color: #e5e7eb; 
+            -webkit-tap-highlight-color: transparent; 
+            overflow-x: hidden; 
+        }
+        
+        /* Fondo de cuadrícula cibernética */
+        .bg-grid { 
+            background-size: 50px 50px; 
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), 
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); 
+        }
+        
+        /* Paneles de Cristal (Glassmorphism) */
+        .glass-panel { 
+            background: rgba(10, 10, 10, 0.6); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        
+        /* Textos Brillantes y Gradientes */
+        .glow-text { text-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Animaciones Épicas */
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 
+            0% { transform: translateY(0px) scale(1); filter: drop-shadow(0 0 15px rgba(59,130,246,0.5)); } 
+            50% { transform: translateY(-15px) scale(1.02); filter: drop-shadow(0 0 30px rgba(59,130,246,0.8)); } 
+            100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 0 15px rgba(59,130,246,0.5)); } 
+        }
+        
+        .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(40px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Animación para el modal de advertencia */
+        .modal-anim { animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body class="font-sans antialiased bg-grid relative min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <div class="absolute top-0 left-[50%] translate-x-[-50%] w-[800px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-3 md:py-4 flex justify-between items-center transition-all duration-300 shadow-lg">
+        <div class="flex items-center gap-3">
+            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-8 md:h-10 w-auto object-contain">
+            <span class="text-lg md:text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-blue-500">LEAGUE OF LEGENDS</span></span>
+        </div>
+        <div class="flex items-center gap-3 md:gap-5">
+            <a href="equipos.html" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-2 flex items-center gap-2">
+                <i class="fas fa-list-ul"></i> <span class="hidden md:inline">Equipos</span>
+            </a>
+            
+            <a href="editar.html" class="text-yellow-500 hover:text-yellow-400 font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-2">
+                <i class="fas fa-key"></i> <span class="hidden md:inline">Editar Mi Equipo</span>
+            </a>
+
+            <button onclick="abrirAdvertencia()" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-black text-xs md:text-sm transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] hover:scale-105">INSCRIBIRSE</button>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 pt-10 md:pt-20 pb-20 z-10 relative">
+        
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-8 fade-in-up" style="animation-delay: 0.1s;">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+            </span>
+            Temporada Oficial 2026
+        </div>
+
+        <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" class="h-48 md:h-64 w-auto object-contain mb-8 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
+
+        <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
+            LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
+        </h1>
+        
+        <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
+            El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
+        </p>
+
+        <div class="max-w-4xl mx-auto w-full px-4 mb-20 z-10 relative">
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-12" style="animation-delay: 0.5s;">
+                <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
+                    <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
+                </button>
+                <a href="equipos.html" class="glass-panel text-gray-300 hover:text-white hover:border-gray-500 hover:bg-white/5 px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
+                    <i class="fas fa-users"></i> VER ROSTERS
+                </a>
+            </div>
+
+            <div class="glass-panel p-6 sm:p-8 rounded-[2rem] border-cyan-500/20 shadow-lg shadow-cyan-900/10 fade-in-up" style="animation-delay: 0.55s;">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    
+                    <div class="md:col-span-4 flex justify-center md:justify-end border-b md:border-b-0 md:border-r border-gray-800 pb-6 md:pb-0 md:pr-8">
+                        <img src="assets/logo2.png" 
+                             onerror="this.src='https://ui-avatars.com/api/?name=S2&background=020202&color=22d3ee&bold=true&font-size=0.5'" 
+                             alt="Logo Torneo Scouting 2" 
+                             class="h-20 md:h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                    </div>
+
+                    <div class="md:col-span-8 text-center md:text-left flex flex-col items-center md:items-start">
+                        <h4 class="text-3xl font-black uppercase italic tracking-tighter text-gradient-cyan mb-2">RECLUTAMIENTO DE <span class="text-white">JUGADORES</span></h4>
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-xl mb-6">Accede al pool oficial de jugadores del Scouting Tournament 2. Ideal para completar tu roster.</p>
+                        
+                        <a href="scouting.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white px-8 py-3.5 rounded-xl font-black text-base transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+                            <i class="fas fa-user-plus text-sm"></i> RECLUTAR JUGADORES
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-3xl mx-auto w-full px-4 fade-in-up mt-8" style="animation-delay: 0.6s;">
+                <div class="bg-[#050505] border border-cyan-900/50 p-5 md:p-6 rounded-3xl relative overflow-hidden text-left shadow-lg shadow-cyan-900/10">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
+                    <div class="flex flex-col sm:flex-row items-start gap-4">
+                        <i class="fas fa-bullhorn text-2xl text-cyan-500 mt-1 hidden sm:block"></i>
+                        <div class="w-full">
+                            <h4 class="text-white font-black uppercase tracking-widest mb-2 text-sm md:text-base"><i class="fas fa-bullhorn text-cyan-500 mr-2 sm:hidden"></i> MERCADO DE FICHAJES OFICIAL</h4>
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed mb-4">
+                                Los equipos de <strong class="text-yellow-500">Tier 1</strong> y <strong class="text-blue-500">Tier 2</strong> solo podrán realizar fichajes o suplencias utilizando la base de datos de <strong class="text-cyan-400">Reclutamiento</strong>.
+                            </p>
+                            
+                            <div class="bg-red-950/20 border border-red-900/50 rounded-xl p-3 mb-3">
+                                <p class="text-red-400 text-xs md:text-sm font-bold leading-relaxed">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i> ATENCIÓN: No todos los jugadores listados están habilitados. Existen perfiles con sanciones disciplinarias vigentes.
+                                </p>
+                            </div>
+                            
+                            <p class="text-purple-400 text-xs md:text-sm font-bold">
+                                <i class="fas fa-headset mr-1"></i> ¿Tienes dudas? Contacta al Staff LBL antes de confirmar tu fichaje.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <section class="max-w-5xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.7s;">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-black uppercase tracking-widest text-gray-300">NUESTROS <span class="text-blue-500">TIERS</span></h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-yellow-500 relative overflow-hidden group hover:bg-[#0a0a0a] transition-all hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(234,179,8,0.1)]">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-[40px] group-hover:bg-yellow-500/20 transition-colors"></div>
+                <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-yellow-500/20">
+                    <i class="fas fa-trophy text-3xl text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"></i>
+                </div>
+                <h3 class="text-2xl md:text-3xl font-black mb-3"><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</h3>
+                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La elite del circuito competitivo de la LBL, aca se encuentran los mejores equipos de la liga.</p>
+            </div>
+            
+            <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-blue-500 relative overflow-hidden group hover:bg-[#0a0a0a] transition-all hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(59,130,246,0.1)]">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-[40px] group-hover:bg-blue-500/20 transition-colors"></div>
+                <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
+                    <i class="fas fa-level-up-alt text-3xl text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"></i>
+                </div>
+                <h3 class="text-2xl md:text-3xl font-black mb-3"><span class="text-gradient-blue">TIER 2</span> (Circuito Ascenso)</h3>
+                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La segunda divicion del circuito competitivo de la LBL, aca los equipos compiten entre si por su cupo de ascenso a TIER 1.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="w-full border-t border-gray-800/50 bg-[#020202] py-10 text-center mt-auto z-10 relative">
+        <div class="flex justify-center gap-6 mb-6">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 hover:text-blue-500 hover:border-blue-500 hover:bg-blue-900/20 transition-all"><i class="fab fa-discord"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:border-pink-500 hover:bg-pink-900/20 transition-all"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 hover:text-purple-500 hover:border-purple-500 hover:bg-purple-900/20 transition-all"><i class="fab fa-twitch"></i></a>
+        </div>
+        <p class="text-gray-600 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-6">Somos pasión, somos competición, somos la LIGA BOLIVIANA DE LEAGUE OF LEGENDS.</p>
+        
+        <div class="flex items-center justify-center gap-4">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 text-gray-800 hover:text-red-500 text-[10px] font-black tracking-widest uppercase transition-colors px-4 py-2 rounded-full hover:bg-red-500/10">
+                <i class="fas fa-shield-alt"></i> Staff LBL
+            </a>
+        </div>
+    </footer>
+
+    <div id="scouting-modal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-[#050505] border border-blue-900/50 p-6 md:p-8 rounded-[2rem] max-w-md w-full text-center relative overflow-hidden shadow-2xl modal-anim">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-500 to-blue-600"></div>
+            
+            <div class="bg-blue-900/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/30">
+                <i class="fas fa-shield-alt text-4xl text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"></i>
+            </div>
+            
+            <h2 class="text-2xl font-black text-white mb-4 uppercase italic">Aviso de Inscripción</h2>
+            
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                El acceso a la liga es estrictamente cerrado. <strong class="text-blue-400">Solo los equipos invitados oficialmente a través de los Torneos de Scouting</strong> serán aceptados. <br><br> Si tu equipo no cuenta con esta invitación, tu registro será descartado automáticamente por el staff.
+            </p>
+            
+            <div class="flex flex-col gap-3">
+                <a href="registro.html" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-900/30">
+                    SÍ, TENGO INVITACIÓN
+                </a>
+                <button onclick="cerrarAdvertencia()" class="w-full text-gray-500 hover:text-white font-bold py-3 rounded-xl transition-colors">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+    </style>
+    <script>
+        function abrirAdvertencia() {
+            const modal = document.getElementById('scouting-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function cerrarAdvertencia() {
+            const modal = document.getElementById('scouting-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
