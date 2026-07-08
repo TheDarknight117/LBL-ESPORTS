@@ -330,22 +330,59 @@
         }
         window.cargarDatos = cargarDatos;
 
-        const buildEditPlayerBlock = (title, prefix, p, isExtra = false) => {
-            if(!p) return ''; 
-            const colorClass = isExtra ? "text-teal-500" : "text-yellow-500";
+        const buildEditPlayerBlock = (title, prefix, p, isExtra = false, isSub = false) => {
+            const player = p || { nombre: '', riotId: '', ci: '', tel: '', mail: '', discordId: '', departamento: '', rol_seleccionado: '' };
+            const colorClass = isExtra ? (isSub ? "text-teal-400" : "text-rose-400") : "text-yellow-500";
+            
+            let subRoleHTML = '';
+            if (isSub) {
+                const r = player.rol_seleccionado || '';
+                subRoleHTML = `
+                    <div class="col-span-2 md:col-span-4">
+                        <label class="text-[9px] text-gray-500 font-bold uppercase">Rol del Suplente</label>
+                        <select id="${prefix}_rol" class="input-login p-2 text-xs h-8 bg-[#0a0a0a] border border-teal-900/50">
+                            <option value="" hidden ${r === '' ? 'selected' : ''}>Selecciona el Rol...</option>
+                            <option value="Carril Superior (TOP)" ${r.includes('TOP') || r === 'top' ? 'selected' : ''}>Carril Superior (TOP)</option>
+                            <option value="Jungla (JG)" ${r.includes('JG') || r === 'jungle' ? 'selected' : ''}>Jungla (JG)</option>
+                            <option value="Carril Central (MID)" ${r.includes('MID') || r === 'middle' ? 'selected' : ''}>Carril Central (MID)</option>
+                            <option value="Tirador (ADC)" ${r.includes('ADC') || r === 'bottom' ? 'selected' : ''}>Tirador (ADC)</option>
+                            <option value="Soporte (SUPP)" ${r.includes('SUPP') || r === 'utility' ? 'selected' : ''}>Soporte (SUPP)</option>
+                        </select>
+                    </div>
+                `;
+            }
+
             return `
             <div class="bg-[#111] p-4 rounded-xl border border-gray-800">
                 <h4 class="${colorClass} font-black text-sm mb-3 uppercase tracking-widest border-b border-gray-800 pb-2">${title}</h4>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Nombre Real</label><input id="${prefix}_nombre" value="${p.nombre||''}" class="input-login p-2 text-xs h-8"></div>
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Riot ID</label><input id="${prefix}_riotId" value="${p.riotId||''}" class="input-login p-2 text-xs h-8 text-blue-400 font-bold"></div>
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Carnet (C.I.)</label><input id="${prefix}_ci" value="${p.ci||''}" class="input-login p-2 text-xs h-8"></div>
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">WhatsApp</label><input id="${prefix}_tel" value="${p.tel||''}" class="input-login p-2 text-xs h-8 text-green-400"></div>
-                    <div class="col-span-2"><label class="text-[9px] text-gray-500 font-bold uppercase">Correo Electrónico</label><input id="${prefix}_mail" value="${p.mail||''}" class="input-login p-2 text-xs h-8"></div>
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Discord</label><input id="${prefix}_discordId" value="${p.discordId||''}" class="input-login p-2 text-xs h-8 text-indigo-400"></div>
-                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Ciudad/Dep</label><input id="${prefix}_departamento" value="${p.departamento||''}" class="input-login p-2 text-xs h-8"></div>
+                    ${subRoleHTML}
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Nombre Real</label><input id="${prefix}_nombre" value="${player.nombre||''}" class="input-login p-2 text-xs h-8" placeholder="${isSub ? 'Dejar vacío para borrar' : ''}"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Riot ID</label><input id="${prefix}_riotId" value="${player.riotId||''}" class="input-login p-2 text-xs h-8 text-blue-400 font-bold"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Carnet (C.I.)</label><input id="${prefix}_ci" value="${player.ci||''}" class="input-login p-2 text-xs h-8"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">WhatsApp</label><input id="${prefix}_tel" value="${player.tel||''}" class="input-login p-2 text-xs h-8 text-green-400"></div>
+                    <div class="col-span-2"><label class="text-[9px] text-gray-500 font-bold uppercase">Correo Electrónico</label><input id="${prefix}_mail" value="${player.mail||''}" class="input-login p-2 text-xs h-8"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Discord</label><input id="${prefix}_discordId" value="${player.discordId||''}" class="input-login p-2 text-xs h-8 text-indigo-400"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Ciudad/Dep</label><input id="${prefix}_departamento" value="${player.departamento||''}" class="input-login p-2 text-xs h-8"></div>
                 </div>
             </div>`;
+        };
+
+        window.agregarStreamerFilaEdit = () => {
+            const container = document.getElementById('edit-streamers-list-container');
+            if(!container) return;
+            const index = container.children.length;
+            if(index >= 5) { alert("Máximo 5 streamers."); return; }
+            const div = document.createElement('div');
+            div.className = "flex gap-2 items-end mt-2 edit-streamer-row animate-[fadeIn_0.3s_ease]";
+            div.innerHTML = `
+                <div class="flex-grow grid grid-cols-2 gap-2">
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Nombre Canal</label><input type="text" placeholder="Ej: TwitchName" class="edit-streamer-nombre input-login p-2 text-xs h-8"></div>
+                    <div><label class="text-[9px] text-gray-500 font-bold uppercase">Enlace Canal</label><input type="url" placeholder="https://..." class="edit-streamer-link input-login p-2 text-xs h-8"></div>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-400 p-2 text-xs font-bold"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(div);
         };
 
         const buildEditRepBlock = (prefix, index, rep) => {
@@ -367,6 +404,30 @@
             let html = '';
             const tier1Selected = eq.equipo.tier === 'Tier 1' ? 'selected' : '';
             const tier2Selected = eq.equipo.tier === 'Tier 2' ? 'selected' : '';
+
+            let streamersHTML = '';
+            if (eq.media && eq.media.streamers && Array.isArray(eq.media.streamers)) {
+                eq.media.streamers.forEach((st, idx) => {
+                    streamersHTML += `
+                    <div class="flex gap-2 items-end mt-2 edit-streamer-row">
+                        <div class="flex-grow grid grid-cols-2 gap-2">
+                            <div><label class="text-[9px] text-gray-500 font-bold uppercase">Nombre Canal</label><input type="text" value="${st.nombre||''}" class="edit-streamer-nombre input-login p-2 text-xs h-8"></div>
+                            <div><label class="text-[9px] text-gray-500 font-bold uppercase">Enlace Canal</label><input type="url" value="${st.link||''}" class="edit-streamer-link input-login p-2 text-xs h-8"></div>
+                        </div>
+                        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-400 p-2 text-xs font-bold"><i class="fas fa-trash"></i></button>
+                    </div>`;
+                });
+            } else if (eq.media && eq.media.streamer_nombre) {
+                streamersHTML += `
+                <div class="flex gap-2 items-end mt-2 edit-streamer-row">
+                    <div class="flex-grow grid grid-cols-2 gap-2">
+                        <div><label class="text-[9px] text-gray-500 font-bold uppercase">Nombre Canal</label><input type="text" value="${eq.media.streamer_nombre||''}" class="edit-streamer-nombre input-login p-2 text-xs h-8"></div>
+                        <div><label class="text-[9px] text-gray-500 font-bold uppercase">Enlace Canal</label><input type="url" value="${eq.media.streamer_link||''}" class="edit-streamer-link input-login p-2 text-xs h-8"></div>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-400 p-2 text-xs font-bold"><i class="fas fa-trash"></i></button>
+                </div>`;
+            }
+
             html += `
             <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl">
                 <h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-shield-alt text-blue-500 mr-2"></i> Identidad y Redes</h3>
@@ -382,10 +443,22 @@
                     <div><label class="text-[10px] text-gray-500 font-bold uppercase">Instagram (Ej: @lbl)</label><input id="edit_media_ig" value="${eq.media?.ig||''}" class="input-login mt-1 p-2 text-xs h-8 border-pink-900/50 focus:border-pink-500"></div>
                     <div><label class="text-[10px] text-gray-500 font-bold uppercase">TikTok (Ej: @lbl)</label><input id="edit_media_tk" value="${eq.media?.tk||''}" class="input-login mt-1 p-2 text-xs h-8 border-gray-700 focus:border-white"></div>
                 </div>
+                
+                <div class="mt-6 border-t border-gray-800 pt-4">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-2"><i class="fas fa-video mr-1 text-purple-400"></i> Streamers / Staff</h4>
+                    <div id="edit-streamers-list-container" class="space-y-2">
+                        ${streamersHTML}
+                    </div>
+                    <button type="button" onclick="agregarStreamerFilaEdit()" class="mt-4 text-[10px] font-bold text-purple-400 bg-purple-900/20 border border-purple-900 hover:bg-purple-600 hover:text-white px-3 py-1.5 rounded transition-all flex items-center gap-2">
+                        <i class="fas fa-plus"></i> AÑADIR STREAMER
+                    </button>
+                </div>
             </div>`;
+
             html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-user-tie text-green-500 mr-2"></i> Representantes Legales</h3><div class="space-y-4">`;
             if(eq.representantes) eq.representantes.forEach((rep, i) => html += buildEditRepBlock(`edit_rep_${i}`, i+1, rep));
             html += `</div></div>`;
+
             html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-gamepad text-yellow-500 mr-2"></i> Roster Titular</h3><div class="space-y-4">`;
             if(eq.roster) {
                 html += buildEditPlayerBlock('TOP', 'edit_TOP', eq.roster.TOP);
@@ -395,16 +468,21 @@
                 html += buildEditPlayerBlock('SOPORTE', 'edit_SUPP', eq.roster.SUPP);
             }
             html += `</div></div>`;
-            if(eq.suplentes && eq.suplentes.length > 0) {
-                html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-user-clock text-teal-400 mr-2"></i> Suplentes</h3><div class="space-y-4">`;
-                eq.suplentes.forEach((s, i) => html += buildEditPlayerBlock(`Suplente #${i+1} (${s.rol_seleccionado||'N/A'})`, `edit_SUP_${i}`, s, true));
-                html += `</div></div>`;
+
+            html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-user-clock text-teal-400 mr-2"></i> Suplentes</h3><div class="space-y-4">`;
+            for(let i=0; i<3; i++) {
+                const s = (eq.suplentes && eq.suplentes[i]) ? eq.suplentes[i] : null;
+                html += buildEditPlayerBlock(`Suplente #${i+1}`, `edit_SUP_${i}`, s, true, true);
             }
-            if(eq.coaches && eq.coaches.length > 0) {
-                html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-chalkboard-user text-rose-500 mr-2"></i> Coaches</h3><div class="space-y-4">`;
-                eq.coaches.forEach((c, i) => html += buildEditPlayerBlock(`Coach #${i+1}`, `edit_COA_${i}`, c, true));
-                html += `</div></div>`;
+            html += `</div></div>`;
+
+            html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-chalkboard-user text-rose-500 mr-2"></i> Coaches</h3><div class="space-y-4">`;
+            for(let i=0; i<2; i++) {
+                const c = (eq.coaches && eq.coaches[i]) ? eq.coaches[i] : null;
+                html += buildEditPlayerBlock(`Coach #${i+1}`, `edit_COA_${i}`, c, true, false);
             }
+            html += `</div></div>`;
+
             return html;
         }
 
@@ -592,24 +670,38 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> GUARDANDO...';
             btn.disabled = true;
 
-            const extractPlayer = (prefix, original) => {
-                if(!original) return null;
-                const newRiot = document.getElementById(`${prefix}_riotId`).value.trim();
-                let newOpgg = original.opgg;
-                if(newRiot !== original.riotId && newRiot.includes('#')) {
+            const extractPlayer = (prefix, original, isSub = false) => {
+                const elRiot = document.getElementById(`${prefix}_riotId`);
+                if(!elRiot) return original || null;
+
+                const newRiot = elRiot.value.trim();
+                const nombre = document.getElementById(`${prefix}_nombre`).value.trim();
+
+                if(nombre === "" && newRiot === "") return null;
+
+                let newOpgg = original?.opgg || '';
+                if(newRiot !== original?.riotId && newRiot.includes('#')) {
                     newOpgg = `https://www.op.gg/summoners/las/${newRiot.replace('#', '-').replace(/\s+/g, '%20')}`;
                 }
-                return {
-                    ...original,
-                    nombre: document.getElementById(`${prefix}_nombre`).value,
+
+                const data = {
+                    ...(original || {}),
+                    nombre: nombre,
                     riotId: newRiot,
                     opgg: newOpgg,
-                    ci: document.getElementById(`${prefix}_ci`).value,
-                    tel: document.getElementById(`${prefix}_tel`).value,
-                    mail: document.getElementById(`${prefix}_mail`).value,
-                    discordId: document.getElementById(`${prefix}_discordId`).value,
-                    departamento: document.getElementById(`${prefix}_departamento`).value
+                    ci: document.getElementById(`${prefix}_ci`).value.trim(),
+                    tel: document.getElementById(`${prefix}_tel`).value.trim(),
+                    mail: document.getElementById(`${prefix}_mail`).value.trim(),
+                    discordId: document.getElementById(`${prefix}_discordId`).value.trim(),
+                    departamento: document.getElementById(`${prefix}_departamento`).value.trim()
                 };
+
+                if(isSub) {
+                    const elRol = document.getElementById(`${prefix}_rol`);
+                    if(elRol) data.rol_seleccionado = elRol.value;
+                }
+
+                return data;
             };
 
             const extractRep = (prefix, original) => {
@@ -631,21 +723,53 @@
                 nuevoEquipo.tier = document.getElementById('edit_eq_tier').value;
                 nuevoEquipo.logo = document.getElementById('edit_eq_logo').value;
 
+                const streamersList = [];
+                document.querySelectorAll('.edit-streamer-row').forEach(row => {
+                    const sNombre = row.querySelector('.edit-streamer-nombre').value.trim();
+                    const sLink = row.querySelector('.edit-streamer-link').value.trim();
+                    if(sNombre && sLink) {
+                        streamersList.push({ nombre: sNombre, link: sLink });
+                    }
+                });
+
                 const nuevaMedia = { ...eqOriginal.media };
                 nuevaMedia.ig = document.getElementById('edit_media_ig').value;
                 nuevaMedia.tk = document.getElementById('edit_media_tk').value;
+                nuevaMedia.streamers = streamersList;
 
                 const nuevosReps = eqOriginal.representantes ? eqOriginal.representantes.map((r, i) => extractRep(`edit_rep_${i}`, r)) : [];
+                
                 const nuevoRoster = {
-                    TOP: extractPlayer('edit_TOP', eqOriginal.roster?.TOP), JG: extractPlayer('edit_JG', eqOriginal.roster?.JG),
-                    MID: extractPlayer('edit_MID', eqOriginal.roster?.MID), ADC: extractPlayer('edit_ADC', eqOriginal.roster?.ADC),
+                    TOP: extractPlayer('edit_TOP', eqOriginal.roster?.TOP), 
+                    JG: extractPlayer('edit_JG', eqOriginal.roster?.JG),
+                    MID: extractPlayer('edit_MID', eqOriginal.roster?.MID), 
+                    ADC: extractPlayer('edit_ADC', eqOriginal.roster?.ADC),
                     SUPP: extractPlayer('edit_SUPP', eqOriginal.roster?.SUPP),
                 };
-                const nuevosSubs = eqOriginal.suplentes ? eqOriginal.suplentes.map((s, i) => extractPlayer(`edit_SUP_${i}`, s)) : [];
-                const nuevosCoaches = eqOriginal.coaches ? eqOriginal.coaches.map((c, i) => extractPlayer(`edit_COA_${i}`, c)) : [];
+
+                const nuevosSubs = [];
+                for(let i=0; i<3; i++) {
+                    const subOriginal = (eqOriginal.suplentes && eqOriginal.suplentes[i]) ? eqOriginal.suplentes[i] : null;
+                    const dataExtraida = extractPlayer(`edit_SUP_${i}`, subOriginal, true);
+                    if(dataExtraida) nuevosSubs.push(dataExtraida);
+                }
+
+                const nuevosCoaches = [];
+                for(let i=0; i<2; i++) {
+                    const coachOriginal = (eqOriginal.coaches && eqOriginal.coaches[i]) ? eqOriginal.coaches[i] : null;
+                    const dataExtraida = extractPlayer(`edit_COA_${i}`, coachOriginal, false);
+                    if(dataExtraida) nuevosCoaches.push(dataExtraida);
+                }
 
                 const docRef = doc(db, "inscripciones_pendientes", id);
-                await updateDoc(docRef, { equipo: nuevoEquipo, media: nuevaMedia, representantes: nuevosReps, roster: nuevoRoster, suplentes: nuevosSubs, coaches: nuevosCoaches });
+                await updateDoc(docRef, { 
+                    equipo: nuevoEquipo, 
+                    media: nuevaMedia, 
+                    representantes: nuevosReps, 
+                    roster: nuevoRoster, 
+                    suplentes: nuevosSubs, 
+                    coaches: nuevosCoaches 
+                });
                 
                 alert("✅ ¡Base de datos actualizada con éxito!");
                 await cargarDatos();
