@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    match /inscripciones_pendientes/{document} {
+      // Permitir lectura completa a administradores autenticados.
+      // Permitir lectura pública de equipos aceptados.
+      // Permitir lectura si el cliente está consultando por un token de edición válido (o el documento tiene un token).
+      allow read: if request.auth != null 
+                  || resource.data.estado == 'Aceptado'
+                  || (resource.data.editToken != null && request.time.toMillis() < resource.data.editTokenExp);
+
+      // Permitir creación pública de nuevas inscripciones, pero forzar que su estado inicial sea "Pendiente"
+      // y que no se puedan auto-asignar tokens de edición. Permitir creación libre al Staff autenticado.
+      allow create: if request.auth != null 
+                    || (request.resource.data.estado == 'Pendiente'
+                        && (!('editToken' in request.resource.data) || request.resource.data.editToken == null));
+
+      // Permitir actualizaciones a administradores autenticados,
+      // o a equipos que tengan una llave de edición válida y no expirada.
+      allow update: if request.auth != null
+                    || (
+                         resource.data.editToken != null 
+                         && request.time.toMillis() < resource.data.editTokenExp 
+                         && request.resource.data.editToken == resource.data.editToken
+                         && request.resource.data.editTokenExp == resource.data.editTokenExp
+                         // Impedir que los equipos se auto-aprueben cambiando su estado
+                         && request.resource.data.estado == resource.data.estado
+                       );
+
+      // Solo administradores autenticados pueden borrar registros.
+      allow delete: if request.auth != null;
+    }
+  }
+}
