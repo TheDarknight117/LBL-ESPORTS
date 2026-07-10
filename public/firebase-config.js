@@ -3,12 +3,12 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"; // ESTO ES VITAL
 
 const firebaseConfig = {
-  apiKey: "AIzaSyANhZvlfMs7lSQAGB0bmp2i4VpfU6AQcR4",
-  authDomain: "lbl-liga-2026.firebaseapp.com",
-  projectId: "lbl-liga-2026",
-  storageBucket: "lbl-liga-2026.firebasestorage.app",
-  messagingSenderId: "860904795060",
-  appId: "1:860904795060:web:41c3ac9ba01fc6a5cbe0e1"
+  apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
+  authDomain: "lbl-esports.firebaseapp.com",
+  projectId: "lbl-esports",
+  storageBucket: "lbl-esports.firebasestorage.app",
+  messagingSenderId: "124596723477",
+  appId: "1:124596723477:web:d913f1060f303ef3a2531c"
 };
 
 const app = initializeApp(firebaseConfig);

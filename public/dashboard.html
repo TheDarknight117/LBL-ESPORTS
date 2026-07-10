@@ -73,6 +73,25 @@
         </header>
 
         <main class="flex-grow w-full max-w-[1400px] mx-auto p-4 md:p-6 mt-4">
+            <!-- Herramientas de Respaldo y Migración -->
+            <div class="glass-panel p-6 rounded-3xl mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 border-purple-500 shadow-lg">
+                <div>
+                    <h3 class="text-sm font-black text-white uppercase flex items-center gap-2"><i class="fas fa-database text-purple-400"></i> Herramientas de Respaldo y Migración</h3>
+                    <p class="text-xs text-gray-400 mt-1">Utiliza estos botones para salvar tu base de datos actual o migrar los datos a un nuevo Firebase.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="exportarBackupJSON()" class="bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-600/50 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95">
+                        <i class="fas fa-download"></i> EXPORTAR COPIA DE SEGURIDAD (.JSON)
+                    </button>
+                    <div class="relative">
+                        <button onclick="document.getElementById('import-file-input').click()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all active:scale-95">
+                            <i class="fas fa-upload"></i> IMPORTAR RESPALDO
+                        </button>
+                        <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importarBackupJSON(event)">
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div class="glass-panel p-4 rounded-2xl border-l-4 border-blue-500">
                     <p class="text-xs text-gray-500 font-bold uppercase mb-1">Total Registros</p>
@@ -213,7 +232,7 @@
 
     <script type="module">
         import { db, auth } from "./firebase-config.js"; 
-        import { collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const loginScreen = document.getElementById('login-screen');
@@ -267,6 +286,75 @@
             document.getElementById(`btn-tab-${tabName}`).classList.remove('tab-inactive');
             document.getElementById(`btn-tab-${tabName}`).classList.add('tab-active');
             if(tabName === 'edit') document.getElementById(`btn-tab-${tabName}`).classList.add('text-yellow-500');
+        };
+
+        window.exportarBackupJSON = () => {
+            if (equiposLocales.length === 0) {
+                alert("⚠️ No hay datos cargados para exportar o la base de datos está vacía.");
+                return;
+            }
+            try {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(equiposLocales, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                
+                const fecha = new Date().toISOString().split('T')[0];
+                downloadAnchor.setAttribute("download", `lbl_backup_${fecha}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            } catch (e) {
+                alert("Error al exportar datos.");
+            }
+        };
+
+        window.importarBackupJSON = async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const datos = JSON.parse(e.target.result);
+                    if (!Array.isArray(datos)) {
+                        alert("❌ Formato de archivo no válido. Debe ser un arreglo de objetos JSON.");
+                        return;
+                    }
+
+                    if (!confirm(`⚠️ Estás a punto de importar ${datos.length} registros a la base de datos actual. Si ya existen con el mismo ID, se sobrescribirán. ¿Deseas continuar?`)) {
+                        return;
+                    }
+
+                    let importados = 0;
+                    let fallidos = 0;
+
+                    for (const registro of datos) {
+                        const docId = registro.id;
+                        if (!docId) {
+                            fallidos++;
+                            continue;
+                        }
+                        
+                        const copiaRegistro = { ...registro };
+                        delete copiaRegistro.id;
+
+                        try {
+                            await setDoc(doc(db, "inscripciones_pendientes", docId), copiaRegistro);
+                            importados++;
+                        } catch (err) {
+                            console.error("Error al importar documento: ", docId, err);
+                            fallidos++;
+                        }
+                    }
+
+                    alert(`✅ Proceso finalizado.\n- Importados con éxito: ${importados}\n- Fallidos: ${fallidos}`);
+                    await cargarDatos();
+                } catch (err) {
+                    alert("❌ Error al leer o parsear el archivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = "";
         };
 
         let equiposLocales = [];
