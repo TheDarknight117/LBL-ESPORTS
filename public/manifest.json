@@ -1,0 +1,22 @@
+{
+  "name": "LBL Esports",
+  "short_name": "LBL",
+  "description": "Liga Boliviana de League of Legends",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#020202",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

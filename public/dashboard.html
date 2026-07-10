@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard | LBL 2026</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- PWA Meta Tags & Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LBL Esports">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
     <link rel="stylesheet" href="dist/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -401,7 +411,7 @@
                                 <p class="text-xs text-gray-500">${rep1.tel}</p>
                             </td>
                             <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${badgeClass}">${estado}</span></td>
-                            <td class="px-6 py-4 text-right"><button onclick="verEquipo('${eq.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors">REVISAR</button></td>
+                            <td class="px-6 py-4 text-right"><button onclick="verEquipo('${eq.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">REVISAR</button></td>
                         `;
                         tbody.appendChild(tr);
                     }
@@ -880,6 +890,17 @@
             if (!confirm(`⚠️ ELIMINAR a "${nombreEquipo}" permanentemente. ¿Continuar?`)) return;
             try { await deleteDoc(doc(db, "inscripciones_pendientes", id)); alert("Eliminado."); cerrarModal(); cargarDatos(); } catch (error) { alert("Error."); }
         };
+    </script>
+    
+    <!-- Register Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
+            });
+        }
     </script>
 </body>
 </html>

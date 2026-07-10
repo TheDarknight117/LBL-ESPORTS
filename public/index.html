@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LBL 2026 | Liga Boliviana de League of Legends</title>
+    <meta name="description" content="La máxima competencia de League of Legends en Bolivia. Regístrate, demuestra tu nivel y compite con los mejores equipos del país.">
+    <meta name="keywords" content="LBL, League of Legends, Bolivia, Esports, Torneo, LOL, Liga Boliviana">
+    
+    <!-- OpenGraph (Facebook/Discord/WhatsApp) -->
+    <meta property="og:title" content="LBL 2026 | Liga Boliviana de League of Legends">
+    <meta property="og:description" content="La máxima competencia de League of Legends en Bolivia. Regístrate, demuestra tu nivel y compite con los mejores equipos del país.">
+    <meta property="og:image" content="https://lbl-esports.web.app/assets/logo2.png">
+    <meta property="og:url" content="https://lbl-esports.web.app/index.html">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LBL 2026 | Liga Boliviana de League of Legends">
+    <meta name="twitter:description" content="La máxima competencia de League of Legends en Bolivia. Regístrate, demuestra tu nivel y compite con los mejores equipos del país.">
+    <meta name="twitter:image" content="https://lbl-esports.web.app/assets/logo2.png">
+
+    <!-- PWA Meta Tags & Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LBL Esports">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
     <link rel="stylesheet" href="dist/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -236,6 +260,17 @@
             const modal = document.getElementById('scouting-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+    </script>
+    
+    <!-- Register Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
+            });
         }
     </script>
 </body>
