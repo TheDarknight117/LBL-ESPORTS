@@ -131,19 +131,41 @@
         const buildPlayerBlock = (title, prefix, p, isSub = false) => {
             if(!p) p = { nombre: '', riotId: '', ci: '', tel: '', discordId: '', departamento: '', rol_seleccionado: '' }; // Base vacía
 
+            const r = p.rol_seleccionado || '';
             const subRoleHTML = isSub ? `
                 <div class="md:col-span-4 mb-2">
                     <label class="text-[10px] text-teal-500 font-bold uppercase tracking-widest">Rol del Suplente</label>
-                    <select id="${prefix}_rol" class="input-login p-3 text-sm h-12 text-white bg-[#0a0a0a] border border-teal-900/50">
-                        <option value="" hidden ${!p.rol_seleccionado ? 'selected' : ''}>Selecciona el Rol...</option>
-                        <option value="top" ${p.rol_seleccionado==='top'?'selected':''}>Carril Superior (TOP)</option>
-                        <option value="jungle" ${p.rol_seleccionado==='jungle'?'selected':''}>Jungla (JG)</option>
-                        <option value="middle" ${p.rol_seleccionado==='middle'?'selected':''}>Carril Central (MID)</option>
-                        <option value="bottom" ${p.rol_seleccionado==='bottom'?'selected':''}>Tirador (ADC)</option>
-                        <option value="utility" ${p.rol_seleccionado==='utility'?'selected':''}>Soporte (SUPP)</option>
+                    <select id="${prefix}_rol" class="input-login text-sm h-12 text-white bg-[#0a0a0a] border border-teal-900/50" style="padding: 0 12px !important; color: white !important; background-color: #0a0a0a !important;">
+                        <option class="bg-gray-900 text-white" value="" hidden ${r === '' ? 'selected' : ''}>Selecciona el Rol...</option>
+                        <option class="bg-gray-900 text-white" value="Carril Superior (TOP)" ${r.includes('TOP') || r === 'top' ? 'selected' : ''}>Carril Superior (TOP)</option>
+                        <option class="bg-gray-900 text-white" value="Jungla (JG)" ${r.includes('JG') || r === 'jungle' ? 'selected' : ''}>Jungla (JG)</option>
+                        <option class="bg-gray-900 text-white" value="Carril Central (MID)" ${r.includes('MID') || r === 'middle' ? 'selected' : ''}>Carril Central (MID)</option>
+                        <option class="bg-gray-900 text-white" value="Tirador (ADC)" ${r.includes('ADC') || r === 'bottom' ? 'selected' : ''}>Tirador (ADC)</option>
+                        <option class="bg-gray-900 text-white" value="Soporte (SUPP)" ${r.includes('SUPP') || r === 'utility' ? 'selected' : ''}>Soporte (SUPP)</option>
                     </select>
                 </div>
             ` : '';
+
+            const cs = p.cuenta_secundaria || { servidor: 'las', riotId2: '', opgg2: '' };
+            const secondaryHTML = `
+                <div class="md:col-span-4 bg-black/40 border border-gray-800 p-4 rounded-2xl mt-2 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-4"><p class="text-[10px] text-purple-400 font-bold uppercase tracking-widest border-b border-gray-800 pb-2"><i class="fas fa-plus-circle mr-1"></i> Cuenta Secundaria (Opcional)</p></div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Servidor</label>
+                        <select id="${prefix}_region2" class="input-login text-sm h-12 text-white bg-[#0a0a0a]" style="padding: 0 12px !important; color: white !important; background-color: #0a0a0a !important;">
+                            <option class="bg-gray-900 text-white" value="las" ${cs.servidor === 'las' ? 'selected' : ''}>LAS</option>
+                            <option class="bg-gray-900 text-white" value="lan" ${cs.servidor === 'lan' ? 'selected' : ''}>LAN</option>
+                            <option class="bg-gray-900 text-white" value="br" ${cs.servidor === 'br' ? 'selected' : ''}>BR</option>
+                            <option class="bg-gray-900 text-white" value="na" ${cs.servidor === 'na' ? 'selected' : ''}>NA</option>
+                            <option class="bg-gray-900 text-white" value="euw" ${cs.servidor === 'euw' ? 'selected' : ''}>EUW</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID</label>
+                        <input id="${prefix}_riotId2" value="${cs.riotId2||''}" class="input-login p-3 text-sm h-12 text-purple-300" placeholder="Smurf#Tag">
+                    </div>
+                </div>
+            `;
 
             return `
             <div class="bg-[#111] p-5 rounded-2xl border border-gray-800">
@@ -156,6 +178,7 @@
                     <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label><input id="${prefix}_tel" value="${p.tel||''}" class="input-login p-3 text-sm h-12"></div>
                     <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label><input id="${prefix}_discordId" value="${p.discordId||''}" class="input-login p-3 text-sm h-12"></div>
                     <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad</label><input id="${prefix}_departamento" value="${p.departamento||''}" class="input-login p-3 text-sm h-12"></div>
+                    ${secondaryHTML}
                 </div>
             </div>`;
         };
@@ -240,6 +263,22 @@
                 if(isSub) {
                     const elRol = document.getElementById(`${prefix}_rol`);
                     if(elRol) data.rol_seleccionado = elRol.value;
+                }
+
+                const elRiot2 = document.getElementById(`${prefix}_riotId2`);
+                const elRegion2 = document.getElementById(`${prefix}_region2`);
+                if(elRiot2 && elRegion2) {
+                    const r2Val = elRiot2.value.trim();
+                    const regVal = elRegion2.value;
+                    let opgg2Val = '';
+                    if(r2Val && r2Val.includes('#')) {
+                        opgg2Val = `https://www.op.gg/summoners/${regVal}/${r2Val.replace('#', '-').replace(/\s+/g, '%20')}`;
+                    }
+                    data.cuenta_secundaria = {
+                        servidor: regVal,
+                        riotId2: r2Val,
+                        opgg2: opgg2Val
+                    };
                 }
 
                 return data;

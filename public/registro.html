@@ -294,8 +294,12 @@
                         <i id="default_icon_${idPrefix}" class="fas fa-user-clock text-teal-500 text-2xl drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]"></i>
                         <img id="icon_${idPrefix}" src="" class="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(45,212,191,0.6)] hidden" alt="Rol"> 
                         <select id="${idPrefix}_rol" class="select-rol bg-[#0a0a0a] border border-teal-800 text-teal-300 rounded-xl px-4 py-2 outline-none font-black uppercase cursor-pointer hover:border-teal-500 transition-all text-sm md:text-base w-full max-w-[250px]" onchange="cambiarIconoRol(this, '${idPrefix}')">
-                            <option value="" hidden selected class="bg-[#0a0a0a] text-gray-500">👉 ESCOGE EL ROL</option>
-                            <option value="top">Carril Superior (TOP)</option><option value="jungle">Jungla (JG)</option><option value="middle">Carril Central (MID)</option><option value="bottom">Tirador (ADC)</option><option value="utility">Soporte (SUPP)</option>
+                            <option class="bg-gray-900 text-white" value="" hidden selected>👉 ESCOGE EL ROL</option>
+                            <option class="bg-gray-900 text-white" value="top">Carril Superior (TOP)</option>
+                            <option class="bg-gray-900 text-white" value="jungle">Jungla (JG)</option>
+                            <option class="bg-gray-900 text-white" value="middle">Carril Central (MID)</option>
+                            <option class="bg-gray-900 text-white" value="bottom">Tirador (ADC)</option>
+                            <option class="bg-gray-900 text-white" value="utility">Soporte (SUPP)</option>
                         </select>
                     </div>`;
             } else if (isCoach) { headerVisual = `<i class="fas fa-chalkboard-user text-rose-500 text-2xl drop-shadow-[0_0_10px_rgba(244,63,94,0.6)]"></i> ${title}`; }
