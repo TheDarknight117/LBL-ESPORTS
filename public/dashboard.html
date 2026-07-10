@@ -69,11 +69,11 @@
 
     <div id="dashboard-content" class="hidden flex-col min-h-screen">
         <header class="w-full glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center border-b border-red-900/30">
-            <div class="flex items-center gap-4">
-                <i class="fas fa-shield-alt text-red-500 text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]"></i>
-                <div>
-                    <h1 class="text-xl font-black tracking-widest uppercase italic leading-none">LBL <span class="text-red-500">STAFF</span></h1>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold" id="user-display">Panel de Administración</p>
+            <div class="flex items-center gap-4 min-w-0">
+                <i class="fas fa-shield-alt text-red-500 text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] shrink-0"></i>
+                <div class="min-w-0">
+                    <h1 class="text-lg sm:text-xl font-black tracking-widest uppercase italic leading-none truncate">LBL <span class="text-red-500">STAFF</span></h1>
+                    <p class="text-[8px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold truncate max-w-[140px] xs:max-w-[180px] sm:max-w-none mt-1" id="user-display">Panel de Administración</p>
                 </div>
             </div>
             <div class="flex gap-4 items-center">
@@ -102,32 +102,33 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="glass-panel p-4 rounded-2xl border-l-4 border-blue-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase mb-1">Total Registros</p>
-                    <p class="text-3xl font-black text-white" id="stat-total">0</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500">
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Total Registros</p>
+                    <p class="text-2xl sm:text-3xl font-black text-white" id="stat-total">0</p>
                 </div>
-                <div class="glass-panel p-4 rounded-2xl border-l-4 border-yellow-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendientes</p>
-                    <p class="text-3xl font-black text-yellow-500" id="stat-pendientes">0</p>
+                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500">
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Pendientes</p>
+                    <p class="text-2xl sm:text-3xl font-black text-yellow-500" id="stat-pendientes">0</p>
                 </div>
-                <div class="glass-panel p-4 rounded-2xl border-l-4 border-green-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase mb-1">Aceptados</p>
-                    <p class="text-3xl font-black text-green-500" id="stat-aceptados">0</p>
+                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500">
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Aceptados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-green-500" id="stat-aceptados">0</p>
                 </div>
-                <div class="glass-panel p-4 rounded-2xl border-l-4 border-orange-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase mb-1">Observados</p>
-                    <p class="text-3xl font-black text-orange-500" id="stat-observados">0</p>
+                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500">
+                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Observados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-orange-500" id="stat-observados">0</p>
                 </div>
             </div>
 
             <div class="glass-panel rounded-3xl overflow-hidden">
-                <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a]">
-                    <h2 class="text-xl font-black uppercase text-gray-300"><i class="fas fa-inbox mr-2 text-blue-500"></i> Bandeja de Inscripciones</h2>
-                    <button onclick="cargarDatos()" class="text-blue-500 hover:text-white transition-colors text-sm font-bold bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50"><i class="fas fa-sync-alt mr-1"></i> Actualizar</button>
+                <div class="p-4 sm:p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a]">
+                    <h2 class="text-lg sm:text-xl font-black uppercase text-gray-300"><i class="fas fa-inbox mr-2 text-blue-500"></i> Bandeja de Inscripciones</h2>
+                    <button onclick="cargarDatos()" class="text-blue-500 hover:text-white transition-colors text-xs sm:text-sm font-bold bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50"><i class="fas fa-sync-alt mr-1"></i> Actualizar</button>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <!-- Vista Escritorio (Tablas) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left text-sm whitespace-nowrap">
                         <thead class="uppercase tracking-widest text-[10px] text-gray-500 bg-[#050505]">
                             <tr>
@@ -141,6 +142,11 @@
                         </thead>
                         <tbody id="tabla-equipos" class="divide-y divide-gray-800/50"></tbody>
                     </table>
+                </div>
+
+                <!-- Vista Móvil (Tarjetas) -->
+                <div id="tarjetas-equipos-movil" class="block md:hidden divide-y divide-gray-800/30 bg-[#020202] p-3 space-y-3">
+                    <!-- Se llena dinámicamente -->
                 </div>
             </div>
         </main>
@@ -371,12 +377,17 @@
 
         async function cargarDatos() {
             const tbody = document.getElementById('tabla-equipos');
+            const cardsDiv = document.getElementById('tarjetas-equipos-movil');
+            
             tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-gray-500"><i class="fas fa-spinner fa-spin mr-2 text-xl"></i> Cargando base de datos...</td></tr>`;
+            cardsDiv.innerHTML = `<div class="text-center py-10 text-gray-500"><i class="fas fa-spinner fa-spin mr-2 text-xl"></i> Cargando base de datos...</div>`;
+            
             try {
                 const querySnapshot = await getDocs(collection(db, "inscripciones_pendientes"));
                 equiposLocales = [];
                 let stats = { total: 0, pendientes: 0, aceptados: 0, observados: 0 };
                 tbody.innerHTML = '';
+                cardsDiv.innerHTML = '';
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
@@ -397,6 +408,7 @@
                         const fallbackSrc = getFallbackImage(eq.equipo.nombre);
                         const teamTag = eq.equipo.tag ? `[${eq.equipo.tag}]` : '';
 
+                        // Fila Escritorio
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-[#111] transition-colors";
                         tr.innerHTML = `
@@ -414,16 +426,53 @@
                             <td class="px-6 py-4 text-right"><button onclick="verEquipo('${eq.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">REVISAR</button></td>
                         `;
                         tbody.appendChild(tr);
+
+                        // Tarjeta Móvil
+                        const card = document.createElement('div');
+                        card.className = "p-4 bg-[#0a0a0a] border border-gray-800/30 rounded-2xl flex flex-col gap-3 shadow-lg";
+                        card.innerHTML = `
+                            <div class="flex items-center justify-between border-b border-gray-800/50 pb-3">
+                                <div class="flex items-center gap-3">
+                                    <img src="${logoSrc}" onerror="this.src='${fallbackSrc}'" class="w-10 h-10 rounded bg-black object-contain border border-gray-800">
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm leading-tight">${eq.equipo.nombre}</h4>
+                                        <p class="text-xs text-gray-500"><span class="text-blue-400 font-bold">${teamTag}</span> ${eq.equipo.tier}</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeClass}">${estado}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs py-1">
+                                <div>
+                                    <p class="text-[9px] text-gray-500 uppercase font-black">Representante</p>
+                                    <p class="text-white font-bold">${rep1.nombre}</p>
+                                    <p class="text-[10px] text-gray-400">${rep1.tel}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[9px] text-gray-500 uppercase font-black">Fecha Registro</p>
+                                    <p class="text-gray-400">${fecha}</p>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-gray-800/50">
+                                <button onclick="verEquipo('${eq.id}')" class="w-full bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white py-3 rounded-xl font-black text-xs transition-colors flex items-center justify-center gap-2 active:scale-[0.98]">
+                                    <i class="fas fa-eye"></i> REVISAR INSCRIPCIÓN
+                                </button>
+                            </div>
+                        `;
+                        cardsDiv.appendChild(card);
                     }
                 });
 
-                if(stats.total === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-gray-500">No hay inscripciones aún.</td></tr>`;
+                if(stats.total === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-gray-500">No hay inscripciones aún.</td></tr>`;
+                    cardsDiv.innerHTML = `<div class="text-center py-10 text-gray-500">No hay inscripciones aún.</div>`;
+                }
                 document.getElementById('stat-total').innerText = stats.total;
                 document.getElementById('stat-pendientes').innerText = stats.pendientes;
                 document.getElementById('stat-aceptados').innerText = stats.aceptados;
                 document.getElementById('stat-observados').innerText = stats.observados;
             } catch (error) {
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-red-500 font-bold">Error al conectar.</td></tr>`;
+                cardsDiv.innerHTML = `<div class="text-center py-10 text-red-500 font-bold">Error al conectar.</div>`;
             }
         }
         window.cargarDatos = cargarDatos;
