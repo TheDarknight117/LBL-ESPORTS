@@ -121,7 +121,7 @@
 
     <script type="module">
         import { db } from "./firebase-config.js"; 
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let todosLosEquipos = [];
         let tierActual = 'Tier 1';
@@ -139,11 +139,12 @@
         // 1. CARGAR DATOS
         async function cargarEquipos() {
             try {
-                const querySnapshot = await getDocs(collection(db, "inscripciones_pendientes"));
+                const q = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
+                const querySnapshot = await getDocs(q);
                 todosLosEquipos = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.estado === "Aceptado") todosLosEquipos.push({ id: doc.id, ...data });
+                    todosLosEquipos.push({ id: doc.id, ...data });
                 });
                 document.getElementById('loading-spinner').classList.add('hidden');
                 renderizarGrilla(tierActual);
