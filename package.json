@@ -1,0 +1,13 @@
+{
+  "name": "lbl-esports",
+  "version": "1.0.0",
+  "description": "LBL esports landing and staff dashboard",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/dist/output.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./public/dist/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
