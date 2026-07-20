@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v3';
+const CACHE_NAME = 'lbl-cache-v4';
 const ASSETS = [
   '/',
   '/index',
@@ -20,7 +20,7 @@ self.addEventListener('install', (e) => {
     caches.open(CACHE_NAME).then((cache) => {
       console.log('SW: Caching static assets');
       return cache.addAll(ASSETS);
-    })
+    }).then(() => self.skipWaiting())
   );
 });
 
@@ -31,7 +31,7 @@ self.addEventListener('activate', (e) => {
       return Promise.all(
         keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
