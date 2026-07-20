@@ -1,12 +1,12 @@
-const CACHE_NAME = 'lbl-cache-v1';
+const CACHE_NAME = 'lbl-cache-v2';
 const ASSETS = [
   '/',
-  '/index.html',
-  '/registro.html',
-  '/dashboard.html',
-  '/editar.html',
-  '/equipos.html',
-  '/scouting.html',
+  '/index',
+  '/registro',
+  '/dashboard',
+  '/editar',
+  '/equipos',
+  '/scouting',
   '/dist/output.css',
   '/assets/logo.png',
   '/assets/logo2.png',
@@ -48,19 +48,36 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
+  let requestToProcess = e.request;
+  const url = new URL(e.request.url);
+  
+  // Normalize .html requests to clean URLs
+  if (url.pathname.endsWith('.html')) {
+    let cleanPath = url.pathname.slice(0, -5);
+    if (cleanPath === '/index') cleanPath = '/';
+    url.pathname = cleanPath;
+    requestToProcess = new Request(url.toString(), {
+      method: e.request.method,
+      headers: e.request.headers,
+      mode: e.request.mode,
+      credentials: e.request.credentials,
+      redirect: 'follow'
+    });
+  }
+
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
+    caches.match(requestToProcess).then((cachedResponse) => {
       if (cachedResponse) {
         // Fetch updated version in the background and update cache
-        fetch(e.request).then((networkResponse) => {
+        fetch(requestToProcess).then((networkResponse) => {
           if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, networkResponse));
+            caches.open(CACHE_NAME).then((cache) => cache.put(requestToProcess, networkResponse));
           }
         }).catch(() => {/* Ignore network errors */});
         
         return cachedResponse;
       }
-      return fetch(e.request);
+      return fetch(requestToProcess);
     })
   );
 });
