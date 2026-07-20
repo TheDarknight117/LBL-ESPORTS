@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="dist/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
+        html, body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; overflow-x: hidden; width: 100%; }
         
         .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
         .glass-panel { background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
@@ -67,11 +67,11 @@
             <p class="text-gray-400 text-sm max-w-2xl mx-auto">Conoce a los equipos aceptados en la LBL. Contacta a los representantes para organizar scrims y mira las estadísticas de los jugadores.</p>
         </div>
 
-        <div class="flex justify-center gap-4 mb-12">
-            <button id="btn-t1" onclick="cambiarTier('Tier 1')" class="px-8 py-3 rounded-2xl border transition-all tab-active-t1 flex items-center gap-2">
+        <div class="flex justify-center gap-3 sm:gap-4 mb-12 px-2">
+            <button id="btn-t1" onclick="cambiarTier('Tier 1')" class="px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-active-t1 flex items-center gap-2 whitespace-nowrap">
                 <i class="fas fa-trophy"></i> TIER 1
             </button>
-            <button id="btn-t2" onclick="cambiarTier('Tier 2')" class="px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10">
+            <button id="btn-t2" onclick="cambiarTier('Tier 2')" class="px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10 whitespace-nowrap">
                 <i class="fas fa-level-up-alt"></i> TIER 2
             </button>
         </div>
@@ -215,8 +215,8 @@
 
         window.cambiarTier = (tier) => {
             tierActual = tier;
-            document.getElementById('btn-t1').className = tier === 'Tier 1' ? "px-8 py-3 rounded-2xl border transition-all tab-active-t1 flex items-center gap-2" : "px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10";
-            document.getElementById('btn-t2').className = tier === 'Tier 2' ? "px-8 py-3 rounded-2xl border transition-all tab-active-t2 flex items-center gap-2" : "px-8 py-3 rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10";
+            document.getElementById('btn-t1').className = tier === 'Tier 1' ? "px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-active-t1 flex items-center gap-2 whitespace-nowrap" : "px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10 whitespace-nowrap";
+            document.getElementById('btn-t2').className = tier === 'Tier 2' ? "px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-active-t2 flex items-center gap-2 whitespace-nowrap" : "px-4 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl border transition-all tab-inactive flex items-center gap-2 hover:bg-white/10 whitespace-nowrap";
             renderizarGrilla(tier);
         };
 
