@@ -11,7 +11,7 @@
     <meta property="og:title" content="LBL 2026 | Liga Boliviana de League of Legends">
     <meta property="og:description" content="Somos Pasión, Somos Competicion, Somos la Liga Boliviana de LOL">
     <meta property="og:image" content="https://lbl-esports.web.app/assets/LIGA_BOLIVIANA_DE_LEAGUE_OF_LEGENDS.png">
-    <meta property="og:url" content="https://lbl-esports.web.app/index.html">
+    <meta property="og:url" content="https://lbl-esports.web.app/index">
     <meta property="og:type" content="website">
 
     <!-- Twitter Cards -->
@@ -56,9 +56,9 @@
         
         /* Textos Brillantes y Gradientes */
         .glow-text { text-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
-        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         
         /* Animaciones Épicas */
         .float-anim { animation: float 6s ease-in-out infinite; }
@@ -87,11 +87,11 @@
             <span class="text-lg md:text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-blue-500">LEAGUE OF LEGENDS</span></span>
         </div>
         <div class="flex items-center gap-3 md:gap-5">
-            <a href="equipos.html" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-2 flex items-center gap-2">
+            <a href="equipos" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-2 flex items-center gap-2">
                 <i class="fas fa-list-ul"></i> <span class="hidden md:inline">Equipos</span>
             </a>
             
-            <a href="editar.html" class="text-yellow-500 hover:text-yellow-400 font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-2">
+            <a href="editar" class="text-yellow-500 hover:text-yellow-400 font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-2">
                 <i class="fas fa-key"></i> <span class="hidden md:inline">Editar Mi Equipo</span>
             </a>
 
@@ -126,7 +126,7 @@
                     <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
                     <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
                 </button>
-                <a href="equipos.html" class="glass-panel text-gray-300 hover:text-white hover:border-gray-500 hover:bg-white/5 px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
+                <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-500 hover:bg-white/5 px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
                     <i class="fas fa-users"></i> VER ROSTERS
                 </a>
             </div>
@@ -145,7 +145,7 @@
                         <h4 class="text-3xl font-black uppercase italic tracking-tighter text-gradient-cyan mb-2">RECLUTAMIENTO DE <span class="text-white">JUGADORES</span></h4>
                         <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-xl mb-6">Accede al pool oficial de jugadores del Scouting Tournament 2. Ideal para completar tu roster.</p>
                         
-                        <a href="scouting.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white px-8 py-3.5 rounded-xl font-black text-base transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+                        <a href="scouting" class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white px-8 py-3.5 rounded-xl font-black text-base transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
                             <i class="fas fa-user-plus text-sm"></i> RECLUTAR JUGADORES
                         </a>
                     </div>
@@ -215,7 +215,7 @@
         <p class="text-gray-600 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-6">Somos pasión, somos competición, somos la LIGA BOLIVIANA DE LEAGUE OF LEGENDS.</p>
         
         <div class="flex items-center justify-center gap-4">
-            <a href="dashboard.html" class="inline-flex items-center gap-2 text-gray-800 hover:text-red-500 text-[10px] font-black tracking-widest uppercase transition-colors px-4 py-2 rounded-full hover:bg-red-500/10">
+            <a href="dashboard" class="inline-flex items-center gap-2 text-gray-800 hover:text-red-500 text-[10px] font-black tracking-widest uppercase transition-colors px-4 py-2 rounded-full hover:bg-red-500/10">
                 <i class="fas fa-shield-alt"></i> Staff LBL
             </a>
         </div>
@@ -236,7 +236,7 @@
             </p>
             
             <div class="flex flex-col gap-3">
-                <a href="registro.html" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-900/30">
+                <a href="registro" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-900/30">
                     SÍ, TENGO INVITACIÓN
                 </a>
                 <button onclick="cerrarAdvertencia()" class="w-full text-gray-500 hover:text-white font-bold py-3 rounded-xl transition-colors">
