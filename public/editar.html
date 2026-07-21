@@ -128,7 +128,7 @@
         });
 
         // GENERADOR DE BLOQUES DE FORMULARIO
-        const buildPlayerBlock = (title, prefix, p, isSub = false) => {
+        const buildPlayerBlock = (title, prefix, p, isSub = false, isCapitan = false) => {
             if(!p) p = { nombre: '', riotId: '', ci: '', tel: '', discordId: '', departamento: '', rol_seleccionado: '' }; // Base vacía
 
             const r = p.rol_seleccionado || '';
@@ -167,9 +167,24 @@
                 </div>
             `;
 
+            let capitanHTML = '';
+            if (!isSub) {
+                const roleKey = prefix.replace('edit_', '');
+                const isChecked = isCapitan ? 'checked' : '';
+                capitanHTML = `
+                    <label class="flex items-center text-[10px] font-black text-gray-300 bg-black/40 px-3 py-1.5 rounded-lg cursor-pointer border border-gray-800 hover:border-yellow-500/50 transition-all select-none">
+                        <input type="radio" name="edit_capitan" value="${roleKey}" class="mr-2 accent-yellow-500 w-3.5 h-3.5" ${isChecked}>
+                        <span class="text-yellow-500 uppercase tracking-widest text-[9px]"><i class="fas fa-crown mr-1"></i> Capitán</span>
+                    </label>
+                `;
+            }
+
             return `
             <div class="bg-[#111] p-5 rounded-2xl border border-gray-800">
-                <h4 class="${isSub ? 'text-teal-400' : 'text-white'} font-black text-sm mb-4 uppercase tracking-widest border-b border-gray-800 pb-2">${title}</h4>
+                <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+                    <h4 class="${isSub ? 'text-teal-400' : 'text-white'} font-black text-sm uppercase tracking-widest">${title}</h4>
+                    ${capitanHTML}
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     ${subRoleHTML}
                     <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label><input id="${prefix}_nombre" value="${p.nombre||''}" class="input-login p-3 text-sm h-12" placeholder="${isSub ? 'Dejar vacío para eliminar suplente' : ''}"></div>
@@ -201,11 +216,12 @@
                 <div class="space-y-6">`;
             
             if(eq.roster) {
-                html += buildPlayerBlock('Carril Superior (TOP)', 'edit_TOP', eq.roster.TOP);
-                html += buildPlayerBlock('Jungla (JG)', 'edit_JG', eq.roster.JG);
-                html += buildPlayerBlock('Carril Central (MID)', 'edit_MID', eq.roster.MID);
-                html += buildPlayerBlock('Tirador (ADC)', 'edit_ADC', eq.roster.ADC);
-                html += buildPlayerBlock('Soporte (SUPP)', 'edit_SUPP', eq.roster.SUPP);
+                const cap = eq.capitan || '';
+                html += buildPlayerBlock('Carril Superior (TOP)', 'edit_TOP', eq.roster.TOP, false, cap === 'TOP');
+                html += buildPlayerBlock('Jungla (JG)', 'edit_JG', eq.roster.JG, false, cap === 'JG');
+                html += buildPlayerBlock('Carril Central (MID)', 'edit_MID', eq.roster.MID, false, cap === 'MID');
+                html += buildPlayerBlock('Tirador (ADC)', 'edit_ADC', eq.roster.ADC, false, cap === 'ADC');
+                html += buildPlayerBlock('Soporte (SUPP)', 'edit_SUPP', eq.roster.SUPP, false, cap === 'SUPP');
             }
             html += `</div></div>`;
 
@@ -306,12 +322,16 @@
                     if(dataExtraida) nuevosSubs.push(dataExtraida);
                 }
 
+                const capitanRadio = document.querySelector('input[name="edit_capitan"]:checked');
+                const nuevoCapitan = capitanRadio ? capitanRadio.value : (currentTeamData.capitan || 'TOP');
+
                 const docRef = doc(db, "inscripciones_pendientes", currentTeamId);
                 
                 await updateDoc(docRef, {
                     equipo: nuevoEquipo,
                     roster: nuevoRoster,
-                    suplentes: nuevosSubs
+                    suplentes: nuevosSubs,
+                    capitan: nuevoCapitan
                 });
                 
                 alert("✅ ¡Tus datos han sido actualizados con éxito en la LBL!\n\nPuedes seguir editando mientras tu código no haya expirado.");
@@ -319,6 +339,7 @@
                 currentTeamData.equipo = nuevoEquipo;
                 currentTeamData.roster = nuevoRoster;
                 currentTeamData.suplentes = nuevosSubs;
+                currentTeamData.capitan = nuevoCapitan;
 
             } catch(e) {
                 console.error(e);
