@@ -77,7 +77,17 @@
                 <i class="fas fa-search-location mr-1"></i> Base de Datos Externa
             </div>
             <h1 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mb-4">TORNEO DE <span class="text-cyan-400">SCOUTING</span></h1>
-            <p class="text-gray-400 text-sm max-w-2xl mx-auto">Explora la base de datos de los equipos y jugadores que participaron en el Scouting. Ideal para reclutar agentes libres o completar tu roster.</p>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto mb-6">Explora la base de datos de los equipos y jugadores que participaron en el Scouting. Ideal para reclutar agentes libres o completar tu roster.</p>
+            
+            <!-- Selector de Torneo Segmentado -->
+            <div class="flex justify-center gap-3 max-w-xs md:max-w-sm mx-auto bg-black/40 border border-gray-800/80 p-1.5 rounded-2xl">
+                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 text-gray-500 hover:text-white">
+                    Scouting 1
+                </button>
+                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 text-gray-500 hover:text-white">
+                    Scouting 2
+                </button>
+            </div>
         </div>
 
         <div class="max-w-2xl mx-auto mb-12 relative">
@@ -127,7 +137,10 @@
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxu9funupVszSkq-kR3czuW_uTDKUjO13-jY3NtQluWG4y7XAeOh5T6qed6YJL5dGL3w/exec";
         
+        let activeTournament = 2; // Por defecto mostrar Scouting 2
         let scoutingTeams = [];
+        let scouting1Teams = [];
+        let scouting2Teams = [];
         
         const roleIcons = {
             'TOP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-top.svg',
@@ -135,46 +148,68 @@
             'MID': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-middle.svg',
             'ADC': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-bottom.svg',
             'SUPP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-utility.svg',
-            // El logo de 'Fill' ya no se usa como suplente por defecto.
             'SUB': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-fill.svg'
         };
 
         // 1. CARGAR Y MAPEAR DATOS
-        function fetchScoutingData() {
-            fetch(GOOGLE_SCRIPT_URL)
-            .then(res => res.json())
-            .then(dataRows => {
-                if(!dataRows || dataRows.length < 2) throw new Error("Sin datos");
-                
-                scoutingTeams = dataRows.slice(1).map((row, index) => {
-                    const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
-                    
-                    let subsArray = [];
-                    if(v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
-                    if(v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
-                    if(v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
-                    
-                    return {
-                        id: index + 1, 
-                        name: v(7) || 'Equipo Sin Nombre', 
-                        tag: v(8),
-                        top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
-                        jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
-                        mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
-                        adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
-                        supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
-                        subs: subsArray
-                    };
-                }).filter(t => t.name.length > 1);
+        async function fetchScoutingData() {
+            try {
+                // Cargar Scouting 2 (desde Google Sheets)
+                const res2 = await fetch(GOOGLE_SCRIPT_URL);
+                const dataRows2 = await res2.json();
+                if(dataRows2 && dataRows2.length >= 2) {
+                    scouting2Teams = dataRows2.slice(1).map((row, index) => {
+                        const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
+                        let subsArray = [];
+                        if(v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
+                        if(v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
+                        if(v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
+                        
+                        return {
+                            id: index + 1, 
+                            name: v(7) || 'Equipo Sin Nombre', 
+                            tag: v(8),
+                            top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
+                            jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
+                            mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
+                            adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
+                            supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
+                            subs: subsArray
+                        };
+                    }).filter(t => t.name.length > 1);
+                }
+
+                // Cargar Scouting 1 (desde JSON estático local)
+                const res1 = await fetch('assets/scouting1.json');
+                scouting1Teams = await res1.json();
 
                 document.getElementById('loading-spinner').classList.add('hidden');
-                renderizarGrilla(scoutingTeams);
-            })
-            .catch(err => {
+                cambiarTorneo(2); // Por defecto mostrar Scouting 2
+
+            } catch (err) {
                 console.error(err);
                 document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Error al cargar datos.</p>`;
-            });
+            }
         }
+
+        window.cambiarTorneo = (torneoId) => {
+            activeTournament = torneoId;
+            const btn1 = document.getElementById('btn-scouting1');
+            const btn2 = document.getElementById('btn-scouting2');
+            
+            document.getElementById('searchInput').value = '';
+
+            if (torneoId === 1) {
+                btn1.className = "flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+                btn2.className = "flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 text-gray-500 hover:text-white hover:bg-white/5";
+                scoutingTeams = scouting1Teams;
+            } else {
+                btn2.className = "flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+                btn1.className = "flex-1 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 text-gray-500 hover:text-white hover:bg-white/5";
+                scoutingTeams = scouting2Teams;
+            }
+            renderizarGrilla(scoutingTeams);
+        };
 
         // 2. RENDERIZAR TARJETAS (Escudo TAG y Click Seguro)
         function renderizarGrilla(data) {
