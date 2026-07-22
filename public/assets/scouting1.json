@@ -48,7 +48,18 @@
             "lol_id": "Akali InTheFranx#Mai",
             "opgg": "https://op.gg/es/lol/summoners/las/Akali%20InTheFranx-Mai"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Alvaro Josue Illanes Quispe",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Overtaken+浣#2001y",
+                "opgg": "https://www.leagueofgraphs.com/summoner/las/Overtaken+%E6%B5%A3-2001y"
+            }
+        ]
     },
     {
         "id": 2,
@@ -99,7 +110,28 @@
             "lol_id": "SLK Ca7riel #6752",
             "opgg": "https://op.gg/es/lol/summoners/las/SLK%20Ca7riel-6752"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Dylan Carlos Ramirez Maygua SLK top y jg",
+                "phone": "78488480",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Six9ine#2179",
+                "opgg": "https://op.gg/es/lol/summoners/las/SLK%20Six9ine-2179"
+            },
+            {
+                "role": "MID",
+                "name": "Axel Pablo Ortega Ampuero SLK Adc y medio",
+                "phone": "69644894",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "阿克塞爾#FABI",
+                "opgg": "https://op.gg/es/lol/summoners/las/SLK%20%E9%98%BF%E5%85%8B%E5%A1%9E%E7%88%BE-FABI"
+            }
+        ]
     },
     {
         "id": 3,
@@ -150,7 +182,18 @@
             "lol_id": "BADFACEMEMO#LAS1",
             "opgg": "https://op.gg/es/lol/summoners/las/BADFACEMEMO-LAS1"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Itan joel charcas quisbert discord joel433",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Fncjoel433#las",
+                "opgg": "https://op.gg/es/lol/summoners/las/FNC%20JOEL433-LAS"
+            }
+        ]
     },
     {
         "id": 4,
@@ -201,7 +244,38 @@
             "lol_id": "persibal9",
             "opgg": "https://op.gg/es/lol/summoners/las/percibal9-5293"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Iver Alan Velasquez Aranda FEiN",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "FEiN#3AM",
+                "opgg": "https://op.gg/lol/summoners/lan/FEiN-3AM"
+            },
+            {
+                "role": "SUB",
+                "name": "Kevin Damian Paniagua Rojas Sparky09",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "TheRealSparky09#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/TheRealSparky09-LAS"
+            },
+            {
+                "role": "SUB",
+                "name": "Limbert Armando Aranda Calle NewLife",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "NewLife#LAN",
+                "opgg": "https://op.gg/lol/summoners/lan/NewLife-LAN"
+            }
+        ]
     },
     {
         "id": 5,
@@ -252,7 +326,18 @@
             "lol_id": "CHORYPAN#LAN",
             "opgg": "https://op.gg/es/lol/summoners/lan/CHORYPAN-LAN"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "⁦alessandro rafael valda gonzales Rompe bragas⁩#⁦LAN⁩ top",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Rompe bragas#LAN",
+                "opgg": "https://op.gg/es/lol/summoners/lan/Rompe%20bragas-LAN/"
+            }
+        ]
     },
     {
         "id": 6,
@@ -303,7 +388,18 @@
             "lol_id": "Gathhal #Las",
             "opgg": "https://op.gg/es/lol/summoners/las/Gathhal-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Alexander Jhoel Berrios Mendoza",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "VP ISTr1kErl#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/VP%20ISTr1kErl-LAS"
+            }
+        ]
     },
     {
         "id": 7,
@@ -405,7 +501,18 @@
             "lol_id": "tq mia khalifa",
             "opgg": "https://op.gg/es/lol/summoners/las/TQ%20Mia%20KhalifA1-wiz"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "JUAN MAMANI VILLCA T1 RAHI #LAS",
+                "phone": "67957669",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "PyAM7h5NmRkhe82KZXsy9LY3fEiMlFxfJ89JEhtK9qC8gvLf7g8V#ZHxSaBfCj6GHtOTEsKhwpyjbA",
+                "opgg": "https://tracker.gg/lol/profile/riot/PyAM7h5NmRkhe82KZXsy9LY3fEiMlFxfJ89JEhtK9qC8gvLf7g8V-ZHxSaBfCj6GHtOTEsKhwpyjbA"
+            }
+        ]
     },
     {
         "id": 9,
@@ -456,7 +563,18 @@
             "lol_id": "Pesadilla Tongoy#2015",
             "opgg": "https://op.gg/es/lol/summoners/las/Pesadilla%20Tongoy-2015"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Joel jhony robles choque TOP FNC JOEL433#LAS SUP Itan joel charcas quisbert",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Scary#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Scary-LAS"
+            }
+        ]
     },
     {
         "id": 10,
@@ -507,7 +625,18 @@
             "lol_id": "Ez3tres #FTH",
             "opgg": "https://op.gg/lol/summoners/las/Ez3tres-FTH"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Noel Paredes Mauricio si es cuenta main tioboliviano",
+                "phone": "73803108",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Pachonk#LAS",
+                "opgg": "https://op.gg/lol/summoners/las/Pachonk-LAS"
+            }
+        ]
     },
     {
         "id": 11,
@@ -558,7 +687,18 @@
             "lol_id": "Sadgersito#LAS",
             "opgg": ""
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "No tenemos",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "No tenemos",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 12,
@@ -609,7 +749,28 @@
             "lol_id": "EvoElNarc0#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/EvoElNarc0-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Hugo Mitre G2 TOP ADC JUNGLA",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "NainPolonia#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/G2%20NainPolonia-LAS"
+            },
+            {
+                "role": "SUB",
+                "name": "Luis Enrique Melgarejo SUP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Alzheimerdinger#G2LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Alzheimerdinger-G2LAS"
+            }
+        ]
     },
     {
         "id": 13,
@@ -660,7 +821,18 @@
             "lol_id": "Rai0z#las",
             "opgg": "https://op.gg/lol/summoners/las/Rai0Z-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Galy Hernan Herrera Huaranca emma top jungla",
+                "phone": "69897745",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "watsoNN#LAS",
+                "opgg": "https://op.gg/lol/summoners/las/emma%20watsoNN-LAS"
+            }
+        ]
     },
     {
         "id": 14,
@@ -711,7 +883,28 @@
             "lol_id": "TIBUR0NBOLIVIANO #pansa",
             "opgg": "https://op.gg/es/lol/summoners/las/TIBUR0NBOLIVIANO-pansa"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Alejandro Gabriel Choque Baptista 721072823845781545 (ID DISCORD) Suport.",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Alejoi705#LAS",
+                "opgg": "https://www.leagueofgraphs.com/es/summoner/las/Alejoi705-LAS#championsData-all-queues"
+            },
+            {
+                "role": "ADC",
+                "name": "Coco Orozco 153617111728652288 (ID DISCORD) Adc",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Stikoc#VKT",
+                "opgg": "https://www.leagueofgraphs.com/es/summoner/las/Stikoc-VKT#championsData-all-queues"
+            }
+        ]
     },
     {
         "id": 15,
@@ -762,7 +955,18 @@
             "lol_id": "Ôzil#Gbc",
             "opgg": "vladimhq@gmail.com"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "No tengo",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "No tengo",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 16,
@@ -813,7 +1017,18 @@
             "lol_id": "Krayvhus #LAS",
             "opgg": "https://op.gg/lol/summoners/las/Krayvhus-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Eiverth Abel León Balderrama XXDeathlionXX #LAS Supp/Mid",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "XXDeathLionXX#LAS",
+                "opgg": "https://op.gg/lol/summoners/las/XXDeathLionXX-LAS"
+            }
+        ]
     },
     {
         "id": 17,
@@ -864,7 +1079,18 @@
             "lol_id": "The Shoot3r#LAS",
             "opgg": "https://op.gg/lol/summoners/las/The%20Shoot3r-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUPP",
+                "name": "Adan Alberto Llanos Zela Support",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "kurivo#LAS",
+                "opgg": "https://op.gg/lol/summoners/las/kurivo-LAS"
+            }
+        ]
     },
     {
         "id": 18,
@@ -915,7 +1141,38 @@
             "lol_id": "kioshy99#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/kioshy99-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Edwin Benajim Villarroel Gonzalez MID",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "ZeroFortuna#XXX",
+                "opgg": "https://op.gg/es/lol/summoners/las/ZeroFortuna-XXX"
+            },
+            {
+                "role": "SUPP",
+                "name": "Jersson Giovanny Zampieri Sanchez Soporte",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Montielsm#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Montielsm-LAS"
+            },
+            {
+                "role": "MID",
+                "name": "Cesar Alberti Maldonado MID",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Cextribe#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Cextribe-LAS"
+            }
+        ]
     },
     {
         "id": 19,
@@ -966,7 +1223,18 @@
             "lol_id": "Skp Javier#Las",
             "opgg": "https://op.gg/es/lol/summoners/las/SKP%20Javier-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Percy Rolando Limachi Mamani SKP DeaD",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "PooL#las",
+                "opgg": "https://op.gg/es/lol/summoners/las/SKP%20DeaD%20PooL-LAS"
+            }
+        ]
     },
     {
         "id": 20,
@@ -1017,7 +1285,18 @@
             "lol_id": "jhoshiw1#8998",
             "opgg": "https://op.gg/es/lol/summoners/lan/jos1w-LAN"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Felipe Ignacio Álvarez Cuellar",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "THESHY BOOMFL#13131",
+                "opgg": "https://op.gg/es/lol/summoners/lan/THESHY%20BOOMFL-13131"
+            }
+        ]
     },
     {
         "id": 21,
@@ -1119,7 +1398,38 @@
             "lol_id": "T1 Zeus#ONE",
             "opgg": "https://op.gg/lol/summoners/lan/Tl%20Gumayushi%20-LAN"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Alexander Ala Cruz Holeeshet #9099 MID LAINE Chuquisaca",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Holeeshet#9099",
+                "opgg": "https://op.gg/es/tft/summoners/lan/Holeeshet-9099"
+            },
+            {
+                "role": "ADC",
+                "name": "Jose carlos Alberto Muller Lopez Miler ADC",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "xD#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/MILER%20xD-LAS"
+            },
+            {
+                "role": "TOP",
+                "name": "Alex Rodríguez TOP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "gosthreaven#LAN",
+                "opgg": "https://op.gg/lol/summoners/lan/Gosthreaven-LAN"
+            }
+        ]
     },
     {
         "id": 23,
@@ -1170,7 +1480,28 @@
             "lol_id": "NoseEkisde#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/NoseEkisde-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "- Josué Apaza PROYECTO DWG MID",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "KIA#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/PR0YECT0%20DWG%20KIA-LAS"
+            },
+            {
+                "role": "TOP",
+                "name": "- el TOP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "misosaurio#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/el%20misosaurio%20-LAS"
+            }
+        ]
     },
     {
         "id": 24,
@@ -1221,7 +1552,28 @@
             "lol_id": "Dr Neo Cortex#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/Dr%20Neo%20Cortex-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Gabriela Ponce ⁦ Raven",
+                "phone": "60579057",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Queen#Mishi",
+                "opgg": "https://op.gg/es/lol/summoners/lan/Raven%20Queen-Mishi"
+            },
+            {
+                "role": "SUB",
+                "name": "Gabriel Bautizta Prado",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Revolt#LAN",
+                "opgg": "https://op.gg/es/lol/summoners/lan/Revolt-LAN"
+            }
+        ]
     },
     {
         "id": 25,
@@ -1425,7 +1777,18 @@
             "lol_id": "UCAM DK#6010",
             "opgg": "https://op.gg/es/lol/summoners/las/UCAM%20DK-6010"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUPP",
+                "name": "Lourdes Janeth flores Fernández whatsapp SOPORTE",
+                "phone": "77518894",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "hitomi#77205",
+                "opgg": "https://op.gg/es/lol/summoners/las/hitomi-77205"
+            }
+        ]
     },
     {
         "id": 29,
@@ -1476,7 +1839,18 @@
             "lol_id": "MisaRynn#666",
             "opgg": "https://op.gg/lol/summoners/las/MisaRynn-666"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Jhamil fares ayala forést v2 cochabamba",
+                "phone": "70388587",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Jhamil fares ayala forést v2 cochabamba",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 30,
@@ -1527,7 +1901,18 @@
             "lol_id": "el2achchiru#12345",
             "opgg": "https://op.gg/es/lol/summoners/las/el2achchiru-12345"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Sin suplentes",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Sin suplentes",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 31,
@@ -1578,7 +1963,18 @@
             "lol_id": "STARIsabella #ST4R",
             "opgg": "https://op.gg/lol/summoners/las/STARIsabella-STAR"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Stiven Russo Apaza Sandoval SOPORTE Y MID",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "ACM1PTXDUWU#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/ACM1PTXDUWU-LAS"
+            }
+        ]
     },
     {
         "id": 32,
@@ -1629,7 +2025,98 @@
             "lol_id": "MSA#7466",
             "opgg": "https://op.gg/lol/summoners/las/MSA-7466"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Paul Alejandro Villca",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Sanspolexe#3332",
+                "opgg": "https://op.gg/es/lol/summoners/las/Sanspolexe-3332"
+            },
+            {
+                "role": "SUB",
+                "name": "⁦Sanspolexe⁩#⁦3332",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Showgunt#Avion",
+                "opgg": "https://op.gg/es/lol/summoners/las/Showgunt-Avion"
+            },
+            {
+                "role": "MID",
+                "name": "MID SUPPORT⁩",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "LAP BacArdi06#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/LAP%20BacArdi06-LAS"
+            },
+            {
+                "role": "SUB",
+                "name": "Jheris Gonzales",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Jheris Gonzales",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "LAP SuS",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "original#LAS",
+                "opgg": ""
+            },
+            {
+                "role": "TOP",
+                "name": "MID TOP SUP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "MID TOP SUP",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "Adrian Huaranca",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Adrian Huaranca",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "LAP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "BacArdi06#LAS",
+                "opgg": ""
+            },
+            {
+                "role": "TOP",
+                "name": "MID JUNGLA SUPP TOP",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "MID JUNGLA SUPP TOP",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 33,
@@ -1680,7 +2167,48 @@
             "lol_id": "Panic At Rift #1899",
             "opgg": "https://op.gg/es/lol/summoners/las/PanicAtRift-1899"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Fernando Salinas",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Fernando Salinas",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "Ferchu62 #LAS",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Ferchu62 #LAS",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "Franco Tomayo",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Franco Tomayo",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "ArtEnd #23025",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "ArtEnd #23025",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 34,
@@ -1731,7 +2259,18 @@
             "lol_id": "Darkless#LAN",
             "opgg": "https://op.gg/lol/summoners/lan/Darkless-LAN"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Carlos Lorenzo Callisaya Sangalli Top",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Panda128#xdd",
+                "opgg": "https://op.gg/lol/summoners/lan/panda128-xdd"
+            }
+        ]
     },
     {
         "id": 35,
@@ -1782,7 +2321,28 @@
             "lol_id": "Yaniskov #11234",
             "opgg": "https://op.gg/es/lol/summoners/las/Yaniskov-11234"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "1. Estif Marguay Mamami MVLAJ #LAS (Mid Top Jungla)",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "1. Estif Marguay Mamami MVLAJ #LAS (Mid Top Jungla)",
+                "opgg": ""
+            },
+            {
+                "role": "TOP",
+                "name": "2. Alvaro Luis Carlos Del Carpio Blanco (Mid Support Top)",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "MataMaracos1234#7644",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 36,
@@ -1833,7 +2393,28 @@
             "lol_id": "AQS TeAmoSilvia #nwn",
             "opgg": "https://op.gg/es/lol/summoners/las/AQS%20TeAmoSilvia-nwn"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Ricardo Amonzabel Torrico AQS YharonGod #LAS Toplaner y Support",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "DanoVan1113#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/DanoVan1113-LAS"
+            },
+            {
+                "role": "TOP",
+                "name": "Daniel Alejandro Flores Bautista DanoVan1113 #LAS Toplaner",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "AQS YharonGod#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/AQS%20YharonGod-LAS"
+            }
+        ]
     },
     {
         "id": 37,
@@ -1884,7 +2465,18 @@
             "lol_id": "Castitatis#pipeM",
             "opgg": "https://op.gg/es/lol/summoners/las/Castitatis-pipeM"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Zaid Hernan Choque Mamani",
+                "phone": "76136244",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "FallenKing#8952",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 38,
@@ -1986,7 +2578,28 @@
             "lol_id": "IsentSovi#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/iSentSovi-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Blas Brian limos hierro 1",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "BLASSKEYLOR#LAS",
+                "opgg": "https://tracker.gg/lol/profile/riot/BLASSKEYLOR1%23LAS/."
+            },
+            {
+                "role": "MID",
+                "name": "Lucas Morales mid la",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "neji54#LAS",
+                "opgg": "https://tracker.gg/lol/profile/riot/Neji54%23LAS/overview?queue=NORMAL_5V5_SWIFTPLAY&season=2025-08-27T04:00:00%2B00:00"
+            }
+        ]
     },
     {
         "id": 40,
@@ -2088,7 +2701,28 @@
             "lol_id": "mixel2 #LAS",
             "opgg": "https://op.gg/pt/lol/summoners/las/mixel2-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Sebastian Andrade Yummi sin ropa",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Yummi sin ropa#AFK",
+                "opgg": "https://op.gg/lol/summoners/las/Yummi%20sin%20ropa-AFK"
+            },
+            {
+                "role": "SUPP",
+                "name": "#AFK support",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "#AFK support",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 42,
@@ -2139,7 +2773,18 @@
             "lol_id": "dig degtrex#2203",
             "opgg": "https://op.gg/es/lol/summoners/las/dig%20degtrex-2203"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "JG",
+                "name": "FOcus al adc⁩#⁦ptes soporte jg y mid",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "FOcus al adc#ptes",
+                "opgg": "https://op.gg/es/lol/summoners/las/FOcus%20al%20adc-ptes"
+            }
+        ]
     },
     {
         "id": 43,
@@ -2190,7 +2835,18 @@
             "lol_id": "DCG Nomacalaris #XYZ",
             "opgg": "https://op.gg/lol/summoners/las/DCG%20Nomacalaris-XYZ"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "ADC",
+                "name": "Manuel Fernando Rada Arias DCG Radis #PTS Soporte ADC",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "DCG Radis#PTS",
+                "opgg": "https://op.gg/lol/summoners/las/DCG%20Radis-PTS"
+            }
+        ]
     },
     {
         "id": 44,
@@ -2241,7 +2897,28 @@
             "lol_id": "G2 Alers09 #LASAN",
             "opgg": "https://op.gg/lol/summoners/las/G2%20Alers09-LASAN"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Billy Patton Avalos R2 IoIoIexo #LLLX Toplaner",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "R2 IoIoIexo#LLLX",
+                "opgg": "https://op.gg/lol/summoners/las/R2%20IoIoIexo-LLLX"
+            },
+            {
+                "role": "SUPP",
+                "name": "Khalil Arab Núñez R2 Arab #4113 support",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Khalil Arab Núñez R2 Arab #4113 support",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 45,
@@ -2292,7 +2969,18 @@
             "lol_id": "ECNERWAL#117",
             "opgg": "https://op.gg/lol/summoners/las/ECNERWAL-117"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "ADC",
+                "name": "Camilo Gabriel Jaldin Coca Suport ADC",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "11n011NL#5021",
+                "opgg": "https://op.gg/lol/summoners/las/11n011NL-5021"
+            }
+        ]
     },
     {
         "id": 46,
@@ -2343,7 +3031,38 @@
             "lol_id": "ExplosiveSweat2 #LPL",
             "opgg": "https://op.gg/es/lol/summoners/las/ExplosiveSweat2-LPL"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Joel Quelca",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "YoSoyJoe#8044",
+                "opgg": "https://op.gg/es/lol/summoners/las/YoSoyJoe-8044"
+            },
+            {
+                "role": "SUB",
+                "name": "Suplente 2",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "YoSoyJoe#8044",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "suport",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "suport",
+                "opgg": ""
+            }
+        ]
     },
     {
         "id": 47,
@@ -2394,7 +3113,18 @@
             "lol_id": "T1 HaMeRfAL #izi",
             "opgg": "https://op.gg/es/lol/summoners/las/T1%20HaMeRfAL-izi"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Joel Johannes Zuñiga Aguayo Haoran #China Midlane",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Haoran#CHINA",
+                "opgg": "https://op.gg/lol/summoners/las/Haoran-CHINA"
+            }
+        ]
     },
     {
         "id": 48,
@@ -2445,7 +3175,18 @@
             "lol_id": "CKA CRISTH11#ALG",
             "opgg": "https://op.gg/es/lol/summoners/las/CKA%20CRISTH11-ALG"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Alejandro Misericordia Velarde RTX ADC Quino Agreda Elvis Ruddy Loco2014#Apolo TOP Estif Marguay Mamani MVLAJ#LAS JUNGLA Erick Gonzales A1zz#tkcha ADC",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "4090#4000",
+                "opgg": "https://op.gg/es/lol/summoners/las/RTX%204090-4000"
+            }
+        ]
     },
     {
         "id": 49,
@@ -2496,7 +3237,18 @@
             "lol_id": "Lepokå#LAS",
             "opgg": "https://op.gg/es/lol/summoners/las/Lepok%C3%A5-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Leandro Angel Jimenez",
+                "phone": "78851242",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Anjhelo7727#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/anjhelo7727-LAS"
+            }
+        ]
     },
     {
         "id": 50,
@@ -2547,7 +3299,28 @@
             "lol_id": "Tiotrollcel #las",
             "opgg": "https://op.gg/es/lol/summoners/las/Tio%20Trollcel-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Zeus Kaled Tarifa Molina 314847165975363594 .",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "ZeusKaled#Las",
+                "opgg": "https://www.leagueofgraphs.com/es/summoner/las/ZeusKaled+-Las#championsData-all-queues."
+            },
+            {
+                "role": "SUB",
+                "name": "Miguel angel ramirez 417375236506386434",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Minsdestroyers-666#championsData-all#queues",
+                "opgg": "https://www.leagueofgraphs.com/es/summoner/las/Minsdestroyers-666#championsData-all-queues"
+            }
+        ]
     },
     {
         "id": 51,
@@ -2649,7 +3422,18 @@
             "lol_id": "SrOso IV#LAS",
             "opgg": "https://op.gg/lol/summoners/las/SrOso%20IV-LAS"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUPP",
+                "name": "Israel Alessandro Castro Arteaga ⁦CiclistaSinLicen⁩#⁦LAS⁩ Soporte",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "ExplosiveSweat2#LPL",
+                "opgg": "https://op.gg/es/lol/summoners/las/ExplosiveSweat2-LPL"
+            }
+        ]
     },
     {
         "id": 53,
@@ -2751,7 +3535,18 @@
             "lol_id": "TFB FatalizWhite #Fata",
             "opgg": "https://op.gg/es/lol/summoners/las/TFB%20FatalizWhite-Fata"
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Iván Edson Alarcón Camacho TFB Messi #1037 Jg y Top",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "TFB Messi#1037",
+                "opgg": "https://op.gg/es/lol/summoners/las/TFB%20Messi-1037"
+            }
+        ]
     },
     {
         "id": 55,
@@ -2853,6 +3648,27 @@
             "lol_id": "VP Ak1Ra#LAS",
             "opgg": ""
         },
-        "subs": []
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Víctor Hilari",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Yiratin#las",
+                "opgg": ""
+            },
+            {
+                "role": "SUB",
+                "name": "Octavio Quispe Choquehuanca",
+                "phone": "",
+                "discord": "",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Ariyelen#Las",
+                "opgg": ""
+            }
+        ]
     }
 ]
