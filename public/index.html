@@ -143,9 +143,9 @@
             El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
         </p>
 
-        <div class="max-w-4xl mx-auto w-full px-4 mb-20 z-10 relative">
+        <div class="max-w-4xl mx-auto w-full px-4 mb-10 z-10 relative">
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-12" style="animation-delay: 0.5s;">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6" style="animation-delay: 0.5s;">
                 <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group">
                     <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
                     <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
@@ -155,38 +155,37 @@
                 </a>
             </div>
 
-
-            <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito) -->
-            <div class="max-w-5xl mx-auto w-full px-4 fade-in-up mt-16 text-center" style="animation-delay: 0.65s;">
+            <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito e Interactivo) -->
+            <div class="max-w-5xl mx-auto w-full px-4 fade-in-up mt-6 text-center" style="animation-delay: 0.65s;">
                 <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTROS TORNEOS...</h2>
-                <p class="text-gray-400 text-sm md:text-base mb-8 max-w-xl mx-auto">
+                <p class="text-gray-400 text-sm md:text-base mb-6 max-w-xl mx-auto">
                     ¿Quieres buscar equipo o algún jugador?<br>
                     Accede a la información de nuestros anteriores torneos
                 </p>
                 
                 <!-- Contenedor del Carrusel Infinito con Fading Mask -->
-                <div class="relative w-full overflow-hidden mask-gradient py-4">
-                    <div class="flex flex-row gap-6 w-max animate-marquee">
+                <div class="relative w-full overflow-hidden mask-gradient py-2">
+                    <div id="marquee-track" class="flex flex-row gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-4 pt-2">
                         <!-- Set 1 -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
                         
                         <!-- Set 2 (Duplicado para loop infinito) -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
+                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                         </a>
                     </div>
                 </div>
@@ -277,6 +276,83 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        // Script del Carrusel Interactivo e Infinito
+        window.addEventListener('DOMContentLoaded', () => {
+            const marquee = document.getElementById('marquee-track');
+            if (!marquee) return;
+
+            let scrollSpeed = 0.8; // Velocidad de auto-desplazamiento
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let isHovered = false;
+
+            function step() {
+                if (!isDown && !isHovered) {
+                    marquee.scrollLeft += scrollSpeed;
+                    
+                    // Si nos pasamos de la mitad de la anchura total (que contiene los elementos duplicados)
+                    // volvemos al inicio para hacer un loop sin fin
+                    if (marquee.scrollLeft >= (marquee.scrollWidth / 2)) {
+                        marquee.scrollLeft -= (marquee.scrollWidth / 2);
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            // Iniciar animación
+            requestAnimationFrame(step);
+
+            // Eventos de ratón (Drag & Drop en PC)
+            marquee.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - marquee.offsetLeft;
+                scrollLeft = marquee.scrollLeft;
+            });
+
+            marquee.addEventListener('mouseleave', () => {
+                isDown = false;
+            });
+
+            marquee.addEventListener('mouseup', () => {
+                isDown = false;
+            });
+
+            marquee.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - marquee.offsetLeft;
+                const walk = (x - startX) * 1.5; // Ajustar velocidad de arrastre
+                marquee.scrollLeft = scrollLeft - walk;
+            });
+
+            // Eventos táctiles (Swipe en móvil)
+            marquee.addEventListener('touchstart', (e) => {
+                isDown = true;
+                startX = e.touches[0].pageX - marquee.offsetLeft;
+                scrollLeft = marquee.scrollLeft;
+            }, { passive: true });
+
+            marquee.addEventListener('touchend', () => {
+                isDown = false;
+            }, { passive: true });
+
+            marquee.addEventListener('touchmove', (e) => {
+                if (!isDown) return;
+                const x = e.touches[0].pageX - marquee.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                marquee.scrollLeft = scrollLeft - walk;
+            }, { passive: true });
+
+            // Pausar en Hover
+            marquee.addEventListener('mouseenter', () => {
+                isHovered = true;
+            });
+            marquee.addEventListener('mouseleave', () => {
+                isHovered = false;
+            });
+        });
     </script>
     
     <!-- Register Service Worker for PWA -->
