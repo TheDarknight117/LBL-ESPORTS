@@ -141,7 +141,7 @@
                     TAG
                 </div>
                 <div>
-                    <span class="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 uppercase mb-1 inline-block">Equipo Scouting</span>
+                    <span id="modal-badge" class="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 uppercase mb-1 inline-block">Equipo Scouting</span>
                     <div class="flex items-baseline gap-2">
                         <h2 id="modal-name" class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white leading-none">Nombre</h2>
                         <span id="modal-tag" class="text-gray-500 font-black text-xl italic"></span>
@@ -161,6 +161,7 @@
         let scoutingTeams = [];
         let scouting1Teams = [];
         let scouting2Teams = [];
+        let qualifierTeams = [];
         
         const roleIcons = {
             'TOP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-top.svg',
@@ -202,6 +203,10 @@
                 // Cargar Scouting 1 (desde JSON estático local)
                 const res1 = await fetch('assets/scouting1.json');
                 scouting1Teams = await res1.json();
+
+                // Cargar Qualifier (desde JSON estático local)
+                const resQual = await fetch('assets/qualifier.json');
+                qualifierTeams = await resQual.json();
 
                 document.getElementById('loading-spinner').classList.add('hidden');
                 
@@ -259,13 +264,9 @@
                 window.history.replaceState(null, '', '?torneo=scouting2');
             } else if (torneoId === 3) {
                 btnQual.className = activeClass;
-                scoutingTeams = [];
-                searchContainer.classList.add('hidden');
-                teamsGrid.classList.add('hidden');
-                emptyState.classList.add('hidden');
-                if (qualifierPlaceholder) {
-                    qualifierPlaceholder.classList.remove('hidden');
-                }
+                scoutingTeams = qualifierTeams;
+                searchContainer.classList.remove('hidden');
+                renderizarGrilla(scoutingTeams);
                 window.history.replaceState(null, '', '?torneo=qualifier');
             }
         };
@@ -394,6 +395,17 @@
                 
                 document.getElementById('modal-name').innerText = equipo.name;
                 document.getElementById('modal-tag').innerText = equipo.tag ? `[${equipo.tag}]` : '';
+
+                const modalBadge = document.getElementById('modal-badge');
+                if (modalBadge) {
+                    if (activeTournament === 3) {
+                        modalBadge.innerText = "Open Qualifier";
+                        modalBadge.className = "text-[10px] font-black tracking-widest px-2 py-1 rounded bg-rose-600/20 text-rose-400 border border-rose-500/30 uppercase mb-1 inline-block";
+                    } else {
+                        modalBadge.innerText = "Equipo Scouting";
+                        modalBadge.className = "text-[10px] font-black tracking-widest px-2 py-1 rounded bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 uppercase mb-1 inline-block";
+                    }
+                }
 
                 let rosterHTML = '';
                 rosterHTML += crearFilaScouting('Top', roleIcons['TOP'], equipo.top);

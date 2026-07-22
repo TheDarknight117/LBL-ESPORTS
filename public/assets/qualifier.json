@@ -1,0 +1,2047 @@
+[
+    {
+        "id": 1,
+        "name": "T.M.S.",
+        "tag": "TMS",
+        "top": {
+            "name": "Elian Roberto Duran",
+            "phone": "71877674",
+            "discord": "1092904037944401921",
+            "sec_role": "MID",
+            "rank": "Plata",
+            "lol_id": "JOJOGOD6#4643",
+            "opgg": "https://op.gg/es/lol/summoners/las/JOJOGOD6-4643"
+        },
+        "jg": {
+            "name": "Alexander Miguel Castro Aramayo",
+            "phone": "74521935",
+            "discord": "954462416010350653",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Plata",
+            "lol_id": "ALEEMBUBU#1424",
+            "opgg": "https://op.gg/es/lol/summoners/las/ALEEMBUBU-1424"
+        },
+        "mid": {
+            "name": "Matias Almeyda Calani Velasquez",
+            "phone": "68692071",
+            "discord": "896016123370278932",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "SOYNUEVOPEROPRO #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/SOYNUEVOPEROPRO-LAS"
+        },
+        "adc": {
+            "name": "Carlos Rodolfo Fernandez Ibarra",
+            "phone": "72950387",
+            "discord": "735123162450100274",
+            "sec_role": "TOP",
+            "rank": "Oro",
+            "lol_id": "calvarlos#7322",
+            "opgg": "https://op.gg/es/lol/summoners/las/calvarlos-7322"
+        },
+        "supp": {
+            "name": "Marco Antonio Escalante",
+            "phone": "72907640",
+            "discord": "928421908498759691",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Plata",
+            "lol_id": "gunteraea#2167",
+            "opgg": "https://op.gg/es/lol/summoners/las/gunteraea-2167"
+        },
+        "subs": []
+    },
+    {
+        "id": 2,
+        "name": "Altitude Gaming",
+        "tag": "ATG",
+        "top": {
+            "name": "Reynaldo Escalier Flores",
+            "phone": "61923895",
+            "discord": "_rey22",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "ReGu3 #666",
+            "opgg": "https://op.gg/es/lol/summoners/las/ReGu3-666"
+        },
+        "jg": {
+            "name": "Marcelo Paco Zelaya",
+            "phone": "68388119",
+            "discord": "1cyren_",
+            "sec_role": "SOPORTE",
+            "rank": "Oro",
+            "lol_id": "CYREN#004",
+            "opgg": "https://op.gg/es/lol/summoners/las/CYREN-004"
+        },
+        "mid": {
+            "name": "Everth Yeison Escalier Uño",
+            "phone": "63687362",
+            "discord": "nightelectric",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "NightElectric#Insta",
+            "opgg": "https://op.gg/es/lol/summoners/las/NightElectric-Insta"
+        },
+        "adc": {
+            "name": "Ricardo Mauricio Miranda Zelaya",
+            "phone": "74419327",
+            "discord": "4thatch",
+            "sec_role": "JUNGLA",
+            "rank": "Platino",
+            "lol_id": "Thatch#ZzZ",
+            "opgg": "https://op.gg/es/lol/summoners/las/Thatch-ZzZ"
+        },
+        "supp": {
+            "name": "Gary Mauricio Chura Carrillo",
+            "phone": "65119333",
+            "discord": ".gmcc",
+            "sec_role": "JUNGLA",
+            "rank": "Platino",
+            "lol_id": "rayoceleste#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/rayoceleste-LAS"
+        },
+        "subs": [
+            {
+                "role": "TIRADOR (ADC)",
+                "name": "Jonathan Mollo Mamani",
+                "phone": "67321796",
+                "discord": "jona.84_59761",
+                "sec_role": "NINGUNO",
+                "rank": "Esmeralda 2 - 4",
+                "lol_id": "Iblis#83715",
+                "opgg": "https://op.gg/es/lol/summoners/las/iblis-83715"
+            },
+            {
+                "role": "JUNGLA",
+                "name": "Erick Javier Veliz Rojas",
+                "phone": "75427921",
+                "discord": "ikbouxer",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "Esmeralda 2 - 4",
+                "lol_id": "IKBOUXER #LAS12",
+                "opgg": "https://op.gg/es/lol/summoners/las/IKBOUXER-LAS12"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "LYONS",
+        "tag": "LYN",
+        "top": {
+            "name": "Wilmer Quispe Rojas",
+            "phone": "73543762",
+            "discord": "wiwi#3325",
+            "sec_role": "Ninguna",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "LYN Forgiven #LANS",
+            "opgg": "https://op.gg/lol/summoners/las/LYN%20Forgiven-LANS"
+        },
+        "jg": {
+            "name": "Crhistian Xavier Orozco La Fuente",
+            "phone": "69494737",
+            "discord": "lynanakin09",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "LYN ANAKIN#LYN",
+            "opgg": "https://op.gg/lol/summoners/las/LYN%20ANAKIN-LYN"
+        },
+        "mid": {
+            "name": "Luis León Armella",
+            "phone": "67993353",
+            "discord": "LYN Luis#1714",
+            "sec_role": "JUNGLA",
+            "rank": "Maestro",
+            "lol_id": "LYN LUIS #LYN",
+            "opgg": "https://op.gg/lol/summoners/las/LYN%20LUIS-LYN"
+        },
+        "adc": {
+            "name": "Andres Medina Revilla",
+            "phone": "67056285",
+            "discord": "andyyis#7312",
+            "sec_role": "MID",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "TamraDuke #2006",
+            "opgg": "https://op.gg/lol/summoners/las/TamraDuke-2006"
+        },
+        "supp": {
+            "name": "Gerson Aquino escalera",
+            "phone": "63860964",
+            "discord": "yeison010.",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "axeldelaLLR7 #LAS",
+            "opgg": "https://op.gg/lol/summoners/las/axeldelaLLR7-LAS"
+        },
+        "subs": [
+            {
+                "role": "SOPORTE",
+                "name": "Luis Angel Gutierrez Lucero",
+                "phone": "73592038",
+                "discord": "Angel",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "Master",
+                "lol_id": "The Ángel#LASS",
+                "opgg": "https://op.gg/es/lol/summoners/las/The%20%C3%81ngel-LASS"
+            },
+            {
+                "role": "TIRADOR (ADC)",
+                "name": "Ariel Escobar Espinoza",
+                "phone": "70674245",
+                "discord": "Rodass#1844",
+                "sec_role": "JUNGLA",
+                "rank": "Esmeralda 2 - 4",
+                "lol_id": "Rodas #5502",
+                "opgg": "https://op.gg/lol/summoners/las/Rodas-5502"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Iron Hells",
+        "tag": "FeH",
+        "top": {
+            "name": "Leonardo Junior Nina Loaiza",
+            "phone": "70377893",
+            "discord": "leonardsoul#3848",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Satanya#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Satanya-LAS"
+        },
+        "jg": {
+            "name": "Rusel York Zambrana Villca",
+            "phone": "77537253",
+            "discord": "top6103",
+            "sec_role": "MID",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "elmataburros4#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/elmataburros4-LAS"
+        },
+        "mid": {
+            "name": "Bryan Diego Huanca Poma",
+            "phone": "71938185",
+            "discord": "Bryandiego #6137",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Platino",
+            "lol_id": "deadhuntergod #591",
+            "opgg": "https://op.gg/es/lol/summoners/las/deadhuntergod-591"
+        },
+        "adc": {
+            "name": "Adrian Rojas Vargas",
+            "phone": "62677811",
+            "discord": "Thunder_123#4252",
+            "sec_role": "SOPORTE",
+            "rank": "Platino",
+            "lol_id": "Artanis #1421",
+            "opgg": "https://op.gg/es/lol/summoners/las/Artanis-1421"
+        },
+        "supp": {
+            "name": "Vania Ivon Yanique Ventura",
+            "phone": "65602192",
+            "discord": "gasaiyuno#6550",
+            "sec_role": "MID",
+            "rank": "Plata",
+            "lol_id": "Gasaiyunokuri #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Gasaiyunokuri-LAS"
+        },
+        "subs": [
+            {
+                "role": "JUNGLA",
+                "name": "Diego Arancibia Lopez",
+                "phone": "78023730",
+                "discord": "kakasauriorex#7763",
+                "sec_role": "SOPORTE",
+                "rank": "Oro",
+                "lol_id": "elvigod #123",
+                "opgg": "https://op.gg/es/lol/summoners/las/elvigod-123"
+            },
+            {
+                "role": "TIRADOR (ADC)",
+                "name": "Benjamín Andrés Hurtado Flores",
+                "phone": "73812857",
+                "discord": "hatsuneikaos_50051",
+                "sec_role": "SOPORTE",
+                "rank": "Oro",
+                "lol_id": "Conrad Junior #TLOU",
+                "opgg": "https://op.gg/es/lol/summoners/las/Conrad%20Junior-TLOU"
+            },
+            {
+                "role": "SOPORTE",
+                "name": "Hector Fabian Nina Loaiza",
+                "phone": "60375541",
+                "discord": "_hectorsoul#6240",
+                "sec_role": "MID",
+                "rank": "Oro",
+                "lol_id": "Sylverector #LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Sylverector-LAS"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Snake Dynasty",
+        "tag": "SKD",
+        "top": {
+            "name": "Alex David Aguilar Colque",
+            "phone": "61137272",
+            "discord": "khathulu",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "SKD KhAThuLu#971",
+            "opgg": "https://op.gg/lol/summoners/las/SKD%20KhAThuLu-971"
+        },
+        "jg": {
+            "name": "Ariel Uria Cazas",
+            "phone": "73879263",
+            "discord": "ArieLinx#9311",
+            "sec_role": "MID",
+            "rank": "Esmeralda 1",
+            "lol_id": "ArieLinx#AUC",
+            "opgg": "https://op.gg/lol/summoners/las/ArieLinx-AUC"
+        },
+        "mid": {
+            "name": "Rodrigo Alonso Ortega castro",
+            "phone": "51 940419969",
+            "discord": "mnbsts",
+            "sec_role": "JUNGLA",
+            "rank": "CHALLENGER",
+            "lol_id": "Lafargue#MILA",
+            "opgg": "https://op.gg/es/lol/summoners/las/Lafargue-MILA"
+        },
+        "adc": {
+            "name": "Vladimir Rodrigo Sarmiento Villarroel",
+            "phone": "60924871",
+            "discord": "ARKINOS184#4360",
+            "sec_role": "TOP",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "SKD ARKINOS#004",
+            "opgg": "https://op.gg/lol/summoners/las/SKD%20ARKINOS-004"
+        },
+        "supp": {
+            "name": "Fernando Javier Beltran Apaza",
+            "phone": "79583425",
+            "discord": "Fernando70#0470",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "THE FERKERTAKER#LASBO",
+            "opgg": "https://op.gg/es/lol/summoners/las/THE%20FERKERTAKER-LASBO"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Wilfredo Cristian Aguilar Jancko",
+                "phone": "60315664",
+                "discord": "Wilyyhet#7778",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "Diamante 1",
+                "lol_id": "TheEaglee#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/TheEaglee-LAS"
+            },
+            {
+                "role": "MID",
+                "name": "Sebastian Loredo Daza",
+                "phone": "60315664",
+                "discord": "donvrgas22",
+                "sec_role": "TOP",
+                "rank": "Platino",
+                "lol_id": "ArieLinxx#4612",
+                "opgg": "https://op.gg/es/lol/summoners/las/ArieLinxx-4612"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "TFX",
+        "tag": "TFX",
+        "top": {
+            "name": "Rodney Sebastián Marca Calle",
+            "phone": "71062626",
+            "discord": "1455637469092515855",
+            "sec_role": "MID",
+            "rank": "Maestro",
+            "lol_id": "Yend0r#Prime",
+            "opgg": "https://op.gg/lol/summoners/las/Yend0r-Prime"
+        },
+        "jg": {
+            "name": "Beymar Camargo Cari",
+            "phone": "73242271",
+            "discord": "813070803611942995",
+            "sec_role": "TOP",
+            "rank": "Platino",
+            "lol_id": "Light Yagami 705#4492",
+            "opgg": "https://op.gg/lol/summoners/las/Light%20Yagami%20705-4492"
+        },
+        "mid": {
+            "name": "Patrick Josue Martinez Pinto",
+            "phone": "69828895",
+            "discord": "569892844433702943",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "TheDarkDuck#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/TheDarkDuck-LAS"
+        },
+        "adc": {
+            "name": "Fernando Maldonado Apaza",
+            "phone": "77446714",
+            "discord": "oikawa5968",
+            "sec_role": "JUNGLA",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "GEN RULER#OTP",
+            "opgg": "https://op.gg/es/lol/summoners/las/GEN%20RULER-OTP"
+        },
+        "supp": {
+            "name": "Joab Shinehah Quiroz Schrupp",
+            "phone": "65587134",
+            "discord": "380522307212279808",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Maestro",
+            "lol_id": "Temppleforce#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/Temppleforce-LAS"
+        },
+        "subs": [
+            {
+                "role": "SOPORTE",
+                "name": "Henry Hernan Pillco Quispe",
+                "phone": "62285663",
+                "discord": "1424560134268522547",
+                "sec_role": "Comodín (Valido solo para 1 jugador)",
+                "rank": "Oro",
+                "lol_id": "CoCaColaWhey",
+                "opgg": "https://op.gg/lol/summoners/las/CoCaColaWhey-wgr"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Iron Academy",
+        "tag": "IHA",
+        "top": {
+            "name": "rhian carlo vasquez",
+            "phone": "74258388",
+            "discord": "rhicarva#0179",
+            "sec_role": "MID",
+            "rank": "Plata",
+            "lol_id": "RhiCarVa#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/RhiCarVa-LAS"
+        },
+        "jg": {
+            "name": "Yesid Santos",
+            "phone": "63938280",
+            "discord": "santos1098_",
+            "sec_role": "TOP",
+            "rank": "Platino",
+            "lol_id": "sprmantad#8901",
+            "opgg": "https://op.gg/lol/summoners/las/sprmantad-8901"
+        },
+        "mid": {
+            "name": "Yurem Arnold Ticona Villazante",
+            "phone": "71970091",
+            "discord": "MAERZ3454",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "MAERZ3454#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/MAERZ3454-LAS"
+        },
+        "adc": {
+            "name": "LUIS FERNANDO ILLANES QUISPE",
+            "phone": "+54 9 11 3880-7737",
+            "discord": "thedemonking#6869",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "TheDemonKing#9432",
+            "opgg": "https://op.gg/es/lol/summoners/las/TheDemonKing-9432"
+        },
+        "supp": {
+            "name": "alejandro suarez mendoza",
+            "phone": "69791594",
+            "discord": "huesitos2921",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Platino",
+            "lol_id": "huesitos#hss",
+            "opgg": "https://op.gg/es/lol/summoners/las/huesitos-hss"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Benjamin Matías Buitrago López",
+                "phone": "74243504",
+                "discord": "izio_dz",
+                "sec_role": "TOP",
+                "rank": "Maestro",
+                "lol_id": "Charlie Mornings #Tar",
+                "opgg": "https://op.gg/es/lol/summoners/las/Charlie%20Mornings-Tar"
+            },
+            {
+                "role": "TOP",
+                "name": "pablo mayta lopez",
+                "phone": "74213434",
+                "discord": "Kato_112",
+                "sec_role": "MID",
+                "rank": "Plata",
+                "lol_id": "pablini1285#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/pablini1285-LAS"
+            },
+            {
+                "role": "SUB",
+                "name": "Agustin Mansor",
+                "phone": "",
+                "discord": "INVENTEROMAN#1014",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "inventeroman#1010",
+                "opgg": "https://op.gg/es/lol/summoners/las/inventeroman-1010"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Mapaches Apaches",
+        "tag": "MAP",
+        "top": {
+            "name": "Carlos Matias Osinaga Arias",
+            "phone": "75607097",
+            "discord": "Mattiw",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "LDM Mattiw#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/LDM%20Mattiw-LAS"
+        },
+        "jg": {
+            "name": "Pablo Esteban Zegarra Rengifo",
+            "phone": "+51957800736",
+            "discord": "Maxorex",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "LDM Astom Machan#Yeezy",
+            "opgg": "https://op.gg/lol/summoners/las/LDM%20Aston%20Machan-yeezy"
+        },
+        "mid": {
+            "name": "Enrique daniel ninio regiani",
+            "phone": "62244677",
+            "discord": "Sandicus",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Sandlcus#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/Sandlcus-LAS"
+        },
+        "adc": {
+            "name": "Daniel Talavera Claure",
+            "phone": "71622016",
+            "discord": "Fleider",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Fleider#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/Fleider-LAS"
+        },
+        "supp": {
+            "name": "Te In Roh Bae",
+            "phone": "77096667",
+            "discord": "awoonic",
+            "sec_role": "TOP",
+            "rank": "No juega Ranked/Clasificatorias",
+            "lol_id": "UnsafeDriver#SMILE",
+            "opgg": "https://op.gg/lol/summoners/las/UnsafeDriver-SMILE"
+        },
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Rolando Castro Ramirez",
+                "phone": "65070888",
+                "discord": "Cråck",
+                "sec_role": "JUNGLA",
+                "rank": "No juega Ranked/Clasificatorias",
+                "lol_id": "Cråck#RCR",
+                "opgg": "https://op.gg/lol/summoners/las/Cr%C3%A5ck-RCR"
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "name": "GOMINOLA5",
+        "tag": "G5",
+        "top": {
+            "name": "Isaías Palomeque Pinto",
+            "phone": "67114194",
+            "discord": "Gatod.fufy",
+            "sec_role": "SOPORTE",
+            "rank": "Oro",
+            "lol_id": "BallenitaDeMar #LAS",
+            "opgg": "https://op.gg/lol/summoners/las/BallenitaDeMar-LAS"
+        },
+        "jg": {
+            "name": "Fabian Cossio Vargas",
+            "phone": "79256196",
+            "discord": "faundaso18.",
+            "sec_role": "TOP",
+            "rank": "Platino",
+            "lol_id": "Faundaso#fcv",
+            "opgg": "https://op.gg/es/lol/summoners/las/Faundaso-fcv"
+        },
+        "mid": {
+            "name": "Andres Ormachea Alegre",
+            "phone": "70548174",
+            "discord": "toko91345",
+            "sec_role": "TOP",
+            "rank": "Maestro",
+            "lol_id": "Toko#8880",
+            "opgg": "https://op.gg/es/lol/summoners/las/Toko-8880"
+        },
+        "adc": {
+            "name": "Samira Siles Alguero",
+            "phone": "77203638",
+            "discord": "sadmorita",
+            "sec_role": "SOPORTE",
+            "rank": "Oro",
+            "lol_id": "SadMory#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/SadMory-LAS"
+        },
+        "supp": {
+            "name": "Lionel Debortoli",
+            "phone": "+54 93816077560",
+            "discord": "l1oo.",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Lio1Fish1#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Lio1Fish1-LAS"
+        },
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Victor Daniel Castillo Tacaza",
+                "phone": "73744965",
+                "discord": "597637841773658135",
+                "sec_role": "MID",
+                "rank": "Platino",
+                "lol_id": "dassking#OWO#",
+                "opgg": "https://op.gg/lol/summoners/las/DASSKING-OWO"
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "name": "TR4GEDY",
+        "tag": "T4",
+        "top": {
+            "name": "Deymar Luis Lippa Alarcon",
+            "phone": "69952063",
+            "discord": "scriptteums",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "ΔTTLAZ#LΔS",
+            "opgg": "https://op.gg/es/lol/summoners/las/%CE%94TTLAZ-L%CE%94S"
+        },
+        "jg": {
+            "name": "Michael Rene Alanoca Condori",
+            "phone": "69712786",
+            "discord": "mikame5184",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Platino",
+            "lol_id": "GLDP MIKAME#3648",
+            "opgg": "https://op.gg/es/lol/summoners/las/GLDP%20Mikame-3648"
+        },
+        "mid": {
+            "name": "Jhosmar Orlando Ferrufino Futierrez",
+            "phone": "65691243",
+            "discord": "jhosmar4253",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "L P#00001",
+            "opgg": "https://op.gg/es/lol/summoners/las/L%20P-00001"
+        },
+        "adc": {
+            "name": "Fabio Toledo huanaca",
+            "phone": "67309120",
+            "discord": "fabio284470",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "GaLLEta de CoCo #FTH",
+            "opgg": "https://op.gg/es/lol/summoners/las/GaLLEta%20de%20CoCo-FTH"
+        },
+        "supp": {
+            "name": "Teddy Tito Chuquimia",
+            "phone": "61225675",
+            "discord": "therioz_fox",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "silverexe666#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/silverexe666-LAS"
+        },
+        "subs": []
+    },
+    {
+        "id": 11,
+        "name": "Crimson Twilight Knights",
+        "tag": "CTK",
+        "top": {
+            "name": "Sebastián Sánchez Farfán",
+            "phone": "74707994",
+            "discord": "WalkerSSF #7352",
+            "sec_role": "Ninguna",
+            "rank": "No juega Ranked/Clasificatorias",
+            "lol_id": "ErrolSSF #LAS",
+            "opgg": "https://op.gg/lol/summoners/las/ErrolSSF-LAS"
+        },
+        "jg": {
+            "name": "Jhonatan Quispe Bany",
+            "phone": "63283138",
+            "discord": "elvago1803",
+            "sec_role": "Ninguna",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "ING Okkotsu Yuta #2003",
+            "opgg": "https://op.gg/lol/summoners/las/ING%20Okkotsu%20Yuta-2003"
+        },
+        "mid": {
+            "name": "Alexander Villaizan Camargo",
+            "phone": "62069611",
+            "discord": "liinasv",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Platino",
+            "lol_id": "ненавижурассвет#kirai",
+            "opgg": "https://op.gg/lol/summoners/las/%D0%BD%D0%B5%D0%BD%D0%B0%D0%B2%D0%B8%D0%B6%D1%83%D1%80%D0%B0%D1%81%D1%81%D0%B2%D0%B5%D1%82-kirai"
+        },
+        "adc": {
+            "name": "Alexander Pierre George Mendez Nuñez",
+            "phone": "76864829",
+            "discord": "alexanderpg",
+            "sec_role": "Ninguna",
+            "rank": "Platino",
+            "lol_id": "NOVAerror #9253",
+            "opgg": "https://op.gg/lol/summoners/las/NOVAerror-9253"
+        },
+        "supp": {
+            "name": "Addel Cáceres Tomense",
+            "phone": "73911691",
+            "discord": "HeroUno #5079",
+            "sec_role": "Ninguna",
+            "rank": "Bronce",
+            "lol_id": "CTK EMPANADA24 #UWU",
+            "opgg": "https://op.gg/es/lol/summoners/las/CTK%20EMPANADA24-UWU"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Jairo Andersson Candia Flores",
+                "phone": "78334725",
+                "discord": "anderjack",
+                "sec_role": "",
+                "rank": "Esmeralda 2 - 4",
+                "lol_id": "Anderjack#LAS",
+                "opgg": "https://op.gg/lol/summoners/las/Anderjack-LAS"
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "name": "CONDOR NEXUS",
+        "tag": "CRN",
+        "top": {
+            "name": "Carlos Gabriel Alanoca Flores",
+            "phone": "74268946",
+            "discord": "gabobu123#3005",
+            "sec_role": "MID",
+            "rank": "Oro",
+            "lol_id": "ramonbus#1263",
+            "opgg": "https://op.gg/es/lol/summoners/las/ramonbus-1263"
+        },
+        "jg": {
+            "name": "Juan Pablo Huiza Aruquipa",
+            "phone": "78937943",
+            "discord": "Blackwats18",
+            "sec_role": "Ninguna",
+            "rank": "Diamante 1",
+            "lol_id": "Trifariano #Noxus",
+            "opgg": "https://op.gg/es/lol/summoners/las/Trifariano-Noxus"
+        },
+        "mid": {
+            "name": "Hujan Sebastian Caceres Pedraza",
+            "phone": "61651745",
+            "discord": "elsebas1874",
+            "sec_role": "TOP",
+            "rank": "Maestro",
+            "lol_id": "SEBAZZZ #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/SEBAZZZ-LAS"
+        },
+        "adc": {
+            "name": "Cristhian Mamani Cordero",
+            "phone": "73267065",
+            "discord": "bolivianogg",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Gronimoon #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Gronimoon-LAS"
+        },
+        "supp": {
+            "name": "Alex Callizaya Limachi",
+            "phone": "60531718",
+            "discord": "boo_fale",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "25frank25 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/25frank25-LAS"
+        },
+        "subs": [
+            {
+                "role": "JUNGLA",
+                "name": "David Joel Ticona cuánto",
+                "phone": "76716143",
+                "discord": "inuprofadk",
+                "sec_role": "TOP",
+                "rank": "Platino",
+                "lol_id": "sinratense#las",
+                "opgg": "https://op.gg/es/lol/summoners/las/sinratense-LAS"
+            },
+            {
+                "role": "JUNGLA",
+                "name": "Jhadir Franco Quispe Suxo",
+                "phone": "71924856",
+                "discord": "Kick#3865",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "",
+                "lol_id": "duraznno123#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/duraznno123-LAS"
+            },
+            {
+                "role": "TIRADOR (ADC)",
+                "name": "Juan José calle tapia",
+                "phone": "69326458",
+                "discord": "gutfire",
+                "sec_role": "Ninguno",
+                "rank": "Platino",
+                "lol_id": "gûtƒirę #LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/g%C3%BBt%C6%92ir%C4%99-LAS"
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "name": "Los Seguidores Del Primo",
+        "tag": "SDP",
+        "top": {
+            "name": "Rafael Montes Lopez",
+            "phone": "69528948",
+            "discord": "sense4200",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "7th sense#sense",
+            "opgg": "https://op.gg/lol/summoners/las/7th%20sense-sense"
+        },
+        "jg": {
+            "name": "Manuel Bejarano Torrez",
+            "phone": "76172350",
+            "discord": "roma08987",
+            "sec_role": "TOP",
+            "rank": "Diamante 1",
+            "lol_id": "roma71#7181",
+            "opgg": "https://op.gg/es/lol/summoners/las/roma71-7181"
+        },
+        "mid": {
+            "name": "Carlos Fabricio Caceres Vargas",
+            "phone": "74129546",
+            "discord": "Fabrit#1172",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "kaporo#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/kaporo-LAS"
+        },
+        "adc": {
+            "name": "Gustavo Adolfo Cavero Torrez",
+            "phone": "61651919",
+            "discord": "TATOXx#7145",
+            "sec_role": "MID",
+            "rank": "Gran-Maestro",
+            "lol_id": "TATOXx#LBL",
+            "opgg": "https://op.gg/es/lol/summoners/las/TATOXx-LBL"
+        },
+        "supp": {
+            "name": "Daniel Quispe",
+            "phone": "+5491151090562",
+            "discord": "danicabj6154",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Maestro",
+            "lol_id": "TCG Zach#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/TCG%20Zach-LAS"
+        },
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Sergio Gabriel Puita Fernández",
+                "phone": "63725389",
+                "discord": "sergiomatacirilos",
+                "sec_role": "",
+                "rank": "Diamante 2 - 4",
+                "lol_id": "RØMA#7181",
+                "opgg": "https://op.gg/es/lol/summoners/las/R%C3%98MA-7181"
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "name": "Crimson Weasels",
+        "tag": "CRW",
+        "top": {
+            "name": "Sergio Apaza Ticona",
+            "phone": "69534919",
+            "discord": "Sergio",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Rekkels#KOI",
+            "opgg": "https://op.gg/es/lol/summoners/las/rekkles-KOI"
+        },
+        "jg": {
+            "name": "Jose Miguel Quispe Machaca",
+            "phone": "73554420",
+            "discord": "SimpSOSA",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "mickey300#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/mickey300-LAS"
+        },
+        "mid": {
+            "name": "Abner Flores Ticona",
+            "phone": "76501822",
+            "discord": "abnerwaaaaaaaaaaaaaaa",
+            "sec_role": "Ninguna",
+            "rank": "Platino",
+            "lol_id": "Koltken#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Koltken-LAS"
+        },
+        "adc": {
+            "name": "Reiner Josue Llanos Calle",
+            "phone": "77201629",
+            "discord": "rayvan564",
+            "sec_role": "Ninguna",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "FbRayvan#564",
+            "opgg": "https://op.gg/es/lol/summoners/las/FbRayvan-564"
+        },
+        "supp": {
+            "name": "Julio Abner Ajpi Torrez",
+            "phone": "76725979",
+            "discord": "bl00dy axe",
+            "sec_role": "Ninguna",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "ºkĘrł4º#EZI",
+            "opgg": "https://op.gg/es/lol/summoners/las/ºkĘrł4º-EZI"
+        },
+        "subs": []
+    },
+    {
+        "id": 15,
+        "name": "FURIA ANDINA",
+        "tag": "FAN",
+        "top": {
+            "name": "Sebastian Loredo Daza",
+            "phone": "60315664",
+            "discord": "Donvrgas22",
+            "sec_role": "MID",
+            "rank": "No juega Ranked/Clasificatorias",
+            "lol_id": "Vecino X #LAS",
+            "opgg": "https://op.gg/summoners/las/Vecino%20X-LAS/auth/32682ab9b844f873cda15cb6783302c6"
+        },
+        "jg": {
+            "name": "Carlos Manuel Sanchez Peñafiel",
+            "phone": "71885871",
+            "discord": "Carnuelsp24",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Yosoyelescrapy07 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/escrapynuel-LAS"
+        },
+        "mid": {
+            "name": "Adolfo Juan Sanchez Peñafiel",
+            "phone": "78610287",
+            "discord": "HANTERSITO",
+            "sec_role": "TOP",
+            "rank": "Oro",
+            "lol_id": "H4NT3R811#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/H4NT3R811-LAS"
+        },
+        "adc": {
+            "name": "Luis Carlos Alvarez Orozco",
+            "phone": "77798573",
+            "discord": "luchozzz4",
+            "sec_role": "TOP",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Viper#OLS",
+            "opgg": "https://op.gg/lol/summoners/las/VIPER-OLS"
+        },
+        "supp": {
+            "name": "Ediwin Leandro Mollo Mamani",
+            "phone": "67321796",
+            "discord": "jona.84_59761",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Wulfrick #77766",
+            "opgg": "https://op.gg/es/lol/summoners/las/wulfrick-77766"
+        },
+        "subs": [
+            {
+                "role": "SOPORTE",
+                "name": "Jhon Deyvid Nina Quispe",
+                "phone": "73236868",
+                "discord": "yuukun2028",
+                "sec_role": "Comodín (Valido solo para 1 jugador)",
+                "rank": "Oro",
+                "lol_id": "Yuu Kun#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/Yuu%20Kun-LAS"
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "name": "ITSD Zaun",
+        "tag": "ITSD",
+        "top": {
+            "name": "Carlos Alberto Canaviri Avendaño",
+            "phone": "60857858",
+            "discord": "carlos090",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "GGEZ KNA1245#9359",
+            "opgg": "https://op.gg/es/lol/summoners/las/GGEZ%20KNA1245-9359"
+        },
+        "jg": {
+            "name": "Kevin Arnold Villarroel Lopez",
+            "phone": "75500233",
+            "discord": "kevinarnoldvillarroel",
+            "sec_role": "TOP",
+            "rank": "Platino",
+            "lol_id": "EST Pain#PA1N",
+            "opgg": "https://op.gg/es/lol/summoners/las/EST%20Pain-PA1N"
+        },
+        "mid": {
+            "name": "Jose Manuel Pizarro Perez",
+            "phone": "78577839",
+            "discord": "jose_pizarro",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "mercenaryo#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/mercenaryo-LAS"
+        },
+        "adc": {
+            "name": "Cristobal Fernando Cardenas Torres",
+            "phone": "70801360",
+            "discord": "thecritter1258",
+            "sec_role": "SOPORTE",
+            "rank": "Platino",
+            "lol_id": "KiNgCriTTeR1258#PERU",
+            "opgg": "https://op.gg/es/lol/summoners/las/KiNgCriTTeR1258-PERU"
+        },
+        "supp": {
+            "name": "Kioshy Alessander Salvatierra quiroga",
+            "phone": "64468136",
+            "discord": "kioshy9009",
+            "sec_role": "JUNGLA",
+            "rank": "Platino",
+            "lol_id": "kioshy99#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/kioshy99-LAS"
+        },
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Sebastian meneses rios",
+                "phone": "77837565",
+                "discord": "the_tempest",
+                "sec_role": "JUNGLA",
+                "rank": "Platino",
+                "lol_id": "sebas9009#LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/sebas9009-LAS"
+            },
+            {
+                "role": "MID",
+                "name": "Edwin benjamin Villarroel gonzales",
+                "phone": "65882792",
+                "discord": "harapeko9232",
+                "sec_role": "TOP",
+                "rank": "Platino",
+                "lol_id": "ZeroFortuna#XXX",
+                "opgg": "https://op.gg/es/lol/summoners/las/ZeroFortuna-XXX"
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "name": "MalcriadinhasFC",
+        "tag": "MFC",
+        "top": {
+            "name": "Lukas Antonio Mercado Escalera",
+            "phone": "79798599",
+            "discord": "Erd#9053",
+            "sec_role": "MID",
+            "rank": "Oro",
+            "lol_id": "Leches#VKT",
+            "opgg": "https://op.gg/es/lol/summoners/las/Leches-VKT"
+        },
+        "jg": {
+            "name": "Leonardo Franco Guarachi Castro",
+            "phone": "70796420",
+            "discord": "leofranguara#5345",
+            "sec_role": "TOP",
+            "rank": "Plata",
+            "lol_id": "leofranguara#1711",
+            "opgg": "https://op.gg/es/lol/summoners/las/leofranguara-1711"
+        },
+        "mid": {
+            "name": "Edson Lamas Alcocer",
+            "phone": "76998566",
+            "discord": "kf14#5613",
+            "sec_role": "TOP",
+            "rank": "Plata",
+            "lol_id": "kf16#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/kf16-LAS"
+        },
+        "adc": {
+            "name": "Micael Mendoza Rada",
+            "phone": "68514978",
+            "discord": "Minec4el#7309",
+            "sec_role": "SOPORTE",
+            "rank": "Platino",
+            "lol_id": "minec4el #uwu",
+            "opgg": "https://op.gg/es/lol/summoners/las/minec4el-uwu"
+        },
+        "supp": {
+            "name": "Nicolás Melgarejo Gamboa",
+            "phone": "75467473",
+            "discord": "Nixlag#0276",
+            "sec_role": "MID",
+            "rank": "Oro",
+            "lol_id": "Nixlag #lol",
+            "opgg": "https://op.gg/es/lol/summoners/las/Nixlag-lol"
+        },
+        "subs": [
+            {
+                "role": "SOPORTE",
+                "name": "Camilo Gabriel Jaldin Coca",
+                "phone": "70367263",
+                "discord": "pacman#8113",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "Oro",
+                "lol_id": "11n011NL #5021",
+                "opgg": "https://op.gg/es/lol/summoners/las/11n011NL-5021"
+            },
+            {
+                "role": "SOPORTE",
+                "name": "Lawrence Nicolas Guzman Patiño",
+                "phone": "75988033",
+                "discord": "Pochita Lover#8198",
+                "sec_role": "JUNGLA",
+                "rank": "Oro",
+                "lol_id": "ECNERWAL #117",
+                "opgg": "https://op.gg/es/lol/summoners/las/ECNERWAL-117"
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "name": "Dark Abyssal Academy",
+        "tag": "DAA",
+        "top": {
+            "name": "Elvin Leo Mamani Chacon",
+            "phone": "73050239",
+            "discord": "LEO JT",
+            "sec_role": "JUNGLA",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "TOP alcohólico #Vodka  LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/TOP%20alcoh%C3%B3lico-Vodka"
+        },
+        "jg": {
+            "name": "Nicolas Nazarek",
+            "phone": "+54 9 3534 41-3123",
+            "discord": "Noname",
+            "sec_role": "TOP",
+            "rank": "Maestro",
+            "lol_id": "colfire#LAS (LAS)",
+            "opgg": "https://op.gg/es/lol/summoners/las/colfire%20-LAS"
+        },
+        "mid": {
+            "name": "Alan Cesar Lima Siñani",
+            "phone": "61171406",
+            "discord": "chester_b3",
+            "sec_role": "JUNGLA",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Chester#ACA",
+            "opgg": "https://op.gg/es/lol/summoners/las/Chester-ACA"
+        },
+        "adc": {
+            "name": "Morales Benitez Dylan Ismael",
+            "phone": "74910301",
+            "discord": "deztry_fps",
+            "sec_role": "MID",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "DezTry #Luz",
+            "opgg": "https://op.gg/es/lol/summoners/las/DezTry-Luz"
+        },
+        "supp": {
+            "name": "Jhonatan Marcos Chura Zanguesa",
+            "phone": "62423604",
+            "discord": "Jhonas1311",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Yamato Endo0 #Las1",
+            "opgg": "https://op.gg/es/lol/summoners/las/Yamato%20Endo0-Las1"
+        },
+        "subs": [
+            {
+                "role": "JUNGLA",
+                "name": "Jhoan Rivaldo Mollo Vega",
+                "phone": "67390918",
+                "discord": "ElMosho7u7r #Viego",
+                "sec_role": "MID",
+                "rank": "Maestro",
+                "lol_id": "VieGOD y 4 malos#Viego",
+                "opgg": "https://op.gg/es/lol/summoners/las/VieGOD%20y%204%20malos-Viego"
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "name": "Aether Core Academy",
+        "tag": "ATA",
+        "top": {
+            "name": "Limberth ticona mamani",
+            "phone": "",
+            "discord": "Dystr3x",
+            "sec_role": "Ninguna",
+            "rank": "Oro",
+            "lol_id": "DYSTR3X#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/DYSTR3X-LAS"
+        },
+        "jg": {
+            "name": "Franco Octavio Salinas Atencio",
+            "phone": "+56 9 4712 8688",
+            "discord": "Hange#8101",
+            "sec_role": "MID",
+            "rank": "Maestro",
+            "lol_id": "ONR Hange #HNG",
+            "opgg": "https://op.gg/es/lol/summoners/las/ONR%20Hange-HNG"
+        },
+        "mid": {
+            "name": "Camilo Nicolas Zurita Machicado",
+            "phone": "67346805",
+            "discord": "le_cameyoshi",
+            "sec_role": "TOP",
+            "rank": "Maestro",
+            "lol_id": "cameyoshi #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/cameyoshi-LAS"
+        },
+        "adc": {
+            "name": "jhon Aron rojas Oblitas",
+            "phone": "",
+            "discord": "Jhonfarodiu",
+            "sec_role": "",
+            "rank": "Esmeralda 1",
+            "lol_id": "KX jhonfarodiu#2022",
+            "opgg": "https://op.gg/lol/summoners/las/KX%20jhonfarodiu-2022"
+        },
+        "supp": {
+            "name": "ESTHER GEORGINA MAMANI COPANA",
+            "phone": "77856954",
+            "discord": "yina05819",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "ATC YHØR #FOX",
+            "opgg": "https://op.gg/es/lol/summoners/las/ATC%20YH%C3%98R-FOX"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "adrian carrillo rodriguez",
+                "phone": "73156901",
+                "discord": "katarinx",
+                "sec_role": "TOP",
+                "rank": "Diamante 2 - 4",
+                "lol_id": "Katarinx#Kat",
+                "opgg": "https://op.gg/es/lol/summoners/las/Katarinx-Kat"
+            }
+        ]
+    },
+    {
+        "id": 20,
+        "name": "Nothing Cash",
+        "tag": "NTC",
+        "top": {
+            "name": "Alex Olguin Morales",
+            "phone": "68475100",
+            "discord": "AlexXie#9656",
+            "sec_role": "Ninguna",
+            "rank": "Plata",
+            "lol_id": "AlexXie#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/AlexXie-LAS"
+        },
+        "jg": {
+            "name": "Roberto Heredia",
+            "phone": "69667420",
+            "discord": "Marcosxfx#0222",
+            "sec_role": "MID",
+            "rank": "Oro",
+            "lol_id": "rompecatres3001 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/rompecatres3001-LAS"
+        },
+        "mid": {
+            "name": "Karol Jozef Garabito Pardo",
+            "phone": "61609847",
+            "discord": "kalolec_Juzet#6377",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Oro",
+            "lol_id": "zeff159 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/zeff159-LAS"
+        },
+        "adc": {
+            "name": "Fabrizzio Alexey Carreño Huaipara",
+            "phone": "78309432",
+            "discord": "F.B.I#6364",
+            "sec_role": "MID",
+            "rank": "Oro",
+            "lol_id": "Neutrofilo #ASD",
+            "opgg": "https://op.gg/es/lol/summoners/las/Neutrofilo-ASD"
+        },
+        "supp": {
+            "name": "Dorian Gabriel Rojas Angulo",
+            "phone": "62988061",
+            "discord": "Dorian336#0080",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Plata",
+            "lol_id": "Dorian336 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Dorian336-LAS"
+        },
+        "subs": []
+    },
+    {
+        "id": 21,
+        "name": "Kaoxitos Blue Academy",
+        "tag": "KXBA",
+        "top": {
+            "name": "Reynol Rolando Mamani Silva",
+            "phone": "74075158",
+            "discord": "pepsigod#1278",
+            "sec_role": "MID",
+            "rank": "Maestro",
+            "lol_id": "KCG Sánchez#REY",
+            "opgg": "https://www.leagueofgraphs.com/summoner/las/KCG%20S%C3%A1nchez-REY"
+        },
+        "jg": {
+            "name": "Elmer Ariel Aquino Escalera",
+            "phone": "71746669",
+            "discord": "yeison010.",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 1",
+            "lol_id": "KX DREYKAN#KXB",
+            "opgg": "https://www.leagueofgraphs.com/es/summoner/las/KX%20DREYKAN#KXB"
+        },
+        "mid": {
+            "name": "Franco Alejandro Aliana",
+            "phone": "+54 9 1130240180",
+            "discord": "fr4nk #5067 o _fr4nk #5067",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "PinguinoRodrigez #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/PinguinoRodrigez-LAS"
+        },
+        "adc": {
+            "name": "Luis Adriel Yujra Mamani",
+            "phone": "63242025",
+            "discord": "yassuo7110.",
+            "sec_role": "JUNGLA",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "KX Rain#3000",
+            "opgg": "https://op.gg/es/lol/summoners/las/KX%20Rain-3000"
+        },
+        "supp": {
+            "name": "Alejandro Misericordia Velarde",
+            "phone": "63983208",
+            "discord": "asus_rtx",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "KX Rinn #KXB",
+            "opgg": "https://op.gg/es/lol/summoners/las/KX%20Rinn-KXB"
+        },
+        "subs": [
+            {
+                "role": "TIRADOR (ADC)",
+                "name": "Alexander Vladimir Téllez Stipe",
+                "phone": "72283941",
+                "discord": "kasuma0355",
+                "sec_role": "",
+                "rank": "Maestro",
+                "lol_id": "Kazuma#72283",
+                "opgg": "https://op.gg/es/lol/summoners/las/kazuma-72283"
+            },
+            {
+                "role": "JUNGLA",
+                "name": "Geimbert Santiago Arteaga Silva",
+                "phone": "78457959",
+                "discord": "Zzzzz",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "Lyvande#1979",
+                "opgg": "https://op.gg/es/lol/summoners/las/Lyvande-1979"
+            },
+            {
+                "role": "MID",
+                "name": "Lucas Alvarez Molina Almo",
+                "phone": "60200629",
+                "discord": "Almo06",
+                "sec_role": "",
+                "rank": "",
+                "lol_id": "almproo #0306",
+                "opgg": "https://op.gg/es/lol/summoners/las/TR7%20Almoproo-0306"
+            }
+        ]
+    },
+    {
+        "id": 22,
+        "name": "Kaox Pink",
+        "tag": "KXPNK",
+        "top": {
+            "name": "Lucas Camacho Anaya",
+            "phone": "71420538",
+            "discord": "yolohunter61",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Maestro",
+            "lol_id": "post mortem#dlom",
+            "opgg": "https://www.leagueofgraphs.com/summoner/las/Post%20Mortem-DLOM"
+        },
+        "jg": {
+            "name": "Arturo Jesús Mamani Mamani",
+            "phone": "77961846",
+            "discord": "+591 77961846",
+            "sec_role": "MID",
+            "rank": "Maestro",
+            "lol_id": "danthesoy #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/lan/danthe%20soy-LAS"
+        },
+        "mid": {
+            "name": "Mattias Ayim Chavez Madera",
+            "phone": "+569 6628 6773",
+            "discord": "_mattv2",
+            "sec_role": "TOP",
+            "rank": "Retador",
+            "lol_id": "haram enjoyer#9202",
+            "opgg": "https://op.gg/es/lol/summoners/las/haram%20enjoyer-9202"
+        },
+        "adc": {
+            "name": "Elder Fernandez Capuma",
+            "phone": "77593075",
+            "discord": "#johncillo1230",
+            "sec_role": "SOPORTE",
+            "rank": "Diamante 1",
+            "lol_id": "fly john#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/fly%20john-LAS"
+        },
+        "supp": {
+            "name": "Juan Carlos Mamani Suxo",
+            "phone": "68746354",
+            "discord": "Juank1352",
+            "sec_role": "Ninguna",
+            "rank": "",
+            "lol_id": "Aku#yac",
+            "opgg": "https://op.gg/es/lol/summoners/las/Aku-YAC"
+        },
+        "subs": [
+            {
+                "role": "SUB",
+                "name": "Polivalente Angel Junior Medina",
+                "phone": "78970551",
+                "discord": "Angeljm245x",
+                "sec_role": "Comodín (Valido solo para 1 jugador)",
+                "rank": "Esmeralda 2 - 4",
+                "lol_id": "Kx Snatchz #LAS",
+                "opgg": "https://op.gg/lol/summoners/las/KX%20Snatchz-LAS"
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "name": "DISTURBED",
+        "tag": "DRD",
+        "top": {
+            "name": "Bill Herman Mayta Ponce",
+            "phone": "62437555",
+            "discord": "No cuenta con uno aun",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 1",
+            "lol_id": "Lux Cósmica#BHMP",
+            "opgg": "https://op.gg/lol/summoners/las/Lux%20C%C3%B3smica-BHMP"
+        },
+        "jg": {
+            "name": "Ariel Francisco Estívariz Marin",
+            "phone": "67157593",
+            "discord": "No cuenta con uno aun",
+            "sec_role": "TOP",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "ShakaDeTiger#6332",
+            "opgg": "https://op.gg/lol/summoners/las/ShakaDeTiger-6332"
+        },
+        "mid": {
+            "name": "José Ernesto Terán",
+            "phone": "NO TIENE",
+            "discord": "canseco0367",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Beastly Claw#Udyr",
+            "opgg": "https://op.gg/lol/summoners/las/Beastly%20Claw-Udyr"
+        },
+        "adc": {
+            "name": "Francisco Xavier Azurduy Rivera",
+            "phone": "67385811",
+            "discord": "FOXU#7184",
+            "sec_role": "JUNGLA",
+            "rank": "Platino",
+            "lol_id": "FOXARUCARD#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/FOXARUCARD-LAS"
+        },
+        "supp": {
+            "name": "Luis Hernan Chambi Nina",
+            "phone": "67046471",
+            "discord": "luga._",
+            "sec_role": "MID",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Nozomí Tojo#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Nozom%C3%AD%20Tojo-LAS"
+        },
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "José Adalid Calizaya Ajhuacho",
+                "phone": "77711529",
+                "discord": "Josuco#7181",
+                "sec_role": "Comodín (Valido solo para 1 jugador)",
+                "rank": "No juega Ranked/Clasificatorias",
+                "lol_id": "SIS Jokertwist #LAS",
+                "opgg": "https://op.gg/lol/summoners/las/SIS%20Jokertwist-LAS"
+            }
+        ]
+    },
+    {
+        "id": 24,
+        "name": "LOTUS REBORN",
+        "tag": "LTR",
+        "top": {
+            "name": "Dhaxs Herbas viruez",
+            "phone": "62990408",
+            "discord": "damiku",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Damiku#LAN",
+            "opgg": "https://op.gg/es/lol/summoners/las/Damiku-LAN"
+        },
+        "jg": {
+            "name": "Fernando Romero",
+            "phone": "12977587",
+            "discord": "xblax",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Xblaxdestroyer #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Xblaxdestroyer-LAS"
+        },
+        "mid": {
+            "name": "Gustavo Villarroel",
+            "phone": "63931039",
+            "discord": "gyrocopter456",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "Gyrocopter456#CUBO",
+            "opgg": "https://op.gg/es/lol/summoners/las/Gyrocopter456-CUBO"
+        },
+        "adc": {
+            "name": "Kevin Damian Paniagua Rojas",
+            "phone": "77449862",
+            "discord": "therealsparky09",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "TheRealSparky09#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/TheRealSparky09-LAS"
+        },
+        "supp": {
+            "name": "Fernando Cespedes Calderon",
+            "phone": "67599565",
+            "discord": "fernando_9828",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "percibal9#5293",
+            "opgg": "https://op.gg/es/lol/summoners/las/percibal9-5293"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Douglas DALENZ",
+                "phone": "60737472",
+                "discord": "Douglas1407",
+                "sec_role": "JUNGLA",
+                "rank": "Oro",
+                "lol_id": "DouG#1407",
+                "opgg": "https://op.gg/es/lol/summoners/las/DouG-1407"
+            }
+        ]
+    },
+    {
+        "id": 25,
+        "name": "El Último Escuadrón",
+        "tag": "EUE",
+        "top": {
+            "name": "Brandon Steve Ferrari Selaya",
+            "phone": "74518548",
+            "discord": "smbsteveyt",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Demon Branlini #1091",
+            "opgg": "https://op.gg/es/lol/summoners/las/Demon%20Branlini-1091"
+        },
+        "jg": {
+            "name": "José Daniel Rocha Condori",
+            "phone": "60340891",
+            "discord": "Jh0sUZ75",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Jh0sU4Z7#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Jh0sU4Z7-LAS"
+        },
+        "mid": {
+            "name": "Cristian Fernando Miranda Toro",
+            "phone": "78695881",
+            "discord": "chiris7w7",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "AQS TeAmoSilvia #nwn",
+            "opgg": "https://op.gg/es/lol/summoners/las/AQS%20TeAmoSilvia-nwn"
+        },
+        "adc": {
+            "name": "Cuauhtemoc Javier Quispe",
+            "phone": "63456354",
+            "discord": "lake780",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "Paphelios #Lake",
+            "opgg": "https://op.gg/es/lol/summoners/las/Paphelios-Lake"
+        },
+        "supp": {
+            "name": "Vito Josué Ruelas Toledo",
+            "phone": "75744497",
+            "discord": "vito03._64593",
+            "sec_role": "TOP",
+            "rank": "Esmeralda 1",
+            "lol_id": "LBL ELGOAT7 #5972",
+            "opgg": "https://op.gg/es/lol/summoners/las/LBL%20ELGOAT7-5972"
+        },
+        "subs": [
+            {
+                "role": "TOP",
+                "name": "Cristhian Javier choque carvajal",
+                "phone": "77171142",
+                "discord": "Mohok0117",
+                "sec_role": "MID",
+                "rank": "Diamante 2 - 4",
+                "lol_id": "Yo la amaba#4700",
+                "opgg": "https://op.gg/es/lol/summoners/las/yo%20la%20amaba-4700/champions"
+            },
+            {
+                "role": "JUNGLA",
+                "name": "David Gironda Chura",
+                "phone": "60587206",
+                "discord": "boost8807",
+                "sec_role": "MID",
+                "rank": "Esmeralda 1",
+                "lol_id": "el Rush #2222",
+                "opgg": "https://op.gg/es/lol/summoners/las/EL%20RUSH-TTV"
+            }
+        ]
+    },
+    {
+        "id": 26,
+        "name": "The Whisperers",
+        "tag": "TWD",
+        "top": {
+            "name": "Nilo Quispe Encinas",
+            "phone": "67937512",
+            "discord": "NIlo",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "orosshrek123 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/orosshrek123-LAS"
+        },
+        "jg": {
+            "name": "Aldair Calizaya Ckacka",
+            "phone": "77864836",
+            "discord": "no tiene",
+            "sec_role": "MID",
+            "rank": "Esmeralda 1",
+            "lol_id": "Cypax #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Cypax-LAS"
+        },
+        "mid": {
+            "name": "Fernando bautista oyola",
+            "phone": "69648302",
+            "discord": "Beand",
+            "sec_role": "JUNGLA",
+            "rank": "Platino",
+            "lol_id": "bead12 #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/bead12-LAS"
+        },
+        "adc": {
+            "name": "Carlos  Garabito",
+            "phone": "75727646",
+            "discord": "Snayyder",
+            "sec_role": "Ninguna",
+            "rank": "Platino",
+            "lol_id": "TNC Dr House #LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/TNC%20Dr%20House-LAS"
+        },
+        "supp": {
+            "name": "Cristian Calizaya Ckacka",
+            "phone": "74206094",
+            "discord": "Pixmelas",
+            "sec_role": "MID",
+            "rank": "Esmeralda 1",
+            "lol_id": "Pixmelas#pix",
+            "opgg": "https://op.gg/es/lol/summoners/las/Pixmelas-PIX"
+        },
+        "subs": []
+    },
+    {
+        "id": 27,
+        "name": "CYBER KNIGHTS ARMY",
+        "tag": "CKA",
+        "top": {
+            "name": "Erick Enrique Caballero Condori",
+            "phone": "78448740",
+            "discord": "KAHINS",
+            "sec_role": "Ninguna",
+            "rank": "Platino",
+            "lol_id": "kahins#las",
+            "opgg": "https://op.gg/es/lol/summoners/las/kahins-LAS"
+        },
+        "jg": {
+            "name": "Erick Gonzales Quiñones",
+            "phone": "932936575",
+            "discord": "Erick",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Oro",
+            "lol_id": "A1zz#Tkcha",
+            "opgg": "https://op.gg/es/lol/summoners/las/A1zz-tkcha"
+        },
+        "mid": {
+            "name": "Brayan Colque Nuñez",
+            "phone": "74815948",
+            "discord": "you_yellow",
+            "sec_role": "SOPORTE",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "brayayin#las",
+            "opgg": "https://op.gg/es/lol/summoners/las/brayayin-LAS"
+        },
+        "adc": {
+            "name": "Jose Maria Nuñez Velasquez",
+            "phone": "76308925",
+            "discord": "josema3008",
+            "sec_role": "Ninguna",
+            "rank": "Platino",
+            "lol_id": "CKA SUN#SCZ",
+            "opgg": "https://op.gg/es/lol/summoners/las/CKA%20Sun-SCZ"
+        },
+        "supp": {
+            "name": "ulises salvatierra",
+            "phone": "76362389",
+            "discord": "odiseo4705",
+            "sec_role": "MID",
+            "rank": "",
+            "lol_id": "odiseoSM#las",
+            "opgg": "https://op.gg/es/lol/summoners/las/Odiseo%20SM-LAS"
+        },
+        "subs": [
+            {
+                "role": "MID",
+                "name": "Lucas Alexis Vasquez Reyes",
+                "phone": "75323208",
+                "discord": "LUCAS",
+                "sec_role": "TOP",
+                "rank": "Plata",
+                "lol_id": "CKA Kaba#las",
+                "opgg": "https://op.gg/es/lol/summoners/las/CKA%20Kaba-LAS"
+            },
+            {
+                "role": "MID",
+                "name": "Misael Rodrigo Velasco Cuevas",
+                "phone": "69117428",
+                "discord": "CKA Rodri",
+                "sec_role": "SOPORTE",
+                "rank": "Plata",
+                "lol_id": "CKA MRodrigoxd",
+                "opgg": "https://op.gg/es/lol/summoners/las/CKA%20MRodrigoxd-8429"
+            },
+            {
+                "role": "SOPORTE",
+                "name": "Aler Joshua Vasquez Reyes",
+                "phone": "75564461",
+                "discord": "Alerkill",
+                "sec_role": "JUNGLA",
+                "rank": "Platino",
+                "lol_id": "CKA Alerkill #LAS",
+                "opgg": "https://op.gg/es/lol/summoners/las/CKA%20%20Alerkill-LAS"
+            }
+        ]
+    },
+    {
+        "id": 28,
+        "name": "Nexus De Plata",
+        "tag": "NDP",
+        "top": {
+            "name": "Imanol Tohara Martinez",
+            "phone": "67913254",
+            "discord": "imanol8495",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "imanolml#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/imanolml-LAS"
+        },
+        "jg": {
+            "name": "Jhohan Cristian callapino Martínez",
+            "phone": "73898515",
+            "discord": "cristiano_963",
+            "sec_role": "TOP",
+            "rank": "Oro",
+            "lol_id": "La Bestia9632#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/La%20Bestia9632-LAS"
+        },
+        "mid": {
+            "name": "Edward Bejarano Martínez",
+            "phone": "73852969",
+            "discord": "edward070_",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Plata",
+            "lol_id": "Edward240weed#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/Edward240weed-LAS"
+        },
+        "adc": {
+            "name": "Luis Angel Martinez Ayarachi",
+            "phone": "61647680",
+            "discord": "luisito_martinez",
+            "sec_role": "JUNGLA",
+            "rank": "Bronce",
+            "lol_id": "Angel12I#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/Angel12I-LAS"
+        },
+        "supp": {
+            "name": "Kelly Teresa Ortiz Martinez",
+            "phone": "67920039",
+            "discord": "kellyt31",
+            "sec_role": "TOP",
+            "rank": "Hierro",
+            "lol_id": "kellyt01#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/kellyt01-LAS"
+        },
+        "subs": [
+            {
+                "role": "SOPORTE",
+                "name": "Julio César Miranda Martinez",
+                "phone": "69606271",
+                "discord": "rasec1343",
+                "sec_role": "TIRADOR (ADC)",
+                "rank": "Bronce",
+                "lol_id": "eminem48c#277",
+                "opgg": "https://op.gg/lol/summoners/las/eminem48c-277"
+            }
+        ]
+    },
+    {
+        "id": 29,
+        "name": "Zetsubou",
+        "tag": "ZET",
+        "top": {
+            "name": "John Kevin Vargas Caprirolo",
+            "phone": "75967535",
+            "discord": "eurynomuss23",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "EurynØmuS#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/EurynØmuS-LAS"
+        },
+        "jg": {
+            "name": "Kevin Gabriel Ureña Cadiz",
+            "phone": "63843505",
+            "discord": "gaburune",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Gezz G#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Gezz%20G-LAS"
+        },
+        "mid": {
+            "name": "Hanigo Hans Laime Lucero",
+            "phone": "78327250",
+            "discord": "hans.laime",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 1",
+            "lol_id": "未来の音#1999",
+            "opgg": "https://op.gg/es/lol/summoners/las/未来の音-1999"
+        },
+        "adc": {
+            "name": "Giovanni Zenteno Caprirolo",
+            "phone": "69537742",
+            "discord": "thanattoss.",
+            "sec_role": "MID",
+            "rank": "Esmeralda 1",
+            "lol_id": "Inmortalicus#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Inmortalicus-LAS"
+        },
+        "supp": {
+            "name": "Richard Lazarte Roldan",
+            "phone": "76922683",
+            "discord": "hb0889",
+            "sec_role": "JUNGLA",
+            "rank": "Plata",
+            "lol_id": "LowWaste#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/LowWaste-LAS"
+        },
+        "subs": []
+    },
+    {
+        "id": 30,
+        "name": "King Dragonex",
+        "tag": "KDX",
+        "top": {
+            "name": "Miguel Ángel Ayala Mancilla",
+            "phone": "62850864",
+            "discord": "Ajax Nobile",
+            "sec_role": "MID",
+            "rank": "Plata",
+            "lol_id": "Ajax_N#0492",
+            "opgg": "https://op.gg/lol/summoners/las/Ajax%20Nobile-LAS"
+        },
+        "jg": {
+            "name": "Alex Escalante",
+            "phone": "+54 3878625089",
+            "discord": "Yo-pordetrasYT",
+            "sec_role": "TOP",
+            "rank": "Oro",
+            "lol_id": "Yo pordetrás#0223",
+            "opgg": "https://op.gg/es/lol/summoners/las/Yo%20pordetras-0223"
+        },
+        "mid": {
+            "name": "Daniel Ramos Tarquino",
+            "phone": "78268941",
+            "discord": "HOTLEIN",
+            "sec_role": "Comodín (Valido solo para 1 jugador)",
+            "rank": "Platino",
+            "lol_id": "Tu Jefe#HoF",
+            "opgg": "https://op.gg/es/lol/summoners/las/Tu%20Jefe-HoF"
+        },
+        "adc": {
+            "name": "Benjamin Mamani tapia",
+            "phone": "69324606",
+            "discord": "benjatex",
+            "sec_role": "TOP",
+            "rank": "Plata",
+            "lol_id": "BenjatexXD#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/benjatexXD-LAS"
+        },
+        "supp": {
+            "name": "Armando Torres",
+            "phone": "73549335",
+            "discord": "Howfunny",
+            "sec_role": "JUNGLA",
+            "rank": "Oro",
+            "lol_id": "Tu Jefa#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/Tu%20Jefa-LAS"
+        },
+        "subs": []
+    },
+    {
+        "id": 31,
+        "name": "QUINTETO GAMING",
+        "tag": "QTT",
+        "top": {
+            "name": "Brayan Mamani Tarquino",
+            "phone": "78268941",
+            "discord": "Daniel",
+            "sec_role": "JUNGLA",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "HOTLEIN#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/HOTLEIN-LAS"
+        },
+        "jg": {
+            "name": "Christopher Yauli",
+            "phone": "62301656",
+            "discord": "Adcry#0352",
+            "sec_role": "SOPORTE",
+            "rank": "Maestro",
+            "lol_id": "Killimet#lol",
+            "opgg": "https://op.gg/es/lol/summoners/las/killimet-lol"
+        },
+        "mid": {
+            "name": "Ninguno",
+            "phone": "Ninguno",
+            "discord": "Ninguno",
+            "sec_role": "TOP",
+            "rank": "Esmeralda 2 - 4",
+            "lol_id": "Ninguno",
+            "opgg": "https://Ninguno"
+        },
+        "adc": {
+            "name": "Alvaro ticona",
+            "phone": "68085938",
+            "discord": "Fugam",
+            "sec_role": "JUNGLA",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Raiden70#LAS",
+            "opgg": "https://op.gg/lol/summoners/las/raiden70-LAS"
+        },
+        "supp": {
+            "name": "Amilkar Yauli",
+            "phone": "63120555",
+            "discord": "Breikel",
+            "sec_role": "TOP",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Ferdiel#las",
+            "opgg": "https://op.gg/es/lol/summoners/las/Ferdiel-LAS"
+        },
+        "subs": []
+    },
+    {
+        "id": 32,
+        "name": "Velocito Gaming",
+        "tag": "VLG",
+        "top": {
+            "name": "Luis Styf Quispe Ramirez",
+            "phone": "69795331",
+            "discord": "nadando4177",
+            "sec_role": "Ninguna",
+            "rank": "Oro",
+            "lol_id": "NadAndOxD#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/NadAndOxD-LAS"
+        },
+        "jg": {
+            "name": "Félix Donaldo Huanca Cutipa",
+            "phone": "+56938871324",
+            "discord": ".mr.gato",
+            "sec_role": "MID",
+            "rank": "Platino",
+            "lol_id": "V1C10US#LAS",
+            "opgg": "https://op.gg/es/lol/summoners/las/V1C10US-LAS"
+        },
+        "mid": {
+            "name": "José Eduardo Ramos Paucara",
+            "phone": "73229904",
+            "discord": "zjhoss",
+            "sec_role": "TIRADOR (ADC)",
+            "rank": "Diamante 2 - 4",
+            "lol_id": "Jhoss#mvp",
+            "opgg": "https://op.gg/es/lol/summoners/las/Jhoss-mvp"
+        },
+        "adc": {
+            "name": "Jhonatan Ibáñez Quispe",
+            "phone": "69861944",
+            "discord": "sujeto697116",
+            "sec_role": "TOP",
+            "rank": "Maestro",
+            "lol_id": "Peyz#SKZ",
+            "opgg": "https://op.gg/lol/summoners/las/Peyz-SKZ"
+        },
+        "supp": {
+            "name": "Diego Herrera",
+            "phone": "983890635",
+            "discord": "diegoyizi",
+            "sec_role": "JUNGLA",
+            "rank": "",
+            "lol_id": "Ð I E G Ø#디에고",
+            "opgg": "https://op.gg/es/lol/summoners/las/%C3%90%20I%20E%20G%20%C3%98-%EB%94%94%EC%97%90%EA%B3%A0"
+        },
+        "subs": []
+    }
+]
