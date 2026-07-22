@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v11';
+const CACHE_NAME = 'lbl-cache-v12';
 const ASSETS = [
   '/',
   '/registro',
