@@ -83,15 +83,15 @@
             </p>
             
             <!-- Selector de Torneo (Botones con Logos) -->
-            <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6 max-w-3xl mx-auto mb-8">
-                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center p-3 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-44 md:w-52 aspect-[2.2/1] shadow-lg">
-                    <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-9 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+            <div class="flex flex-row justify-center items-center gap-3 md:gap-4 max-w-3xl mx-auto mb-8">
+                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center p-2 rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-36 aspect-[2.4/1] shadow-md">
+                    <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-6 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center p-3 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-44 md:w-52 aspect-[2.2/1] shadow-lg">
-                    <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-9 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center p-2 rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-36 aspect-[2.4/1] shadow-md">
+                    <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-6 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center p-3 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-44 md:w-52 aspect-[2.2/1] shadow-lg">
-                    <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-9 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center p-2 rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-36 aspect-[2.4/1] shadow-md">
+                    <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-6 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
             </div>
         </div>
@@ -234,8 +234,8 @@
             
             document.getElementById('searchInput').value = '';
 
-            const normalClass = "group relative flex items-center justify-center p-3 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-44 md:w-52 aspect-[2.2/1] shadow-lg";
-            const activeClass = "group relative flex items-center justify-center p-3 rounded-2xl border border-cyan-500/80 bg-[#070707]/80 shadow-[0_0_20px_rgba(6,182,212,0.4)] scale-[1.03] transition-all duration-300 w-44 md:w-52 aspect-[2.2/1]";
+            const normalClass = "group relative flex items-center justify-center p-2 rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-36 aspect-[2.4/1] shadow-md";
+            const activeClass = "group relative flex items-center justify-center p-2 rounded-xl border border-cyan-500/80 bg-[#070707]/80 shadow-[0_0_15px_rgba(6,182,212,0.3)] scale-[1.03] transition-all duration-300 w-24 md:w-36 aspect-[2.4/1]";
 
             btn1.className = normalClass;
             btn2.className = normalClass;
