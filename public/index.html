@@ -82,6 +82,22 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Carrusel Infinito */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        .mask-gradient {
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-grid relative min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
@@ -185,7 +201,7 @@
                 </div>
             </div>
 
-            <!-- NUESTROS TORNEOS SECTION (Carrusel Horizontal) -->
+            <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito) -->
             <div class="max-w-5xl mx-auto w-full px-4 fade-in-up mt-16 text-center" style="animation-delay: 0.65s;">
                 <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTROS TORNEOS...</h2>
                 <p class="text-gray-400 text-sm md:text-base mb-8 max-w-xl mx-auto">
@@ -193,31 +209,34 @@
                     Accede a la información de nuestros anteriores torneos
                 </p>
                 
-                <!-- Contenedor del Carrusel con scroll horizontal -->
-                <div class="relative w-full overflow-hidden">
-                    <div class="flex flex-row overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory no-scrollbar justify-start md:justify-center w-full">
-                        <!-- Scouting 1 -->
-                        <a href="scouting?torneo=scouting1" class="snap-center shrink-0 group relative flex items-center justify-center p-6 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-[280px] md:w-[320px] aspect-[1.8/1] shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:-translate-y-1">
-                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                <!-- Contenedor del Carrusel Infinito con Fading Mask -->
+                <div class="relative w-full overflow-hidden mask-gradient py-4">
+                    <div class="flex flex-row gap-6 w-max animate-marquee">
+                        <!-- Set 1 -->
+                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        </a>
+                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        </a>
+                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
                         </a>
                         
-                        <!-- Scouting 2 -->
-                        <a href="scouting?torneo=scouting2" class="snap-center shrink-0 group relative flex items-center justify-center p-6 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-[280px] md:w-[320px] aspect-[1.8/1] shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:-translate-y-1">
-                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <!-- Set 2 (Duplicado para loop infinito) -->
+                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
                         </a>
-                        
-                        <!-- Open Qualifier -->
-                        <a href="scouting?torneo=qualifier" class="snap-center shrink-0 group relative flex items-center justify-center p-6 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-[280px] md:w-[320px] aspect-[1.8/1] shadow-lg hover:shadow-[0_0_20px_rgba(244,63,94,0.15)] hover:-translate-y-1">
-                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
                         </a>
-                    </div>
-                    
-                    <!-- Indicador visual de deslizamiento móvil -->
-                    <div class="flex justify-center items-center gap-2 mt-2 md:hidden">
-                        <span class="text-[10px] text-gray-500 uppercase tracking-widest font-black"><i class="fas fa-hand-pointer animate-bounce mr-1"></i> Desliza para explorar</span>
+                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-64 aspect-[2.2/1] shadow-lg">
+                            <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
 
     </main>
