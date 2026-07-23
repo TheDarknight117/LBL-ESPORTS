@@ -96,6 +96,18 @@
             </div>
         </div>
 
+        <!-- Sección de Descripción del Torneo Activo -->
+        <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-4xl mx-auto mb-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/5 shadow-lg">
+            <div class="flex justify-center shrink-0 w-full md:w-auto">
+                <img id="td-logo" src="assets/logo2.png" alt="Torneo Logo" class="h-20 md:h-28 w-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+            </div>
+            <div class="text-center md:text-left">
+                <p id="td-text" class="text-gray-300 text-sm md:text-base leading-relaxed font-medium">
+                    <!-- Cargado dinámicamente -->
+                </p>
+            </div>
+        </div>
+
         <div class="max-w-2xl mx-auto mb-12 relative">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
             <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Nombre, TAG, Rango...">
@@ -245,6 +257,34 @@
             btn1.className = normalClass;
             btn2.className = normalClass;
             btnQual.className = normalClass;
+
+            // Datos de descripción por Torneo
+            const descripciones = {
+                1: {
+                    logo: "assets/scouting1.png",
+                    text: "Fue el primer paso de la Liga Boliviana, esto propuso la antesala para reclutar a los primeros equipos que conformarian nuestra liga, se realizo en Septiembre de 2025, con +50 equipos inscritos y +300 jugadores registrados, de los cuales solo unos pocos fueron invitados por su gran desempeño en la competencia.",
+                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+                },
+                2: {
+                    logo: "assets/logo2.png",
+                    text: "El Scouting Tournament 2 tuvo la maxima cantidad de equipos registrados de entre todos los torneos de clasificacion que tuvimos hasta la fecha, con la gran suma de 87 equipos en competencia con +500 jugadores inscritos... Fue sin duda uno de los Torneos de Scouting mas grandes que hicimos...",
+                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+                },
+                3: {
+                    logo: "assets/open_qualifier.png",
+                    text: "El Open Qualifier fue un torneo que realizamos por la exigencia misma de nuestra comunidad, el planteamiento original era realizar el Scouting Tournament 3 a fines de 2026, pero al ver tanto apoyo de nuestra comunidad, decidimos hacer un torneo para buscar mas equipos que entrarian a Tier 2, y nació el Open Qualifier, y nos gusto la idea de un torneo a mediados de año y posiblemente se vuelva a repetir... Contamos con 32 equipos y +200 jugadores registrados.",
+                    shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+                }
+            };
+
+            const tdLogo = document.getElementById('td-logo');
+            const tdText = document.getElementById('td-text');
+            if (tdLogo && tdText) {
+                const desc = descripciones[torneoId];
+                tdLogo.src = desc.logo;
+                tdLogo.className = `h-20 md:h-28 w-auto object-contain ${desc.shadow}`;
+                tdText.innerText = desc.text;
+            }
 
             if (qualifierPlaceholder) {
                 qualifierPlaceholder.classList.add('hidden');
