@@ -216,7 +216,31 @@
                     <i class="fas fa-level-up-alt text-3xl text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"></i>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-black mb-3"><span class="text-gradient-blue">TIER 2</span> (Circuito Ascenso)</h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La segunda divicion del circuito competitivo de la LBL, aca los equipos compiten entre si por su cupo de ascenso a TIER 1.</p>
+                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La segunda division del circuito competitivo de la LBL, aca los equipos compiten entre si por su cupo de ascenso a TIER 1.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE SPONSORS OFICIALES -->
+    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-20 z-10 fade-in-up" style="animation-delay: 0.75s;">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-2">NUESTROS SPONSORS...</h2>
+            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+                Las primeras marcas que confiaron en este proyecto, <br> e impulsan la competencia en el país.
+            </p>
+        </div>
+        
+        <!-- Contenedor del Slideshow de Sponsors -->
+        <div class="glass-panel p-6 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group min-h-[300px] flex flex-col justify-between">
+            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-all duration-500 opacity-100 w-full">
+                <!-- Se inyecta dinámicamente con JavaScript -->
+            </div>
+            
+            <!-- Indicadores (Dots) -->
+            <div class="flex justify-center gap-3 mt-8">
+                <button onclick="setSponsorSlide(0)" class="sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300"></button>
+                <button onclick="setSponsorSlide(1)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button>
+                <!-- <button onclick="setSponsorSlide(2)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button> -->
             </div>
         </div>
     </section>
@@ -352,6 +376,90 @@
             marquee.addEventListener('mouseleave', () => {
                 isHovered = false;
             });
+        });
+
+        // Script del Carrusel de Sponsors
+        const sponsorsData = [
+            {
+                image: "assets/BARON.png",
+                sub: "Baròn Nashor traido a ustedes gracias a VOLT...",
+                title: 'DESTAPA LA <span class="text-yellow-400">ENERGIA</span> QUE DEFINE CAMPEONES...',
+                desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends..."
+            },
+            {
+                image: "assets/vacuos.png",
+                sub: "Cyrex Store presenta las vacuolarvas para el equipo....",
+                title: 'LOS MEJORES <span class="text-pink-500">PERIFERICOS</span> SOLO EN <span class="text-yellow-400">CYREX STORE</span>...',
+                desc: "Sponsor TECH de la Liga Boliviana de League of Legends"
+            }
+            /*,
+            {
+                image: "assets/heraldo.png",
+                sub: "Origin Gamer Store presenta el Heraldo de la Grieta....",
+                title: 'EQUIPAMIENTO DE <span class="text-rose-400">ALTO RENDIMIENTO</span> PARA TU CAMINO...',
+                desc: "Patrocinador Oficial de Hardware de la LBL"
+            }
+            */
+        ];
+
+        let currentSponsorSlide = 0;
+        let sponsorInterval;
+
+        function renderSponsorSlide(index) {
+            const container = document.getElementById('sponsor-slide-container');
+            if (!container) return;
+
+            const data = sponsorsData[index];
+            
+            const imgHTML = `<div class="w-full md:w-[500px] shrink-0 aspect-[2.2/1] rounded-3xl overflow-hidden border border-white/10 shadow-lg relative group">
+                     <img src="${data.image}" alt="Sponsor Banner" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103" draggable="false" onerror="this.parentNode.innerHTML='<div class=\\'absolute inset-0 flex items-center justify-center text-gray-500\\'>Error al cargar imagen</div>'">
+                   </div>`;
+
+            // Transición suave por CSS
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                container.innerHTML = `
+                    ${imgHTML}
+                    <div class="text-left w-full">
+                        <p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>
+                        <h3 class="text-2xl md:text-5xl font-black italic uppercase leading-none tracking-tighter text-white mb-4">${data.title}</h3>
+                        <p class="text-[10px] md:text-xs text-gray-500 font-bold tracking-widest uppercase">${data.desc}</p>
+                    </div>
+                `;
+                container.style.opacity = '1';
+            }, 150);
+
+            // Actualizar dots
+            const dots = document.querySelectorAll('.sponsor-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === index) {
+                    dot.className = "sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300";
+                } else {
+                    dot.className = "sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300";
+                }
+            });
+        }
+
+        window.setSponsorSlide = (index) => {
+            currentSponsorSlide = index;
+            renderSponsorSlide(currentSponsorSlide);
+            resetSponsorTimer();
+        };
+
+        function nextSponsorSlide() {
+            currentSponsorSlide = (currentSponsorSlide + 1) % sponsorsData.length;
+            renderSponsorSlide(currentSponsorSlide);
+        }
+
+        function resetSponsorTimer() {
+            clearInterval(sponsorInterval);
+            sponsorInterval = setInterval(nextSponsorSlide, 6000);
+        }
+
+        window.addEventListener('load', () => {
+            renderSponsorSlide(0);
+            resetSponsorTimer();
         });
     </script>
     

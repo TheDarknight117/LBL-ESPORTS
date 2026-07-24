@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v18';
+const CACHE_NAME = 'lbl-cache-v22';
 const ASSETS = [
   '/',
   '/registro',
@@ -12,7 +12,8 @@ const ASSETS = [
   '/assets/LBL%20Circular.png',
   '/assets/SEO%20LBL%20etiqueta.png',
   '/assets/scouting1.json',
-  '/assets/qualifier.json'
+  '/assets/qualifier.json',
+  '/assets/heraldo.png'
 ];
 
 // Install Event - cache assets
