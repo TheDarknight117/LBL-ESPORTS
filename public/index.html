@@ -411,8 +411,8 @@
 
             const data = sponsorsData[index];
             
-            const imgHTML = `<div class="w-full md:w-[500px] shrink-0 aspect-[2.2/1] rounded-3xl overflow-hidden border border-white/10 shadow-lg relative group">
-                     <img src="${data.image}" alt="Sponsor Banner" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103" draggable="false" onerror="this.parentNode.innerHTML='<div class=\\'absolute inset-0 flex items-center justify-center text-gray-500\\'>Error al cargar imagen</div>'">
+            const imgHTML = `<div class="w-full md:w-[500px] shrink-0 aspect-[2.2/1] relative group overflow-hidden">
+                     <img src="${data.image}" alt="Sponsor Banner" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-102" draggable="false" onerror="this.parentNode.innerHTML='<div class=\\'absolute inset-0 flex items-center justify-center text-gray-500\\'>Error al cargar imagen</div>'">
                    </div>`;
 
             // Transición suave por CSS
