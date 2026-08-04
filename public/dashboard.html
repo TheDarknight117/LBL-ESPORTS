@@ -285,11 +285,13 @@
                 dashboardContent.classList.remove('hidden');
                 dashboardContent.classList.add('flex');
                 document.getElementById('user-display').innerText = `Sesión: ${user.email}`;
+                localStorage.setItem('lbl_staff_logged_in', 'true');
                 cargarDatos(); 
             } else {
                 loginScreen.classList.remove('hidden');
                 dashboardContent.classList.add('hidden');
                 dashboardContent.classList.remove('flex');
+                localStorage.removeItem('lbl_staff_logged_in');
             }
         });
 
