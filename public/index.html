@@ -109,6 +109,9 @@
         <div class="flex items-center gap-3">
             <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-8 md:h-10 w-auto object-contain">
             <span class="text-lg md:text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-blue-500">LEAGUE OF LEGENDS</span></span>
+            <span id="staff-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                <i class="fas fa-shield-alt"></i> Staff View
+            </span>
         </div>
         <div class="flex items-center gap-3 md:gap-5">
             <a href="equipos" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-2 flex items-center gap-2">
@@ -460,6 +463,14 @@
         window.addEventListener('load', () => {
             renderSponsorSlide(0);
             resetSponsorTimer();
+
+            // Mostrar Staff View si está logueado
+            const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
+            const staffBadge = document.getElementById('staff-badge');
+            if (isStaff && staffBadge) {
+                staffBadge.classList.remove('hidden');
+                staffBadge.classList.add('inline-flex');
+            }
         });
     </script>
     
