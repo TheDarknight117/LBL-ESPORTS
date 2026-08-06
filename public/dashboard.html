@@ -656,6 +656,81 @@
             document.getElementById('searchInput')?.addEventListener('input', aplicarFiltrosYOrden);
         }, 100);
 
+        let dragSourcePrefix = null;
+
+        window.handleDragStart = (e, prefix) => {
+            const isHandle = e.target.closest('.drag-handle');
+            if (!isHandle) {
+                e.preventDefault();
+                return;
+            }
+            dragSourcePrefix = prefix;
+            e.dataTransfer.effectAllowed = 'move';
+            e.currentTarget.classList.add('opacity-40', 'border-yellow-500/50', 'scale-[0.98]');
+        };
+
+        window.handleDragEnd = (e) => {
+            e.currentTarget.classList.remove('opacity-40', 'border-yellow-500/50', 'scale-[0.98]');
+            document.querySelectorAll('.edit-player-card').forEach(card => {
+                card.classList.remove('border-cyan-500', 'scale-[1.02]', 'bg-[#151515]');
+            });
+        };
+
+        window.handleDragOver = (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        };
+
+        window.handleDragEnter = (e) => {
+            e.preventDefault();
+            const targetPrefix = e.currentTarget.getAttribute('data-prefix');
+            if (targetPrefix === dragSourcePrefix) return;
+            e.currentTarget.classList.add('border-cyan-500', 'scale-[1.02]', 'bg-[#151515]');
+        };
+
+        window.handleDragLeave = (e) => {
+            e.currentTarget.classList.remove('border-cyan-500', 'scale-[1.02]', 'bg-[#151515]');
+        };
+
+        window.handleDrop = (e, targetPrefix) => {
+            e.stopPropagation();
+            if (!dragSourcePrefix || dragSourcePrefix === targetPrefix) return;
+
+            const fields = ['nombre', 'riotId', 'ci', 'tel', 'mail', 'discordId', 'departamento', 'riotId2', 'region2'];
+            
+            const elSourceRol = document.getElementById(`${dragSourcePrefix}_rol`);
+            const elTargetRol = document.getElementById(`${targetPrefix}_rol`);
+            if (elSourceRol && elTargetRol) {
+                const tempRol = elSourceRol.value;
+                elSourceRol.value = elTargetRol.value;
+                elTargetRol.value = tempRol;
+            }
+
+            fields.forEach(field => {
+                const elFrom = document.getElementById(`${dragSourcePrefix}_${field}`);
+                const elTo = document.getElementById(`${targetPrefix}_${field}`);
+                if (elFrom && elTo) {
+                    const tempVal = elFrom.value;
+                    elFrom.value = elTo.value;
+                    elTo.value = tempVal;
+                }
+            });
+
+            // Animación de destello de éxito
+            const sourceCard = document.querySelector(`.edit-player-card[data-prefix="${dragSourcePrefix}"]`);
+            const targetCard = document.querySelector(`.edit-player-card[data-prefix="${targetPrefix}"]`);
+            if (sourceCard && targetCard) {
+                sourceCard.classList.add('border-green-500', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+                targetCard.classList.add('border-green-500', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+                setTimeout(() => {
+                    sourceCard.classList.remove('border-green-500', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+                    targetCard.classList.remove('border-green-500', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+                }, 800);
+            }
+
+            dragSourcePrefix = null;
+        };
+
         const buildEditPlayerBlock = (title, prefix, p, isExtra = false, isSub = false, isCapitan = false, currentRole = '') => {
             const player = p || { nombre: '', riotId: '', ci: '', tel: '', mail: '', discordId: '', departamento: '', rol_seleccionado: '' };
             const colorClass = isExtra ? (isSub ? "text-teal-400" : "text-rose-400") : "text-yellow-500";
@@ -729,9 +804,12 @@
             }
 
             return `
-            <div class="bg-[#111] p-4 rounded-xl border border-gray-800">
+            <div class="bg-[#111] p-4 rounded-xl border border-gray-800 edit-player-card transition-all duration-300 relative" data-prefix="${prefix}" draggable="true" ondragstart="handleDragStart(event, '${prefix}')" ondragend="handleDragEnd(event)" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, '${prefix}')">
                 <div class="flex flex-wrap gap-2 justify-between items-center mb-3 border-b border-gray-800 pb-2">
                     <div class="flex items-center gap-2">
+                        <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-500 hover:text-white px-2 py-1 rounded border border-gray-800 hover:border-gray-700 bg-black/30 flex items-center gap-1 transition-all text-[9px] uppercase tracking-wider font-bold select-none" title="Arrastra para intercambiar con otro jugador">
+                            <i class="fas fa-grip-vertical text-[10px]"></i>
+                        </div>
                         <h4 class="${colorClass} font-black text-sm uppercase tracking-widest">${title}</h4>
                         ${roleSelectHTML}
                     </div>
