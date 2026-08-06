@@ -656,31 +656,7 @@
             document.getElementById('searchInput')?.addEventListener('input', aplicarFiltrosYOrden);
         }, 100);
 
-        window.swapRosterRoles = (fromRole, toRole) => {
-            const fields = ['nombre', 'riotId', 'ci', 'tel', 'mail', 'discordId', 'departamento', 'riotId2', 'region2'];
-            fields.forEach(field => {
-                const elFrom = document.getElementById(`edit_${fromRole}_${field}`);
-                const elTo = document.getElementById(`edit_${toRole}_${field}`);
-                if (elFrom && elTo) {
-                    const tempVal = elFrom.value;
-                    elFrom.value = elTo.value;
-                    elTo.value = tempVal;
-                }
-            });
-        };
-
-        window.handleMainRosterRoleChange = (fromRole, selectElement) => {
-            const toRole = selectElement.value;
-            if (fromRole === toRole) return;
-
-            if (confirm(`⚠️ ¿Intercambiar los roles de los jugadores entre ${fromRole} y ${toRole}?`)) {
-                window.swapRosterRoles(fromRole, toRole);
-                alert(`✅ Roles intercambiados correctamente en la interfaz.`);
-            }
-            selectElement.value = fromRole; // Resetear el select al valor nativo de la tarjeta
-        };
-
-        const buildEditPlayerBlock = (title, prefix, p, isExtra = false, isSub = false, isCapitan = false) => {
+        const buildEditPlayerBlock = (title, prefix, p, isExtra = false, isSub = false, isCapitan = false, currentRole = '') => {
             const player = p || { nombre: '', riotId: '', ci: '', tel: '', mail: '', discordId: '', departamento: '', rol_seleccionado: '' };
             const colorClass = isExtra ? (isSub ? "text-teal-400" : "text-rose-400") : "text-yellow-500";
             
@@ -729,24 +705,24 @@
             let capitanHTML = '';
             let roleSelectHTML = '';
             if (!isExtra) {
-                const roleKey = prefix.replace('edit_', '');
+                const idxKey = prefix.replace('edit_', '');
                 const isChecked = isCapitan ? 'checked' : '';
                 capitanHTML = `
                     <label class="flex items-center text-[10px] font-black text-gray-300 bg-black/40 px-3 py-1.5 rounded-lg cursor-pointer border border-gray-800 hover:border-yellow-500/50 transition-all select-none">
-                        <input type="radio" name="edit_capitan" value="${roleKey}" class="mr-2 accent-yellow-500 w-3.5 h-3.5" ${isChecked}>
+                        <input type="radio" name="edit_capitan" value="${idxKey}" class="mr-2 accent-yellow-500 w-3.5 h-3.5" ${isChecked}>
                         <span class="text-yellow-500 uppercase tracking-widest text-[9px]"><i class="fas fa-crown mr-1"></i> Capitán</span>
                     </label>
                 `;
 
                 roleSelectHTML = `
                     <div class="flex items-center gap-1.5 ml-2 sm:ml-4">
-                        <label class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Cambiar Rol:</label>
-                        <select onchange="handleMainRosterRoleChange('${roleKey}', this)" class="bg-[#0c0c0c] border border-gray-800 text-gray-300 text-[10px] font-bold uppercase py-0.5 px-1.5 rounded-lg focus:border-yellow-500 focus:outline-none cursor-pointer">
-                            <option value="TOP" ${roleKey === 'TOP' ? 'selected' : ''}>TOP</option>
-                            <option value="JG" ${roleKey === 'JG' ? 'selected' : ''}>JUNGLA</option>
-                            <option value="MID" ${roleKey === 'MID' ? 'selected' : ''}>MID</option>
-                            <option value="ADC" ${roleKey === 'ADC' ? 'selected' : ''}>ADC</option>
-                            <option value="SUPP" ${roleKey === 'SUPP' ? 'selected' : ''}>SOPORTE</option>
+                        <label class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Rol:</label>
+                        <select id="${prefix}_rol" class="bg-[#0c0c0c] border border-gray-800 text-gray-300 text-[10px] font-bold uppercase py-0.5 px-1.5 rounded-lg focus:border-yellow-500 focus:outline-none cursor-pointer">
+                            <option value="TOP" ${currentRole === 'TOP' ? 'selected' : ''}>TOP</option>
+                            <option value="JG" ${currentRole === 'JG' ? 'selected' : ''}>JUNGLA</option>
+                            <option value="MID" ${currentRole === 'MID' ? 'selected' : ''}>MID</option>
+                            <option value="ADC" ${currentRole === 'ADC' ? 'selected' : ''}>ADC</option>
+                            <option value="SUPP" ${currentRole === 'SUPP' ? 'selected' : ''}>SOPORTE</option>
                         </select>
                     </div>
                 `;
@@ -869,11 +845,12 @@
             html += `<div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl"><h3 class="text-sm font-black text-white uppercase tracking-widest mb-4"><i class="fas fa-gamepad text-yellow-500 mr-2"></i> Roster Titular</h3><div class="space-y-4">`;
             if(eq.roster) {
                 const cap = eq.capitan || '';
-                html += buildEditPlayerBlock('TOP', 'edit_TOP', eq.roster.TOP, false, false, cap === 'TOP');
-                html += buildEditPlayerBlock('JUNGLA', 'edit_JG', eq.roster.JG, false, false, cap === 'JG');
-                html += buildEditPlayerBlock('MID', 'edit_MID', eq.roster.MID, false, false, cap === 'MID');
-                html += buildEditPlayerBlock('ADC', 'edit_ADC', eq.roster.ADC, false, false, cap === 'ADC');
-                html += buildEditPlayerBlock('SOPORTE', 'edit_SUPP', eq.roster.SUPP, false, false, cap === 'SUPP');
+                const mainRoles = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+                const titles = { TOP: 'TOP', JG: 'JUNGLA', MID: 'MID', ADC: 'ADC', SUPP: 'SOPORTE' };
+                mainRoles.forEach((rol, i) => {
+                    const player = eq.roster[rol];
+                    html += buildEditPlayerBlock(titles[rol], `edit_titular_${i}`, player, false, false, cap === rol, rol);
+                });
             }
             html += `</div></div>`;
 
@@ -1193,13 +1170,33 @@
 
                 const nuevosReps = eqOriginal.representantes ? eqOriginal.representantes.map((r, i) => extractRep(`edit_rep_${i}`, r)) : [];
                 
-                const nuevoRoster = {
-                    TOP: extractPlayer('edit_TOP', eqOriginal.roster?.TOP, false, true), 
-                    JG: extractPlayer('edit_JG', eqOriginal.roster?.JG, false, true),
-                    MID: extractPlayer('edit_MID', eqOriginal.roster?.MID, false, true), 
-                    ADC: extractPlayer('edit_ADC', eqOriginal.roster?.ADC, false, true),
-                    SUPP: extractPlayer('edit_SUPP', eqOriginal.roster?.SUPP, false, true),
-                };
+                // Validar roles duplicados en el Roster Titular
+                const rolesSeleccionados = [];
+                for(let i = 0; i < 5; i++) {
+                    const elRol = document.getElementById(`edit_titular_${i}_rol`);
+                    if(elRol) {
+                        const rol = elRol.value;
+                        if(rolesSeleccionados.includes(rol)) {
+                            alert(`❌ ERROR: El rol "${rol}" está duplicado en el roster titular. Todos los jugadores titulares deben tener roles distintos.`);
+                            btn.innerHTML = '<i class="fas fa-save"></i> GUARDAR TODOS LOS CAMBIOS';
+                            btn.disabled = false;
+                            return;
+                        }
+                        rolesSeleccionados.push(rol);
+                    }
+                }
+
+                // Generar nuevo roster a partir del rol elegido en cada dropdown
+                const nuevoRoster = {};
+                const originalRosterByRole = eqOriginal.roster || {};
+                for(let i = 0; i < 5; i++) {
+                    const elRol = document.getElementById(`edit_titular_${i}_rol`);
+                    if(elRol) {
+                        const rol = elRol.value;
+                        const originalData = originalRosterByRole[rol];
+                        nuevoRoster[rol] = extractPlayer(`edit_titular_${i}`, originalData, false, true);
+                    }
+                }
 
                 const nuevosSubs = [];
                 for(let i=0; i<3; i++) {
@@ -1216,7 +1213,12 @@
                 }
 
                 const capitanRadio = document.querySelector('input[name="edit_capitan"]:checked');
-                const nuevoCapitan = capitanRadio ? capitanRadio.value : (eqOriginal.capitan || 'TOP');
+                let nuevoCapitan = eqOriginal.capitan || 'TOP';
+                if(capitanRadio) {
+                    const capIndex = capitanRadio.value.replace('titular_', '');
+                    const elRolCap = document.getElementById(`edit_titular_${capIndex}_rol`);
+                    if(elRolCap) nuevoCapitan = elRolCap.value;
+                }
 
                 const docRef = doc(db, "inscripciones_pendientes", id);
                 await updateDoc(docRef, { 
