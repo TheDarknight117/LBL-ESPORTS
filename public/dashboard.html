@@ -656,6 +656,30 @@
             document.getElementById('searchInput')?.addEventListener('input', aplicarFiltrosYOrden);
         }, 100);
 
+        window.swapRosterRoles = (fromRole, toRole) => {
+            const fields = ['nombre', 'riotId', 'ci', 'tel', 'mail', 'discordId', 'departamento', 'riotId2', 'region2'];
+            fields.forEach(field => {
+                const elFrom = document.getElementById(`edit_${fromRole}_${field}`);
+                const elTo = document.getElementById(`edit_${toRole}_${field}`);
+                if (elFrom && elTo) {
+                    const tempVal = elFrom.value;
+                    elFrom.value = elTo.value;
+                    elTo.value = tempVal;
+                }
+            });
+        };
+
+        window.handleMainRosterRoleChange = (fromRole, selectElement) => {
+            const toRole = selectElement.value;
+            if (fromRole === toRole) return;
+
+            if (confirm(`⚠️ ¿Intercambiar los roles de los jugadores entre ${fromRole} y ${toRole}?`)) {
+                window.swapRosterRoles(fromRole, toRole);
+                alert(`✅ Roles intercambiados correctamente en la interfaz.`);
+            }
+            selectElement.value = fromRole; // Resetear el select al valor nativo de la tarjeta
+        };
+
         const buildEditPlayerBlock = (title, prefix, p, isExtra = false, isSub = false, isCapitan = false) => {
             const player = p || { nombre: '', riotId: '', ci: '', tel: '', mail: '', discordId: '', departamento: '', rol_seleccionado: '' };
             const colorClass = isExtra ? (isSub ? "text-teal-400" : "text-rose-400") : "text-yellow-500";
@@ -703,6 +727,7 @@
             }
 
             let capitanHTML = '';
+            let roleSelectHTML = '';
             if (!isExtra) {
                 const roleKey = prefix.replace('edit_', '');
                 const isChecked = isCapitan ? 'checked' : '';
@@ -712,12 +737,28 @@
                         <span class="text-yellow-500 uppercase tracking-widest text-[9px]"><i class="fas fa-crown mr-1"></i> Capitán</span>
                     </label>
                 `;
+
+                roleSelectHTML = `
+                    <div class="flex items-center gap-1.5 ml-2 sm:ml-4">
+                        <label class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Cambiar Rol:</label>
+                        <select onchange="handleMainRosterRoleChange('${roleKey}', this)" class="bg-[#0c0c0c] border border-gray-800 text-gray-300 text-[10px] font-bold uppercase py-0.5 px-1.5 rounded-lg focus:border-yellow-500 focus:outline-none cursor-pointer">
+                            <option value="TOP" ${roleKey === 'TOP' ? 'selected' : ''}>TOP</option>
+                            <option value="JG" ${roleKey === 'JG' ? 'selected' : ''}>JUNGLA</option>
+                            <option value="MID" ${roleKey === 'MID' ? 'selected' : ''}>MID</option>
+                            <option value="ADC" ${roleKey === 'ADC' ? 'selected' : ''}>ADC</option>
+                            <option value="SUPP" ${roleKey === 'SUPP' ? 'selected' : ''}>SOPORTE</option>
+                        </select>
+                    </div>
+                `;
             }
 
             return `
             <div class="bg-[#111] p-4 rounded-xl border border-gray-800">
-                <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
-                    <h4 class="${colorClass} font-black text-sm uppercase tracking-widest">${title}</h4>
+                <div class="flex flex-wrap gap-2 justify-between items-center mb-3 border-b border-gray-800 pb-2">
+                    <div class="flex items-center gap-2">
+                        <h4 class="${colorClass} font-black text-sm uppercase tracking-widest">${title}</h4>
+                        ${roleSelectHTML}
+                    </div>
                     ${capitanHTML}
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
