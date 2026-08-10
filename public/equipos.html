@@ -129,6 +129,16 @@
         let todosLosEquipos = [];
         let tierActual = 'Tier 1';
         
+        const urlParams = new URLSearchParams(window.location.search);
+        const tierParam = urlParams.get('tier');
+        if (tierParam) {
+            if (tierParam.toLowerCase().includes('2')) {
+                tierActual = 'Tier 2';
+            } else if (tierParam.toLowerCase().includes('1')) {
+                tierActual = 'Tier 1';
+            }
+        }
+        
         const roleIcons = {
             'TOP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-top.svg',
             'JG': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-jungle.svg',
@@ -150,7 +160,7 @@
                     todosLosEquipos.push({ id: doc.id, ...data });
                 });
                 document.getElementById('loading-spinner').classList.add('hidden');
-                renderizarGrilla(tierActual);
+                cambiarTier(tierActual);
             } catch (error) {
                 console.error(error);
                 document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold">Error de conexión.</p>`;
