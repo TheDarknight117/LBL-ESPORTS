@@ -9,12 +9,12 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "assets/LBL Circular.png",
+      "src": "assets/logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "assets/LBL Circular.png",
+      "src": "assets/logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }
