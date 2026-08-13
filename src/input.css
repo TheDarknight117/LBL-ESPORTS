@@ -34,10 +34,13 @@
         height: 420px;
     }
 }
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .staff-accordion-wrap {
-        height: 320px;
-        gap: 0.5rem;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 280px !important;
+        gap: 0.35rem !important;
+        padding: 0 4px;
     }
 }
 
@@ -45,23 +48,25 @@
     height: 100% !important;
     min-height: 100% !important;
     clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-    transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                flex-basis 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                flex 0.75s cubic-bezier(0.22, 1, 0.36, 1), 
-                opacity 0.5s ease-out, 
-                border-color 0.4s ease-out, 
-                box-shadow 0.4s ease-out,
-                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                flex-basis 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                flex 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+                opacity 0.4s ease-out, 
+                border-color 0.3s ease-out, 
+                box-shadow 0.3s ease-out,
+                transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: width, flex, opacity;
 }
 @media (max-width: 768px) {
     .trapezoid-card {
-        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        clip-path: none !important;
+        border-radius: 0.875rem !important;
+        transform: translateZ(0); /* Aceleración por GPU en móvil */
     }
 }
 
 .exec-text-fade {
-    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .trapezoid-card-bg {

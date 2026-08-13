@@ -117,10 +117,13 @@
                 height: 420px;
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .staff-accordion-wrap {
-                height: 320px;
-                gap: 0.5rem;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 280px !important;
+                gap: 0.35rem !important;
+                padding: 0 4px;
             }
         }
 
@@ -128,23 +131,25 @@
             height: 100% !important;
             min-height: 100% !important;
             clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                        flex-basis 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                        flex 0.75s cubic-bezier(0.22, 1, 0.36, 1), 
-                        opacity 0.5s ease-out, 
-                        border-color 0.4s ease-out, 
-                        box-shadow 0.4s ease-out,
-                        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex-basis 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+                        opacity 0.4s ease-out, 
+                        border-color 0.3s ease-out, 
+                        box-shadow 0.3s ease-out,
+                        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: width, flex, opacity;
         }
         @media (max-width: 768px) {
             .trapezoid-card {
-                clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+                clip-path: none !important;
+                border-radius: 0.875rem !important;
+                transform: translateZ(0); /* Aceleración GPU en móvil */
             }
         }
 
         .exec-text-fade {
-            transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .trapezoid-card-bg {
@@ -686,6 +691,8 @@
         };
 
         function updateExecStateUI() {
+            const isMobile = window.innerWidth < 768;
+
             executivesData.forEach((exec, idx) => {
                 const card = document.getElementById(`exec-card-${idx}`);
                 const dot = document.getElementById(`exec-dot-${idx}`);
@@ -696,30 +703,50 @@
 
                 const isActive = idx === activeExecIndex;
 
-                if (activeExecIndex === -1) {
-                    // Estado 1: Todas acopladas uniformemente (72px cada una, nombre oculto)
-                    card.style.flex = '0 0 72px';
-                    card.style.width = '72px';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
-                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
-                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
-                } else if (isActive) {
-                    // Estado 2: Tarjeta Seleccionada Expandida (~320px, nombre visible con fade-in)
-                    card.style.flex = '0 0 320px';
-                    card.style.width = '320px';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
-                    if (icon) icon.className = `${exec.icon} text-5xl md:text-6xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
-                    if (title) title.className = "text-base md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-2 block";
+                if (isMobile) {
+                    // MÓVIL: Auto-distribución proporcional 100% contenida sin desborde
+                    if (activeExecIndex === -1) {
+                        card.style.flex = '1 1 0%';
+                        card.style.width = 'auto';
+                    } else if (isActive) {
+                        card.style.flex = '3.5 1 0%';
+                        card.style.width = 'auto';
+                    } else {
+                        card.style.flex = '0.7 1 0%';
+                        card.style.width = 'auto';
+                    }
                 } else {
-                    // Estado 2: Tarjetas Inactivas Condensadas (72px cada una, nombre oculto)
-                    card.style.flex = '0 0 72px';
-                    card.style.width = '72px';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-45 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-gray-700/60";
-                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
-                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    // ESCRITORIO: Dimensiones fijas solicitadas (72px / 320px)
+                    if (activeExecIndex === -1) {
+                        card.style.flex = '0 0 72px';
+                        card.style.width = '72px';
+                    } else if (isActive) {
+                        card.style.flex = '0 0 320px';
+                        card.style.width = '320px';
+                    } else {
+                        card.style.flex = '0 0 72px';
+                        card.style.width = '72px';
+                    }
+                }
+
+                if (activeExecIndex === -1) {
+                    // Estado 1: Todas acopladas uniformemente (nombre oculto)
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
+                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                } else if (isActive) {
+                    // Estado 2: Tarjeta Seleccionada Expandida (nombre visible con fade-in)
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    if (title) title.className = "text-sm md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-1 md:px-2 block";
+                } else {
+                    // Estado 2: Tarjetas Inactivas Condensadas (nombre oculto)
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-gray-700/60";
+                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
+                    if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 }
             });
 
@@ -765,6 +792,7 @@
             renderSponsorSlide(0);
             resetSponsorTimer();
             renderExecutives();
+            window.addEventListener('resize', updateExecStateUI);
 
             // Mostrar Staff View si está logueado
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
