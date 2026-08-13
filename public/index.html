@@ -88,25 +88,28 @@
         /* Estilos de Trapecio e Interactividad de la Directiva */
         .trapezoid-card {
             clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            transition: flex 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-                        flex-grow 0.85s cubic-bezier(0.22, 1, 0.36, 1), 
-                        opacity 0.55s ease-out, 
-                        border-color 0.45s ease-out, 
-                        box-shadow 0.45s ease-out,
-                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: flex 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex-grow 0.75s cubic-bezier(0.22, 1, 0.36, 1), 
+                        opacity 0.5s ease-out, 
+                        border-color 0.4s ease-out, 
+                        box-shadow 0.4s ease-out,
+                        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: flex-grow, flex, opacity;
             height: 100% !important;
-            min-height: 340px;
+            min-height: 380px;
+        }
+        #executives-accordion {
+            transition: max-width 0.75s cubic-bezier(0.22, 1, 0.36, 1), width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
         }
         @media (min-width: 768px) {
             .trapezoid-card {
-                min-height: 390px;
+                min-height: 400px;
             }
         }
         @media (max-width: 767px) {
             .trapezoid-card {
                 clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-                min-height: 300px;
+                min-height: 320px;
             }
         }
         
@@ -289,27 +292,27 @@
     <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
       
         <!-- Layout Principal: Acordeón de Trapecios Estrechos a la Izquierda + Texto a la Derecha -->
-        <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 w-full min-h-[360px]">
+        <div class="flex flex-col md:flex-row items-center justify-start gap-8 md:gap-14 w-full min-h-[380px]">
             
             <!-- Izquierda: Acordeón de Displays Trapezoidales Estrechos (6 Cajas) -->
-            <div id="executives-accordion" class="flex flex-row items-stretch gap-1.5 md:gap-2.5 h-[340px] md:h-[390px] w-full md:w-[35%] max-w-[420px] shrink-0 transition-all duration-500">
+            <div id="executives-accordion" class="flex flex-row items-stretch gap-1.5 md:gap-2 h-[360px] md:h-[400px] w-full max-w-[320px] md:max-w-[340px] shrink-0">
                 <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
             </div>
 
             <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
-            <div class="w-full md:w-[60%] flex flex-col justify-center text-left py-2 px-2 md:px-4">
+            <div class="flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-4 min-w-0">
                 <div id="exec-active-badge-container" class="mb-3">
-                    <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                    <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
                         CEO
                     </span>
                 </div>
                 
                 <h3 id="exec-active-name" class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-4 exec-text-fade">
-                    CEO
+                    NUESTRO STAFF
                 </h3>
                 
                 <p id="exec-active-desc" class="text-gray-300 text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
-                    CEO de la LBL
+                    Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.
                 </p>
             </div>
 
@@ -637,6 +640,17 @@
         };
 
         function updateExecStateUI() {
+            const accordion = document.getElementById('executives-accordion');
+            if (accordion) {
+                // En Estado 1 (acoplado), el contenedor mide max-w 320px para que cada trapecio sea super delgado (~48px)
+                // En Estado 2 (desplegado), el contenedor se expande a max-w 520px
+                if (activeExecIndex === -1) {
+                    accordion.style.maxWidth = '320px';
+                } else {
+                    accordion.style.maxWidth = '520px';
+                }
+            }
+
             executivesData.forEach((exec, idx) => {
                 const card = document.getElementById(`exec-card-${idx}`);
                 const dot = document.getElementById(`exec-dot-${idx}`);
@@ -648,26 +662,26 @@
                 const isActive = idx === activeExecIndex;
 
                 if (activeExecIndex === -1) {
-                    // Estado 1: Todos acoplados uniformemente sin desplegarse
+                    // Estado 1: Todos acoplados delgados (~48px cada uno)
                     card.style.flex = '1 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group h-full min-h-[340px] md:min-h-[390px]";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400/70 group-hover:bg-blue-400 group-hover:shadow-[0_0_8px_#60a5fa] transition-all";
-                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-3 transition-all duration-500 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)]`;
-                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group h-full";
+                    if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400/80 group-hover:bg-blue-400 group-hover:shadow-[0_0_8px_#60a5fa] transition-all";
+                    if (icon) icon.className = `${exec.icon} text-xl md:text-2xl mb-3 transition-all duration-500 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]`;
+                    if (title) title.className = "text-xs font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 } else if (isActive) {
-                    // Estado 2: Elemento Seleccionado Expandido
-                    card.style.flex = '3.5 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group h-full min-h-[340px] md:min-h-[390px]";
+                    // Estado 2: Elemento Seleccionado Expandido (~300px)
+                    card.style.flex = '5 1 0%';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group h-full";
                     if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
-                    if (icon) icon.className = `${exec.icon} text-3xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
                     if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0";
                 } else {
-                    // Estado 2: Elementos No Seleccionados Condensados
-                    card.style.flex = '0.5 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group h-full min-h-[340px] md:min-h-[390px]";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-gray-700/60";
-                    if (icon) icon.className = `${exec.icon} text-2xl md:text-3xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-500`;
-                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    // Estado 2: Elementos No Seleccionados Condensados (~32px)
+                    card.style.flex = '0.4 1 0%';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group h-full";
+                    if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-gray-700/60";
+                    if (icon) icon.className = `${exec.icon} text-lg md:text-xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-500`;
+                    if (title) title.className = "text-xs font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 }
             });
 
