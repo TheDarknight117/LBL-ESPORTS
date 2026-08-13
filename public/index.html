@@ -281,15 +281,15 @@
     <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
       
         <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha (Sin Box Global) -->
-        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full min-h-[380px]">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10 w-full min-h-[380px]">
             
-            <!-- Izquierda: Acordeón de Displays Trapezoidales (4 Cajas) -->
-            <div id="executives-accordion" class="flex flex-row gap-3 h-[320px] md:h-[400px] w-full lg:w-[55%] shrink-0 transition-all duration-500">
-                <!-- Se renderizan las 4 cajas trapezoidales dinámicamente -->
+            <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas) -->
+            <div id="executives-accordion" class="flex flex-row gap-2 md:gap-3 h-[320px] md:h-[400px] w-full md:w-[55%] shrink-0 transition-all duration-500">
+                <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
             </div>
 
             <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
-            <div class="w-full lg:w-[45%] flex flex-col justify-center text-left py-2 px-2 md:px-4">
+            <div class="w-full md:w-[42%] flex flex-col justify-center text-left py-2 px-2 md:px-4">
                 <div id="exec-active-badge-container" class="mb-3">
                     <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10">
                         CEO
@@ -642,9 +642,9 @@
                 if (activeExecIndex === -1) {
                     // Estado 1: Todos acoplados uniformemente sin desplegarse
                     card.style.flex = '1 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
-                    if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400/70 group-hover:bg-blue-400 group-hover:shadow-[0_0_8px_#60a5fa] transition-all";
+                    if (icon) icon.className = `${exec.icon} text-3xl md:text-5xl mb-3 transition-all duration-500 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)]`;
                     if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 } else if (isActive) {
                     // Estado 2: Elemento Seleccionado Expandido
