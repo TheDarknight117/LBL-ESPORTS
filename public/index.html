@@ -88,28 +88,18 @@
         /* Estilos de Trapecio e Interactividad de la Directiva */
         .trapezoid-card {
             clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            transition: flex 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                        flex-grow 0.75s cubic-bezier(0.22, 1, 0.36, 1), 
+            transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex-basis 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex 0.75s cubic-bezier(0.22, 1, 0.36, 1), 
                         opacity 0.5s ease-out, 
                         border-color 0.4s ease-out, 
                         box-shadow 0.4s ease-out,
                         transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: flex-grow, flex, opacity;
-            height: 100% !important;
-            min-height: 380px;
+            will-change: width, flex, opacity;
         }
-        #executives-accordion {
-            transition: max-width 0.75s cubic-bezier(0.22, 1, 0.36, 1), width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        @media (min-width: 768px) {
-            .trapezoid-card {
-                min-height: 400px;
-            }
-        }
-        @media (max-width: 767px) {
+        @media (max-width: 768px) {
             .trapezoid-card {
                 clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-                min-height: 320px;
             }
         }
         
@@ -291,19 +281,19 @@
     <!-- SECCIÓN DE DIRECTIVA Y STAFF EJECUTIVO -->
     <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
       
-        <!-- Layout Principal: Acordeón de Trapecios Estrechos a la Izquierda + Texto a la Derecha -->
-        <div class="flex flex-col md:flex-row items-center justify-start gap-8 md:gap-14 w-full min-h-[380px]">
+        <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha (Sin Box Global) -->
+        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full min-h-[420px]">
             
-            <!-- Izquierda: Acordeón de Displays Trapezoidales Estrechos (6 Cajas) -->
-            <div id="executives-accordion" class="flex flex-row items-stretch gap-1.5 md:gap-2 h-[360px] md:h-[400px] w-full max-w-[320px] md:max-w-[340px] shrink-0">
+            <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas de 72px a 320px) -->
+            <div id="executives-accordion" class="flex flex-row items-stretch gap-2.5 md:gap-3 h-[340px] md:h-[420px] w-full lg:w-auto shrink-0 transition-all duration-700 justify-center lg:justify-start">
                 <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
             </div>
 
             <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
-            <div class="flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-4 min-w-0">
+            <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-6">
                 <div id="exec-active-badge-container" class="mb-3">
                     <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
-                        CEO
+                        STAFF LBL
                     </span>
                 </div>
                 
@@ -538,7 +528,7 @@
                 id: 'ceo',
                 role: 'CEO & Fundador',
                 name: 'DARKCITO',
-                desc: 'Ingeniero Informático, Profesor y Creador de Contenido en Twitch. Impulsor principal y CEO de la LBL, dedicado a la gestión estratégica, liderazgo institucional y visión integral de la liga.',
+                desc: 'El CEO y fundador de esta gran competencia, fue el impulsor de este gran proyecto. Ingeniero Informático, Profesor y además creador de contenido en Twitch, ha dedicado su tiempo, pasión y visión a la gestión y coordinación integral de la LBL.',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-crown'
             },
@@ -546,7 +536,7 @@
                 id: 'coo',
                 role: 'COO - Operaciones',
                 name: 'LUICO',
-                desc: 'Ex-Jugador semiprofesional de League of Legends con amplia trayectoria en esports. Director de Operaciones (COO) en la LBL, encargado de la gestión logística, circuitos competitivos y coordinación técnica de Tier 1 y Tier 2.',
+                desc: 'Encargado de la gestión logística, estructuración del circuito competitivo y coordinación técnica de las ligas Tier 1 y Tier 2 de la LBL. Ex Jugador semi profesional de League of Legends y ahora parte de eseto proyecto.',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-chess-king'
             },
@@ -554,7 +544,7 @@
                 id: 'cfo',
                 role: 'CFO - Finanzas & Sponsors',
                 name: 'POL',
-                desc: 'Experto en relaciones comerciales, gestión de negocios y ex-Jefe de Comunicación Comercial en startups. Director Financiero (CFO) en la LBL, encargado de alianzas corporativas y patrocinadores oficiales del circuito.',
+                desc: 'Encargado de las alianzas comerciales con sponsors y patrocinadores oficiales que impulsan el circuito nacional. Experto en relaciones comerciales y gestión financiera.',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-chart-line'
             },
@@ -562,7 +552,7 @@
                 id: 'cco',
                 role: 'CCO - Comunicaciones',
                 name: 'REN NOROI',
-                desc: 'Estudiante de Ingeniería de Sistemas y locutor profesional. Director de Comunicaciones (CCO) y voz oficial de la LBL, encargado de la difusión estratégica, medios digitales y comunicación operativa de la liga.',
+                desc: 'Encargado de la comunicación operativa y difusión estratégica de la LBL en todas sus plataformas oficiales. Estudiante de Ing Sistemas y voz de locucion de la LBL',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-bullhorn'
             },
@@ -570,7 +560,7 @@
                 id: 'cdo',
                 role: 'CDO - Dirección Creativa',
                 name: 'ALIASELALEX',
-                desc: 'Diseñador Gráfico de profesión y especialista en branding visual. Director Creativo (CDO) de la LBL, mente artística a cargo de la identidad visual, dirección de arte y diseño gráfico oficial del circuito.',
+                desc: 'Diseñador Gráfico de profesión es la mente creativa encargada del desarrollo visual, identidad gráfica y dirección artística de la LBL.',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-palette'
             },
@@ -578,7 +568,7 @@
                 id: 'clo',
                 role: 'CLO - Asuntos Legales',
                 name: 'KETWI',
-                desc: 'Abogada de profesión y especialista en comunicación efectiva. Directora Legal (CLO) de la LBL, encargada del marco jurídico, redacción de reglamentos oficiales y gobernanza normativa de la liga.',
+                desc: 'Abogada de profesión, encargada de la regulación de aspectos legales y redaccion de normativas de la liga, ademas de comunicadora efectiva de la LBL.',
                 image: '', // Placeholder trapezoidal interactivo
                 icon: 'fas fa-scale-balanced'
             }
@@ -640,17 +630,6 @@
         };
 
         function updateExecStateUI() {
-            const accordion = document.getElementById('executives-accordion');
-            if (accordion) {
-                // En Estado 1 (acoplado), el contenedor mide max-w 320px para que cada trapecio sea super delgado (~48px)
-                // En Estado 2 (desplegado), el contenedor se expande a max-w 520px
-                if (activeExecIndex === -1) {
-                    accordion.style.maxWidth = '320px';
-                } else {
-                    accordion.style.maxWidth = '520px';
-                }
-            }
-
             executivesData.forEach((exec, idx) => {
                 const card = document.getElementById(`exec-card-${idx}`);
                 const dot = document.getElementById(`exec-dot-${idx}`);
@@ -662,26 +641,29 @@
                 const isActive = idx === activeExecIndex;
 
                 if (activeExecIndex === -1) {
-                    // Estado 1: Todos acoplados delgados (~48px cada uno)
-                    card.style.flex = '1 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group h-full";
-                    if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400/80 group-hover:bg-blue-400 group-hover:shadow-[0_0_8px_#60a5fa] transition-all";
-                    if (icon) icon.className = `${exec.icon} text-xl md:text-2xl mb-3 transition-all duration-500 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]`;
-                    if (title) title.className = "text-xs font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    // Estado 1: Todas acopladas uniformemente (72px cada una, nombre oculto)
+                    card.style.flex = '0 0 72px';
+                    card.style.width = '72px';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
+                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 } else if (isActive) {
-                    // Estado 2: Elemento Seleccionado Expandido (~300px)
-                    card.style.flex = '5 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group h-full";
+                    // Estado 2: Tarjeta Seleccionada Expandida (~320px, nombre visible con fade-in)
+                    card.style.flex = '0 0 320px';
+                    card.style.width = '320px';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
                     if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
-                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
-                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0";
+                    if (icon) icon.className = `${exec.icon} text-5xl md:text-6xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    if (title) title.className = "text-base md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-2 block";
                 } else {
-                    // Estado 2: Elementos No Seleccionados Condensados (~32px)
-                    card.style.flex = '0.4 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group h-full";
-                    if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-gray-700/60";
-                    if (icon) icon.className = `${exec.icon} text-lg md:text-xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-500`;
-                    if (title) title.className = "text-xs font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    // Estado 2: Tarjetas Inactivas Condensadas (72px cada una, nombre oculto)
+                    card.style.flex = '0 0 72px';
+                    card.style.width = '72px';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-45 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-gray-700/60";
+                    if (icon) icon.className = `${exec.icon} text-3xl md:text-4xl mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
+                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 }
             });
 
