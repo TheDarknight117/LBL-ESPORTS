@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LBL 2026 | Liga Boliviana de League of Legends</title>
+    <title>LBL Esports | Liga Boliviana de League of Legends</title>
     <meta name="description" content="Somos Pasión, Somos Competicion, Somos la Liga Boliviana de LOL">
     <meta name="keywords" content="LBL, League of Legends, Bolivia, Esports, Torneo, LOL, Liga Boliviana">
     
@@ -83,6 +83,27 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        /* Estilos de Trapecio e Interactividad de la Directiva */
+        .trapezoid-card {
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+            transition: flex 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                        flex-grow 0.85s cubic-bezier(0.22, 1, 0.36, 1), 
+                        opacity 0.55s ease-out, 
+                        border-color 0.45s ease-out, 
+                        box-shadow 0.45s ease-out,
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: flex-grow, flex, opacity;
+        }
+        @media (max-width: 768px) {
+            .trapezoid-card {
+                clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+            }
+        }
+        
+        .exec-text-fade {
+            transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         /* Carrusel Infinito */
@@ -253,6 +274,37 @@
                 <button onclick="setSponsorSlide(1)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button>
                 <!-- <button onclick="setSponsorSlide(2)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button> -->
             </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE DIRECTIVA Y STAFF EJECUTIVO -->
+    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
+      
+        <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha (Sin Box Global) -->
+        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full min-h-[380px]">
+            
+            <!-- Izquierda: Acordeón de Displays Trapezoidales (4 Cajas) -->
+            <div id="executives-accordion" class="flex flex-row gap-3 h-[320px] md:h-[400px] w-full lg:w-[55%] shrink-0 transition-all duration-500">
+                <!-- Se renderizan las 4 cajas trapezoidales dinámicamente -->
+            </div>
+
+            <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
+            <div class="w-full lg:w-[45%] flex flex-col justify-center text-left py-2 px-2 md:px-4">
+                <div id="exec-active-badge-container" class="mb-3">
+                    <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                        CEO
+                    </span>
+                </div>
+                
+                <h3 id="exec-active-name" class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-4 exec-text-fade">
+                    CEO
+                </h3>
+                
+                <p id="exec-active-desc" class="text-gray-300 text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
+                    CEO de la LBL
+                </p>
+            </div>
+
         </div>
     </section>
 
@@ -469,9 +521,190 @@
             sponsorInterval = setInterval(nextSponsorSlide, 6000);
         }
 
+        // DATOS DE LA DIRECTIVA Y STAFF EJECUTIVO
+        const executivesData = [
+            {
+                id: 'ceo',
+                role: 'CEO & Fundador',
+                name: 'DARKCITO',
+                desc: 'Ingeniero Informático, Profesor y Creador de Contenido en Twitch. Impulsor principal y CEO de la LBL, dedicado a la gestión estratégica, liderazgo institucional y visión integral de la liga.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-crown'
+            },
+            {
+                id: 'coo',
+                role: 'COO - Operaciones',
+                name: 'LUICO',
+                desc: 'Ex-Jugador semiprofesional de League of Legends con amplia trayectoria en esports. Director de Operaciones (COO) en la LBL, encargado de la gestión logística, circuitos competitivos y coordinación técnica de Tier 1 y Tier 2.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-chess-king'
+            },
+            {
+                id: 'cfo',
+                role: 'CFO - Finanzas & Sponsors',
+                name: 'POL',
+                desc: 'Experto en relaciones comerciales, gestión de negocios y ex-Jefe de Comunicación Comercial en startups. Director Financiero (CFO) en la LBL, encargado de alianzas corporativas y patrocinadores oficiales del circuito.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-chart-line'
+            },
+            {
+                id: 'cco',
+                role: 'CCO - Comunicaciones',
+                name: 'REN NOROI',
+                desc: 'Estudiante de Ingeniería de Sistemas y locutor profesional. Director de Comunicaciones (CCO) y voz oficial de la LBL, encargado de la difusión estratégica, medios digitales y comunicación operativa de la liga.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-bullhorn'
+            },
+            {
+                id: 'cdo',
+                role: 'CDO - Dirección Creativa',
+                name: 'ALIASELALEX',
+                desc: 'Diseñador Gráfico de profesión y especialista en branding visual. Director Creativo (CDO) de la LBL, mente artística a cargo de la identidad visual, dirección de arte y diseño gráfico oficial del circuito.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-palette'
+            },
+            {
+                id: 'clo',
+                role: 'CLO - Asuntos Legales',
+                name: 'KETWI',
+                desc: 'Abogada de profesión y especialista en comunicación efectiva. Directora Legal (CLO) de la LBL, encargada del marco jurídico, redacción de reglamentos oficiales y gobernanza normativa de la liga.',
+                image: '', // Placeholder trapezoidal interactivo
+                icon: 'fas fa-scale-balanced'
+            }
+        ];
+
+        let activeExecIndex = -1; // -1: Estado 1 Predeterminado ("NUESTRO STAFF")
+
+        function renderExecutives() {
+            const container = document.getElementById('executives-accordion');
+            if (!container) return;
+
+            let html = '';
+            executivesData.forEach((exec, idx) => {
+                const mediaHTML = exec.image ? `
+                    <img src="${exec.image}" alt="${exec.name}" class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105" draggable="false">
+                ` : `
+                    <div class="w-full h-full bg-gradient-to-b from-blue-950/60 via-black/80 to-black flex flex-col items-center justify-center p-4 text-center relative overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-[35px] opacity-30 bg-blue-500"></div>
+                        <i id="exec-icon-${idx}" class="${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700"></i>
+                    </div>
+                `;
+
+                html += `
+                    <div id="exec-card-${idx}" 
+                         onclick="selectExecutive(${idx})" 
+                         class="trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border flex flex-col justify-between group">
+                        
+                        <!-- Display de la Imagen / Placeholder -->
+                        <div class="w-full h-full absolute inset-0 -z-10 transition-opacity duration-700">
+                            ${mediaHTML}
+                        </div>
+
+                        <!-- Capa de Gradiente Oscuro -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none"></div>
+
+                        <!-- Encabezado de la Tarjeta Trapecio (Luz Indicadora sin Etiqueta de Rol) -->
+                        <div class="p-3 md:p-4 relative z-10 flex justify-end items-center">
+                            <div id="exec-dot-${idx}" class="w-2.5 h-2.5 rounded-full transition-all duration-500"></div>
+                        </div>
+
+                        <!-- Pie de la Tarjeta (Nombre) -->
+                        <div class="p-3 md:p-4 relative z-10">
+                            <h4 id="exec-title-${idx}" class="text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none group-hover:translate-x-1 transition-all duration-500 truncate">
+                                ${exec.name}
+                            </h4>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            updateExecStateUI();
+        }
+
+        window.selectExecutive = (index) => {
+            // Si hace clic en la tarjeta ya seleccionada, vuelve al Estado 1 ("NUESTRO STAFF")
+            activeExecIndex = (activeExecIndex === index) ? -1 : index;
+            updateExecStateUI();
+        };
+
+        function updateExecStateUI() {
+            executivesData.forEach((exec, idx) => {
+                const card = document.getElementById(`exec-card-${idx}`);
+                const dot = document.getElementById(`exec-dot-${idx}`);
+                const icon = document.getElementById(`exec-icon-${idx}`);
+                const title = document.getElementById(`exec-title-${idx}`);
+
+                if (!card) return;
+
+                const isActive = idx === activeExecIndex;
+
+                if (activeExecIndex === -1) {
+                    // Estado 1: Todos acoplados uniformemente sin desplegarse
+                    card.style.flex = '1 1 0%';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                } else if (isActive) {
+                    // Estado 2: Elemento Seleccionado Expandido
+                    card.style.flex = '4.5 1 0%';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0";
+                } else {
+                    // Estado 2: Elementos No Seleccionados Condensados
+                    card.style.flex = '0.8 1 0%';
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-gray-700/60";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-500`;
+                    if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                }
+            });
+
+            updateExecDetailInfo();
+        }
+
+        function updateExecDetailInfo() {
+            const nameEl = document.getElementById('exec-active-name');
+            const descEl = document.getElementById('exec-active-desc');
+            const roleEl = document.getElementById('exec-active-role');
+
+            if (!nameEl || !descEl || !roleEl) return;
+
+            nameEl.style.opacity = '0';
+            descEl.style.opacity = '0';
+            nameEl.style.transform = 'translateX(16px)';
+            descEl.style.transform = 'translateX(16px)';
+
+            setTimeout(() => {
+                if (activeExecIndex === -1) {
+                    // Texto del Estado 1 Predeterminado
+                    roleEl.innerText = '';
+                    roleEl.className = 'hidden';
+                    nameEl.innerText = 'NUESTRO STAFF';
+                    descEl.innerText = 'Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.';
+                } else {
+                    // Texto del Estado 2 (Miembro Seleccionado)
+                    const exec = executivesData[activeExecIndex];
+                    roleEl.innerText = exec.role;
+                    roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 inline-block';
+                    nameEl.innerText = exec.name;
+                    descEl.innerText = exec.desc;
+                }
+
+                nameEl.style.opacity = '1';
+                descEl.style.opacity = '1';
+                nameEl.style.transform = 'translateX(0)';
+                descEl.style.transform = 'translateX(0)';
+            }, 180);
+        }
+
         window.addEventListener('load', () => {
             renderSponsorSlide(0);
             resetSponsorTimer();
+            renderExecutives();
 
             // Mostrar Staff View si está logueado
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
