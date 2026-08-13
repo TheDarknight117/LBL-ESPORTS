@@ -95,10 +95,18 @@
                         box-shadow 0.45s ease-out,
                         transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: flex-grow, flex, opacity;
+            height: 100% !important;
+            min-height: 360px;
         }
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
+            .trapezoid-card {
+                min-height: 420px;
+            }
+        }
+        @media (max-width: 767px) {
             .trapezoid-card {
                 clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+                min-height: 320px;
             }
         }
         
@@ -284,7 +292,7 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10 w-full min-h-[380px]">
             
             <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas) -->
-            <div id="executives-accordion" class="flex flex-row gap-2 md:gap-3 h-[320px] md:h-[400px] w-full md:w-[55%] shrink-0 transition-all duration-500">
+            <div id="executives-accordion" class="flex flex-row items-stretch gap-2 md:gap-3 h-[360px] md:h-[420px] w-full md:w-[58%] shrink-0 transition-all duration-500">
                 <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
             </div>
 
@@ -642,21 +650,21 @@
                 if (activeExecIndex === -1) {
                     // Estado 1: Todos acoplados uniformemente sin desplegarse
                     card.style.flex = '1 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500/30 hover:border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] opacity-90 hover:opacity-100 scale-100 flex flex-col justify-between group h-full min-h-[360px] md:min-h-[420px]";
                     if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400/70 group-hover:bg-blue-400 group-hover:shadow-[0_0_8px_#60a5fa] transition-all";
                     if (icon) icon.className = `${exec.icon} text-3xl md:text-5xl mb-3 transition-all duration-500 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)]`;
                     if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                 } else if (isActive) {
                     // Estado 2: Elemento Seleccionado Expandido
                     card.style.flex = '4.5 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group h-full min-h-[360px] md:min-h-[420px]";
                     if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
                     if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
                     if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0";
                 } else {
                     // Estado 2: Elementos No Seleccionados Condensados
                     card.style.flex = '0.8 1 0%';
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-75 scale-[0.98] flex flex-col justify-between group h-full min-h-[360px] md:min-h-[420px]";
                     if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-gray-700/60";
                     if (icon) icon.className = `${exec.icon} text-4xl md:text-5xl mb-3 transition-all duration-700 group-hover:scale-110 text-gray-500`;
                     if (title) title.className = "text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
