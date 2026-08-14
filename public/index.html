@@ -146,6 +146,15 @@
                 border-radius: 0.875rem !important;
                 transform: translateZ(0); /* Aceleración GPU en móvil */
             }
+        .card-bottom-vignette {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0.15) 75%, transparent 100%) !important;
+            pointer-events: none;
+            z-index: 2;
         }
 
         .exec-text-fade {
@@ -589,48 +598,54 @@
                 id: 'ceo',
                 role: 'CEO & Fundador',
                 name: 'DARKCITO',
-                desc: 'Ingeniero Informático, Profesor y Creador de Contenido en Twitch. Impulsor principal y CEO de la LBL, dedicado a la gestión estratégica, liderazgo institucional y visión integral de la liga.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Ingeniero Informático, Profesor y Creador de Contenido en Twitch.',
+                desc: 'Fundador y CEO de la LBL, dedicado a la gestión tecnológica, líder institucional y desarrollo de la liga.',
+                image: 'assets/icons staff/darkcito.png',
                 icon: 'fas fa-crown'
             },
             {
                 id: 'coo',
                 role: 'COO - Operaciones',
                 name: 'LUICO',
-                desc: 'Ex-Jugador semiprofesional de League of Legends con amplia trayectoria en esports. Director de Operaciones (COO) en la LBL, encargado de la gestión logística, circuitos competitivos y coordinación técnica de Tier 1 y Tier 2.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Ex-Jugador semiprofesional de League of Legends con amplia trayectoria en esports.',
+                desc: 'Director de Operaciones (COO) en la LBL, encargado de la gestión logística, circuitos competitivos y coordinación técnica de Tier 1 y Tier 2.',
+                image: 'assets/icons staff/luico.png',
                 icon: 'fas fa-chess-king'
             },
             {
                 id: 'cfo',
                 role: 'CFO - Finanzas & Sponsors',
                 name: 'POL',
-                desc: 'Experto en relaciones comerciales, gestión de negocios y ex-Jefe de Comunicación Comercial en startups. Director Financiero (CFO) en la LBL, encargado de alianzas corporativas y patrocinadores oficiales del circuito.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Experto en relaciones comerciales, gestión de negocios y ex-Jefe de Comunicación Comercial.',
+                desc: 'Director Financiero (CFO) en la LBL, encargado de alianzas corporativas y patrocinadores oficiales del circuito.',
+                image: 'assets/icons staff/Pol.png',
                 icon: 'fas fa-chart-line'
             },
             {
                 id: 'cco',
                 role: 'CCO - Comunicaciones',
                 name: 'REN NOROI',
-                desc: 'Estudiante de Ingeniería de Sistemas y locutor profesional. Director de Comunicaciones (CCO) y voz oficial de la LBL, encargado de la difusión estratégica, medios digitales y comunicación operativa de la liga.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Estudiante de Ingeniería de Sistemas y locutor profesional.',
+                desc: 'Director de Comunicaciones (CCO) y voz oficial de la LBL, encargado de la difusión estratégica, medios digitales y comunicación operativa de la liga.',
+                image: 'assets/icons staff/ren noroi.png',
                 icon: 'fas fa-bullhorn'
             },
             {
                 id: 'cdo',
                 role: 'CDO - Dirección Creativa',
                 name: 'ALIASELALEX',
-                desc: 'Diseñador Gráfico de profesión y especialista en branding visual. Director Creativo (CDO) de la LBL, mente artística a cargo de la identidad visual, dirección de arte y diseño gráfico oficial del circuito.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Diseñador Gráfico de profesión y especialista en branding visual.',
+                desc: 'Director Creativo (CDO) de la LBL, mente artística a cargo de la identidad visual, dirección de arte y diseño gráfico oficial del circuito.',
+                image: 'assets/icons staff/aliaselalex.png',
                 icon: 'fas fa-palette'
             },
             {
                 id: 'clo',
                 role: 'CLO - Asuntos Legales',
                 name: 'KETWI',
-                desc: 'Abogada de profesión y especialista en comunicación efectiva. Directora Legal (CLO) de la LBL, encargada del marco jurídico, redacción de reglamentos oficiales y gobernanza normativa de la liga.',
-                image: '', // Placeholder trapezoidal interactivo
+                background: 'Abogada de profesión y especialista en comunicación efectiva.',
+                desc: 'Directora Legal (CLO) de la LBL, encargada del marco jurídico, redacción de reglamentos oficiales y gobernanza normativa de la liga.',
+                image: 'assets/icons staff/ketwi2.png',
                 icon: 'fas fa-scale-balanced'
             }
         ];
@@ -644,7 +659,11 @@
             let html = '';
             executivesData.forEach((exec, idx) => {
                 const mediaHTML = exec.image ? `
-                    <img src="${exec.image}" alt="${exec.name}" class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105" draggable="false">
+                    <img id="exec-img-${idx}" 
+                         src="${exec.image}?v=${Date.now()}" 
+                         alt="${exec.name}" 
+                         class="w-full h-full object-cover object-center transition-all duration-700 ease-out" 
+                         draggable="false">
                 ` : `
                     <div class="trapezoid-card-bg">
                         <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-[35px] opacity-30 bg-blue-500 pointer-events-none"></div>
@@ -657,22 +676,20 @@
                          onclick="selectExecutive(${idx})" 
                          class="trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border flex flex-col justify-between group">
                         
-                        <!-- Display de la Imagen / Placeholder -->
-                        <div class="w-full h-full absolute inset-0 -z-10 transition-opacity duration-700">
+                        <!-- Display de la Imagen con fondo oscuro y viñeta inferior integrada -->
+                        <div class="w-full h-full absolute inset-0 -z-10 bg-black overflow-hidden pointer-events-none">
                             ${mediaHTML}
+                            <div class="card-bottom-vignette"></div>
                         </div>
 
-                        <!-- Capa de Gradiente Oscuro -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none"></div>
-
-                        <!-- Encabezado de la Tarjeta Trapecio (Luz Indicadora sin Etiqueta de Rol) -->
+                        <!-- Encabezado de la Tarjeta Trapecio (Luz Indicadora en la esquina superior) -->
                         <div class="p-3 md:p-4 relative z-10 flex justify-end items-center">
-                            <div id="exec-dot-${idx}" class="w-2.5 h-2.5 rounded-full transition-all duration-500"></div>
+                            <div id="exec-dot-${idx}" class="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full transition-all duration-500"></div>
                         </div>
 
                         <!-- Pie de la Tarjeta (Nombre) -->
-                        <div class="p-3 md:p-4 relative z-10">
-                            <h4 id="exec-title-${idx}" class="text-sm md:text-lg font-black text-white uppercase tracking-tight leading-none group-hover:translate-x-1 transition-all duration-500 truncate">
+                        <div class="p-3 md:p-4 relative z-10 w-full">
+                            <h4 id="exec-title-${idx}" class="text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none group-hover:translate-x-1 transition-all duration-500 truncate drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                                 ${exec.name}
                             </h4>
                         </div>
@@ -698,6 +715,7 @@
                 const dot = document.getElementById(`exec-dot-${idx}`);
                 const icon = document.getElementById(`exec-icon-${idx}`);
                 const title = document.getElementById(`exec-title-${idx}`);
+                const img = document.getElementById(`exec-img-${idx}`);
 
                 if (!card) return;
 
@@ -731,22 +749,25 @@
 
                 if (activeExecIndex === -1) {
                     // Estado 1: Todas acopladas uniformemente (nombre oculto)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/40 opacity-75 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/50 opacity-85 hover:opacity-100 scale-100 flex flex-col justify-between group";
                     if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
                     if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-100 filter brightness-90 contrast-100 group-hover:scale-105 group-hover:brightness-100";
                 } else if (isActive) {
-                    // Estado 2: Tarjeta Seleccionada Expandida (nombre visible con fade-in)
+                    // Estado 2: Tarjeta Seleccionada Expandida (nombre visible con fade-in y zoom de imagen)
                     card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
                     if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
                     if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
-                    if (title) title.className = "text-sm md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-1 md:px-2 block";
+                    if (title) title.className = "text-sm md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-1 md:px-2 block drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]";
+                    if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-110 filter brightness-105 contrast-105";
                 } else {
-                    // Estado 2: Tarjetas Inactivas Condensadas (nombre oculto)
+                    // Estado 2: Tarjetas Inactivas Condensadas (nombre oculto y atenuación)
                     card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
                     if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-gray-700/60";
                     if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
+                    if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-95 filter brightness-60 contrast-95 group-hover:scale-100 group-hover:brightness-90";
                 }
             });
 
@@ -771,14 +792,17 @@
                     roleEl.innerText = '';
                     roleEl.className = 'hidden';
                     nameEl.innerText = 'NUESTRO STAFF';
-                    descEl.innerText = 'Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.';
+                    descEl.innerHTML = '<span class="text-gray-300 text-sm md:text-base font-medium leading-relaxed block">Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.</span>';
                 } else {
-                    // Texto del Estado 2 (Miembro Seleccionado)
+                    // Texto del Estado 2 (Miembro Seleccionado con salto de línea)
                     const exec = executivesData[activeExecIndex];
                     roleEl.innerText = exec.role;
                     roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 inline-block';
                     nameEl.innerText = exec.name;
-                    descEl.innerText = exec.desc;
+                    descEl.innerHTML = `
+                        <span class="block text-gray-200 text-sm md:text-base font-medium leading-relaxed mb-3">${exec.background}</span>
+                        <span class="block text-gray-400 text-xs md:text-sm font-normal leading-relaxed">${exec.desc}</span>
+                    `;
                 }
 
                 nameEl.style.opacity = '1';
