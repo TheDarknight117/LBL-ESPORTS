@@ -194,6 +194,10 @@
             mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
             -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         }
+
+        @keyframes shimmer { 
+            100% { transform: translateX(100%); } 
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-grid relative min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
@@ -428,9 +432,6 @@
         </div>
     </div>
 
-    <style>
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-    </style>
     <script>
         function abrirAdvertencia() {
             const modal = document.getElementById('scouting-modal');
