@@ -230,7 +230,14 @@
             Temporada Oficial 2026
         </div>
 
-        <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" class="h-48 md:h-64 w-auto object-contain mb-8 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
+        <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" class="h-48 md:h-64 w-auto object-contain mb-6 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
+
+        <!-- BOTÓN DESCARGAR APLICACIÓN (PWA INSTALL) -->
+        <div class="mb-8 fade-in-up flex justify-center" style="animation-delay: 0.25s;">
+            <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer">
+                DESCARGAR APLICACIÓN
+            </button>
+        </div>
 
         <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
             LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
@@ -828,8 +835,48 @@
         });
     </script>
     
-    <!-- Register Service Worker for PWA -->
+    <!-- PWA Install & Service Worker Logic -->
     <script>
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            console.log('LBL PWA instalada exitosamente');
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) {
+                btn.innerText = 'APLICACIÓN INSTALADA';
+                btn.className = "px-6 py-2.5 rounded-full bg-emerald-950/40 text-emerald-300 border border-emerald-500/40 font-black text-xs md:text-sm tracking-wider uppercase";
+            }
+        });
+
+        window.installPWA = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('Usuario aceptó instalar la PWA');
+                }
+                deferredPrompt = null;
+            } else {
+                // Modo alternativo si el navegador no tiene soporte directo para prompt JS (ej: iOS Safari)
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert('📱 Para instalar en tu iPhone/iPad:\n\n1. Toca el botón Compartir ⎋ (abajo en Safari)\n2. Selecciona "Agregar a inicio ⊞"');
+                } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                    alert('✅ ¡Ya tienes instalada la aplicación LBL Esports!');
+                } else {
+                    alert('📲 Para instalar la app:\nHaz clic en el ícono de instalación (⊕ o 📲) en la barra de direcciones de tu navegador.');
+                }
+            }
+        };
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
