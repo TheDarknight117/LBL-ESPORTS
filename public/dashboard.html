@@ -459,6 +459,7 @@
         import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "./auditoria-core.js";
+        import { getStaffNick, formatStaffAuthor } from "./staff-config.js";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -474,7 +475,7 @@
                 loginScreen.classList.add('hidden');
                 dashboardContent.classList.remove('hidden');
                 dashboardContent.classList.add('flex');
-                document.getElementById('user-display').innerText = `Sesión: ${user.email}`;
+                document.getElementById('user-display').innerText = `Sesión: ${getStaffNick(user.email)}`;
                 localStorage.setItem('lbl_staff_logged_in', 'true');
                 
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
@@ -999,7 +1000,7 @@
             const container = document.getElementById('notif-list-container');
             const staffLabel = document.getElementById('notif-staff-label');
             const countText = document.getElementById('notif-count-text');
-            if (staffLabel) staffLabel.innerText = `Staff: ${auth.currentUser?.email || 'Admin'}`;
+            if (staffLabel) staffLabel.innerText = `Staff: ${getStaffNick(auth.currentUser?.email)}`;
 
             const readSet = getReadNotifsSet();
             
@@ -1042,6 +1043,8 @@
                     ? `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-staff-pill flex items-center gap-1 shrink-0"><i class="fas fa-shield-alt text-[7px]"></i> STAFF</span>`
                     : `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-team-pill flex items-center gap-1 shrink-0"><i class="fas fa-crown text-[7px]"></i> TEAM</span>`;
 
+                const autorMostrado = autorTipo === 'STAFF' ? formatStaffAuthor(ev.autor) : ev.autor;
+
                 let resumenCambios = '';
                 if (Array.isArray(ev.cambios)) {
                     ev.cambios.slice(0, 3).forEach(c => {
@@ -1061,7 +1064,7 @@
                                     <h4 class="text-xs font-black text-white truncate tracking-wide">${ev.equipoNombre}</h4>
                                     <div class="flex items-center gap-1.5 mt-0.5">
                                         ${badgeTipo}
-                                        <span class="text-[9px] text-gray-400 font-medium truncate">${ev.autor}</span>
+                                        <span class="text-[9px] text-gray-400 font-medium truncate">${autorMostrado}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1543,8 +1546,10 @@
                     
                     const autorTipo = ev.autorTipo || (ev.autor && ev.autor.toLowerCase().includes('staff') ? 'STAFF' : 'TEAM');
                     const badgeAutor = autorTipo === 'STAFF' 
-                        ? `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase bg-red-950/70 text-red-300 border border-red-500/40 flex items-center gap-1"><i class="fas fa-shield-alt text-[7px]"></i> MODIFICACIÓN POR STAFF</span>`
-                        : `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase bg-amber-950/70 text-amber-300 border border-amber-500/40 flex items-center gap-1"><i class="fas fa-crown text-[7px]"></i> MODIFICACIÓN POR EQUIPO</span>`;
+                        ? `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-staff-pill flex items-center gap-1"><i class="fas fa-shield-alt text-[7px]"></i> MODIFICACIÓN POR STAFF</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-team-pill flex items-center gap-1"><i class="fas fa-crown text-[7px]"></i> MODIFICACIÓN POR EQUIPO</span>`;
+
+                    const autorMostrado = autorTipo === 'STAFF' ? formatStaffAuthor(ev.autor) : ev.autor;
 
                     let cambiosHTML = '';
                     if (Array.isArray(ev.cambios)) {
@@ -1587,7 +1592,7 @@
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-800 pb-2.5">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="w-6 h-6 rounded-full bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-black">#${auditCount - evIdx}</span>
-                                    <span class="text-xs font-black text-white uppercase">${ev.autor}</span>
+                                    <span class="text-xs font-black text-white uppercase">${autorMostrado}</span>
                                     ${badgeAutor}
                                 </div>
                                 <span class="text-[10px] text-gray-500 font-bold"><i class="fas fa-clock mr-1"></i> ${fechaFormat}</span>
@@ -1843,7 +1848,7 @@
                 };
 
                 const staffEmail = auth.currentUser?.email || 'Staff LBL';
-                const autorTag = `Staff (${staffEmail})`;
+                const autorTag = formatStaffAuthor(staffEmail);
                 const auditoria = procesarAuditoriaEquipo(eqOriginal, datosNuevos, autorTag, equiposLocales, 'STAFF');
 
                 const payload = {
