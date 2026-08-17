@@ -102,25 +102,36 @@
                 <i class="fas fa-times"></i>
             </button>
 
-            <div id="modal-header" class="p-6 md:p-8 border-b border-gray-800 flex items-center gap-6 shrink-0 relative overflow-hidden rounded-t-3xl">
+            <div id="modal-header" class="p-6 md:p-8 border-b border-gray-800 flex flex-col md:flex-row items-start md:items-center gap-6 shrink-0 relative overflow-hidden rounded-t-3xl">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent -z-10"></div>
-                <img id="modal-logo" src="" class="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-xl bg-black/50 p-2 border border-gray-800">
-                <div class="w-full">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span id="modal-tier" class="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 uppercase">Tier</span>
+                <img id="modal-logo" src="" class="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-xl bg-black/50 p-2 border border-gray-800 shrink-0">
+                <div class="w-full min-w-0">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <span id="modal-tier" class="text-[10px] font-black tracking-widest px-2.5 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 uppercase">Tier</span>
+                        <span id="modal-tag" class="text-[10px] font-black tracking-widest px-2.5 py-0.5 rounded bg-gray-800 text-gray-300 uppercase">TAG</span>
                     </div>
-                    <h2 id="modal-name" class="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white mb-3">Nombre</h2>
+                    <h2 id="modal-name" class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white mb-2 truncate">Nombre</h2>
                     
-                    <div id="modal-rep" class="flex flex-wrap gap-2 mb-3">
-                        </div>
+                    <div id="modal-rep" class="flex flex-wrap gap-2 mb-2"></div>
+                    <div id="modal-socials" class="flex flex-wrap gap-2 mb-3"></div>
 
-                    <div id="modal-socials" class="flex gap-3">
+                    <!-- LAYER ESTILO LIQUIPEDIA: MOVIMIENTOS & FICHAJES RECIENTES -->
+                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-1.5 pt-2.5 border-t border-gray-800/80 w-full">
+                        <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-gray-400">
+                            <span class="flex items-center gap-1.5 text-cyan-400">
+                                <i class="fas fa-arrow-right-arrow-left"></i> Movimientos Recientes (Liquipedia)
+                            </span>
+                            <span id="modal-moves-date" class="text-gray-500 font-mono text-[9px]">Última act.</span>
                         </div>
+                        <div id="modal-moves-badges" class="flex flex-wrap gap-1.5">
+                            <!-- Badges inyectados dinámicamente -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div id="modal-roster" class="p-6 md:p-8 overflow-y-auto flex-grow space-y-8">
-                </div>
+            </div>
         </div>
     </div>
 
@@ -274,6 +285,12 @@
             document.getElementById('modal-name').innerText = equipo.equipo.nombre;
             document.getElementById('modal-tier').innerText = equipo.equipo.tier;
 
+            const tagEl = document.getElementById('modal-tag');
+            if (tagEl) {
+                tagEl.innerText = equipo.equipo.tag ? `[${equipo.equipo.tag}]` : '';
+                tagEl.style.display = equipo.equipo.tag ? 'inline-block' : 'none';
+            }
+
             // Inyectar Representantes EXPLÍCITAMENTE en el Modal
             let repsInfoHTML = '';
             if (equipo.representantes && equipo.representantes.length > 0) {
@@ -298,6 +315,61 @@
             if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-blue-400 hover:text-white bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50 text-xs font-bold transition-colors"><i class="fas fa-video mr-1"></i> Stream</a>`;
             if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-900/20 px-3 py-1.5 rounded-lg border border-pink-900/50 text-xs font-bold transition-colors"><i class="fab fa-instagram mr-1"></i> Instagram</a>`;
             document.getElementById('modal-socials').innerHTML = redesHTML;
+
+            // LAYER ESTILO LIQUIPEDIA: MOVIMIENTOS & FICHAJES
+            const liquiLayer = document.getElementById('modal-liquipedia-layer');
+            const movesBadges = document.getElementById('modal-moves-badges');
+            const movesDate = document.getElementById('modal-moves-date');
+            
+            if (equipo.historial_ediciones && equipo.historial_ediciones.length > 0) {
+                const ultEvento = equipo.historial_ediciones[0];
+                const fechaFormat = new Date(ultEvento.fecha).toLocaleDateString('es-BO', { day: '2-digit', month: 'short' });
+                movesDate.innerText = `Act. ${fechaFormat}`;
+                
+                let badgesHTML = '';
+                if (Array.isArray(ultEvento.cambios)) {
+                    ultEvento.cambios.forEach(c => {
+                        if (c.tipoCambio === 'cambio_nombre') {
+                            badgesHTML += `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-500/30 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-sync-alt text-[8px]"></i> Renombre: ${c.anterior} ➔ ${c.nuevo}
+                                </span>`;
+                        } else if (c.tipoCambio === 'fichaje') {
+                            badgesHTML += `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-user-plus text-[8px]"></i> Fichaje: ${c.nuevo} (${c.campo})
+                                </span>`;
+                        } else if (c.tipoCambio === 'transferencia') {
+                            badgesHTML += `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-arrow-right-arrow-left text-[8px]"></i> Traspaso: ${c.nuevo} (${c.anterior})
+                                </span>`;
+                        } else if (c.tipoCambio === 'baja') {
+                            badgesHTML += `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/30 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-user-minus text-[8px]"></i> Baja: ${c.anterior}
+                                </span>`;
+                        } else if (c.tipoCambio === 'reemplazo') {
+                            badgesHTML += `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/60 text-blue-300 border border-blue-500/30 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-arrows-rotate text-[8px]"></i> ${c.detalle || `${c.nuevo} en ${c.campo}`}
+                                </span>`;
+                        }
+                    });
+                }
+
+                if (badgesHTML) {
+                    movesBadges.innerHTML = badgesHTML;
+                    liquiLayer.classList.remove('hidden');
+                    liquiLayer.classList.add('flex');
+                } else {
+                    liquiLayer.classList.add('hidden');
+                    liquiLayer.classList.remove('flex');
+                }
+            } else {
+                liquiLayer.classList.add('hidden');
+                liquiLayer.classList.remove('flex');
+            }
 
             const r = equipo.roster || {};
             
@@ -342,6 +414,32 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
                 equipo.coaches.forEach(coach => {
                     rosterHTML += crearFilaJugador('Coach Estratégico', roleIcons['COACH'], coach);
+                });
+                rosterHTML += `</div></div>`;
+            }
+
+            // SECCIÓN: EX-JUGADORES (HISTORIAL DE INTEGRANTES)
+            if (equipo.ex_jugadores && equipo.ex_jugadores.length > 0) {
+                rosterHTML += `
+                <div class="mt-8 border-t border-gray-800/80 pt-6">
+                    <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center justify-between">
+                        <span><i class="fas fa-history text-cyan-500 mr-2"></i> Ex-Jugadores del Equipo</span>
+                        <span class="text-[10px] text-gray-500 font-bold">${equipo.ex_jugadores.length} ex-integrante(s)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                equipo.ex_jugadores.forEach(ex => {
+                    const fechaSal = new Date(ex.fechaSalida).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', year: 'numeric' });
+                    rosterHTML += `
+                        <div class="flex items-center justify-between p-3.5 bg-[#0a0a0a] rounded-2xl border border-gray-800/60 text-xs">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black text-gray-200">${ex.riotId}</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-900 text-gray-400 border border-gray-800 uppercase">${ex.rol || 'Jugador'}</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-0.5">${ex.nombre}</p>
+                                <p class="text-[9px] text-rose-400/90 mt-1"><i class="fas fa-arrow-right-from-bracket mr-1"></i> ${ex.motivo || 'Baja'} (${fechaSal})</p>
+                            </div>
+                        </div>`;
                 });
                 rosterHTML += `</div></div>`;
             }

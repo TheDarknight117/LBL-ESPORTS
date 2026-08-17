@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v46';
+const CACHE_NAME = 'lbl-cache-v47';
 const ASSETS = [
   '/',
   '/registro',
@@ -6,6 +6,7 @@ const ASSETS = [
   '/editar',
   '/equipos',
   '/scouting',
+  '/auditoria-core.js',
   '/dist/output.css',
   '/assets/logo.png',
   '/assets/logo2.png',
