@@ -71,21 +71,10 @@
     <!-- BARRA NAVEGACIÓN SUPERIOR -->
     <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-4 md:px-8 py-3.5 flex justify-between items-center">
         <div class="flex items-center">
-            <a href="/torneos" onclick="if(typeof volverAlCatalogo === 'function') { volverAlCatalogo(); return false; }" class="flex items-center gap-3 group cursor-pointer" title="Volver al Catálogo de Torneos">
-                <img src="/assets/logo.png" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-1">
+            <a href="/" class="flex items-center gap-5 group">
+                <img src="/assets/logo.png" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-3">
                 <span class="font-black text-lg md:text-xl tracking-wider text-white uppercase italic">LBL <span class="text-cyan-400">TORNEOS</span></span>
             </a>
-        </div>
-        <div class="flex items-center gap-2 sm:gap-4">
-            <a href="/" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full hover:bg-white/5 flex items-center gap-2">
-                <i class="fas fa-home"></i> <span class="hidden sm:inline">Inicio</span>
-            </a>
-            <a href="/equipos" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full hover:bg-white/5 flex items-center gap-2">
-                <i class="fas fa-shield-alt"></i> <span class="hidden sm:inline">Equipos</span>
-            </a>
-            <button onclick="volverAlCatalogo()" class="text-cyan-400 hover:text-cyan-300 font-bold text-xs md:text-sm transition-colors py-1.5 px-3.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2 cursor-pointer shadow-sm">
-                <i class="fas fa-trophy"></i> <span class="hidden sm:inline">Torneos</span>
-            </button>
         </div>
     </header>
 
@@ -109,14 +98,11 @@
                         Explora los torneos en vivo en curso y el historial de campeonatos de la Liga Boliviana de Esports.
                     </p>
                 </div>
-                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES (OCULTADO TEMPORALMENTE) -->
-                <!--
                 <div class="flex items-center gap-3">
                     <button onclick="abrirBaseDatosJugadores()" class="px-5 py-3 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
                         <i class="fas fa-users-gear text-cyan-400"></i> Base de Datos de Jugadores
                     </button>
                 </div>
-                -->
             </section>
 
             <!-- BARRA DE FILTROS DEL CATÁLOGO -->
@@ -183,14 +169,12 @@
                     </p>
                 </div>
 
-                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES (OCULTADO TEMPORALMENTE) -->
-                <!--
+                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES -->
                 <div class="flex items-center gap-3 shrink-0">
                     <button onclick="abrirBaseDatosJugadores()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
                         <i class="fas fa-users text-cyan-400"></i> Base de Datos de Jugadores
                     </button>
                 </div>
-                -->
             </section>
 
             <!-- BARRA DE ETAPAS DEL TORNEO (RESUMEN / POSICIONES / CUADRANTE) -->
@@ -207,16 +191,18 @@
                     </button>
                 </div>
 
-                <!-- CONTROLES ADICIONALES (VISOR CHALLONGE) -->
+                <!-- CONTROLES ADICIONALES (TOGGLE DE VISTA EN LLAVE) -->
                 <div id="bracket-view-toggle" class="hidden items-center gap-2">
-                    <span id="btn-view-embed" class="px-3.5 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-black text-xs flex items-center gap-1.5 shadow-lg">
-                        <i class="fas fa-window-maximize text-cyan-400"></i> Challonge
-                    </span>
+                    <button id="btn-view-cards" onclick="cambiarModoVista('cards')" class="px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg">
+                        <i class="fas fa-sitemap text-cyan-400"></i> Vista de Tarjetas LBL
+                    </button>
+                    <button id="btn-view-embed" onclick="cambiarModoVista('embed')" class="px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer">
+                        <i class="fas fa-window-maximize"></i> Visor Challonge
+                    </button>
                 </div>
             </div>
 
-            <!-- SECCIÓN DE FEED DE MATCHES EN VIVO / RECIENTES (OCULTO / COMENTADO TEMPORALMENTE) -->
-            <!--
+            <!-- SECCIÓN DE FEED DE MATCHES EN VIVO / RECIENTES -->
             <section id="section-feed-matches" class="space-y-4">
                 <div class="flex items-center justify-between border-b border-gray-800 pb-3">
                     <h3 class="text-base md:text-lg font-black text-white uppercase tracking-wider italic flex items-center gap-2">
@@ -231,7 +217,6 @@
                     </div>
                 </div>
             </section>
-            -->
 
             <!-- CONTENEDOR DINÁMICO DE ETAPAS (RESUMEN / POSICIONES / CUADRANTE) -->
             <div id="dynamic-tournament-container" class="w-full min-h-[300px]">
@@ -256,11 +241,10 @@
         //  Valor: tag de máximo 3 letras en MAYÚSCULAS
         // ══════════════════════════════════════════════════════════════════
         const TAG_OVERRIDES = {
-            'aether core':        'ATC', // Tier 1
-            'aether core academy':'ATA', // Tier 2 / Academy
             'kaox pink':          'KPK',
             'condor nexus':       'CRN',
             'crimson weasels':    'CRW',
+            'aether core academy':'ATA',
             'snake dynasty':      'SKD',
             'mapaches apaches':   'MAP',
             'altitude gaming':    'ATG',
@@ -274,24 +258,7 @@
             'kaoxitos blue academy':'KBA',
             'los seguidores del primo':'SDP',
             'crimson twilight knights':'CTK',
-            'grieta cumbiera':    'GRC',
-            'kaox red':           'KXR',
-            'riot pls game':      'RPG',
-            'strugglers e-sports':'SGE',
-            'struggle esports':   'SGE',
-            'uka kitties':        'UKA',
-            'ukakitties':         'UKA',
-            'team dark':          'TDK',
-            'viktus':             'VKT',
-            'marines del altiplano':'MDA',
-            'solo kill pro':      'SKP',
-            'nox reign esports':  'NRE',
-            'kaox yellow':        'KXY',
-            'kaox purple':        'KXP',
-            'kaox blue':          'KXB',
-            't1nacotas':          'T1N',
-            'rise of kings order':'RKO',
-            'team first kill':    'TFK',
+
             
             // ── Agrega más equipos abajo con el mismo formato ──
             // 'nombre del equipo': 'TAG',
@@ -299,33 +266,29 @@
 
         /**
          * Resuelve el tag de un equipo aplicando:
-         * 1. Override manual exacto (TAG_OVERRIDES)
-         * 2. Override manual por prefijo más específico
-         * 3. Tag guardado en Firestore (lblInfo.tag), truncado a 3 letras
-         * 4. Iniciales del nombre, máximo 3 letras
+         * 1. Override manual (TAG_OVERRIDES)
+         * 2. Tag guardado en Firestore (lblInfo.tag), truncado a 3 letras
+         * 3. Iniciales del nombre, máximo 3 letras
          */
         function resolverTag(equipo) {
             const nombre = (equipo?.nombre || equipo?.name || '').trim();
             const key = nombre.toLowerCase();
 
-            // 1. Override manual exacto
+            // 1. Override manual
             if (TAG_OVERRIDES[key]) return TAG_OVERRIDES[key];
 
-            // 2. Buscar coincidencia por longitud descendente para priorizar nombres más largos y específicos
-            const sortedKeys = Object.keys(TAG_OVERRIDES).sort((a, b) => b.length - a.length);
-            for (const k of sortedKeys) {
-                if (key === k || key.startsWith(k) || k.startsWith(key)) {
-                    return TAG_OVERRIDES[k];
-                }
+            // Buscar coincidencia parcial en los overrides
+            for (const [k, v] of Object.entries(TAG_OVERRIDES)) {
+                if (key.includes(k) || k.includes(key)) return v;
             }
 
-            // 3. Tag de Firestore, truncado a 3 letras
+            // 2. Tag de Firestore, truncado a 3 letras
             const tagFb = (equipo?.tag || '').trim().toUpperCase();
             if (tagFb && tagFb !== nombre.toUpperCase() && tagFb.length <= 6) {
                 return tagFb.substring(0, 3);
             }
 
-            // 4. Iniciales del nombre (máx 3 palabras)
+            // 3. Iniciales del nombre (máx 3 palabras)
             const words = nombre.split(/\s+/).filter(Boolean);
             if (words.length >= 2) {
                 return words.slice(0, 3).map(w => w[0]).join('').toUpperCase();
@@ -333,96 +296,9 @@
             return nombre.substring(0, 3).toUpperCase();
         }
 
-        // Mapa auxiliar de logos de equipos cargados desde Firestore
-        const mapaLogosEquipos = new Map();
-
-        /**
-         * Resuelve el logo de un equipo buscando en datos locales, Firestore y mapa auxiliar
-         */
-        function resolverLogoEquipo(nombre, tag, p) {
-            if (p?.lblInfo?.logo) return p.lblInfo.logo;
-            if (p?.logo) return p.logo;
-            const cleanNom = (nombre || '').toLowerCase().trim();
-            const cleanTag = (tag || '').toLowerCase().trim();
-            if (cleanNom && mapaLogosEquipos.has(cleanNom)) return mapaLogosEquipos.get(cleanNom);
-            if (cleanTag && mapaLogosEquipos.has(cleanTag)) return mapaLogosEquipos.get(cleanTag);
-            for (const [k, v] of mapaLogosEquipos.entries()) {
-                if (cleanNom === k || (cleanNom.includes(k) && !cleanNom.includes('academy') && !k.includes('academy'))) {
-                    return v;
-                }
-            }
-            return '';
-        }
-
-        async function cargarEquiposFirestore() {
-            try {
-                const snap = await getDocs(collection(db, 'inscripciones_pendientes'));
-                snap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const eq = data.equipo || {};
-                    const nom = (eq.nombre || '').trim().toLowerCase();
-                    const tag = (eq.tag || '').trim().toLowerCase();
-                    if (nom && eq.logo) mapaLogosEquipos.set(nom, eq.logo);
-                    if (tag && eq.logo) mapaLogosEquipos.set(tag, eq.logo);
-                });
-            } catch (e) {
-                console.warn("Logos auxiliares no disponibles:", e);
-            }
-        }
-
         // --- ESTADO GLOBAL DE NAVEGACIÓN Y MULTITORNEOS ---
-        const DEFAULT_TORNEOS_INICIALES = [
-            {
-                id: 'clausura_tier1',
-                nombre: 'Torneo Clausura LBL 2026 - Tier 1',
-                slug: '18378786',
-                categoria: 'liga_lbl',
-                division: 'Tier 1',
-                formatoLabel: 'Fase de Grupos (Round Robin)',
-                estado: 'vivo',
-                creadoEn: '2026-02-15T00:00:00.000Z'
-            },
-            {
-                id: 'tier1',
-                nombre: 'Torneo Apertura LBL 2026 - Tier 1',
-                slug: '17573081',
-                categoria: 'liga_lbl',
-                division: 'Tier 1',
-                formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
-                estado: 'finalizado',
-                creadoEn: '2026-01-10T00:00:00.000Z'
-            },
-            {
-                id: 'tier2',
-                nombre: 'Torneo Apertura LBL 2026 - Tier 2',
-                slug: '17573105',
-                categoria: 'liga_lbl',
-                division: 'Tier 2',
-                formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
-                estado: 'finalizado',
-                creadoEn: '2026-01-10T00:00:00.000Z'
-            },
-            {
-                id: 'open_qualifier',
-                nombre: 'LBL OPEN QUALIFIER 2026',
-                slug: '17871688',
-                categoria: 'clasificacion_lbl',
-                division: 'General',
-                formatoLabel: 'Eliminatoria Doble',
-                estado: 'finalizado',
-                creadoEn: '2026-01-05T00:00:00.000Z'
-            },
-            {
-                id: 'winter_cup',
-                nombre: 'Winter Cup LBL 2025',
-                slug: '16167943',
-                categoria: 'abierto',
-                division: 'General',
-                formatoLabel: 'Eliminatoria Directa',
-                estado: 'finalizado',
-                creadoEn: '2025-07-01T00:00:00.000Z'
-            }
-        ];
+        // Torneos se cargan 100% desde el cache de localStorage (sincronizados desde Dashboard + API de Challonge)
+        const DEFAULT_TORNEOS_INICIALES = [];
 
         let listaTorneosRegistrados = [];
         try {
@@ -434,19 +310,14 @@
                     listaTorneosRegistrados = parsed.filter(t => !eliminados.includes(t.id));
                 }
             }
-            if (listaTorneosRegistrados.length === 0) {
-                listaTorneosRegistrados = [...DEFAULT_TORNEOS_INICIALES];
-            }
-        } catch(e) {
-            listaTorneosRegistrados = [...DEFAULT_TORNEOS_INICIALES];
-        }
+        } catch(e) {}
 
         let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle
         let filtroEstadoCatalogo = 'vivo'; // 'vivo' | 'finalizado'
         let filtroCategoriaCatalogo = 'todos'; // 'todos' | 'liga_lbl' | 'abierto'
 
         let etapaActiva = 'resumen'; // 'resumen', 'grupos', 'llave'
-        let modoVistaActual = 'embed'; // 'embed' (Visor Oficial Challonge) por defecto
+        let modoVistaActual = 'cards'; // 'cards' (Vista de Tarjetas LBL por defecto) o 'embed'
 
         window.abrirBaseDatosJugadores = () => {
             alert("👥 Próximamente: Base de Datos de Jugadores y Equipos LBL.\nAcceso centralizado al historial de jugadores, convocatorias y estadísticas oficiales.");
@@ -459,7 +330,6 @@
 
             if (parts.length >= 2 && parts[0] === 'torneos') {
                 const slugUrl = parts[1];
-                const stageUrl = parts[2] || 'overview';
 
                 const found = listaTorneosRegistrados.find(t => {
                     const cleanTSlug = (typeof extraerChallongeSlug === 'function') ? extraerChallongeSlug(t.slug || t.url || t.id) : (t.slug || t.id);
@@ -471,21 +341,19 @@
                     torneoSeleccionadoId = found.id;
                 } else if (slugUrl.toLowerCase().includes('t1clbl')) {
                     torneoSeleccionadoId = 't1clbl2026';
+                } else if (slugUrl.toLowerCase().includes('t2clbl')) {
+                    torneoSeleccionadoId = 't2clbl2026';
                 } else if (slugUrl.toLowerCase().includes('qualifier')) {
-                    torneoSeleccionadoId = 'openqualifier2026';
+                    torneoSeleccionadoId = 'open_qualifier';
                 } else {
                     torneoSeleccionadoId = null;
                 }
 
-                if (stageUrl === 'puntuaciones' || stageUrl === 'posiciones' || stageUrl === 'grupos') {
-                    etapaActiva = 'grupos';
-                } else if (stageUrl === 'llaves' || stageUrl === 'eliminatorias') {
-                    etapaActiva = 'llave';
-                } else {
-                    etapaActiva = 'resumen';
-                }
+                // Por directiva oficial: siempre iniciar en la etapa Resumen (Overview) por defecto
+                etapaActiva = 'resumen';
             } else {
                 torneoSeleccionadoId = null;
+                etapaActiva = 'resumen';
             }
         }
 
@@ -539,9 +407,6 @@
             actualizarURL(false);
 
             try {
-                // Cargar logos auxiliares de Firestore en paralelo
-                cargarEquiposFirestore().catch(() => {});
-
                 const snap = await getDocs(collection(db, 'torneos_registrados'));
                 const lista = [];
                 snap.forEach(docSnap => {
@@ -718,8 +583,7 @@
             actualizarURL(true);
         };
 
-        window.cambiarEtapa = (etapa) => {
-            etapaActiva = etapa;
+        function actualizarTabsUI(etapa) {
             ['resumen', 'grupos', 'llave'].forEach(e => {
                 const btn = document.getElementById(`tab-stage-${e}`);
                 if (btn) {
@@ -735,27 +599,13 @@
             if (toggle) {
                 toggle.style.display = (etapa === 'llave') ? 'flex' : 'none';
             }
+        }
 
+        window.cambiarEtapa = (etapa) => {
+            etapaActiva = etapa;
+            actualizarTabsUI(etapaActiva);
             renderizarTorneoDetalle();
             actualizarURL(true);
-        };
-
-        window.cambiarModoVista = (modo) => {
-            modoVistaActual = modo;
-            const btnEmbed = document.getElementById('btn-view-embed');
-            const btnCards = document.getElementById('btn-view-cards');
-
-            if (btnEmbed && btnCards) {
-                if (modo === 'embed') {
-                    btnEmbed.className = 'px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer';
-                    btnCards.className = 'px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer';
-                } else {
-                    btnCards.className = 'px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer';
-                    btnEmbed.className = 'px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer';
-                }
-            }
-
-            renderizarTorneoDetalle();
         };
 
         const getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'LBL').trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
@@ -763,6 +613,8 @@
         function renderizarTorneoDetalle() {
             const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
             if (!docTorneo) return;
+
+            actualizarTabsUI(etapaActiva);
 
             const torneo = docTorneo.datosChallonge || docTorneo;
 
@@ -781,8 +633,8 @@
 
             if (statusBadge) {
                 const chState = (torneo.estado || docTorneo.estado || '').toLowerCase();
-                const isCompleted = chState === 'complete' || chState === 'finalizado' || chState === 'awaiting_review';
-                const isPending = !isCompleted && (chState === 'pending' || chState === 'proximamente');
+                const isPending = chState === 'pending' || chState === 'proximamente';
+                const isCompleted = chState === 'complete' || chState === 'finalizado';
 
                 if (isCompleted) {
                     statusBadge.innerHTML = `<i class="fas fa-flag-checkered text-[8px] mr-1 text-slate-400"></i> Torneo Finalizado`;
@@ -837,7 +689,11 @@
             } else if (etapaActiva === 'grupos') {
                 renderizarTablaPosiciones(torneo, mainContainer);
             } else if (etapaActiva === 'llave') {
-                renderizarChallongeEmbed(docTorneo, mainContainer);
+                if (modoVistaActual === 'embed') {
+                    renderizarChallongeEmbed(docTorneo, mainContainer);
+                } else {
+                    renderizarAdaptativoSegunFormato(docTorneo, mainContainer);
+                }
             }
         }
 
@@ -867,9 +723,9 @@
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
             const participantesMap = new Map();
             rawParticipantes.forEach(p => {
-                const name = (p.name || p.nombre || p.lblInfo?.nombre || p.display_name || '').trim();
-                if (name && name !== 'TBD' && !participantesMap.has(name.toLowerCase())) {
-                    participantesMap.set(name.toLowerCase(), p);
+                const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || '';
+                if (name && name !== 'TBD' && !participantesMap.has(name.toLowerCase().trim())) {
+                    participantesMap.set(name.toLowerCase().trim(), p);
                 }
             });
 
@@ -891,9 +747,9 @@
             if (participantes.length > 0) {
                 equiposGridHTML = `<div class="flex flex-col gap-3.5 pt-2">`;
                 participantes.forEach(p => {
-                    const name = (p.name || p.nombre || p.lblInfo?.nombre || p.display_name || 'Equipo').trim();
-                    const tag = resolverTag({ nombre: name, tag: p.tag || p.lblInfo?.tag });
-                    const logo = esLigaLBL ? resolverLogoEquipo(name, tag, p) : '';
+                    const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || 'Equipo';
+                    const tag = resolverTag(p.lblInfo || p) || name.substring(0, 3).toUpperCase();
+                    const logo = esLigaLBL ? (p.lblInfo?.logo || p.logo || '') : '';
 
                     let avatarHTML = '';
                     if (esLigaLBL && logo) {
