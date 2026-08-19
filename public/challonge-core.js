@@ -131,27 +131,33 @@ export function extraerChallongeSlug(inputStr) {
 }
 
 /**
- * Helper centralizado de peticiones usando el proxy local o directo.
+ * Helper centralizado de peticiones con fallback de proxies CORS para navegadores.
  */
 async function apiCall(targetUrl) {
-    try {
-        const origin = (typeof window !== 'undefined' && window.location) ? window.location.origin : 'http://localhost:3000';
-        const proxyUrl = `${origin}/api/challonge-proxy?url=${encodeURIComponent(targetUrl)}`;
-        const res = await fetch(proxyUrl);
-        if (res.ok) return await res.json();
-        if (res.status === 404 || res.status === 401) return null;
-    } catch(e) {
-        console.warn("Proxy local no disponible, intentando directo...", e);
-    }
-
+    // 1. Petición directa (funciona si hay proxy local o mismo origen)
     try {
         const res = await fetch(targetUrl);
         if (res.ok) return await res.json();
     } catch(e) {}
 
+    // 2. corsproxy.io con parámetro ?url=
     try {
-        const corsUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+        const corsUrl = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
         const res = await fetch(corsUrl);
+        if (res.ok) return await res.json();
+    } catch(e) {}
+
+    // 3. allorigins.win raw
+    try {
+        const rawUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const res = await fetch(rawUrl);
+        if (res.ok) return await res.json();
+    } catch(e) {}
+
+    // 4. codetabs proxy
+    try {
+        const tabUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
+        const res = await fetch(tabUrl);
         if (res.ok) return await res.json();
     } catch(e) {}
 

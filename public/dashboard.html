@@ -714,8 +714,58 @@
         };
 
         // --- SISTEMA MULTITORNEO EN DASHBOARD ---
-        // Torneos se agregan 100% via API de Challonge, no hay datos hardcodeados.
-        const DEFAULT_TORNEOS_INICIALES = [];
+        const DEFAULT_TORNEOS_INICIALES = [
+            {
+                id: 'clausura_tier1',
+                nombre: 'Torneo Clausura LBL 2026 - Tier 1',
+                slug: '18378786',
+                categoria: 'liga_lbl',
+                division: 'Tier 1',
+                formatoLabel: 'Fase de Grupos (Round Robin)',
+                estado: 'vivo',
+                creadoEn: '2026-02-15T00:00:00.000Z'
+            },
+            {
+                id: 'tier1',
+                nombre: 'Torneo Apertura LBL 2026 - Tier 1',
+                slug: '17573081',
+                categoria: 'liga_lbl',
+                division: 'Tier 1',
+                formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
+                estado: 'finalizado',
+                creadoEn: '2026-01-10T00:00:00.000Z'
+            },
+            {
+                id: 'tier2',
+                nombre: 'Torneo Apertura LBL 2026 - Tier 2',
+                slug: '17573105',
+                categoria: 'liga_lbl',
+                division: 'Tier 2',
+                formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
+                estado: 'finalizado',
+                creadoEn: '2026-01-10T00:00:00.000Z'
+            },
+            {
+                id: 'open_qualifier',
+                nombre: 'LBL OPEN QUALIFIER 2026',
+                slug: '17871688',
+                categoria: 'clasificacion_lbl',
+                division: 'General',
+                formatoLabel: 'Eliminatoria Doble',
+                estado: 'finalizado',
+                creadoEn: '2026-01-05T00:00:00.000Z'
+            },
+            {
+                id: 'winter_cup',
+                nombre: 'Winter Cup LBL 2025',
+                slug: '16167943',
+                categoria: 'abierto',
+                division: 'General',
+                formatoLabel: 'Eliminatoria Directa',
+                estado: 'finalizado',
+                creadoEn: '2025-07-01T00:00:00.000Z'
+            }
+        ];
 
         async function cargarTorneosRegistrados() {
             const container = document.getElementById('grid-torneos-registrados');
@@ -743,6 +793,11 @@
                         if (Array.isArray(parsed) && parsed.length > 0) lista = parsed;
                     } catch (e) {}
                 }
+            }
+
+            // Si aún está vacío, inicializar con la lista predeterminada oficial
+            if (lista.length === 0) {
+                lista = [...DEFAULT_TORNEOS_INICIALES];
             }
 
             // Filtrar eliminados
