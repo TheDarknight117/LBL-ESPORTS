@@ -35,6 +35,51 @@
         .input-login { background-color: #0a0a0a; border: 1px solid #333; padding: 0.875rem; border-radius: 0.5rem; outline: none; transition: all 0.3s; width: 100%; color: white; }
         .input-login:focus { border-color: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
 
+        /* ESTILOS STRICT DARK PARA VENTANAS MODALES Y INPUTS DE TORNEO */
+        #modal-gestor-torneos input,
+        #modal-gestor-torneos select,
+        #modal-torneo input,
+        #modal-torneo select {
+            background-color: #030712 !important;
+            color: #ffffff !important;
+            border: 1px solid #1f2937 !important;
+            border-radius: 0.75rem !important;
+            padding: 0.625rem 0.875rem !important;
+            outline: none !important;
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            box-shadow: none !important;
+        }
+
+        #modal-gestor-torneos input:focus,
+        #modal-gestor-torneos select:focus,
+        #modal-torneo input:focus,
+        #modal-torneo select:focus {
+            border-color: #06b6d4 !important;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25) !important;
+        }
+
+        #modal-gestor-torneos select option,
+        #modal-torneo select option {
+            background-color: #070c14 !important;
+            color: #ffffff !important;
+            padding: 10px !important;
+        }
+
+        #modal-gestor-torneos input::placeholder,
+        #modal-torneo input::placeholder {
+            color: #4b5563 !important;
+            font-weight: 500 !important;
+        }
+
+        #modal-torneo select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2306b6d4' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2.5rem !important;
+        }
+
         .tab-btn { transition: all 0.3s ease; }
         .tab-active { color: #3b82f6; border-bottom: 2px solid #3b82f6; background-color: rgba(59, 130, 246, 0.1); }
         .tab-inactive { color: #6b7280; border-bottom: 2px solid transparent; }
@@ -208,32 +253,33 @@
                     <span class="leading-none select-none">MODIFICACIONES</span>
                     <span id="notif-badge" class="badge-notif-empty">0</span>
                 </button>
+                <!-- BOTÓN VENTANA FLOTANTE GESTOR DE TORNEOS -->
+                <button onclick="abrirModalGestorTorneos()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-500/40 text-cyan-300 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap" title="Abrir Gestor Multitorneo LBL">
+                    <i class="fas fa-trophy text-cyan-400"></i> Torneos
+                </button>
                 <a href="/" class="text-gray-500 hover:text-white text-sm font-bold px-3 py-2 transition-colors hidden sm:block"><i class="fas fa-home mr-1"></i> Inicio</a>
                 <button onclick="cerrarSesion()" class="border border-red-900/50 text-red-400 hover:bg-red-600 hover:text-white text-sm font-bold px-4 py-2 rounded-lg transition-all shadow-lg shadow-red-900/20"><i class="fas fa-sign-out-alt mr-1"></i> Salir</button>
             </div>
         </header>
 
         <main class="flex-grow w-full max-w-[1400px] mx-auto p-4 md:p-6 mt-4">
-            <!-- [PARA ACTIVAR LAS HERRAMIENTAS DE RESPALDO Y MIGRACIÓN, DESCOMENTA EL SIGUIENTE BLOQUE HTML] -->
-            <!--
-            <div class="glass-panel p-6 rounded-3xl mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 border-purple-500 shadow-lg">
+            <!-- ACCESO RÁPIDO Y ALERTAS DE BANNER -->
+            <div class="glass-panel p-5 rounded-3xl mb-8 border-l-4 border-cyan-500 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h3 class="text-sm font-black text-white uppercase flex items-center gap-2"><i class="fas fa-database text-purple-400"></i> Herramientas de Respaldo y Migración</h3>
-                    <p class="text-xs text-gray-400 mt-1">Utiliza estos botones para salvar tu base de datos actual o migrar los datos a un nuevo Firebase.</p>
+                    <h3 class="text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-trophy text-cyan-400"></i> Gestor Multitorneo LBL (Torneos VIVO & Pasados)
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1">Registra enlaces de Challonge, sincroniza partidas en vivo y gestiona el historial de campeonatos en una ventana flotante.</p>
                 </div>
-                <div class="flex flex-wrap gap-3">
-                    <button onclick="exportarBackupJSON()" class="bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-600/50 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95">
-                        <i class="fas fa-download"></i> EXPORTAR COPIA DE SEGURIDAD (.JSON)
+                <div class="flex items-center gap-3">
+                    <button onclick="abrirModalGestorTorneos()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
+                        <i class="fas fa-window-restore"></i> Abrir Gestor de Torneos
                     </button>
-                    <div class="relative">
-                        <button onclick="document.getElementById('import-file-input').click()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all active:scale-95">
-                            <i class="fas fa-upload"></i> IMPORTAR RESPALDO
-                        </button>
-                        <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importarBackupJSON(event)">
-                    </div>
+                    <a href="/torneos" target="_blank" class="px-4 py-2.5 rounded-xl bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-400 border border-cyan-500/30 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i class="fas fa-external-link-alt"></i> Web Pública
+                    </a>
                 </div>
             </div>
-            -->
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
                 <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500">
@@ -454,12 +500,180 @@
         </div>
     </div>
 
+    <!-- VENTANA FLOTANTE: GESTOR MULTITORNEO LBL -->
+    <div id="modal-gestor-torneos" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+        <div class="glass-panel bg-[#070c14] border border-cyan-500/40 rounded-3xl p-6 md:p-8 max-w-5xl w-full space-y-6 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <!-- ENCABEZADO VENTANA FLOTANTE -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-800/80 pb-4">
+                <div>
+                    <h3 class="text-lg md:text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-trophy text-cyan-400"></i> Gestor Multitorneo LBL (VIVO & Pasados)
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Ventana flotante de control de torneos oficiales e historial de competencias LBL.</p>
+                </div>
+                <div class="flex items-center gap-3 self-end sm:self-auto">
+                    <button onclick="abrirModalTorneo()" class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
+                        <i class="fas fa-plus"></i> Registrar Torneo
+                    </button>
+                    <button onclick="cerrarModalGestorTorneos()" class="w-9 h-9 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fas fa-times text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ESTADO API KEY CHALLONGE (CONECTADA OFICIALMENTE) -->
+            <div class="bg-[#030712] border border-emerald-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                        <i class="fas fa-check-circle text-emerald-400 text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+                            Challonge API Oficial
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[9px] font-black tracking-widest uppercase">Conectada & Activa</span>
+                        </span>
+                        <span class="text-[10px] text-gray-400">Sincronización en tiempo real habilitada con tu cuenta oficial LBL.</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="cargarTorneosRegistrados()" class="px-3.5 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                        <i class="fas fa-redo-alt text-[10px]"></i> Refrescar
+                    </button>
+                </div>
+            </div>
+
+            <!-- LISTA Y CARDS DE TORNEOS REGISTRADOS -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-list text-cyan-400"></i> Torneos Registrados en la Base de Datos
+                    </span>
+                    <span id="reg-count-badge" class="text-[10px] font-bold text-gray-500">Cargando...</span>
+                </div>
+
+                <div id="grid-torneos-registrados" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Inyectado dinámicamente -->
+                </div>
+            </div>
+
+            <!-- ESTADO Y BOTÓN IR A WEB -->
+            <div id="challonge-sync-status" class="text-[11px] font-bold text-gray-500 pt-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-800/60 gap-2">
+                <span>Estado: Todos los torneos están sincronizados para la web pública.</span>
+                <a href="/torneos" target="_blank" class="text-cyan-400 hover:underline flex items-center gap-1">
+                    <i class="fas fa-external-link-alt text-xs"></i> Abrir torneos.html en público
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR / EDITAR TORNEO INDIVIDUAL (MISMA DIMENSIÓN Y ESTÉTIKA) -->
+    <div id="modal-torneo" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+        <div class="glass-panel bg-[#070c14] border border-cyan-500/40 rounded-3xl p-6 md:p-8 max-w-5xl w-full space-y-6 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-800/80 pb-4">
+                <h3 id="modal-torneo-titulo" class="text-lg md:text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-trophy text-cyan-400"></i> Registrar Nuevo Torneo
+                </h3>
+                <button onclick="cerrarModalTorneo()" class="w-9 h-9 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                    <i class="fas fa-times text-base"></i>
+                </button>
+            </div>
+
+            <form id="form-torneo" onsubmit="guardarTorneoRegistrado(event)" class="space-y-5 text-xs">
+                <input type="hidden" id="t-edit-id" value="">
+                <input type="hidden" id="t-division" value="Tier 1">
+                <input type="hidden" id="t-formato" value="Doble Eliminación">
+
+                <!-- IMPORTAR DIRECTO DE MI CUENTA CHALLONGE -->
+                <div class="bg-[#030712] border border-cyan-500/30 rounded-2xl p-3.5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-black text-cyan-300 uppercase tracking-wider text-[11px] flex items-center gap-2">
+                            <i class="fas fa-magic text-cyan-400"></i> Importar desde mi Cuenta Challonge
+                        </span>
+                        <button type="button" onclick="cargarTorneosDeCuentaChallonge()" class="text-[10px] text-cyan-400 hover:underline font-bold flex items-center gap-1 cursor-pointer">
+                            <i class="fas fa-sync-alt"></i> Refrescar torneos
+                        </button>
+                    </div>
+                    <select id="t-challonge-selector" onchange="seleccionarTorneoCuentaChallonge(this.value)" class="w-full bg-[#070c14] text-white border border-gray-800 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-cyan-500 cursor-pointer">
+                        <option value="">-- Elige un torneo de tu cuenta de Challonge para autocompletar --</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-black text-gray-300 uppercase tracking-wider mb-1.5">Nombre del Torneo</label>
+                        <input type="text" id="t-nombre" required class="w-full bg-[#030712] border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-white font-bold outline-none focus:border-cyan-500 transition-colors" placeholder="Ej. Liga LBL 2026 - Clausura">
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block font-black text-gray-300 uppercase tracking-wider">Enlace o Slug de Challonge</label>
+                            <span id="t-slug-status" class="text-[10px] text-cyan-400 font-bold hidden"></span>
+                        </div>
+                        <input type="text" id="t-slug" required oninput="debounceAutoDetectarTorneo(this.value)" class="w-full bg-[#030712] border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-cyan-400 font-mono font-bold outline-none focus:border-cyan-500 transition-colors" placeholder="Ej. https://challonge.com/T1CLBL2026 o T1CLBL2026">
+                        <span class="text-[10px] text-gray-500 mt-1 block">Pega cualquier link de Challonge: la API detecta automáticamente los datos.</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-black text-gray-300 uppercase tracking-wider mb-1.5">Categoría del Torneo</label>
+                        <select id="t-categoria" onchange="actualizarPillsParticipantes(this.value)" class="w-full bg-[#030712] text-white border border-gray-800/80 rounded-xl px-3 py-2.5 font-bold outline-none focus:border-cyan-500 cursor-pointer">
+                            <option class="bg-[#030712] text-white" value="liga_lbl">🏆 LIGA LBL</option>
+                            <option class="bg-[#030712] text-white" value="clasificacion_lbl">🎯 CLASIFICACIÓN LBL</option>
+                            <option class="bg-[#030712] text-white" value="lbl_series">⚡ LBL SERIES</option>
+                            <option class="bg-[#030712] text-white" value="abierto">🌐 TORNEO ABIERTO</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-black text-gray-300 uppercase tracking-wider mb-1.5">Estado del Torneo</label>
+                        <select id="t-estado" class="w-full bg-[#030712] text-white border border-gray-800/80 rounded-xl px-3 py-2.5 font-bold outline-none focus:border-cyan-500 cursor-pointer">
+                            <option class="bg-[#030712] text-white" value="proximamente">⏳ Próximamente (Por Iniciar)</option>
+                            <option class="bg-[#030712] text-white" value="vivo">🔴 En Vivo (Torneo en Curso)</option>
+                            <option class="bg-[#030712] text-white" value="finalizado">🏁 Finalizado (Torneo Pasado)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DINÁMICA DE ETIQUETAS MULTIPLES: PARTICIPANTES -->
+                <div class="space-y-2 pt-2 border-t border-gray-800/80">
+                    <label class="block font-black text-gray-300 uppercase tracking-wider">
+                        Participantes <span class="text-gray-500 text-[10px] lowercase">(marca las divisiones/etiquetas que participan)</span>
+                    </label>
+                    <div id="pills-participantes" class="flex flex-wrap gap-2 pt-1">
+                        <!-- Inyectado dinámicamente según Categoría -->
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DINÁMICA DE ETIQUETAS MULTIPLES: FORMATO DE JUEGO -->
+                <div class="space-y-2 pt-2 border-t border-gray-800/80">
+                    <label class="block font-black text-gray-300 uppercase tracking-wider">
+                        Formato de Juego <span class="text-gray-500 text-[10px] lowercase">(selección de etiquetas de formato)</span>
+                    </label>
+                    <div id="pills-formatos" class="flex flex-wrap gap-2 pt-1">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-800/80 flex justify-end gap-3">
+                    <button type="button" onclick="cerrarModalTorneo()" class="px-5 py-2.5 rounded-xl border border-gray-800/80 text-gray-400 font-bold hover:text-white transition-all cursor-pointer">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btn-save-torneo" class="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-black uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-cyan-500/20">
+                        <i class="fas fa-save mr-1.5"></i> Guardar Torneo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script type="module">
         import { db, auth } from "./firebase-config.js"; 
         import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "./auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "./staff-config.js";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY } from "./challonge-core.js";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -469,6 +683,549 @@
 
         let unsubscribeSnapshot = null;
         let currentModalTeamId = null;
+
+        // Estructura en memoria para torneos registrados
+        let torneosRegistradosList = [];
+        let listaTorneosCuentaChallonge = [];
+
+        // Inicializar API Key por defecto de forma permanente
+        localStorage.setItem('lbl_challonge_apikey', DEFAULT_CHALLONGE_API_KEY);
+
+        window.addEventListener('load', () => {
+            localStorage.setItem('lbl_challonge_apikey', DEFAULT_CHALLONGE_API_KEY);
+            cargarTorneosRegistrados();
+        });
+
+        window.abrirModalGestorTorneos = () => {
+            const modal = document.getElementById('modal-gestor-torneos');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                cargarTorneosRegistrados();
+            }
+        };
+
+        window.cerrarModalGestorTorneos = () => {
+            const modal = document.getElementById('modal-gestor-torneos');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        // --- SISTEMA MULTITORNEO EN DASHBOARD ---
+        // Torneos se agregan 100% via API de Challonge, no hay datos hardcodeados.
+        const DEFAULT_TORNEOS_INICIALES = [];
+
+        async function cargarTorneosRegistrados() {
+            const container = document.getElementById('grid-torneos-registrados');
+            const badge = document.getElementById('reg-count-badge');
+            if (!container) return;
+
+            container.innerHTML = `<div class="col-span-full py-4 text-center text-xs text-cyan-400 font-bold"><i class="fas fa-spinner fa-spin mr-1"></i> Cargando lista de torneos...</div>`;
+
+            let lista = [];
+            try {
+                const snap = await getDocs(collection(db, 'torneos_registrados'));
+                snap.forEach(docSnap => {
+                    lista.push({ ...docSnap.data(), id: docSnap.id });
+                });
+            } catch (err) {
+                console.warn("Firestore torneos_registrados no disponible:", err);
+            }
+
+            // Fallback a localStorage si Firestore no tiene datos
+            if (lista.length === 0) {
+                const localReg = localStorage.getItem('lbl_torneos_registrados_cache');
+                if (localReg) {
+                    try { 
+                        const parsed = JSON.parse(localReg);
+                        if (Array.isArray(parsed) && parsed.length > 0) lista = parsed;
+                    } catch (e) {}
+                }
+            }
+
+            // Filtrar eliminados
+            let eliminados = [];
+            try {
+                eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
+            } catch(e) {}
+            lista = lista.filter(t => !eliminados.includes(t.id));
+
+            torneosRegistradosList = lista;
+            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(lista));
+
+            if (badge) badge.innerText = `${lista.length} torneo(s) registrados`;
+            renderizarTablaTorneosRegistrados(lista);
+        }
+
+        function renderizarTablaTorneosRegistrados(lista) {
+            const container = document.getElementById('grid-torneos-registrados');
+            if (!container) return;
+
+            if (lista.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-6 text-center text-xs text-gray-500 font-bold uppercase border border-gray-800 rounded-2xl bg-[#030712]">No hay torneos registrados. Haz clic en "Registrar Torneo" para agregar uno.</div>`;
+                return;
+            }
+
+            let html = '';
+            lista.forEach(t => {
+                const esVivo = t.estado === 'vivo';
+                const statusBadge = esVivo
+                    ? `<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-black uppercase flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> EN VIVO</span>`
+                    : `<span class="px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 text-[10px] font-black uppercase">🏁 FINALIZADO</span>`;
+
+                const catBadge = t.categoria === 'liga_lbl'
+                    ? `<span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[9px] font-bold uppercase">Liga LBL</span>`
+                    : `<span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[9px] font-bold uppercase">Torneo Abierto</span>`;
+
+                const numMatches = t.datosChallonge?.matches?.length || 0;
+                const lastSync = t.actualizadoEn ? new Date(t.actualizadoEn).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }) : 'Nunca';
+
+                html += `
+                    <div class="glass-panel p-4 rounded-2xl border border-gray-800 bg-[#070c14] space-y-3 shadow-lg flex flex-col justify-between hover:border-cyan-500/40 transition-all">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5">${catBadge} <span class="text-[10px] text-cyan-400 font-bold">${t.division || 'Open'}</span></div>
+                                ${statusBadge}
+                            </div>
+                            <h4 class="font-black text-white text-sm uppercase tracking-wide leading-snug">${t.nombre}</h4>
+                            <div class="text-[11px] text-gray-400 font-medium flex items-center justify-between">
+                                <span><i class="fas fa-link text-gray-500 mr-1"></i> Slug: <strong class="text-cyan-400">${t.slug}</strong></span>
+                                <span><i class="fas fa-gamepad text-gray-500 mr-1"></i> ${numMatches} partidas</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
+                            <span class="text-[10px] text-gray-500 font-bold">Sync: ${lastSync}</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="sincronizarTorneoRegistrado('${t.id}')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40 rounded-lg font-black text-[11px] transition-all cursor-pointer shadow" title="Sincronizar datos con Challonge">
+                                    <i class="fas fa-sync-alt mr-1"></i> Sync
+                                </button>
+                                <button onclick="abrirModalTorneo('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-cyan-500/20 text-gray-300 hover:text-cyan-400 flex items-center justify-center transition-colors cursor-pointer" title="Editar torneo">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <button onclick="eliminarTorneoRegistrado('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer" title="Eliminar torneo">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.cargarTorneosDeCuentaChallonge = async () => {
+            const selector = document.getElementById('t-challonge-selector');
+            if (!selector) return;
+            selector.innerHTML = `<option value="">🔄 Consultando torneos de tu cuenta oficial...</option>`;
+            
+            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+            
+            if (!listaTorneosCuentaChallonge || listaTorneosCuentaChallonge.length === 0) {
+                selector.innerHTML = `<option value="">No se encontraron torneos en la cuenta</option>`;
+                return;
+            }
+
+            let html = `<option value="">-- Selecciona un torneo de tu cuenta (${listaTorneosCuentaChallonge.length} encontrados) --</option>`;
+            listaTorneosCuentaChallonge.forEach(t => {
+                const stateLabel = t.state === 'complete' ? '🏁 FINALIZADO' : (t.state === 'pending' ? '⏳ PRÓXIMO' : '🔴 EN VIVO');
+                html += `<option value="${t.id}">${t.name} (${t.url}) [${stateLabel}]</option>`;
+            });
+            selector.innerHTML = html;
+        };
+
+        window.seleccionarTorneoCuentaChallonge = (torneoId) => {
+            if (!torneoId) return;
+            const t = listaTorneosCuentaChallonge.find(item => item.id.toString() === torneoId.toString());
+            if (!t) return;
+
+            document.getElementById('t-nombre').value = t.name || '';
+            document.getElementById('t-slug').value = t.url || t.id;
+
+            // Auto-detectar categoría
+            const nomLower = (t.name || '').toLowerCase();
+            let cat = 'abierto';
+            if (nomLower.includes('tier 1') || nomLower.includes('tier 2') || nomLower.includes('liga')) cat = 'liga_lbl';
+            else if (nomLower.includes('clasificacion') || nomLower.includes('qualifier')) cat = 'clasificacion_lbl';
+            else if (nomLower.includes('series')) cat = 'lbl_series';
+            document.getElementById('t-categoria').value = cat;
+
+            // Auto-detectar estado
+            let est = 'vivo';
+            if (t.state === 'complete' || t.state === 'awaiting_review') est = 'finalizado';
+            else if (t.state === 'pending') est = 'proximamente';
+            document.getElementById('t-estado').value = est;
+
+            actualizarPillsParticipantes(cat, null);
+            actualizarPillsFormatos(t.tournament_type === 'double elimination' ? 'Doble Eliminación' : (t.tournament_type === 'round robin' ? 'Fase de Grupos' : 'Eliminación Directa'));
+        };
+
+        let detectTimer = null;
+        window.debounceAutoDetectarTorneo = (val) => {
+            clearTimeout(detectTimer);
+            if (!val || val.trim().length < 3) return;
+            detectTimer = setTimeout(() => autoDetectarTorneoDesdeSlug(val), 400);
+        };
+
+        window.autoDetectarTorneoDesdeSlug = async (slugOrUrl) => {
+            const statusEl = document.getElementById('t-slug-status');
+            if (statusEl) {
+                statusEl.classList.remove('hidden');
+                statusEl.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Detectando torneo en Challonge...`;
+            }
+
+            try {
+                const cleanSlug = extraerChallongeSlug(slugOrUrl);
+                if (listaTorneosCuentaChallonge.length === 0) {
+                    listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+                }
+
+                const qClean = cleanSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const match = listaTorneosCuentaChallonge.find(t => {
+                    const uClean = (t.url || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const idClean = t.id ? t.id.toString() : '';
+                    const nClean = (t.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    return idClean === cleanSlug || uClean === qClean || uClean.includes(qClean) || qClean.includes(uClean) || nClean.includes(qClean);
+                });
+
+                if (match) {
+                    const nombreEl = document.getElementById('t-nombre');
+                    if (nombreEl && (!nombreEl.value || nombreEl.value.trim() === '')) {
+                        nombreEl.value = match.name || '';
+                    }
+
+                    const nomLower = (match.name || '').toLowerCase();
+                    let cat = 'abierto';
+                    if (nomLower.includes('tier 1') || nomLower.includes('tier 2') || nomLower.includes('liga')) cat = 'liga_lbl';
+                    else if (nomLower.includes('clasificacion') || nomLower.includes('qualifier')) cat = 'clasificacion_lbl';
+                    else if (nomLower.includes('series')) cat = 'lbl_series';
+                    document.getElementById('t-categoria').value = cat;
+
+                    let est = 'vivo';
+                    if (match.state === 'complete' || match.state === 'awaiting_review') est = 'finalizado';
+                    else if (match.state === 'pending') est = 'proximamente';
+                    document.getElementById('t-estado').value = est;
+
+                    actualizarPillsParticipantes(cat, null);
+                    actualizarPillsFormatos(match.tournament_type === 'double elimination' ? 'Doble Eliminación' : (match.tournament_type === 'round robin' ? 'Fase de Grupos' : 'Eliminación Directa'));
+
+                    if (statusEl) {
+                        statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fas fa-check-circle mr-1"></i> Detectado: ${match.name}</span>`;
+                    }
+                } else {
+                    if (statusEl) {
+                        statusEl.innerHTML = `<span class="text-yellow-400 font-bold"><i class="fas fa-info-circle mr-1"></i> Slug verificado</span>`;
+                    }
+                }
+            } catch(e) {
+                if (statusEl) statusEl.classList.add('hidden');
+            }
+        };
+
+        // --- SISTEMA DE PILLS / ETIQUETAS DINÁMICAS PARA PARTICIPANTES Y FORMATO ---
+        const PARTICIPANTES_POR_CATEGORIA = {
+            'liga_lbl': ['Tier 1', 'Tier 2'],
+            'clasificacion_lbl': ['Tier 1, Tier 2', 'Tier 1', 'Tier 2', 'Open Qualifier'],
+            'lbl_series': ['Tier 1', 'Tier 2', 'Comunidad'],
+            'abierto': ['Open Qualifier', 'Scouting', 'Comunidad', 'Tier 2, Tier 1']
+        };
+
+        const OPCIONES_FORMATOS = [
+            'Fase de Grupos + Playoffs',
+            'Doble Eliminación',
+            'Eliminación Directa',
+            'Round Robin',
+            'Suizo'
+        ];
+
+        let participantesSeleccionados = new Set();
+        let formatosSeleccionados = new Set();
+
+        window.actualizarPillsParticipantes = (categoria, preseleccionado = null) => {
+            const container = document.getElementById('pills-participantes');
+            if (!container) return;
+
+            const opciones = PARTICIPANTES_POR_CATEGORIA[categoria] || PARTICIPANTES_POR_CATEGORIA['liga_lbl'];
+            participantesSeleccionados.clear();
+
+            if (preseleccionado) {
+                preseleccionado.split(',').map(s => s.trim()).filter(Boolean).forEach(p => participantesSeleccionados.add(p));
+            } else if (opciones.length > 0) {
+                participantesSeleccionados.add(opciones[0]);
+            }
+
+            renderPillsParticipantes(opciones);
+        };
+
+        function renderPillsParticipantes(opciones) {
+            const container = document.getElementById('pills-participantes');
+            if (!container) return;
+
+            container.innerHTML = opciones.map(op => {
+                const isSel = participantesSeleccionados.has(op);
+                const cls = isSel
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-[0_0_12px_rgba(6,182,212,0.2)] font-black'
+                    : 'bg-[#0a0f1d] text-gray-400 border-gray-800/80 hover:border-gray-700 hover:text-white font-bold';
+                const icon = isSel
+                    ? '<i class="fas fa-check-circle text-xs text-cyan-400"></i>'
+                    : '<i class="far fa-circle text-xs text-gray-600"></i>';
+                return `<button type="button" onclick="togglePillParticipante('${op}')" class="px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${cls}">${icon}<span>${op}</span></button>`;
+            }).join('');
+
+            const hiddenInput = document.getElementById('t-division');
+            if (hiddenInput) hiddenInput.value = Array.from(participantesSeleccionados).join(', ');
+        }
+
+        window.togglePillParticipante = (op) => {
+            if (participantesSeleccionados.has(op)) {
+                participantesSeleccionados.delete(op);
+            } else {
+                participantesSeleccionados.add(op);
+            }
+            const cat = document.getElementById('t-categoria')?.value || 'liga_lbl';
+            renderPillsParticipantes(PARTICIPANTES_POR_CATEGORIA[cat] || PARTICIPANTES_POR_CATEGORIA['liga_lbl']);
+        };
+
+        window.actualizarPillsFormatos = (preseleccionado = null) => {
+            formatosSeleccionados.clear();
+            if (preseleccionado) {
+                preseleccionado.split(',').map(s => s.trim()).filter(Boolean).forEach(f => formatosSeleccionados.add(f));
+            } else {
+                formatosSeleccionados.add('Doble Eliminación');
+            }
+            renderPillsFormatos();
+        };
+
+        function renderPillsFormatos() {
+            const container = document.getElementById('pills-formatos');
+            if (!container) return;
+
+            container.innerHTML = OPCIONES_FORMATOS.map(op => {
+                const isSel = formatosSeleccionados.has(op);
+                const cls = isSel
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-[0_0_12px_rgba(6,182,212,0.2)] font-black'
+                    : 'bg-[#0a0f1d] text-gray-400 border-gray-800/80 hover:border-gray-700 hover:text-white font-bold';
+                const icon = isSel
+                    ? '<i class="fas fa-check-circle text-xs text-cyan-400"></i>'
+                    : '<i class="far fa-circle text-xs text-gray-600"></i>';
+                return `<button type="button" onclick="togglePillFormato('${op}')" class="px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all border cursor-pointer flex items-center gap-2 ${cls}">${icon}<span>${op}</span></button>`;
+            }).join('');
+
+            const hiddenInput = document.getElementById('t-formato');
+            if (hiddenInput) hiddenInput.value = Array.from(formatosSeleccionados).join(', ');
+        }
+
+        window.togglePillFormato = (op) => {
+            if (formatosSeleccionados.has(op)) {
+                formatosSeleccionados.delete(op);
+            } else {
+                formatosSeleccionados.add(op);
+            }
+            renderPillsFormatos();
+        };
+
+        window.abrirModalTorneo = (id = null) => {
+            const modal = document.getElementById('modal-torneo');
+            const titleEl = document.getElementById('modal-torneo-titulo');
+            const editIdEl = document.getElementById('t-edit-id');
+
+            if (!modal) return;
+
+            cargarTorneosDeCuentaChallonge();
+
+            if (id) {
+                const item = torneosRegistradosList.find(t => t.id === id);
+                if (!item) return;
+                titleEl.innerHTML = `<i class="fas fa-edit text-cyan-400"></i> Editar Torneo`;
+                editIdEl.value = item.id;
+                document.getElementById('t-nombre').value = item.nombre || '';
+                document.getElementById('t-slug').value = item.slug || '';
+                const cat = item.categoria || 'liga_lbl';
+                document.getElementById('t-categoria').value = cat;
+                document.getElementById('t-estado').value = item.estado || 'vivo';
+                
+                actualizarPillsParticipantes(cat, item.division || '');
+                actualizarPillsFormatos(item.formatoLabel || '');
+            } else {
+                titleEl.innerHTML = `<i class="fas fa-plus text-cyan-400"></i> Registrar Nuevo Torneo`;
+                editIdEl.value = '';
+                document.getElementById('form-torneo').reset();
+                actualizarPillsParticipantes('liga_lbl', null);
+                actualizarPillsFormatos(null);
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.cerrarModalTorneo = () => {
+            const modal = document.getElementById('modal-torneo');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        window.guardarTorneoRegistrado = async (e) => {
+            e.preventDefault();
+
+            if (!participantesSeleccionados || participantesSeleccionados.size === 0) {
+                alert("⚠️ ATENCIÓN: Debes marcar al menos una etiqueta en la sección 'Participantes'.");
+                return;
+            }
+            if (!formatosSeleccionados || formatosSeleccionados.size === 0) {
+                alert("⚠️ ATENCIÓN: Debes marcar al menos una etiqueta en 'Formato de Juego'.");
+                return;
+            }
+
+            const editId = document.getElementById('t-edit-id').value;
+            const nombre = document.getElementById('t-nombre').value.trim();
+            let rawSlug = document.getElementById('t-slug').value.trim();
+            const categoria = document.getElementById('t-categoria').value;
+            const division = Array.from(participantesSeleccionados).join(', ');
+            const estado = document.getElementById('t-estado').value;
+            const formatoLabel = Array.from(formatosSeleccionados).join(', ');
+
+            // Extraer slug limpio sin error de prefijo de idioma
+            const slug = extraerChallongeSlug(rawSlug) || rawSlug.trim();
+
+            const docId = editId || slug.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+
+            // Desbloquear de eliminados si se vuelve a crear o editar
+            try {
+                let eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
+                eliminados = eliminados.filter(x => x !== docId && x !== slug.toLowerCase());
+                localStorage.setItem('lbl_torneos_eliminados_ids', JSON.stringify(eliminados));
+            } catch (e) {}
+
+            const itemExistente = torneosRegistradosList.find(t => t.id === docId);
+
+            const torneoData = {
+                id: docId,
+                nombre: nombre,
+                slug: slug,
+                urlChallonge: rawSlug.includes('http') ? rawSlug : `https://challonge.com/es/${slug}`,
+                categoria: categoria,
+                division: division,
+                estado: estado,
+                formatoLabel: formatoLabel,
+                actualizadoEn: new Date().toISOString(),
+                datosChallonge: itemExistente?.datosChallonge || null
+            };
+
+            try {
+                await setDoc(doc(db, 'torneos_registrados', docId), torneoData, { merge: true });
+            } catch (fsErr) {
+                console.warn("No se pudo guardar en Firestore (permiso o red):", fsErr);
+            }
+
+            const index = torneosRegistradosList.findIndex(t => t.id === docId);
+            if (index >= 0) torneosRegistradosList[index] = { ...torneosRegistradosList[index], ...torneoData };
+            else torneosRegistradosList.push(torneoData);
+
+            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(torneosRegistradosList));
+            cerrarModalTorneo();
+            renderizarTablaTorneosRegistrados(torneosRegistradosList);
+
+            // Intentar auto-sincronizar con API
+            sincronizarTorneoRegistrado(docId);
+        };
+
+        window.eliminarTorneoRegistrado = async (id) => {
+            const torneoItem = torneosRegistradosList.find(t => t.id === id);
+            const nombre = torneoItem ? torneoItem.nombre : id;
+            if (!confirm(`¿Estás seguro de eliminar "${nombre}" de la lista?`)) return;
+
+            // Guardar en la lista negra de eliminados para que no se re-cree automáticamente
+            try {
+                let eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
+                if (!eliminados.includes(id)) eliminados.push(id);
+                if (torneoItem?.slug && !eliminados.includes(torneoItem.slug.toLowerCase())) {
+                    eliminados.push(torneoItem.slug.toLowerCase());
+                }
+                localStorage.setItem('lbl_torneos_eliminados_ids', JSON.stringify(eliminados));
+            } catch (e) {}
+
+            try {
+                await deleteDoc(doc(db, 'torneos_registrados', id));
+            } catch (e) {
+                console.warn("No se pudo eliminar de Firestore:", e);
+            }
+
+            torneosRegistradosList = torneosRegistradosList.filter(t => t.id !== id);
+            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(torneosRegistradosList));
+            renderizarTablaTorneosRegistrados(torneosRegistradosList);
+            alert(`🗑️ Torneo "${nombre}" eliminado con éxito.`);
+        };
+
+        window.sincronizarTorneoRegistrado = async (id) => {
+            const torneoItem = torneosRegistradosList.find(t => t.id === id);
+            if (!torneoItem) return;
+
+            const statusEl = document.getElementById('challonge-sync-status');
+            const apiKey = DEFAULT_CHALLONGE_API_KEY;
+
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-yellow-400"><i class="fas fa-spinner fa-spin mr-1"></i> Sincronizando "${torneoItem.nombre}" con Challonge API...</span>`;
+            }
+
+            try {
+                const resultado = await procesarTorneoChallonge(torneoItem.slug, apiKey, equiposLocales, torneoItem.division);
+
+                let autoEstado = torneoItem.estado;
+                if (resultado.estado === 'pending') autoEstado = 'proximamente';
+                else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
+                else if (resultado.estado === 'complete' || resultado.estado === 'awaiting_review') autoEstado = 'finalizado';
+
+                const updatedDoc = {
+                    ...torneoItem,
+                    nombre: resultado.nombre || torneoItem.nombre,
+                    estado: autoEstado,
+                    actualizadoEn: new Date().toISOString(),
+                    formatoLabel: torneoItem.formatoLabel || resultado.tipoFormatLabel || 'Doble Eliminación',
+                    podio: resultado.podio,
+                    challongeStandings: resultado.challongeStandings,
+                    participantes: resultado.participantes,
+                    standings: resultado.standings,
+                    matches: resultado.matches,
+                    datosChallonge: resultado
+                };
+
+                // Guardar en Firestore torneos_registrados
+                try {
+                    await setDoc(doc(db, 'torneos_registrados', id), updatedDoc, { merge: true });
+                } catch (fsErr) {
+                    console.warn("No se pudo guardar en Firestore:", fsErr);
+                }
+
+                // Compatibilidad con la versión previa (tier1 / tier2 en torneos_activos)
+                if (id === 'tier1' || id === 'tier2') {
+                    try { await setDoc(doc(db, 'torneos_activos', id), resultado); } catch (e) {}
+                    localStorage.setItem(`lbl_torneo_${id}`, JSON.stringify(resultado));
+                }
+
+                // Actualizar memoria local
+                const idx = torneosRegistradosList.findIndex(t => t.id === id);
+                if (idx >= 0) torneosRegistradosList[idx] = updatedDoc;
+                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(torneosRegistradosList));
+
+                renderizarTablaTorneosRegistrados(torneosRegistradosList);
+
+                const horaStr = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> "${torneoItem.nombre}" sincronizado a las ${horaStr}! (${resultado.matches.length} partidas, ${resultado.participantes.length} equipos)</span>`;
+                }
+                alert(`✅ "${torneoItem.nombre}" sincronizado con éxito!\nPartidas cargadas: ${resultado.matches.length}\nEquipos participantes: ${resultado.participantes.length}`);
+            } catch (err) {
+                console.error("Error al sincronizar torneo:", err);
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="text-rose-400"><i class="fas fa-exclamation-triangle mr-1"></i> Error en "${torneoItem.nombre}": ${err.message}</span>`;
+                }
+                alert(`❌ Error al sincronizar "${torneoItem.nombre}":\n${err.message}`);
+            }
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {

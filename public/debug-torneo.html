@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>LBL - Debug Torneo</title>
+    <style>
+        body { background: #0a0a1a; color: #ccc; font-family: monospace; padding: 20px; }
+        h2 { color: #38bdf8; }
+        pre { background: #111; border: 1px solid #333; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.5; }
+        .section { margin-bottom: 40px; }
+        .match { border: 1px solid #222; padding: 12px; margin: 6px 0; border-radius: 6px; }
+        .match.completed { border-color: #22c55e44; background: #0d2b1a; }
+        .match.pending { border-color: #33333399; background: #111; }
+        .match.tbd { border-color: #ff000044; background: #2b0d0d; }
+        .w { color: #22d3ee; font-weight: bold; }
+        .l { color: #f43f5e; font-weight: bold; }
+        .label { color: #94a3b8; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <h2>🔍 LBL Debug — Datos del Torneo en Cache</h2>
+    <div id="output">Cargando...</div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        async function debug() {
+            const out = document.getElementById('output');
+            let html = '';
+
+            for (const tier of ['tier1', 'tier2']) {
+                let torneo = null;
+
+                // 1. Intentar Firestore
+                try {
+                    const snap = await getDoc(doc(db, 'torneos_activos', tier));
+                    if (snap.exists()) torneo = snap.data();
+                } catch(e) {}
+
+                // 2. Fallback localStorage
+                if (!torneo) {
+                    const raw = localStorage.getItem(`lbl_torneo_${tier}`);
+                    if (raw) try { torneo = JSON.parse(raw); } catch(e) {}
+                }
+
+                const label = tier === 'tier1' ? 'Tier 1' : 'Tier 2';
+                html += `<div class="section">`;
+                html += `<h2>${label}: ${torneo ? torneo.nombre : '❌ Sin datos'}</h2>`;
+
+                if (!torneo) {
+                    html += `<p style="color:#f43f5e">No hay datos sincronizados para ${label}</p>`;
+                    html += `</div>`;
+                    continue;
+                }
+
+                html += `<p><b>Tipo:</b> ${torneo.tipoFormat} | <b>Estado:</b> ${torneo.estado} | <b>Slug:</b> ${torneo.slug}</p>`;
+
+                // --- PARTICIPANTES ---
+                html += `<h3 style="color:#a78bfa">Participantes (${(torneo.participantes||[]).length})</h3>`;
+                html += `<pre>`;
+                (torneo.participantes || []).forEach(p => {
+                    html += `ID: ${JSON.stringify(p.id)} | name: ${JSON.stringify(p.name)} | lblInfo.nombre: ${JSON.stringify(p.lblInfo?.nombre)} | lblInfo.id: ${JSON.stringify(p.lblInfo?.id)}\n`;
+                });
+                html += `</pre>`;
+
+                // --- PARTIDAS ---
+                const matches = torneo.matches || [];
+                const completed = matches.filter(m => m.state === 'completed' || m.state === 'complete' || !!m.winner_id);
+                const pending = matches.filter(m => m.state !== 'completed' && m.state !== 'complete' && !m.winner_id);
+
+                html += `<h3 style="color:#a78bfa">Partidas — ${matches.length} total | ✅ ${completed.length} completadas | ⏳ ${pending.length} pendientes</h3>`;
+
+                html += `<h4 style="color:#22d3ee">✅ Completadas</h4>`;
+                completed.forEach(m => {
+                    const p1name = m.player1?.nombre || m.player1?.name || 'TBD';
+                    const p2name = m.player2?.nombre || m.player2?.name || 'TBD';
+                    const isTBD = p1name === 'TBD' || p2name === 'TBD';
+
+                    const winnerIsP1 = m.winner_id && (String(m.winner_id) === String(m.player1_id));
+                    const winnerIsP2 = m.winner_id && (String(m.winner_id) === String(m.player2_id));
+
+                    const isWalkover = m.scores_csv === '0-0' || m.scores_csv === '' || !m.scores_csv;
+
+                    html += `<div class="match ${isTBD ? 'tbd' : 'completed'}">`;
+                    html += `<span class="label">Round ${m.round} | ID partida: ${m.id} | state: ${m.state}</span><br>`;
+                    html += `<span class="label">p1_id:</span> <b>${m.player1_id}</b> | <span class="label">p2_id:</span> <b>${m.player2_id}</b> | <span class="label">winner_id:</span> <b>${m.winner_id}</b><br>`;
+                    html += `<span class="label">p1.nombre:</span> ${JSON.stringify(m.player1?.nombre)} | <span class="label">p1.name:</span> ${JSON.stringify(m.player1?.name)}<br>`;
+                    html += `<span class="label">p2.nombre:</span> ${JSON.stringify(m.player2?.nombre)} | <span class="label">p2.name:</span> ${JSON.stringify(m.player2?.name)}<br>`;
+                    html += `<span class="label">score:</span> ${m.scores_csv} | <span class="label">WO:</span> ${isWalkover}<br>`;
+                    html += `<b>Ganador detectado: ${winnerIsP1 ? '<span class="w">P1 (' + p1name + ')</span>' : winnerIsP2 ? '<span class="w">P2 (' + p2name + ')</span>' : '<span class="l">⚠️ NINGUNO (IDs no coinciden)</span>'}</b><br>`;
+                    if (isTBD) html += `<span style="color:#f97316">⚠️ TBD — este match se está incluyendo en el historial incorrectamente</span><br>`;
+                    html += `</div>`;
+                });
+
+                html += `<h4 style="color:#94a3b8">⏳ Pendientes</h4>`;
+                pending.forEach(m => {
+                    const p1name = m.player1?.nombre || m.player1?.name || 'TBD';
+                    const p2name = m.player2?.nombre || m.player2?.name || 'TBD';
+                    html += `<div class="match pending">`;
+                    html += `<span class="label">Round ${m.round} | state: ${m.state}</span> — ${p1name} vs ${p2name}<br>`;
+                    html += `</div>`;
+                });
+
+                html += `</div>`;
+            }
+
+            out.innerHTML = html;
+        }
+
+        debug().catch(e => {
+            document.getElementById('output').innerHTML = `<span style="color:red">Error: ${e.message}</span>`;
+        });
+    </script>
+</body>
+</html>

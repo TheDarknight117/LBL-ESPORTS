@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneos en Curso | LBL Esports</title>
+    
+    <!-- SEO Meta Tags & Open Graph -->
+    <meta name="description" content="Sigue en vivo los torneos de la Liga Boliviana de Esports (LBL). Enlaces, brackets, resultados y tabla de posiciones de Tier 1 y Tier 2.">
+    <meta name="keywords" content="LBL, Torneos, League of Legends, Bolivia, Brackets, Tabla de Posiciones, Tier 1, Tier 2">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="LBL Esports">
+    <meta property="og:title" content="Torneos Oficiales | LBL 2026">
+    <meta property="og:description" content="Sigue en vivo los torneos de la Liga Boliviana de Esports (LBL). Enlaces, brackets, resultados y tabla de posiciones.">
+    <meta property="og:image" content="/assets/logo.png">
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (Compilado) & Favicon -->
+    <link rel="stylesheet" href="/dist/output.css">
+    <link rel="icon" type="image/png" href="/assets/LBL%20Circular.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/LBL%20Circular.png">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+
+        .glass-panel {
+            background: rgba(10, 16, 26, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .bracket-node {
+            background: rgba(13, 19, 28, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            transition: all 0.25s ease;
+        }
+        .bracket-node:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .tab-btn-active {
+            background: linear-gradient(135deg, rgba(3, 105, 161, 0.4) 0%, rgba(14, 165, 233, 0.15) 100%);
+            border-color: #38bdf8 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .badge-live-pulse {
+            animation: pulseGlow 1.8s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+    <!-- BARRA NAVEGACIÓN SUPERIOR -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-4 md:px-8 py-3.5 flex justify-between items-center">
+        <div class="flex items-center">
+            <a href="/torneos" onclick="if(typeof volverAlCatalogo === 'function') { volverAlCatalogo(); return false; }" class="flex items-center gap-3 group cursor-pointer" title="Volver al Catálogo de Torneos">
+                <img src="/assets/logo.png" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-1">
+                <span class="font-black text-lg md:text-xl tracking-wider text-white uppercase italic">LBL <span class="text-cyan-400">TORNEOS</span></span>
+            </a>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4">
+            <a href="/" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full hover:bg-white/5 flex items-center gap-2">
+                <i class="fas fa-home"></i> <span class="hidden sm:inline">Inicio</span>
+            </a>
+            <a href="/equipos" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full hover:bg-white/5 flex items-center gap-2">
+                <i class="fas fa-shield-alt"></i> <span class="hidden sm:inline">Equipos</span>
+            </a>
+            <button onclick="volverAlCatalogo()" class="text-cyan-400 hover:text-cyan-300 font-bold text-xs md:text-sm transition-colors py-1.5 px-3.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2 cursor-pointer shadow-sm">
+                <i class="fas fa-trophy"></i> <span class="hidden sm:inline">Torneos</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HÉROE CENTRAL / VISTA DUAL DE TORNEOS -->
+    <main class="flex-grow w-full max-w-[1400px] mx-auto p-4 md:p-8 space-y-8">
+        
+        <!-- VISTA 1: CATÁLOGO / SELECTOR DE TORNEOS (VIVO & PASADOS) -->
+        <div id="view-catalog" class="space-y-8">
+            <!-- BANNER PRINCIPAL DE CATÁLOGO -->
+            <section class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-t-4 border-cyan-500 shadow-2xl">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest">
+                            <i class="fas fa-trophy mr-1 text-cyan-400"></i> Centro de Torneos Oficiales
+                        </span>
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white italic">
+                        TORNEOS DE LA LBL
+                    </h1>
+                    <p class="text-gray-400 text-xs md:text-sm font-medium">
+                        Explora los torneos en vivo en curso y el historial de campeonatos de la Liga Boliviana de Esports.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="abrirBaseDatosJugadores()" class="px-5 py-3 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
+                        <i class="fas fa-users-gear text-cyan-400"></i> Base de Datos de Jugadores
+                    </button>
+                </div>
+            </section>
+
+            <!-- BARRA DE FILTROS DEL CATÁLOGO -->
+            <div class="glass-panel p-3 rounded-2xl bg-[#070c14] border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- TABS ESTADO (EN VIVO vs FINALIZADOS) -->
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button id="tab-filtro-vivo" onclick="filtrarEstadoCatalogo('vivo')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Torneos En Vivo
+                    </button>
+                    <button id="tab-filtro-finalizado" onclick="filtrarEstadoCatalogo('finalizado')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                        <i class="fas fa-flag-checkered"></i> Torneos Pasados
+                    </button>
+                </div>
+
+                <!-- PILLS CATEGORÍA (LIGA LBL, CLASIFICACIÓN, LBL SERIES, ABIERTOS) -->
+                <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+                    <button id="pill-cat-todos" onclick="filtrarCategoriaCatalogo('todos')" class="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition-all bg-gray-800 text-white border border-gray-700 cursor-pointer">
+                        Todos
+                    </button>
+                    <button id="pill-cat-liga_lbl" onclick="filtrarCategoriaCatalogo('liga_lbl')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 cursor-pointer">
+                        🏆 Liga LBL
+                    </button>
+                    <button id="pill-cat-clasificacion_lbl" onclick="filtrarCategoriaCatalogo('clasificacion_lbl')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 cursor-pointer">
+                        🎯 Clasificación LBL
+                    </button>
+                    <button id="pill-cat-lbl_series" onclick="filtrarCategoriaCatalogo('lbl_series')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-amber-400 hover:bg-amber-500/10 cursor-pointer">
+                        ⚡ LBL Series
+                    </button>
+                    <button id="pill-cat-abierto" onclick="filtrarCategoriaCatalogo('abierto')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 cursor-pointer">
+                        🌐 Torneos Abiertos
+                    </button>
+                </div>
+            </div>
+
+            <!-- GRID DE TARJETAS DE TORNEOS -->
+            <div id="catalog-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="col-span-full py-12 text-center text-xs font-bold text-gray-500 uppercase">
+                    <i class="fas fa-spinner fa-spin text-cyan-400 text-lg mb-2 block"></i> Cargando torneos de la Liga...
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 2: DETALLE DEL TORNEO SELECCIONADO (CON NUESTRA ARQUITECTURA) -->
+        <div id="view-detail" class="hidden space-y-8">
+            <!-- SUBHEADER DE NAVEGACIÓN DENTRO DEL TORNEO -->
+            <section class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-t-4 border-cyan-500 shadow-2xl">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="volverAlCatalogo()" class="px-3 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 mr-1">
+                            <i class="fas fa-arrow-left"></i> Volver al Catálogo
+                        </button>
+                        <span id="detail-status-badge" class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest">
+                            <i class="fas fa-circle text-[8px] mr-1 text-cyan-400 animate-pulse"></i> Sincronizado en Vivo
+                        </span>
+                        <span id="detail-format-badge" class="px-3 py-1 rounded-full bg-gray-900 text-gray-300 border border-gray-800 text-[10px] md:text-xs font-black uppercase tracking-wider">
+                            Formato: Doble Eliminación
+                        </span>
+                    </div>
+                    <h1 id="detail-tournament-title" class="text-2xl md:text-4xl font-black uppercase tracking-tight text-white italic">
+                        Cargando Torneo...
+                    </h1>
+                    <p id="detail-tournament-desc" class="text-gray-400 text-xs md:text-sm font-medium">
+                        Visualización oficial de fixtures, tabla de posiciones y cuadrante en vivo.
+                    </p>
+                </div>
+
+                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <button onclick="abrirBaseDatosJugadores()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
+                        <i class="fas fa-users text-cyan-400"></i> Base de Datos de Jugadores
+                    </button>
+                </div>
+            </section>
+
+            <!-- BARRA DE ETAPAS DEL TORNEO (RESUMEN / POSICIONES / CUADRANTE) -->
+            <div class="glass-panel p-2 rounded-2xl bg-[#070c14] border border-gray-800 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <button id="tab-stage-resumen" onclick="cambiarEtapa('resumen')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg">
+                        <i class="fas fa-layer-group"></i> Resumen
+                    </button>
+                    <button id="tab-stage-grupos" onclick="cambiarEtapa('grupos')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                        <i class="fas fa-list-ol"></i> Posiciones
+                    </button>
+                    <button id="tab-stage-llave" onclick="cambiarEtapa('llave')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                        <i class="fas fa-sitemap"></i> Eliminatorias (Llave)
+                    </button>
+                </div>
+
+                <!-- CONTROLES ADICIONALES (TOGGLE DE VISTA EN LLAVE) -->
+                <div id="bracket-view-toggle" class="hidden items-center gap-2">
+                    <button id="btn-view-cards" onclick="cambiarModoVista('cards')" class="px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg">
+                        <i class="fas fa-sitemap text-cyan-400"></i> Vista de Tarjetas LBL
+                    </button>
+                    <button id="btn-view-embed" onclick="cambiarModoVista('embed')" class="px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer">
+                        <i class="fas fa-window-maximize"></i> Visor Challonge
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DE FEED DE MATCHES EN VIVO / RECIENTES -->
+            <section id="section-feed-matches" class="space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <h3 class="text-base md:text-lg font-black text-white uppercase tracking-wider italic flex items-center gap-2">
+                        <i class="fas fa-gamepad text-cyan-400"></i> Próximos Encuentros & Resultados Recientes
+                    </h3>
+                    <span id="txt-matches-count" class="text-xs font-bold text-gray-500">0 partidas</span>
+                </div>
+
+                <div id="matches-feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="col-span-full p-8 rounded-2xl border border-dashed border-gray-800/80 bg-[#070c14] text-center text-amber-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-inner">
+                        <i class="fas fa-clock text-amber-400"></i> ESPERANDO TORNEO
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONTENEDOR DINÁMICO DE ETAPAS (RESUMEN / POSICIONES / CUADRANTE) -->
+            <div id="dynamic-tournament-container" class="w-full min-h-[300px]">
+                <!-- Se llena dinámicamente según la etapa activa -->
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full glass-panel border-t border-gray-800/80 p-6 text-center text-xs text-gray-500 font-bold uppercase tracking-widest mt-12">
+        Liga Boliviana de Esports &copy; 2026 — Todos los derechos reservados.
+    </footer>
+
+    <!-- LÓGICA DE FIRESTORE Y RENDERIZADO (100% SOLO LECTURA) -->
+    <script type="module">
+        import { db } from "/firebase-config.js";
+        import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ══════════════════════════════════════════════════════════════════
+        //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
+        //  Clave: nombre del equipo en minúsculas (como aparece en Challonge)
+        //  Valor: tag de máximo 3 letras en MAYÚSCULAS
+        // ══════════════════════════════════════════════════════════════════
+        const TAG_OVERRIDES = {
+            'aether core':        'ATC', // Tier 1
+            'aether core academy':'ATA', // Tier 2 / Academy
+            'kaox pink':          'KPK',
+            'condor nexus':       'CRN',
+            'crimson weasels':    'CRW',
+            'snake dynasty':      'SKD',
+            'mapaches apaches':   'MAP',
+            'altitude gaming':    'ATG',
+            'quinteto gaming':    'QTT',
+            'lyons':              'LYN',
+            'iron academy':       'IHA',
+            'tfx':                'TFX',
+            'lotus reborn':       'LTR',
+            'dark abyssal academy':'DAA',
+            'velocito gaming':     'VLG',
+            'kaoxitos blue academy':'KBA',
+            'los seguidores del primo':'SDP',
+            'crimson twilight knights':'CTK',
+            'grieta cumbiera':    'GRC',
+            'kaox red':           'KXR',
+            'riot pls game':      'RPG',
+            'strugglers e-sports':'SGE',
+            'struggle esports':   'SGE',
+            'uka kitties':        'UKA',
+            'ukakitties':         'UKA',
+            'team dark':          'TDK',
+            'viktus':             'VKT',
+            'marines del altiplano':'MDA',
+            'solo kill pro':      'SKP',
+            'nox reign esports':  'NRE',
+            'kaox yellow':        'KXY',
+            'kaox purple':        'KXP',
+            'kaox blue':          'KXB',
+            't1nacotas':          'T1N',
+            'rise of kings order':'RKO',
+            'team first kill':    'TFK',
+            
+            // ── Agrega más equipos abajo con el mismo formato ──
+            // 'nombre del equipo': 'TAG',
+        };
+
+        /**
+         * Resuelve el tag de un equipo aplicando:
+         * 1. Override manual exacto (TAG_OVERRIDES)
+         * 2. Override manual por prefijo más específico
+         * 3. Tag guardado en Firestore (lblInfo.tag), truncado a 3 letras
+         * 4. Iniciales del nombre, máximo 3 letras
+         */
+        function resolverTag(equipo) {
+            const nombre = (equipo?.nombre || equipo?.name || '').trim();
+            const key = nombre.toLowerCase();
+
+            // 1. Override manual exacto
+            if (TAG_OVERRIDES[key]) return TAG_OVERRIDES[key];
+
+            // 2. Buscar coincidencia por longitud descendente para priorizar nombres más largos y específicos
+            const sortedKeys = Object.keys(TAG_OVERRIDES).sort((a, b) => b.length - a.length);
+            for (const k of sortedKeys) {
+                if (key === k || key.startsWith(k) || k.startsWith(key)) {
+                    return TAG_OVERRIDES[k];
+                }
+            }
+
+            // 3. Tag de Firestore, truncado a 3 letras
+            const tagFb = (equipo?.tag || '').trim().toUpperCase();
+            if (tagFb && tagFb !== nombre.toUpperCase() && tagFb.length <= 6) {
+                return tagFb.substring(0, 3);
+            }
+
+            // 4. Iniciales del nombre (máx 3 palabras)
+            const words = nombre.split(/\s+/).filter(Boolean);
+            if (words.length >= 2) {
+                return words.slice(0, 3).map(w => w[0]).join('').toUpperCase();
+            }
+            return nombre.substring(0, 3).toUpperCase();
+        }
+
+        // Mapa auxiliar de logos de equipos cargados desde Firestore
+        const mapaLogosEquipos = new Map();
+
+        /**
+         * Resuelve el logo de un equipo buscando en datos locales, Firestore y mapa auxiliar
+         */
+        function resolverLogoEquipo(nombre, tag, p) {
+            if (p?.lblInfo?.logo) return p.lblInfo.logo;
+            if (p?.logo) return p.logo;
+            const cleanNom = (nombre || '').toLowerCase().trim();
+            const cleanTag = (tag || '').toLowerCase().trim();
+            if (cleanNom && mapaLogosEquipos.has(cleanNom)) return mapaLogosEquipos.get(cleanNom);
+            if (cleanTag && mapaLogosEquipos.has(cleanTag)) return mapaLogosEquipos.get(cleanTag);
+            for (const [k, v] of mapaLogosEquipos.entries()) {
+                if (cleanNom === k || (cleanNom.includes(k) && !cleanNom.includes('academy') && !k.includes('academy'))) {
+                    return v;
+                }
+            }
+            return '';
+        }
+
+        async function cargarEquiposFirestore() {
+            try {
+                const snap = await getDocs(collection(db, 'inscripciones_pendientes'));
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const eq = data.equipo || {};
+                    const nom = (eq.nombre || '').trim().toLowerCase();
+                    const tag = (eq.tag || '').trim().toLowerCase();
+                    if (nom && eq.logo) mapaLogosEquipos.set(nom, eq.logo);
+                    if (tag && eq.logo) mapaLogosEquipos.set(tag, eq.logo);
+                });
+            } catch (e) {
+                console.warn("Logos auxiliares no disponibles:", e);
+            }
+        }
+
+        // --- ESTADO GLOBAL DE NAVEGACIÓN Y MULTITORNEOS ---
+        // Torneos se cargan 100% desde el cache de localStorage (sincronizados desde Dashboard + API de Challonge)
+        const DEFAULT_TORNEOS_INICIALES = [];
+
+        let listaTorneosRegistrados = [];
+        try {
+            const cached = localStorage.getItem('lbl_torneos_registrados_cache');
+            const eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    listaTorneosRegistrados = parsed.filter(t => !eliminados.includes(t.id));
+                }
+            }
+        } catch(e) {}
+
+        let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle
+        let filtroEstadoCatalogo = 'vivo'; // 'vivo' | 'finalizado'
+        let filtroCategoriaCatalogo = 'todos'; // 'todos' | 'liga_lbl' | 'abierto'
+
+        let etapaActiva = 'resumen'; // 'resumen', 'grupos', 'llave'
+        let modoVistaActual = 'cards'; // 'cards' (Vista de Tarjetas LBL por defecto) o 'embed'
+
+        window.abrirBaseDatosJugadores = () => {
+            alert("👥 Próximamente: Base de Datos de Jugadores y Equipos LBL.\nAcceso centralizado al historial de jugadores, convocatorias y estadísticas oficiales.");
+        };
+
+        // --- ENRUTADOR MODULAR Y SEO DINÁMICO (/torneos/:slug/:etapa) ---
+        function procesarRutaURL() {
+            const rawPath = decodeURIComponent(window.location.pathname);
+            const parts = rawPath.split('/').filter(Boolean);
+
+            if (parts.length >= 2 && parts[0] === 'torneos') {
+                const slugUrl = parts[1];
+                const stageUrl = parts[2] || 'overview';
+
+                const found = listaTorneosRegistrados.find(t => {
+                    const cleanTSlug = (typeof extraerChallongeSlug === 'function') ? extraerChallongeSlug(t.slug || t.url || t.id) : (t.slug || t.id);
+                    return (t.id && t.id.toLowerCase() === slugUrl.toLowerCase()) || 
+                           (cleanTSlug && cleanTSlug.toLowerCase() === slugUrl.toLowerCase());
+                });
+
+                if (found) {
+                    torneoSeleccionadoId = found.id;
+                } else if (slugUrl.toLowerCase().includes('t1clbl')) {
+                    torneoSeleccionadoId = 't1clbl2026';
+                } else if (slugUrl.toLowerCase().includes('qualifier')) {
+                    torneoSeleccionadoId = 'openqualifier2026';
+                } else {
+                    torneoSeleccionadoId = null;
+                }
+
+                if (stageUrl === 'puntuaciones' || stageUrl === 'posiciones' || stageUrl === 'grupos') {
+                    etapaActiva = 'grupos';
+                } else if (stageUrl === 'llaves' || stageUrl === 'eliminatorias') {
+                    etapaActiva = 'llave';
+                } else {
+                    etapaActiva = 'resumen';
+                }
+            } else {
+                torneoSeleccionadoId = null;
+            }
+        }
+
+        function actualizarURL(pushHistory = true) {
+            let newPath = '/torneos';
+            let docTitle = 'Torneos Oficiales | LBL 2026';
+
+            if (torneoSeleccionadoId) {
+                const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+                if (docTorneo) {
+                    const cleanSlug = (typeof extraerChallongeSlug === 'function')
+                        ? extraerChallongeSlug(docTorneo.slug || docTorneo.url || docTorneo.id)
+                        : (docTorneo.slug || docTorneo.id);
+
+                    let stageSegment = 'overview';
+                    let stageName = 'Resumen';
+
+                    if (etapaActiva === 'grupos') {
+                        stageSegment = 'puntuaciones';
+                        stageName = 'Posiciones';
+                    } else if (etapaActiva === 'llave') {
+                        stageSegment = 'llaves';
+                        stageName = 'Eliminatorias';
+                    }
+
+                    newPath = `/torneos/${cleanSlug}/${stageSegment}`;
+                    docTitle = `${docTorneo.nombre || 'Torneo LBL'} | ${stageName} | LBL 2026`;
+                }
+            }
+
+            document.title = docTitle;
+
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.setAttribute('content', docTitle);
+
+            if (pushHistory && window.location.pathname !== newPath) {
+                history.pushState({ torneoId: torneoSeleccionadoId, etapa: etapaActiva }, '', newPath);
+            }
+        }
+
+        window.addEventListener('popstate', () => {
+            procesarRutaURL();
+            renderizarVista();
+            actualizarURL(false);
+        });
+
+        // --- CARGA DE DATOS DESDE FIRESTORE / LOCALSTORAGE ---
+        async function cargarTorneosDesdeFirestore() {
+            procesarRutaURL();
+            renderizarVista();
+            actualizarURL(false);
+
+            try {
+                // Cargar logos auxiliares de Firestore en paralelo
+                cargarEquiposFirestore().catch(() => {});
+
+                const snap = await getDocs(collection(db, 'torneos_registrados'));
+                const lista = [];
+                snap.forEach(docSnap => {
+                    lista.push({ ...docSnap.data(), id: docSnap.id });
+                });
+
+                if (lista.length > 0) {
+                    listaTorneosRegistrados = lista;
+                    localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(lista));
+                    procesarRutaURL();
+                    renderizarVista();
+                    actualizarURL(false);
+                } else {
+                    procesarRutaURL();
+                    renderizarVista();
+                    actualizarURL(false);
+                }
+            } catch (err) {
+                console.warn("Firestore torneos_registrados inaccesible:", err);
+                procesarRutaURL();
+                renderizarVista();
+                actualizarURL(false);
+            }
+        }
+
+        function renderizarVista() {
+            const viewCatalog = document.getElementById('view-catalog');
+            const viewDetail = document.getElementById('view-detail');
+
+            if (!torneoSeleccionadoId) {
+                if (viewCatalog) viewCatalog.classList.remove('hidden');
+                if (viewDetail) viewDetail.classList.add('hidden');
+                renderizarCatalogo();
+            } else {
+                if (viewCatalog) viewCatalog.classList.add('hidden');
+                if (viewDetail) viewDetail.classList.remove('hidden');
+                renderizarTorneoDetalle();
+            }
+        }
+
+        window.volverAlCatalogo = () => {
+            torneoSeleccionadoId = null;
+            renderizarVista();
+            actualizarURL(true);
+        };
+
+        window.filtrarEstadoCatalogo = (estado) => {
+            filtroEstadoCatalogo = estado;
+            const btnVivo = document.getElementById('tab-filtro-vivo');
+            const btnFin = document.getElementById('tab-filtro-finalizado');
+
+            if (btnVivo && btnFin) {
+                if (estado === 'vivo') {
+                    btnVivo.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
+                    btnFin.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
+                } else {
+                    btnFin.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
+                    btnVivo.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
+                }
+            }
+
+            renderizarCatalogo();
+        };
+
+        window.filtrarCategoriaCatalogo = (cat) => {
+            filtroCategoriaCatalogo = cat;
+            ['todos', 'liga_lbl', 'clasificacion_lbl', 'lbl_series', 'abierto'].forEach(c => {
+                const btn = document.getElementById(`pill-cat-${c}`);
+                if (btn) {
+                    if (c === cat) {
+                        btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition-all bg-gray-800 text-white border border-gray-700 cursor-pointer shadow';
+                    } else {
+                        btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white hover:bg-white/5 cursor-pointer';
+                    }
+                }
+            });
+
+            renderizarCatalogo();
+        };
+
+        function renderizarCatalogo() {
+            const container = document.getElementById('catalog-grid-container');
+            if (!container) return;
+
+            let filtrados = listaTorneosRegistrados.filter(t => {
+                const datos = t.datosChallonge || {};
+                const chState = (datos.estado || '').toLowerCase();
+                const localState = (t.estado || '').toLowerCase();
+
+                const isPending = chState === 'pending' || localState === 'proximamente' || localState === 'pending';
+                const isCompleted = chState === 'complete' || chState === 'awaiting_review' || localState === 'finalizado' || localState === 'complete';
+
+                const matchEstado = (filtroEstadoCatalogo === 'vivo') ? (!isCompleted) : isCompleted;
+                const matchCat = (filtroCategoriaCatalogo === 'todos') ? true : (t.categoria === filtroCategoriaCatalogo);
+                return matchEstado && matchCat;
+            });
+
+            if (filtrados.length === 0) {
+                const mensaje = (listaTorneosRegistrados.length === 0)
+                    ? 'No hay torneos registrados aún en la Liga. Los torneos ingresados desde el Panel de Staff aparecerán aquí.'
+                    : `No se encontraron torneos ${filtroEstadoCatalogo === 'vivo' ? 'activos / por iniciar' : 'pasados'} en la categoría seleccionada.`;
+
+                container.innerHTML = `
+                    <div class="col-span-full p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
+                        <i class="fas fa-trophy text-4xl text-gray-600 block mb-2"></i>
+                        <p class="text-white text-sm font-black">${mensaje}</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            filtrados.forEach(t => {
+                const datos = t.datosChallonge || {};
+                const chState = (datos.estado || '').toLowerCase();
+                const localState = (t.estado || '').toLowerCase();
+
+                const isPending = chState === 'pending' || localState === 'proximamente' || localState === 'pending';
+                const isCompleted = chState === 'complete' || chState === 'awaiting_review' || localState === 'finalizado' || localState === 'complete';
+
+                let statusBadge = '';
+                if (isCompleted) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 text-[10px] font-black uppercase">🏁 FINALIZADO</span>`;
+                } else if (isPending) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase flex items-center gap-1.5"><i class="fas fa-clock text-amber-400"></i> POR INICIAR</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-black uppercase flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> EN VIVO</span>`;
+                }
+
+                const catBadge = t.categoria === 'liga_lbl'
+                    ? `<span class="px-2.5 py-1 rounded-lg bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[10px] font-black uppercase tracking-wider">🏆 Liga LBL</span>`
+                    : t.categoria === 'clasificacion_lbl'
+                    ? `<span class="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider">🎯 Clasificación LBL</span>`
+                    : t.categoria === 'lbl_series'
+                    ? `<span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider">⚡ LBL Series</span>`
+                    : `<span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[10px] font-black uppercase tracking-wider">🌐 Torneo Abierto</span>`;
+
+                const numMatches = datos.matches?.length || 0;
+                const numEquipos = datos.totalEquipos ?? datos.participantes?.length ?? 0;
+                const formatoLabel = t.formatoLabel || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
+
+                html += `
+                    <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-6 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                ${catBadge}
+                                ${statusBadge}
+                            </div>
+                            <div>
+                                <span class="text-xs font-black text-cyan-400 uppercase tracking-widest block">${t.division || 'Competencia'}</span>
+                                <h3 class="text-xl font-black text-white uppercase tracking-tight group-hover:text-cyan-300 transition-colors leading-snug mt-0.5">${t.nombre}</h3>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-800/80 text-xs text-gray-400 font-semibold">
+                                <div class="flex items-center gap-1.5"><i class="fas fa-shield-halved text-gray-500"></i> ${numEquipos} Equipos</div>
+                                <div class="flex items-center gap-1.5"><i class="fas fa-gamepad text-gray-500"></i> ${numMatches} Partidas</div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-800 flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">${formatoLabel}</span>
+                            <span class="px-4 py-2 rounded-xl bg-cyan-500/20 group-hover:bg-cyan-500 text-cyan-300 group-hover:text-black border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                Ver Torneo <i class="fas fa-arrow-right text-xs"></i>
+                            </span>
+                        </div>
+                    </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.seleccionarTorneo = (id) => {
+            torneoSeleccionadoId = id;
+            etapaActiva = 'resumen';
+            renderizarVista();
+            actualizarURL(true);
+        };
+
+        window.cambiarEtapa = (etapa) => {
+            etapaActiva = etapa;
+            ['resumen', 'grupos', 'llave'].forEach(e => {
+                const btn = document.getElementById(`tab-stage-${e}`);
+                if (btn) {
+                    if (e === etapa) {
+                        btn.className = 'px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
+                    } else {
+                        btn.className = 'px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
+                    }
+                }
+            });
+
+            const toggle = document.getElementById('bracket-view-toggle');
+            if (toggle) {
+                toggle.style.display = (etapa === 'llave') ? 'flex' : 'none';
+            }
+
+            renderizarTorneoDetalle();
+            actualizarURL(true);
+        };
+
+        window.cambiarModoVista = (modo) => {
+            modoVistaActual = modo;
+            const btnEmbed = document.getElementById('btn-view-embed');
+            const btnCards = document.getElementById('btn-view-cards');
+
+            if (btnEmbed && btnCards) {
+                if (modo === 'embed') {
+                    btnEmbed.className = 'px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer';
+                    btnCards.className = 'px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer';
+                } else {
+                    btnCards.className = 'px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer';
+                    btnEmbed.className = 'px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer';
+                }
+            }
+
+            renderizarTorneoDetalle();
+        };
+
+        const getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'LBL').trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
+
+        function renderizarTorneoDetalle() {
+            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            if (!docTorneo) return;
+
+            const torneo = docTorneo.datosChallonge || docTorneo;
+
+            const titleEl = document.getElementById('detail-tournament-title');
+            const formatBadge = document.getElementById('detail-format-badge');
+            const statusBadge = document.getElementById('detail-status-badge');
+            const descEl = document.getElementById('detail-tournament-desc');
+
+            const mainContainer = document.getElementById('dynamic-tournament-container');
+            const countText = document.getElementById('txt-matches-count');
+            const feedSection = document.getElementById('section-feed-matches');
+
+            if (titleEl) titleEl.innerText = docTorneo.nombre || torneo.nombre || 'Torneo LBL';
+            if (formatBadge) formatBadge.innerText = `Formato: ${docTorneo.formatoLabel || torneo.tipoFormatLabel || 'Doble Eliminación'}`;
+            if (descEl) descEl.innerText = `Torneo ${docTorneo.categoria === 'liga_lbl' ? 'oficial de la Liga LBL' : 'Abierto de Esports'} • División: ${docTorneo.division || 'General'}`;
+
+            if (statusBadge) {
+                const chState = (torneo.estado || docTorneo.estado || '').toLowerCase();
+                const isPending = chState === 'pending' || chState === 'proximamente';
+                const isCompleted = chState === 'complete' || chState === 'finalizado';
+
+                if (isCompleted) {
+                    statusBadge.innerHTML = `<i class="fas fa-flag-checkered text-[8px] mr-1 text-slate-400"></i> Torneo Finalizado`;
+                    statusBadge.className = "px-3 py-1 rounded-full bg-slate-500/10 text-slate-400 border border-slate-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest";
+                } else if (isPending) {
+                    statusBadge.innerHTML = `<i class="fas fa-clock text-[8px] mr-1 text-amber-400"></i> Torneo Por Iniciar`;
+                    statusBadge.className = "px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest";
+                } else {
+                    statusBadge.innerHTML = `<i class="fas fa-circle text-[8px] mr-1 text-cyan-400 animate-pulse"></i> Torneo en Vivo`;
+                    statusBadge.className = "px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest";
+                }
+            }
+
+            if (!torneo || !torneo.matches) {
+                if (countText) countText.innerText = '0 partidas sincronizadas';
+                if (feedSection) feedSection.style.display = 'none';
+
+                mainContainer.innerHTML = `
+                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
+                        <i class="fas fa-diagram-project text-4xl text-cyan-400 block mb-2"></i>
+                        <p>Este torneo aún no ha sido sincronizado con Challonge desde el Dashboard de Staff.</p>
+                        <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug}</strong></span>
+                    </div>`;
+                return;
+            }
+
+            titleEl.innerText = torneo.nombre || docTorneo.nombre || 'Torneo LBL';
+            const tipoFormat = (torneo.tipoFormat || docTorneo.formatoLabel || 'single_elimination').toLowerCase();
+            
+            let formatText = docTorneo.formatoLabel || 'Eliminatoria Directa';
+            if (tipoFormat.includes('double')) formatText = 'Eliminatoria Doble (Upper / Lower)';
+            else if (tipoFormat.includes('round') || tipoFormat.includes('group')) formatText = 'Fase de Grupos (Round Robin)';
+            else if (tipoFormat.includes('swiss')) formatText = 'Sistema Suizo';
+            
+            formatBadge.innerText = `Formato: ${formatText}`;
+            if (countText) countText.innerText = `${torneo.matches.length} partidas registradas`;
+
+            // Renderizar Feed de enfrentamiento
+            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || (torneo.podio && torneo.podio.primerLugar);
+            if (isCompleted) {
+                if (feedSection) feedSection.style.display = 'none';
+            } else {
+                if (feedSection) {
+                    feedSection.style.display = 'block';
+                    renderizarFeedMatches(torneo.matches);
+                }
+            }
+
+            // Renderizar según la etapa seleccionada (Estilo LoL Esports Adaptativo)
+            if (etapaActiva === 'resumen') {
+                renderizarEtapaResumen(docTorneo, mainContainer);
+            } else if (etapaActiva === 'grupos') {
+                renderizarTablaPosiciones(torneo, mainContainer);
+            } else if (etapaActiva === 'llave') {
+                if (modoVistaActual === 'embed') {
+                    renderizarChallongeEmbed(docTorneo, mainContainer);
+                } else {
+                    renderizarAdaptativoSegunFormato(docTorneo, mainContainer);
+                }
+            }
+        }
+
+        // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
+        function renderizarEtapaResumen(docTorneo, container) {
+            const torneo = docTorneo.datosChallonge || docTorneo;
+            const podio = torneo.podio || {};
+            const challongeStandings = Array.isArray(torneo.challongeStandings) ? torneo.challongeStandings : [];
+
+            let p1 = podio.primerLugar;
+            let p2 = podio.segundoLugar;
+            let p3 = podio.tercerLugar;
+
+            // Si el podio está incompleto o tiene duplicados (ej. p2 == p3), resolver desde challongeStandings oficiales
+            if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
+                const s1 = challongeStandings.find(s => s.rank === 1);
+                const s2 = challongeStandings.find(s => s.rank === 2);
+                const s3 = challongeStandings.find(s => s.rank === 3);
+                if (s1) p1 = s1.equipo;
+                if (s2) p2 = s2.equipo;
+                if (s3) p3 = s3.equipo;
+            }
+
+            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || !!p1;
+
+            // Extraer participantes únicos para la tarjeta derecha "Equipos participantes"
+            let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
+            const participantesMap = new Map();
+            rawParticipantes.forEach(p => {
+                const name = (p.name || p.nombre || p.lblInfo?.nombre || p.display_name || '').trim();
+                if (name && name !== 'TBD' && !participantesMap.has(name.toLowerCase())) {
+                    participantesMap.set(name.toLowerCase(), p);
+                }
+            });
+
+            if (participantesMap.size === 0 && torneo.matches) {
+                torneo.matches.forEach(m => {
+                    if (m.player1 && m.player1.nombre && m.player1.nombre !== 'TBD') {
+                        participantesMap.set(m.player1.nombre.toLowerCase().trim(), m.player1);
+                    }
+                    if (m.player2 && m.player2.nombre && m.player2.nombre !== 'TBD') {
+                        participantesMap.set(m.player2.nombre.toLowerCase().trim(), m.player2);
+                    }
+                });
+            }
+
+            const participantes = Array.from(participantesMap.values());
+
+            const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
+            let equiposGridHTML = '';
+            if (participantes.length > 0) {
+                equiposGridHTML = `<div class="flex flex-col gap-3.5 pt-2">`;
+                participantes.forEach(p => {
+                    const name = (p.name || p.nombre || p.lblInfo?.nombre || p.display_name || 'Equipo').trim();
+                    const tag = resolverTag({ nombre: name, tag: p.tag || p.lblInfo?.tag });
+                    const logo = esLigaLBL ? resolverLogoEquipo(name, tag, p) : '';
+
+                    let avatarHTML = '';
+                    if (esLigaLBL && logo) {
+                        avatarHTML = `
+                            <div class="w-12 h-12 rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
+                                <img src="${logo}" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-xl">
+                            </div>`;
+                    } else {
+                        avatarHTML = `
+                            <div class="w-12 h-12 rounded-2xl bg-[#030712] border border-gray-800 flex items-center justify-center shrink-0 shadow-inner group-hover:border-cyan-500/40 transition-colors">
+                                <span class="font-black text-xs text-cyan-400 font-mono">${tag}</span>
+                            </div>`;
+                    }
+
+                    equiposGridHTML += `
+                        <div class="flex items-center gap-6 p-4 rounded-2xl bg-[#030712] hover:bg-[#070c14] border-0 transition-all shadow-md group">
+                            ${avatarHTML}
+                            <span class="text-sm md:text-base font-black text-white tracking-wider uppercase truncate" title="${name}">${name}</span>
+                        </div>`;
+                });
+                equiposGridHTML += `</div>`;
+            } else {
+                equiposGridHTML = `<div class="p-6 text-center text-xs font-bold text-gray-500 uppercase">No hay lista de equipos registrada.</div>`;
+            }
+
+            let podioHTML = '';
+            // Helper para tarjeta de podio individual
+            const podioCard = (rank, label, sublabel, accentColor, bgFrom, borderColor, equipo, isAvailable) => {
+                const nombre = equipo?.nombre || equipo?.name || '';
+                const tag = resolverTag(equipo || {}) || nombre.substring(0, 3).toUpperCase();
+                const rankShieldStyle = {
+                    '1': 'background:linear-gradient(135deg,#b8860b,#f5c518,#b8860b);color:#0a0a1a;',
+                    '2': 'background:linear-gradient(135deg,#4a5568,#a0aec0,#4a5568);color:#0a0a1a;',
+                    '3': 'background:linear-gradient(135deg,#7b4f1a,#cd7f32,#7b4f1a);color:#0a0a1a;'
+                }[rank] || 'background:#1a1f2e;color:#94a3b8;';
+
+                return `
+                    <div class="flex-1 flex flex-col justify-center px-6 py-5 relative" style="border-left: 2px solid ${borderColor};">
+                        <div class="flex items-center gap-4">
+                            <!-- Shield rank -->
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-lg" style="${rankShieldStyle}">
+                                ${rank}<span style="font-size:0.55em;vertical-align:super;">°</span>
+                            </div>
+                            <!-- Tag + Name -->
+                            <div class="flex flex-col gap-1 min-w-0">
+                                <span class="px-2 py-0.5 rounded font-black text-[10px] uppercase tracking-widest self-start" style="background:rgba(20,148,224,0.15);color:#1494E0;border:1px solid rgba(20,148,224,0.3)">${isAvailable ? tag : '???'}</span>
+                                <span class="font-black text-white uppercase tracking-wide text-sm md:text-base truncate">${isAvailable ? (nombre || 'Por Definir') : 'Por Definir'}</span>
+                                <span class="text-[11px] font-semibold" style="color:${accentColor}">${sublabel}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            };
+
+            if (isCompleted && p1) {
+                podioHTML = `
+                    <div class="flex flex-col sm:flex-row w-full rounded-2xl overflow-hidden shadow-2xl" style="background:#07090f;border:1px solid #1a2035;">
+                        ${podioCard('1','Campeón','1.er lugar — Campeón 🏆','#f5c518','#b8860b','#f5c518',p1,true)}
+                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
+                        ${podioCard('2','Subcampeón','2.° lugar — Subcampeón 🥈','#a0aec0','#4a5568','#a0aec0',p2,!!p2)}
+                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
+                        ${podioCard('3','Bronce','3.er lugar — Medalla de Bronce 🥉','#cd7f32','#7b4f1a','#cd7f32',p3,!!p3)}
+                    </div>`;
+            } else {
+                podioHTML = `
+                    <div class="flex flex-col sm:flex-row w-full rounded-2xl overflow-hidden shadow-xl" style="background:#07090f;border:1px solid #1a2035;">
+                        ${podioCard('1','Campeón','1.er lugar — En disputa','#f5c518','#b8860b','#f5c51840',null,false)}
+                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
+                        ${podioCard('2','Subcampeón','2.° lugar — En disputa','#a0aec0','#4a5568','#a0aec040',null,false)}
+                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
+                        ${podioCard('3','Bronce','3.er lugar — En disputa','#cd7f32','#7b4f1a','#cd7f3240',null,false)}
+                    </div>`;
+            }
+
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- COLUMNA IZQUIERDA: RESUMEN DEL SPLIT & PODIO -->
+                    <div class="lg:col-span-7 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
+                        <div class="space-y-2 border-b border-gray-800/80 pb-4">
+                            <h3 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight">
+                                Resumen de ${torneo.nombre || `Torneo LBL ${divisionActiva}`}
+                            </h3>
+                            <p class="text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
+                                El torneo principal de la Liga Boliviana de LoL. En esta competencia, los equipos de la región se enfrentan para disputar la gloria y los puestos de honor.
+                            </p>
+                        </div>
+
+                        <!-- CUADRO DE POSICIONES PRINCIPALES -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-black text-cyan-400 uppercase tracking-widest italic flex items-center gap-2">
+                                <i class="fas fa-trophy text-yellow-400"></i> Puestos del Torneo
+                            </h4>
+                            ${podioHTML}
+                        </div>
+
+                        <!-- FASES DEL EVENTO -->
+                        <div class="space-y-2 border-t border-gray-800/80 pt-4">
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Fases del Evento</h4>
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                • <strong class="text-gray-300">Temporada Regular:</strong> Formato de todos contra todos o fases de grupos.<br>
+                                • <strong class="text-gray-300">Eliminatorias / Play-offs:</strong> Cuadrante directo de eliminación con Upper y Lower Bracket al mejor de 3 y 5 partidas (BO3 / BO5).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: EQUIPOS PARTICIPANTES -->
+                    <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl">
+                        <div class="border-b border-gray-800/80 pb-3">
+                            <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight">
+                                Equipos participantes
+                            </h3>
+                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                Todos los equipos de la región participan en este evento.
+                            </span>
+                        </div>
+
+                        ${equiposGridHTML}
+                    </div>
+                </div>`;
+        }
+
+        // --- HELPER PARA PARSEAR MARCADORES Y DETECTAR WALKOVER (W.O.) ---
+        function parseMatchScores(m) {
+            const isCompleted = m.state === 'completed' || m.state === 'complete' || !!m.winner_id;
+            const rawScores = (m.scores_csv || '').trim();
+
+            const isZeroZero = !rawScores || rawScores === '0-0' || rawScores.replace(/[,\s-]/g, '') === '00000000000000000000';
+            const isWalkover = isCompleted && isZeroZero && !!m.winner_id;
+
+            let p1Score = '0';
+            let p2Score = '0';
+
+            if (!isWalkover && rawScores) {
+                if (rawScores.includes(',')) {
+                    const sets = rawScores.split(',');
+                    let p1Wins = 0;
+                    let p2Wins = 0;
+                    sets.forEach(s => {
+                        const parts = s.split('-').map(x => parseInt(x.trim()) || 0);
+                        if (parts[0] > parts[1]) p1Wins++;
+                        else if (parts[1] > parts[0]) p2Wins++;
+                    });
+                    p1Score = p1Wins.toString();
+                    p2Score = p2Wins.toString();
+                } else {
+                    const parts = rawScores.split('-').map(x => x.trim());
+                    p1Score = parts[0] || '0';
+                    p2Score = parts[1] || '0';
+                }
+            }
+
+            const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
+            const p2IdStr = (m.player2_id !== undefined && m.player2_id !== null) ? String(m.player2_id) : (m.player2?.id ? String(m.player2.id) : '');
+            const winnerIdStr = (m.winner_id !== undefined && m.winner_id !== null) ? String(m.winner_id) : '';
+
+            let p1Winner = false;
+            let p2Winner = false;
+
+            if (isCompleted) {
+                if (winnerIdStr && (winnerIdStr === p1IdStr || winnerIdStr === p2IdStr)) {
+                    p1Winner = (winnerIdStr === p1IdStr);
+                    p2Winner = (winnerIdStr === p2IdStr);
+                } else if (!isWalkover) {
+                    p1Winner = parseInt(p1Score) > parseInt(p2Score);
+                    p2Winner = parseInt(p2Score) > parseInt(p1Score);
+                }
+            }
+
+            return {
+                isCompleted,
+                isWalkover,
+                p1Score,
+                p2Score,
+                p1Winner,
+                p2Winner
+            };
+        }
+
+        function renderizarFeedMatches(matches) {
+            const feedContainer = document.getElementById('matches-feed-container');
+            if (!feedContainer) return;
+
+            const torneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
+            const esLigaLBL = (torneoActual.categoria === 'liga_lbl') || (torneoActual.datosChallonge?.categoria === 'liga_lbl');
+
+            if (!matches || matches.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="col-span-full p-8 rounded-2xl border border-dashed border-gray-800/80 bg-[#070c14] text-center text-amber-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-inner">
+                        <i class="fas fa-clock text-amber-400"></i> ESPERANDO TORNEO
+                    </div>`;
+                return;
+            }
+
+            const sortedMatches = [...matches].slice(0, 6);
+
+            let html = '';
+            sortedMatches.forEach(m => {
+                const p1 = m.player1 || { nombre: 'TBD', tag: 'TBD', logo: '' };
+                const p2 = m.player2 || { nombre: 'TBD', tag: 'TBD', logo: '' };
+                const parsed = parseMatchScores(m);
+
+                const badgeEstado = m.state === 'live'
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-rose-600/30 text-rose-400 border border-rose-500/40 text-[9px] font-black uppercase badge-live-pulse"><i class="fas fa-circle text-[7px] mr-1"></i> EN VIVO</span>`
+                    : parsed.isCompleted
+                        ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase">Finalizado</span>`
+                        : `<span class="px-2.5 py-0.5 rounded-full bg-cyan-950/40 text-cyan-400 border border-cyan-500/30 text-[9px] font-black uppercase">Próximamente</span>`;
+
+                let scoreDisplay = '';
+                if (parsed.isWalkover) {
+                    scoreDisplay = `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black text-[10px] border border-amber-500/40 tracking-wider">W.O.</span>`;
+                } else {
+                    scoreDisplay = `<span class="text-sm font-bold text-cyan-400 tracking-wider">${parsed.p1Score} - ${parsed.p2Score}</span>`;
+                }
+
+                const p1Logo = esLigaLBL ? (p1.logo || '') : '';
+                const p2Logo = esLigaLBL ? (p2.logo || '') : '';
+
+                const p1Avatar = (esLigaLBL && p1Logo)
+                    ? `<img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
+                    : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p1.tag || resolverTag(p1)}</div>`;
+
+                const p2Avatar = (esLigaLBL && p2Logo)
+                    ? `<img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
+                    : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p2.tag || resolverTag(p2)}</div>`;
+
+                html += `
+                    <div class="p-4 rounded-2xl bg-[#080d17] border border-gray-800/80 flex flex-col justify-between gap-3 hover:border-cyan-500/30 transition-all shadow-md">
+                        <div class="flex items-center justify-between border-b border-gray-800/50 pb-2">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ronda ${m.round < 0 ? 'Losers' : m.round}</span>
+                            ${badgeEstado}
+                        </div>
+
+                        <div class="grid grid-cols-5 items-center gap-2 py-1">
+                            <!-- EQUIPO 1 -->
+                            <div class="col-span-2 flex flex-col items-center text-center space-y-1">
+                                ${p1Avatar}
+                                <span class="text-xs font-semibold text-gray-200 truncate max-w-full">${p1.tag || p1.nombre}</span>
+                            </div>
+
+                            <!-- MARCADOR -->
+                            <div class="col-span-1 flex flex-col items-center justify-center">
+                                ${scoreDisplay}
+                            </div>
+
+                            <!-- EQUIPO 2 -->
+                            <div class="col-span-2 flex flex-col items-center text-center space-y-1">
+                                ${p2Avatar}
+                                <span class="text-xs font-semibold text-gray-200 truncate max-w-full">${p2.tag || p2.nombre}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            feedContainer.innerHTML = html;
+        }
+
+        // --- RENDERIZADOR DE POSICIONES Y HISTORIAL DEL PARTIDO (W, L, W.O.) ---
+        function renderizarTablaPosiciones(torneo, container) {
+            if (!torneo) return;
+
+            const matches = torneo.matches || [];
+
+            // 1. PRIORIDAD: Standings oficiales de Challonge (final_rank por participante)
+            let standings = [];
+
+            if (Array.isArray(torneo.challongeStandings) && torneo.challongeStandings.length > 0) {
+                const seenStandings = new Set();
+                standings = torneo.challongeStandings.filter(st => {
+                    const eqKey = (st.equipo?.nombre || st.equipo?.name || st.participant_id || st.equipo_id || '').toLowerCase().trim();
+                    if (!eqKey || seenStandings.has(eqKey)) return false;
+                    seenStandings.add(eqKey);
+                    return true;
+                });
+            } else if (Array.isArray(torneo.standings) && torneo.standings.length > 0) {
+                const seenStandings = new Set();
+                standings = torneo.standings.filter(st => {
+                    const eqKey = (st.equipo?.nombre || st.equipo?.name || st.id || '').toLowerCase().trim();
+                    if (!eqKey || seenStandings.has(eqKey)) return false;
+                    seenStandings.add(eqKey);
+                    return true;
+                });
+            }
+
+            // 2. Si no hay standings de Challonge, calcular manualmente desde partidas
+            if (standings.length === 0) {
+                const mapById = new Map();
+                const mapByName = new Map();
+
+                if (Array.isArray(torneo.participantes) && torneo.participantes.length > 0) {
+                    torneo.participantes.forEach(p => {
+                        const displayName = (p.lblInfo?.nombre) || p.nombre || p.name || p.display_name;
+                        const challongeId = p.id;
+                        if (!displayName || displayName === 'TBD') return;
+
+                        const eqObj = {
+                            id: challongeId,
+                            nombre: displayName,
+                            tag: p.lblInfo?.tag || p.tag || displayName,
+                            logo: p.lblInfo?.logo || p.logo || '',
+                            group_player_ids: p.group_player_ids || []
+                        };
+
+                        if (challongeId !== undefined && challongeId !== null) {
+                            mapById.set(String(challongeId), eqObj);
+                        }
+                        mapByName.set(displayName.trim().toLowerCase(), eqObj);
+                    });
+                }
+
+                matches.forEach(m => {
+                    for (const [side, pid] of [['player1', m.player1_id], ['player2', m.player2_id]]) {
+                        const player = m[side];
+                        const displayName = player?.nombre || player?.name;
+                        if (!displayName || displayName === 'TBD' || displayName === 'Por Definir') continue;
+
+                        const pidStr = (pid !== undefined && pid !== null) ? String(pid) : null;
+                        const nameKey = displayName.trim().toLowerCase();
+
+                        if ((pidStr && !mapById.has(pidStr)) && !mapByName.has(nameKey)) {
+                            const eqObj = {
+                                id: pid,
+                                nombre: displayName.trim(),
+                                tag: player.tag || displayName.trim(),
+                                logo: player.logo || ''
+                            };
+                            if (pidStr) mapById.set(pidStr, eqObj);
+                            mapByName.set(nameKey, eqObj);
+                        }
+                    }
+                });
+
+                const allTeams = new Map();
+                mapById.forEach((eqObj, idStr) => allTeams.set(idStr, eqObj));
+                mapByName.forEach((eqObj, nameKey) => {
+                    const idStr = (eqObj.id !== undefined && eqObj.id !== null) ? String(eqObj.id) : nameKey;
+                    if (!allTeams.has(idStr)) allTeams.set(idStr, eqObj);
+                });
+
+                const computed = [];
+                allTeams.forEach((eqObj, teamKey) => {
+                    let pg = 0;
+                    let pp = 0;
+                    const eqIdStr = (eqObj.id !== undefined && eqObj.id !== null) ? String(eqObj.id) : '';
+                    const eqNameLower = (eqObj.nombre || '').trim().toLowerCase();
+
+                    matches.forEach(m => {
+                        const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
+                        if (!isCompleted) return;
+
+                        const p1Name = (m.player1?.nombre || m.player1?.name || '').trim().toLowerCase();
+                        const p2Name = (m.player2?.nombre || m.player2?.name || '').trim().toLowerCase();
+                        const p1Valid = p1Name && p1Name !== 'tbd' && p1Name !== 'por definir';
+                        const p2Valid = p2Name && p2Name !== 'tbd' && p2Name !== 'por definir';
+                        const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : '';
+                        const p2IdStr = (m.player2_id !== undefined && m.player2_id !== null) ? String(m.player2_id) : '';
+
+                        const isP1 = (eqIdStr && p1IdStr && eqIdStr === p1IdStr) || (eqNameLower && p1Valid && eqNameLower === p1Name);
+                        const isP2 = (eqIdStr && p2IdStr && eqIdStr === p2IdStr) || (eqNameLower && p2Valid && eqNameLower === p2Name);
+
+                        if (isP1 || isP2) {
+                            const parsed = parseMatchScores(m);
+                            const won = isP1 ? parsed.p1Winner : parsed.p2Winner;
+                            if (won) pg++;
+                            else pp++;
+                        }
+                    });
+
+                    computed.push({
+                        equipo: eqObj,
+                        equipo_id: eqObj.id,
+                        pj: pg + pp,
+                        pg: pg,
+                        pp: pp,
+                        pts: pg * 3
+                    });
+                });
+
+                computed.sort((a, b) => {
+                    if (b.pg !== a.pg) return b.pg - a.pg;
+                    return a.pp - b.pp;
+                });
+
+                standings = computed;
+            }
+
+            if (standings.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center glass-panel rounded-3xl border border-gray-800 text-gray-500 text-xs font-bold uppercase">
+                        No hay equipos ni posiciones disponibles registradas para este torneo.
+                    </div>`;
+                return;
+            }
+
+            // Determinar qué partidas usar para el historial de posiciones
+            // En torneos de 2 fases (grupos + eliminatorias), si hay partidas de playoffs/llave, el historial de las posiciones oficiales refleja los playoffs
+            const hasGroupMatches = matches.some(m => m.group_id);
+            const hasPlayoffMatches = matches.some(m => !m.group_id && (m.state === 'complete' || m.state === 'completed' || !!m.winner_id));
+            const matchesForHistory = (hasGroupMatches && hasPlayoffMatches)
+                ? matches.filter(m => !m.group_id)
+                : matches;
+
+            const historialPorEquipo = new Map();
+
+            standings.forEach(st => {
+                const eq = st.equipo || {};
+                const eqName = (eq.nombre || eq.name || '').trim().toLowerCase();
+                const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
+                const pGroupIds = Array.isArray(st.group_player_ids) ? st.group_player_ids.map(String) : [];
+
+                const teamMatches = matchesForHistory.filter(m => {
+                    const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
+                    if (!isCompleted) return false;
+
+                    const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
+                    const p2IdStr = (m.player2_id !== undefined && m.player2_id !== null) ? String(m.player2_id) : (m.player2?.id ? String(m.player2.id) : '');
+                    const p1Name = (m.player1?.nombre || m.player1?.name || '').trim().toLowerCase();
+                    const p2Name = (m.player2?.nombre || m.player2?.name || '').trim().toLowerCase();
+                    const p1Valid = p1Name && p1Name !== 'tbd' && p1Name !== 'por definir';
+                    const p2Valid = p2Name && p2Name !== 'tbd' && p2Name !== 'por definir';
+
+                    const matchP1 = (eqIdStr && p1IdStr && eqIdStr === p1IdStr) ||
+                                    (pGroupIds.length > 0 && pGroupIds.includes(p1IdStr)) ||
+                                    (eqName && p1Valid && eqName === p1Name);
+
+                    const matchP2 = (eqIdStr && p2IdStr && eqIdStr === p2IdStr) ||
+                                    (pGroupIds.length > 0 && pGroupIds.includes(p2IdStr)) ||
+                                    (eqName && p2Valid && eqName === p2Name);
+
+                    return matchP1 || matchP2;
+                });
+
+                teamMatches.sort((a, b) => (a.round - b.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
+
+                const badgedHistory = teamMatches.map(m => {
+                    const parsed = parseMatchScores(m);
+                    const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
+                    const p1Name = (m.player1?.nombre || m.player1?.name || '').trim().toLowerCase();
+                    const p1Valid = p1Name && p1Name !== 'tbd' && p1Name !== 'por definir';
+
+                    const isP1 = (eqIdStr && p1IdStr && eqIdStr === p1IdStr) ||
+                                 (pGroupIds.length > 0 && pGroupIds.includes(p1IdStr)) ||
+                                 (eqName && p1Valid && eqName === p1Name);
+
+                    const isWinner = isP1 ? parsed.p1Winner : parsed.p2Winner;
+
+                    if (parsed.isWalkover) {
+                        if (isWinner) {
+                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)" title="Victoria por Walkover (W.O.)">W</span>`;
+                        } else {
+                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota por Incomparecencia (L)">L</span>`;
+                        }
+                    } else {
+                        if (isWinner) {
+                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="Victoria (W)">W</span>`;
+                        } else {
+                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota (L)">L</span>`;
+                        }
+                    }
+                });
+
+                if (eqName) historialPorEquipo.set(eqName, badgedHistory);
+                if (eqIdStr) historialPorEquipo.set(eqIdStr, badgedHistory);
+            });
+
+            // Detectar si hay al menos 1 partida disputada en el torneo
+            const hayPartidasDisputadas = matches.some(m => m.state === 'complete' || m.state === 'completed' || !!m.winner_id);
+
+            // Si aún no hay partidas disputadas, ordenar alfabéticamente por nombre de equipo
+            if (!hayPartidasDisputadas) {
+                standings.sort((a, b) => {
+                    const nameA = (a.equipo?.nombre || a.equipo?.name || '').toLowerCase();
+                    const nameB = (b.equipo?.nombre || b.equipo?.name || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+            }
+
+            let rowsHTML = '';
+            standings.forEach((st, idx) => {
+                const eq = st.equipo || {};
+                const eqName = (eq.nombre || eq.name || '').trim().toLowerCase();
+                const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
+                const historyBadges = (eqName && historialPorEquipo.get(eqName)) || (eqIdStr && historialPorEquipo.get(eqIdStr)) || [];
+                const historyHTML = historyBadges.length > 0
+                    ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
+                    : `<span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Sin partidas disputadas</span>`;
+
+                const tagDisplay = resolverTag(eq);
+                const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
+
+                // Si el torneo tiene rangos oficiales (st.rank), usar el rango oficial
+                const officialRank = st.rank || (idx + 1);
+                let rankHTML = '';
+                if (!hayPartidasDisputadas) {
+                    rankHTML = `<span class="font-bold text-gray-600 text-sm md:text-base">—</span>`;
+                } else if (officialRank === 1) {
+                    rankHTML = `<span class="text-xl">🏆</span>`;
+                } else if (officialRank === 2) {
+                    rankHTML = `<span class="font-black italic text-gray-200 text-base md:text-lg">2°</span>`;
+                } else if (officialRank === 3) {
+                    rankHTML = `<span class="font-black italic text-amber-600 text-base md:text-lg">3°</span>`;
+                } else {
+                    rankHTML = `<span class="font-black italic text-gray-500 text-base md:text-lg">${officialRank}</span>`;
+                }
+
+                rowsHTML += `
+                    <tr class="border-b border-gray-800/60 hover:bg-[#0c1424] transition-colors text-xs md:text-sm">
+                        <td class="p-4 text-center w-16">${rankHTML}</td>
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2.5 py-1 rounded-lg border font-black text-xs uppercase tracking-widest ${TAG_BADGE_CLASS}">${tagDisplay}</span>
+                                <span class="font-bold text-white tracking-wide uppercase text-xs md:text-sm">${eq.nombre || 'Equipo'}</span>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            ${historyHTML}
+                        </td>
+                    </tr>`;
+            });
+
+            container.innerHTML = `
+                <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
+                    <!-- ENCABEZADO Y GUÍA DE INDICATIVOS -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                        <div>
+                            <h3 class="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
+                                <i class="fas fa-list-ol text-cyan-400"></i> Posiciones
+                            </h3>
+                            <p class="text-base text-gray-400 font-medium mt-0.5">
+                                ${hayPartidasDisputadas ? 'Clasificación oficial y desglose detallado del historial del partido.' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
+                            </p>
+                        </div>
+
+                        <!-- GUÍA DE INDICATIVOS -->
+                        <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold">
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
+                                <span class="text-gray-300">Victoria</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
+                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
+                                <span class="text-gray-300">Derrota</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
+                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)">W</span>
+                                <span class="text-gray-300">Walkover</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLA FIEL A CAPTURA DE PANTALLA -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-800 bg-[#030712] text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">
+                                    <th class="p-4 text-center w-16">Rango</th>
+                                    <th class="p-4">Nombre del equipo</th>
+                                    <th class="p-4">Historial del partido</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800/40">
+                                ${rowsHTML}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
+        // --- FUNCIÓN ADAPTATIVA SEGÚN FORMATO DETECTADO POR LA API ---
+        function renderizarAdaptativoSegunFormato(docTorneo, container) {
+            const torneo = docTorneo.datosChallonge || docTorneo;
+            const matches = torneo.matches || [];
+
+            if (!matches || matches.length === 0) {
+                container.innerHTML = `
+                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
+                        <i class="fas fa-clock text-4xl text-amber-400 block mb-2"></i>
+                        <p class="text-white text-sm font-black">Torneo Programado — Partidas por Iniciar</p>
+                        <span class="text-[11px] text-gray-500 block">El cuadrante de eliminatoria se activará automáticamente tan pronto como comiencen los partidos en Challonge.</span>
+                    </div>`;
+                return;
+            }
+
+            const tipoFormat = (torneo.tipoFormat || docTorneo.formatoLabel || '').toLowerCase();
+
+            // Si el torneo tiene formato de grupos / round robin como fase primaria
+            if (tipoFormat.includes('round') || tipoFormat.includes('group') || tipoFormat.includes('grupos')) {
+                // Si ya existen partidas en la eliminatoria final / playoffs
+                const tienePlayoffs = matches.some(m => m.round !== undefined && m.round !== null && m.round !== 0);
+                if (tienePlayoffs) {
+                    renderizarBrackets(torneo, container);
+                } else {
+                    renderizarTablaPosiciones(torneo, container);
+                }
+            } else {
+                // Formato por defecto (Double Elimination, Single Elimination, Swiss)
+                renderizarBrackets(torneo, container);
+            }
+        }
+
+        // --- VISOR DE EMBED OFICIAL DE CHALLONGE (INTERACTIVO Y ADAPTADO) ---
+        function renderizarChallongeEmbed(docTorneo, container) {
+            const torneo = docTorneo.datosChallonge || docTorneo;
+            const rawSlug = docTorneo.slug || torneo.slug || torneo.url || torneo.id;
+            if (!rawSlug) {
+                if (container) container.innerHTML = `<div class="p-8 text-center text-gray-500 text-xs font-bold uppercase">No hay enlace de Challonge válido.</div>`;
+                return;
+            }
+
+            const cleanSlug = (typeof extraerChallongeSlug === 'function') ? extraerChallongeSlug(rawSlug) : rawSlug.trim();
+            // URL limpia para fijar la navegación inicial en Group Stage -> Group A -> Standings
+            const embedUrl = `https://challonge.com/${cleanSlug}/module?multiplier=1.0&match_width_multiplier=1.2&scale_to_fit=1&show_final_results=1&show_tournament_name=0&show_live_status=0&tab=group_stage&subtab=standings`;
+
+            const html = `
+                <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-2xl overflow-hidden w-full">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-800/80 pb-4">
+                        <div>
+                            <h4 class="text-base md:text-lg font-black text-white uppercase italic tracking-tight flex items-center gap-2">
+                                <i class="fas fa-sitemap text-cyan-400"></i> Cuadrante Oficial Challonge (${cleanSlug})
+                            </h4>
+                            <span class="text-xs text-gray-400 font-medium block mt-0.5">Visor oficial interactivo sincronizado en vivo.</span>
+                        </div>
+                        <a href="https://challonge.com/es/${cleanSlug}" target="_blank" class="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 shadow">
+                            Abrir en Challonge <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+
+                    <div class="w-full overflow-x-auto rounded-2xl bg-[#030712] border border-gray-800 p-2 min-h-[750px] flex flex-col items-center justify-center">
+                        <iframe src="${embedUrl}" width="100%" height="800" frameborder="0" scrolling="auto" allowtransparency="true" style="background: transparent; min-height: 750px; width: 100%; border: none;" class="w-full min-h-[750px] rounded-xl"></iframe>
+                    </div>
+                </div>`;
+
+            if (container) container.innerHTML = html;
+            return html;
+        }
+
+        window.adaptarVisualizacionChallonge = renderizarChallongeEmbed;
+
+        // --- TARJETA ESTILO OFFICIAL LOL ESPORTS PICK'EM ---
+        function renderPickemCardNode(m) {
+            const torneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
+            const esLigaLBL = (torneoActual.categoria === 'liga_lbl') || (torneoActual.datosChallonge?.categoria === 'liga_lbl');
+
+            const p1 = m.player1 || { nombre: 'TBD', tag: 'TBD', logo: '' };
+            const p2 = m.player2 || { nombre: 'TBD', tag: 'TBD', logo: '' };
+            const parsed = parseMatchScores(m);
+
+            const isLive = m.state === 'live';
+            const isCompleted = parsed.isCompleted;
+
+            // Player 1 Styling
+            const p1IsW = parsed.p1Winner;
+            const p1RowBg = p1IsW ? 'bg-[#0f172a] border-l-2 border-l-cyan-400' : 'bg-[#090d16] hover:bg-[#0f172a]/50';
+            const p1Text = p1IsW ? 'font-bold text-cyan-300' : p1IsW === false && isCompleted ? 'font-medium text-slate-500' : 'font-semibold text-slate-200';
+            let p1ScoreText = '-';
+            if (isCompleted) {
+                if (parsed.isWalkover && p1IsW) p1ScoreText = `<span class="text-[9px] font-black text-amber-300">W.O.</span>`;
+                else if (parsed.isWalkover && !p1IsW) p1ScoreText = `0`;
+                else p1ScoreText = parsed.p1Score;
+            }
+
+            // Player 2 Styling
+            const p2IsW = parsed.p2Winner;
+            const p2RowBg = p2IsW ? 'bg-[#0f172a] border-l-2 border-l-cyan-400' : 'bg-[#050810] hover:bg-[#0f172a]/50';
+            const p2Text = p2IsW ? 'font-bold text-cyan-300' : p2IsW === false && isCompleted ? 'font-medium text-slate-500' : 'font-semibold text-slate-200';
+            let p2ScoreText = '-';
+            if (isCompleted) {
+                if (parsed.isWalkover && p2IsW) p2ScoreText = `<span class="text-[9px] font-black text-amber-300">W.O.</span>`;
+                else if (parsed.isWalkover && !p2IsW) p2ScoreText = `0`;
+                else p2ScoreText = parsed.p2Score;
+            }
+
+            const matchNumDisplay = m.identifier ? `MATCH #${m.identifier}` : `MATCH #${m.suggested_play_order || m.id}`;
+
+            const p1Logo = esLigaLBL ? (p1.logo || '') : '';
+            const p2Logo = esLigaLBL ? (p2.logo || '') : '';
+
+            const p1Avatar = (esLigaLBL && p1Logo)
+                ? `<img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
+                : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p1.tag || p1.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
+
+            const p2Avatar = (esLigaLBL && p2Logo)
+                ? `<img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
+                : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p2.tag || p2.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
+
+            return `
+                <div class="match-card-pickem w-[235px] bg-[#090d16] border border-[#1e293b] rounded-md shadow-2xl overflow-hidden relative shrink-0 transition-all hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.25)] my-1.5">
+                    <!-- Top Match Bar -->
+                    <div class="flex items-center justify-between px-2 py-1 bg-[#030712] border-b border-[#1e293b] text-[9px] font-bold text-slate-400">
+                        <span class="tracking-wider uppercase font-black text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-500/30">${matchNumDisplay}</span>
+                        <span class="${isLive ? 'text-rose-400 font-black animate-pulse' : isCompleted ? 'text-emerald-400' : 'text-slate-500'}">
+                            ${isLive ? '• LIVE' : isCompleted ? 'FINAL' : 'BO3'}
+                        </span>
+                    </div>
+
+                    <!-- EQUIPO 1 -->
+                    <div class="flex items-center justify-between border-b border-[#1e293b] ${p1RowBg} min-h-[32px] transition-colors">
+                        <span class="w-6 py-1 bg-[#030712] text-cyan-400 text-[8px] font-black text-center uppercase border-r border-[#1e293b] shrink-0">LBL</span>
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 flex-1 min-w-0">
+                            ${p1Avatar}
+                            <span class="text-[11px] ${p1Text} truncate uppercase tracking-wider" title="${p1.nombre || p1.tag}">${p1.nombre || p1.tag}</span>
+                        </div>
+                        <div class="w-7 py-1 text-center font-black text-xs border-l border-[#1e293b] shrink-0 ${p1IsW ? 'bg-cyan-500/20 text-cyan-300 border-l-cyan-400/50' : 'bg-black/40 text-slate-500'}">
+                            ${p1ScoreText}
+                        </div>
+                    </div>
+
+                    <!-- EQUIPO 2 -->
+                    <div class="flex items-center justify-between ${p2RowBg} min-h-[32px] transition-colors">
+                        <span class="w-6 py-1 bg-[#030712] text-cyan-400 text-[8px] font-black text-center uppercase border-r border-[#1e293b] shrink-0">LBL</span>
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 flex-1 min-w-0">
+                            ${p2Avatar}
+                            <span class="text-[11px] ${p2Text} truncate uppercase tracking-wider" title="${p2.nombre || p2.tag}">${p2.nombre || p2.tag}</span>
+                        </div>
+                        <div class="w-7 py-1 text-center font-black text-xs border-l border-[#1e293b] shrink-0 ${p2IsW ? 'bg-cyan-500/20 text-cyan-300 border-l-cyan-400/50' : 'bg-black/40 text-slate-500'}">
+                            ${p2ScoreText}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // --- ARQUITECTURA LIMPIA: ORDEN DIRECTO DE LA API SIN CONECTORES ---
+        function renderLiquipediaGridBracket(roundNumbers, matchesList, getNombreRonda) {
+            if (!roundNumbers || roundNumbers.length === 0) return '';
+
+            let html = `<div class="flex items-stretch gap-6 overflow-x-auto pb-6 pt-2 scrollbar-thin max-w-full">`;
+
+            roundNumbers.forEach((rKey) => {
+                // Ordenar partidos en la ronda según la secuencia directa de la API
+                const rMatches = matchesList.filter(m => m.round === rKey).sort((a, b) => {
+                    const orderA = a.suggested_play_order || a.id;
+                    const orderB = b.suggested_play_order || b.id;
+                    return orderA - orderB;
+                });
+                const roundTitle = getNombreRonda(rKey);
+
+                html += `
+                    <div class="flex flex-col shrink-0 min-w-[235px]">
+                        <!-- Pill Header -->
+                        <div class="mb-4 border border-[#1e293b] rounded-md bg-[#090d16] py-1.5 px-3 text-center shadow-lg">
+                            <h4 class="text-xs font-black text-cyan-400 uppercase tracking-widest truncate">${roundTitle}</h4>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${rMatches.length} MATCHES</span>
+                        </div>
+
+                        <!-- Lista de Partidos directamente ordenados por la API -->
+                        <div class="flex-1 flex flex-col justify-around py-1 gap-2">`;
+
+                rMatches.forEach(m => {
+                    html += renderPickemCardNode(m);
+                });
+
+                html += `</div></div>`;
+            });
+
+            html += `</div>`;
+            return html;
+        }
+
+        // --- RENDERIZADOR PRINCIPAL DE BRACKETS ---
+        function renderizarBrackets(torneo, container) {
+            const matches = torneo.matches || [];
+            if (!matches || matches.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs font-bold uppercase">No hay partidas de eliminatoria cargadas.</div>`;
+                return;
+            }
+
+            const isDoubleElim = (torneo.tipoFormat || '').toLowerCase().includes('double');
+            
+            const winnersMatches = matches.filter(m => m.round > 0);
+            const losersMatches = matches.filter(m => m.round < 0);
+
+            const posRounds = [...new Set(winnersMatches.map(m => m.round))].sort((a, b) => a - b);
+            // Ordenar Losers Rounds en dirección cronológica (-1, -2, -3... hasta la final de perdedores)
+            const negRounds = [...new Set(losersMatches.map(m => m.round))].sort((a, b) => b - a);
+
+            const maxPosRound = posRounds[posRounds.length - 1] || 1;
+            const minNegRound = negRounds[negRounds.length - 1] || -1;
+
+            const getNombreRonda = (rNum) => {
+                if (rNum > 0) {
+                    if (rNum === maxPosRound) return 'GRAN FINAL 🏆';
+                    if (rNum === maxPosRound - 1) return 'FINAL DE GANADORES';
+                    if (rNum === maxPosRound - 2) return 'SEMIFINALES GANADORES';
+                    if (rNum === maxPosRound - 3) return 'CUARTOS DE FINAL';
+                    if (rNum === maxPosRound - 4) return 'OCTAVOS DE FINAL';
+                    return `ROUND ${rNum}`;
+                } else {
+                    if (rNum === minNegRound) return 'FINAL DE PERDEDORES 🥉';
+                    if (rNum === minNegRound + 1) return 'SEMIFINAL PERDEDORES';
+                    return `LOSERS ROUND ${Math.abs(rNum)}`;
+                }
+            };
+
+            let bracketsHTML = '';
+
+            if (isDoubleElim) {
+                bracketsHTML = `
+                    <div class="space-y-10">
+                        <!-- UPPER BRACKET (WINNERS) -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-cyan-500/40 pb-2">
+                                <h4 class="text-sm md:text-base font-black text-yellow-400 uppercase tracking-wider italic flex items-center gap-2">
+                                    <i class="fas fa-trophy text-yellow-400"></i> Upper Bracket (Cuadro Principal)
+                                </h4>
+                                <span class="text-xs font-bold text-slate-400">${winnersMatches.length} matches</span>
+                            </div>
+                            ${renderLiquipediaGridBracket(posRounds, winnersMatches, getNombreRonda)}
+                        </div>
+
+                        <!-- LOWER BRACKET (LOSERS) -->
+                        <div class="space-y-4 pt-4 border-t border-[#1e293b]">
+                            <div class="flex items-center justify-between border-b border-rose-500/40 pb-2">
+                                <h4 class="text-sm md:text-base font-black text-rose-400 uppercase tracking-wider italic flex items-center gap-2">
+                                    <i class="fas fa-shield-halved text-rose-400"></i> Losers' Bracket (Cuadro de Perdedores)
+                                </h4>
+                                <span class="text-xs font-bold text-slate-400">${losersMatches.length} matches</span>
+                            </div>
+                            ${renderLiquipediaGridBracket(negRounds, losersMatches, getNombreRonda)}
+                        </div>
+                    </div>`;
+            } else {
+                bracketsHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-cyan-500/40 pb-2">
+                            <h4 class="text-sm md:text-base font-black text-cyan-400 uppercase tracking-wider italic flex items-center gap-2">
+                                <i class="fas fa-sitemap text-cyan-400"></i> Single Elimination Bracket
+                            </h4>
+                            <span class="text-xs font-bold text-slate-400">${winnersMatches.length} matches</span>
+                        </div>
+                        ${renderLiquipediaGridBracket(posRounds, winnersMatches, getNombreRonda)}
+                    </div>`;
+            }
+
+            container.innerHTML = bracketsHTML;
+        }
+
+        // Cargar torneos al iniciar la página
+        cargarTorneosDesdeFirestore();
+
+        window.addEventListener('load', () => {
+            const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
+            const staffBadge = document.getElementById('staff-badge');
+            if (isStaff && staffBadge) {
+                staffBadge.classList.remove('hidden');
+                staffBadge.classList.add('inline-flex');
+            }
+        });
+    </script>
+</body>
+</html>

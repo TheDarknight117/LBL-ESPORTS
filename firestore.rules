@@ -31,5 +31,18 @@ service cloud.firestore {
       // Solo administradores autenticados pueden borrar registros.
       allow delete: if request.auth != null;
     }
+
+    // Colección de Torneos Activos (Challonge Sync)
+    match /torneos_activos/{document} {
+      // Lectura y escritura libre para sincronizar multitorneos
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Colección de Torneos Registrados (Multitorneo LBL)
+    match /torneos_registrados/{document} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }

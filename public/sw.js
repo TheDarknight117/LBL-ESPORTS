@@ -1,6 +1,7 @@
-const CACHE_NAME = 'lbl-cache-v49';
+const CACHE_NAME = 'lbl-cache-v58';
 const ASSETS = [
   '/',
+  '/torneos',
   '/registro',
   '/dashboard',
   '/editar',
@@ -55,8 +56,17 @@ self.addEventListener('fetch', (e) => {
   let requestToProcess = e.request;
   const url = new URL(e.request.url);
   
-  // Normalize .html requests to clean URLs
-  if (url.pathname.endsWith('.html')) {
+  // Normalize SPA /torneos/* navigation requests to clean /torneos
+  if (url.pathname.startsWith('/torneos') && !url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|json)$/i)) {
+    url.pathname = '/torneos';
+    requestToProcess = new Request(url.toString(), {
+      method: e.request.method,
+      headers: e.request.headers,
+      mode: e.request.mode,
+      credentials: e.request.credentials,
+      redirect: 'follow'
+    });
+  } else if (url.pathname.endsWith('.html')) {
     let cleanPath = url.pathname.slice(0, -5);
     if (cleanPath === '/index') cleanPath = '/';
     url.pathname = cleanPath;

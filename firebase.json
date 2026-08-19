@@ -26,6 +26,12 @@
           }
         ]
       }
+    ],
+    "rewrites": [
+      {
+        "source": "/torneos/**",
+        "destination": "/torneos.html"
+      }
     ]
   },
   "firestore": {
