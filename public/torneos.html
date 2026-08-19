@@ -232,7 +232,8 @@
     <!-- LÓGICA DE FIRESTORE Y RENDERIZADO (100% SOLO LECTURA) -->
     <script type="module">
         import { db } from "/firebase-config.js";
-        import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS } from "./challonge-core.js";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -257,46 +258,94 @@
             'kaoxitos blue academy':'KBA',
             'los seguidores del primo':'SDP',
             'crimson twilight knights':'CTK',
-
-            
-            // ── Agrega más equipos abajo con el mismo formato ──
-            // 'nombre del equipo': 'TAG',
+            'strugglers':         'SGE',
+            'strugglers e-sports':'SGE',
+            'kaox yellow':        'KXY',
+            'kaox green':         'KXG',
+            'kaox red':           'KXRED',
+            'uka kitties':        'UKAT',
+            't1nacotas':          'T1N',
+            'team first kill':    'TFK',
+            'quinteto de nos':    'QDN',
+            'rise of kings order':'RKO',
+            'aether core':        'ATC',
+            'riot pls game':      'RPG',
+            'team dark':          'TDK',
+            'marines del altiplano':'MDA'
         };
 
-        /**
-         * Resuelve el tag de un equipo aplicando:
-         * 1. Override manual (TAG_OVERRIDES)
-         * 2. Tag guardado en Firestore (lblInfo.tag), truncado a 3 letras
-         * 3. Iniciales del nombre, máximo 3 letras
-         */
-        function resolverTag(equipo) {
-            const nombre = (equipo?.nombre || equipo?.name || '').trim();
-            const key = nombre.toLowerCase();
-
-            // 1. Override manual
-            if (TAG_OVERRIDES[key]) return TAG_OVERRIDES[key];
-
-            // Buscar coincidencia parcial en los overrides
-            for (const [k, v] of Object.entries(TAG_OVERRIDES)) {
-                if (key.includes(k) || k.includes(key)) return v;
+        function resolverTag(equipoObj) {
+            if (!equipoObj) return '';
+            const nombre = (equipoObj.nombre || equipoObj.name || '').trim();
+            const clean = nombre.toLowerCase();
+            if (TAG_OVERRIDES[clean]) return TAG_OVERRIDES[clean];
+            for (const [key, tag] of Object.entries(TAG_OVERRIDES)) {
+                if (clean.includes(key) || key.includes(clean)) return tag;
             }
-
-            // 2. Tag de Firestore, truncado a 3 letras
-            const tagFb = (equipo?.tag || '').trim().toUpperCase();
-            if (tagFb && tagFb !== nombre.toUpperCase() && tagFb.length <= 6) {
-                return tagFb.substring(0, 3);
-            }
-
-            // 3. Iniciales del nombre (máx 3 palabras)
-            const words = nombre.split(/\s+/).filter(Boolean);
-            if (words.length >= 2) {
-                return words.slice(0, 3).map(w => w[0]).join('').toUpperCase();
+            if (equipoObj.tag && equipoObj.tag.length <= 4) {
+                return equipoObj.tag.toUpperCase();
             }
             return nombre.substring(0, 3).toUpperCase();
         }
 
+        // --- CACHÉ DE EQUIPOS ACEPTADOS LBL Y OBTENCIÓN DE LOGOS HD ---
+        let listaEquiposAceptadosCache = [];
+        try {
+            const cachedEq = localStorage.getItem('lbl_equipos_aceptados_cache');
+            if (cachedEq) {
+                const parsed = JSON.parse(cachedEq);
+                if (Array.isArray(parsed)) listaEquiposAceptadosCache = parsed;
+            }
+        } catch(e) {}
+
+        function obtenerLogoEquipo(equipoObj, nombreStr) {
+            if (equipoObj && equipoObj.logo) return equipoObj.logo;
+            if (equipoObj && equipoObj.lblInfo && equipoObj.lblInfo.logo) return equipoObj.lblInfo.logo;
+            const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim().toLowerCase();
+            if (!nameToSearch || nameToSearch === 'tbd') return '';
+
+            // 1. Buscar en memoria/Firestore
+            const cleanSearch = nameToSearch.replace(/\s*\(.*?\)\s*/g, '').trim();
+            const found = listaEquiposAceptadosCache.find(eq => {
+                const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
+                const tag = (eq.equipo?.tag || '').trim().toLowerCase();
+                return nom === nameToSearch || nom === cleanSearch || tag === nameToSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
+            });
+            if (found && found.equipo?.logo) return found.equipo.logo;
+
+            // 2. Buscar en diccionario oficial de respaldo
+            if (OFFICIAL_LBL_TEAM_LOGOS) {
+                const fbKey = Object.keys(OFFICIAL_LBL_TEAM_LOGOS).find(k => {
+                    if (cleanSearch === 'aether core' && k.includes('academy')) return false;
+                    if (cleanSearch.includes('academy') && !k.includes('academy')) return false;
+                    return k === cleanSearch || cleanSearch.startsWith(k) || k.startsWith(cleanSearch);
+                });
+                if (fbKey && OFFICIAL_LBL_TEAM_LOGOS[fbKey]?.logo) {
+                    return OFFICIAL_LBL_TEAM_LOGOS[fbKey].logo;
+                }
+            }
+
+            return '';
+        }
+
+        // --- DEDUPLICADOR ROBUSTO DE TORNEOS ---
+        function deduplicarTorneos(lista) {
+            if (!Array.isArray(lista)) return [];
+            const vistos = new Set();
+            const unicos = [];
+            lista.forEach(t => {
+                const slugKey = (t.slug || t.id || '').toString().trim().toLowerCase();
+                const idKey = (t.id || '').toString().trim().toLowerCase();
+                if (!vistos.has(slugKey) && !vistos.has(idKey)) {
+                    vistos.add(slugKey);
+                    vistos.add(idKey);
+                    unicos.push(t);
+                }
+            });
+            return unicos;
+        }
+
         // --- ESTADO GLOBAL DE NAVEGACIÓN Y MULTITORNEOS ---
-        // Torneos se cargan 100% desde el cache de localStorage (sincronizados desde Dashboard + API de Challonge)
         const DEFAULT_TORNEOS_INICIALES = [];
 
         let listaTorneosRegistrados = [];
@@ -306,7 +355,7 @@
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    listaTorneosRegistrados = parsed.filter(t => !eliminados.includes(t.id));
+                    listaTorneosRegistrados = deduplicarTorneos(parsed.filter(t => !eliminados.includes(t.id)));
                 }
             }
         } catch(e) {}
@@ -423,6 +472,21 @@
             renderizarVista();
             actualizarURL(false);
 
+            // 1. Cargar equipos aceptados con logos HD oficiales
+            try {
+                const qEq = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
+                const snapEq = await getDocs(qEq);
+                const equipos = [];
+                snapEq.forEach(d => equipos.push({ id: d.id, ...d.data() }));
+                if (equipos.length > 0) {
+                    listaEquiposAceptadosCache = equipos;
+                    localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equipos));
+                }
+            } catch (e) {
+                console.warn("Inscripciones pendientes no accesibles públicamente, usando fallback.", e);
+            }
+
+            // 2. Cargar y deduplicar torneos registrados
             try {
                 const snap = await getDocs(collection(db, 'torneos_registrados'));
                 const lista = [];
@@ -431,8 +495,8 @@
                 });
 
                 if (lista.length > 0) {
-                    listaTorneosRegistrados = lista;
-                    localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(lista));
+                    listaTorneosRegistrados = deduplicarTorneos(lista);
+                    localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
                     procesarRutaURL();
                     renderizarVista();
                     actualizarURL(false);
@@ -635,6 +699,25 @@
 
             actualizarTabsUI(etapaActiva);
 
+            // Sincronización en segundo plano con Challonge API para reflejar cambios de horarios y marcadores en vivo
+            if (!docTorneo._sincronizadoLiveChallonge) {
+                docTorneo._sincronizadoLiveChallonge = true;
+                const slugToFetch = docTorneo.slug || docTorneo.url || docTorneo.id;
+                if (typeof procesarTorneoChallonge === 'function') {
+                    procesarTorneoChallonge(slugToFetch, DEFAULT_CHALLONGE_API_KEY, [], docTorneo.division || 'Tier 1')
+                        .then(liveData => {
+                            if (liveData && liveData.matches && liveData.matches.length > 0) {
+                                docTorneo.datosChallonge = liveData;
+                                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                                if (torneoSeleccionadoId === docTorneo.id) {
+                                    renderizarTorneoDetalle();
+                                }
+                            }
+                        })
+                        .catch(e => console.warn("Live Challonge sync:", e.message));
+                }
+            }
+
             const torneo = docTorneo.datosChallonge || docTorneo;
 
             const titleEl = document.getElementById('detail-tournament-title');
@@ -756,7 +839,7 @@
                 participantes.forEach(p => {
                     const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || 'Equipo';
                     const tag = resolverTag(p.lblInfo || p) || name.substring(0, 3).toUpperCase();
-                    const logo = esLigaLBL ? (p.lblInfo?.logo || p.logo || '') : '';
+                    const logo = esLigaLBL ? obtenerLogoEquipo(p.lblInfo || p, name) : '';
 
                     let avatarHTML = '';
                     if (esLigaLBL && logo) {
@@ -958,18 +1041,38 @@
                         completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
                     };
                 }
-                const dias = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
-                const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-                const diaSem = dias[d.getDay()];
-                const diaNum = d.getDate();
-                const mesStr = meses[d.getMonth()];
-                const horas = String(d.getHours()).padStart(2, '0');
-                const mins = String(d.getMinutes()).padStart(2, '0');
+                const formatter = new Intl.DateTimeFormat('es-BO', {
+                    timeZone: 'America/La_Paz',
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+
+                const parts = formatter.formatToParts(d);
+                let diaSem = '';
+                let diaNum = '';
+                let mesStr = '';
+                let hora = '';
+                let min = '';
+
+                parts.forEach(p => {
+                    if (p.type === 'weekday') diaSem = p.value.toUpperCase().replace('.', '');
+                    if (p.type === 'day') diaNum = p.value;
+                    if (p.type === 'month') mesStr = p.value.toUpperCase().replace('.', '');
+                    if (p.type === 'hour') hora = p.value;
+                    if (p.type === 'minute') min = p.value;
+                });
+
+                const horaStr = `${hora}:${min}`;
+                const fechaTexto = `${diaSem} ${diaNum} ${mesStr}`;
 
                 return {
-                    fechaTexto: `${diaSem} ${diaNum} ${mesStr}`,
-                    horaTexto: `${horas}:${mins}`,
-                    completo: `${diaSem} ${diaNum} ${mesStr} • ${horas}:${mins}`
+                    fechaTexto,
+                    horaTexto: horaStr,
+                    completo: `${fechaTexto} • ${horaStr}`
                 };
             } catch(e) {
                 return {
@@ -1032,11 +1135,11 @@
 
                     const p1Name = m.player1?.nombre || m.player1?.name || 'TBD';
                     const p1Tag = resolverTag(m.player1) || p1Name.substring(0, 3).toUpperCase();
-                    const p1Logo = esLigaLBL ? (m.player1?.logo || '') : '';
+                    const p1Logo = esLigaLBL ? obtenerLogoEquipo(m.player1, p1Name) : '';
 
                     const p2Name = m.player2?.nombre || m.player2?.name || 'TBD';
                     const p2Tag = resolverTag(m.player2) || p2Name.substring(0, 3).toUpperCase();
-                    const p2Logo = esLigaLBL ? (m.player2?.logo || '') : '';
+                    const p2Logo = esLigaLBL ? obtenerLogoEquipo(m.player2, p2Name) : '';
 
                     let p1Avatar = '';
                     if (esLigaLBL && p1Logo) {

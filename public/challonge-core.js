@@ -12,22 +12,57 @@
 
 export const DEFAULT_CHALLONGE_API_KEY = '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8';
 
+// Directorio oficial de respaldo para Logos HD de Equipos LBL
+export const OFFICIAL_LBL_TEAM_LOGOS = {
+    'kaox pink':          { nombre: 'Kaox Pink', tag: 'KPK', logo: 'https://i.ibb.co/ccDss4cK/kaox-pink.png', tier: 'Tier 2' },
+    'marines del altiplano': { nombre: 'MARINES DEL ALTIPLANO', tag: 'MDA', logo: 'https://i.ibb.co/5g3pWqCY/MDA-nuevo.png', tier: 'Tier 2' },
+    'uka kitties':        { nombre: 'Uka Kitties', tag: 'UKAT', logo: 'https://i.ibb.co/BVs51DdC/ukakitties.png', tier: 'Tier 1' },
+    'kaox red':           { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png', tier: 'Tier 1' },
+    'mapaches apaches':   { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png', tier: 'Tier 1' },
+    'kaox yellow':        { nombre: 'Kaox Yellow', tag: 'KXY', logo: 'https://i.ibb.co/cKLS7ML6/Yellow.png', tier: 'Tier 2' },
+    'strugglers e-sports':{ nombre: 'STRUGGLERS E-SPORTS', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', tier: 'Tier 1' },
+    'team first kill':    { nombre: 'Team First Kill', tag: 'TFK', logo: 'https://i.ibb.co/yFJf62yw/first-kill.png', tier: 'Tier 2' },
+    'aether core academy':{ nombre: 'Aether Core Academy', tag: 'ATA', logo: 'https://i.ibb.co/mFCWgPLq/aether-core-academy.png', tier: 'Tier 2' },
+    'kaox green':         { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png', tier: 'Tier 2' },
+    'quinteto de nos':    { nombre: 'Quinteto de nos', tag: 'QDN', logo: 'https://i.ibb.co/99mnBtnx/QUINTETO-DE-NOS.png', tier: 'Tier 2' },
+    't1nacotas':          { nombre: 'T1NACOTAS', tag: 'T1N', logo: 'https://i.ibb.co/84B0WzY7/T1-NACOTAS.png', tier: 'Tier 2' },
+    'crimson weasels':    { nombre: 'Crimson Weasels', tag: 'CRW', logo: 'https://i.ibb.co/xtnyLw23/CRIMSON-WEASELS.png', tier: 'Tier 2' },
+    'grieta cumbiera':    { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', tier: 'Tier 1' },
+    'team dark':          { nombre: 'TEAM DARK', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png', tier: 'Tier 1' },
+    'snake dynasty':      { nombre: 'Snake Dynasty', tag: 'SKD', logo: 'https://i.ibb.co/Fqy1YXJ0/snake-dinasty-2.png', tier: 'Tier 2' },
+    'rise of kings order':{ nombre: 'Rise Of Kings Order', tag: 'RKO', logo: 'https://i.ibb.co/pjkrMcp2/Rise-Of-King-Order.png', tier: 'Tier 2' },
+    'aether core':        { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', tier: 'Tier 1' },
+    'condor nexus':       { nombre: 'CONDOR NEXUS', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', tier: 'Tier 2' },
+    'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' }
+};
+
 /**
  * Mapea el TAG o Nombre de Challonge con la colección de equipos LBL de Firestore.
  */
 export function buscarEquipoLBL(participantName, equiposLBL = []) {
     if (!participantName) return null;
     const cleanName = participantName.toString().trim().toLowerCase();
+
+    let equiposLista = Array.isArray(equiposLBL) && equiposLBL.length > 0 ? equiposLBL : [];
+    if (equiposLista.length === 0 && typeof localStorage !== 'undefined') {
+        try {
+            const cached = localStorage.getItem('lbl_equipos_aceptados_cache');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed)) equiposLista = parsed;
+            }
+        } catch(e) {}
+    }
     
     // 1. Coincidencia EXACTA por TAG
-    let hallado = equiposLBL.find(eq => {
+    let hallado = equiposLista.find(eq => {
         const tag = (eq.equipo?.tag || '').trim().toLowerCase();
         return tag && tag === cleanName;
     });
 
     // 2. Coincidencia EXACTA por Nombre
     if (!hallado) {
-        hallado = equiposLBL.find(eq => {
+        hallado = equiposLista.find(eq => {
             const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
             return nom && nom === cleanName;
         });
@@ -35,7 +70,7 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
 
     // 3. Coincidencia parcial estricta (no mezclar divisiones principal vs academy)
     if (!hallado) {
-        hallado = equiposLBL.find(eq => {
+        hallado = equiposLista.find(eq => {
             const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
             if (cleanName === 'aether core' && nom.includes('academy')) return false;
             if (cleanName.includes('academy') && !nom.includes('academy')) return false;
@@ -50,6 +85,24 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
             tag: hallado.equipo?.tag || participantName,
             logo: hallado.equipo?.logo || '',
             tier: hallado.equipo?.tier || 'Tier 2'
+        };
+    }
+
+    // 4. Búsqueda en Directorio Oficial de Respaldo LBL
+    const fallbackKey = Object.keys(OFFICIAL_LBL_TEAM_LOGOS).find(k => {
+        if (cleanName === 'aether core' && k.includes('academy')) return false;
+        if (cleanName.includes('academy') && !k.includes('academy')) return false;
+        return k === cleanName || cleanName.startsWith(k) || k.startsWith(cleanName);
+    });
+
+    if (fallbackKey && OFFICIAL_LBL_TEAM_LOGOS[fallbackKey]) {
+        const fb = OFFICIAL_LBL_TEAM_LOGOS[fallbackKey];
+        return {
+            id: `lbl_${fallbackKey.replace(/\s+/g, '_')}`,
+            nombre: fb.nombre || participantName,
+            tag: fb.tag || participantName,
+            logo: fb.logo || '',
+            tier: fb.tier || 'Tier 2'
         };
     }
 

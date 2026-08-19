@@ -714,13 +714,39 @@
         };
 
         // --- SISTEMA MULTITORNEO EN DASHBOARD ---
+        function deduplicarTorneos(lista) {
+            if (!Array.isArray(lista)) return [];
+            const vistos = new Set();
+            const unicos = [];
+            lista.forEach(t => {
+                const slugKey = (t.slug || t.id || '').toString().trim().toLowerCase();
+                const idKey = (t.id || '').toString().trim().toLowerCase();
+                if (!vistos.has(slugKey) && !vistos.has(idKey)) {
+                    vistos.add(slugKey);
+                    vistos.add(idKey);
+                    unicos.push(t);
+                }
+            });
+            return unicos;
+        }
+
         const DEFAULT_TORNEOS_INICIALES = [
             {
-                id: 'clausura_tier1',
+                id: 't1clbl2026',
                 nombre: 'Torneo Clausura LBL 2026 - Tier 1',
                 slug: '18378786',
                 categoria: 'liga_lbl',
                 division: 'Tier 1',
+                formatoLabel: 'Fase de Grupos (Round Robin)',
+                estado: 'vivo',
+                creadoEn: '2026-02-15T00:00:00.000Z'
+            },
+            {
+                id: 't2clbl2026',
+                nombre: 'Torneo Clausura LBL 2026 - Tier 2',
+                slug: '18383807',
+                categoria: 'liga_lbl',
+                division: 'Tier 2',
                 formatoLabel: 'Fase de Grupos (Round Robin)',
                 estado: 'vivo',
                 creadoEn: '2026-02-15T00:00:00.000Z'
@@ -800,12 +826,12 @@
                 lista = [...DEFAULT_TORNEOS_INICIALES];
             }
 
-            // Filtrar eliminados
+            // Filtrar eliminados y deduplicar
             let eliminados = [];
             try {
                 eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
             } catch(e) {}
-            lista = lista.filter(t => !eliminados.includes(t.id));
+            lista = deduplicarTorneos(lista.filter(t => !eliminados.includes(t.id)));
 
             torneosRegistradosList = lista;
             localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(lista));
