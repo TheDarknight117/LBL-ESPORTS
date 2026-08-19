@@ -668,12 +668,12 @@
     </div>
 
     <script type="module">
-        import { db, auth } from "./firebase-config.js"; 
+        import { db, auth } from "/firebase-config.js"; 
         import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { procesarAuditoriaEquipo } from "./auditoria-core.js";
-        import { getStaffNick, formatStaffAuthor } from "./staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY } from "./challonge-core.js";
+        import { procesarAuditoriaEquipo } from "/auditoria-core.js";
+        import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY } from "/challonge-core.js";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -734,7 +734,8 @@
             {
                 id: 't1clbl2026',
                 nombre: 'Torneo Clausura LBL 2026 - Tier 1',
-                slug: '18378786',
+                slug: 'T1CLBL2026',
+                challongeId: '18378786',
                 categoria: 'liga_lbl',
                 division: 'Tier 1',
                 formatoLabel: 'Fase de Grupos (Round Robin)',
@@ -744,7 +745,8 @@
             {
                 id: 't2clbl2026',
                 nombre: 'Torneo Clausura LBL 2026 - Tier 2',
-                slug: '18383807',
+                slug: 'T2CLBL2026',
+                challongeId: '18383807',
                 categoria: 'liga_lbl',
                 division: 'Tier 2',
                 formatoLabel: 'Fase de Grupos (Round Robin)',
@@ -754,7 +756,8 @@
             {
                 id: 'tier1',
                 nombre: 'Torneo Apertura LBL 2026 - Tier 1',
-                slug: '17573081',
+                slug: 'T1ALBL2026',
+                challongeId: '17573081',
                 categoria: 'liga_lbl',
                 division: 'Tier 1',
                 formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
@@ -764,7 +767,8 @@
             {
                 id: 'tier2',
                 nombre: 'Torneo Apertura LBL 2026 - Tier 2',
-                slug: '17573105',
+                slug: 'T2ALBL2026',
+                challongeId: '17573105',
                 categoria: 'liga_lbl',
                 division: 'Tier 2',
                 formatoLabel: 'Eliminatoria Doble (Upper / Lower)',
@@ -774,7 +778,8 @@
             {
                 id: 'open_qualifier',
                 nombre: 'LBL OPEN QUALIFIER 2026',
-                slug: '17871688',
+                slug: 'LBL_OQ26',
+                challongeId: '17871688',
                 categoria: 'clasificacion_lbl',
                 division: 'General',
                 formatoLabel: 'Eliminatoria Doble',
@@ -784,7 +789,8 @@
             {
                 id: 'winter_cup',
                 nombre: 'Winter Cup LBL 2025',
-                slug: '16167943',
+                slug: 'winterlolcito',
+                challongeId: '16167943',
                 categoria: 'abierto',
                 division: 'General',
                 formatoLabel: 'Eliminatoria Directa',

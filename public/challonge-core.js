@@ -187,28 +187,28 @@ export function extraerChallongeSlug(inputStr) {
  * Helper centralizado de peticiones con fallback de proxies CORS para navegadores.
  */
 async function apiCall(targetUrl) {
-    // 1. Proxy cors.eu.org (ultra rápido y compatible con JSON de Challonge en producción)
-    try {
-        const corsUrl = `https://cors.eu.org/${targetUrl}`;
-        const res = await fetch(corsUrl);
-        if (res.ok) return await res.json();
-    } catch(e) {}
-
-    // 2. Proxy proxy.cors.sh (fallback secundario)
-    try {
-        const corsUrl = `https://proxy.cors.sh/${targetUrl}`;
-        const res = await fetch(corsUrl);
-        if (res.ok) return await res.json();
-    } catch(e) {}
-
-    // 3. corsproxy.io con parámetro ?url=
+    // 1. corsproxy.io (alta disponibilidad y respuesta JSON directa)
     try {
         const corsUrl = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
         const res = await fetch(corsUrl);
         if (res.ok) return await res.json();
     } catch(e) {}
 
-    // 4. Petición directa (funciona en localhost o con extensiones)
+    // 2. api.allorigins.win (fallback secundario ultra confiable)
+    try {
+        const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const res = await fetch(corsUrl);
+        if (res.ok) return await res.json();
+    } catch(e) {}
+
+    // 3. cors.eu.org (fallback terciario)
+    try {
+        const corsUrl = `https://cors.eu.org/${targetUrl}`;
+        const res = await fetch(corsUrl);
+        if (res.ok) return await res.json();
+    } catch(e) {}
+
+    // 4. Petición directa
     try {
         const res = await fetch(targetUrl);
         if (res.ok) return await res.json();
