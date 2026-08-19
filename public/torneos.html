@@ -191,19 +191,17 @@
                     </button>
                 </div>
 
-                <!-- CONTROLES ADICIONALES (TOGGLE DE VISTA EN LLAVE) -->
+                <!-- CONTROLES ADICIONALES (VISOR CHALLONGE) -->
                 <div id="bracket-view-toggle" class="hidden items-center gap-2">
-                    <button id="btn-view-cards" onclick="cambiarModoVista('cards')" class="px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg">
-                        <i class="fas fa-sitemap text-cyan-400"></i> Vista de Tarjetas LBL
-                    </button>
-                    <button id="btn-view-embed" onclick="cambiarModoVista('embed')" class="px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer">
-                        <i class="fas fa-window-maximize"></i> Visor Challonge
-                    </button>
+                    <span id="btn-view-embed" class="px-3.5 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-black text-xs flex items-center gap-1.5 shadow-lg">
+                        <i class="fas fa-window-maximize text-cyan-400"></i> Challonge
+                    </span>
                 </div>
             </div>
 
-            <!-- SECCIÓN DE FEED DE MATCHES EN VIVO / RECIENTES -->
-            <section id="section-feed-matches" class="space-y-4">
+            <!-- SECCIÓN DE FEED DE MATCHES EN VIVO / RECIENTES (OCULTADO TEMPORALMENTE) -->
+            <!--
+            <section id="section-feed-matches" class="space-y-4 hidden">
                 <div class="flex items-center justify-between border-b border-gray-800 pb-3">
                     <h3 class="text-base md:text-lg font-black text-white uppercase tracking-wider italic flex items-center gap-2">
                         <i class="fas fa-gamepad text-cyan-400"></i> Próximos Encuentros & Resultados Recientes
@@ -217,6 +215,7 @@
                     </div>
                 </div>
             </section>
+            -->
 
             <!-- CONTENEDOR DINÁMICO DE ETAPAS (RESUMEN / POSICIONES / CUADRANTE) -->
             <div id="dynamic-tournament-container" class="w-full min-h-[300px]">
@@ -672,16 +671,8 @@
             formatBadge.innerText = `Formato: ${formatText}`;
             if (countText) countText.innerText = `${torneo.matches.length} partidas registradas`;
 
-            // Renderizar Feed de enfrentamiento
-            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || (torneo.podio && torneo.podio.primerLugar);
-            if (isCompleted) {
-                if (feedSection) feedSection.style.display = 'none';
-            } else {
-                if (feedSection) {
-                    feedSection.style.display = 'block';
-                    renderizarFeedMatches(torneo.matches);
-                }
-            }
+            // Feed de enfrentamiento (Ocultado temporalmente por directiva oficial)
+            if (feedSection) feedSection.style.display = 'none';
 
             // Renderizar según la etapa seleccionada (Estilo LoL Esports Adaptativo)
             if (etapaActiva === 'resumen') {
