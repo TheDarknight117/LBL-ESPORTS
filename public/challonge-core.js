@@ -247,7 +247,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
         data = await apiCall(fullUrl);
     }
 
-    if ((!data || !data.tournament) && /^\d+$/.test(cleanSlug)) {
+    if (!data || !data.tournament) {
         const directUrl = `https://api.challonge.com/v1/tournaments/${cleanSlug}.json?api_key=${encodeURIComponent(cleanKey)}&include_participants=1&include_matches=1`;
         data = await apiCall(directUrl);
     }
