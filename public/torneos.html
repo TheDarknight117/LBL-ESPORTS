@@ -777,8 +777,8 @@
 
             if (statusBadge) {
                 const chState = (torneo.estado || docTorneo.estado || '').toLowerCase();
-                const isPending = chState === 'pending' || chState === 'proximamente';
-                const isCompleted = chState === 'complete' || chState === 'finalizado';
+                const isCompleted = chState === 'complete' || chState === 'finalizado' || chState === 'awaiting_review';
+                const isPending = !isCompleted && (chState === 'pending' || chState === 'proximamente');
 
                 if (isCompleted) {
                     statusBadge.innerHTML = `<i class="fas fa-flag-checkered text-[8px] mr-1 text-slate-400"></i> Torneo Finalizado`;
