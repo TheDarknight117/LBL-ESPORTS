@@ -316,7 +316,7 @@
         let filtroCategoriaCatalogo = 'todos'; // 'todos' | 'liga_lbl' | 'abierto'
 
         let etapaActiva = 'resumen'; // 'resumen', 'grupos', 'llave'
-        let modoVistaActual = 'cards'; // 'cards' (Vista de Tarjetas LBL por defecto) o 'embed'
+        let modoVistaActual = 'embed'; // 'embed' (Inserción Oficial de Challonge) de forma exclusiva
 
         window.abrirBaseDatosJugadores = () => {
             alert("👥 Próximamente: Base de Datos de Jugadores y Equipos LBL.\nAcceso centralizado al historial de jugadores, convocatorias y estadísticas oficiales.");
@@ -680,11 +680,7 @@
             } else if (etapaActiva === 'grupos') {
                 renderizarTablaPosiciones(torneo, mainContainer);
             } else if (etapaActiva === 'llave') {
-                if (modoVistaActual === 'embed') {
-                    renderizarChallongeEmbed(docTorneo, mainContainer);
-                } else {
-                    renderizarAdaptativoSegunFormato(docTorneo, mainContainer);
-                }
+                renderizarChallongeEmbed(docTorneo, mainContainer);
             }
         }
 
