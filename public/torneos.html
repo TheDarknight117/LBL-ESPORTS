@@ -317,6 +317,24 @@
 
         let etapaActiva = 'resumen'; // 'resumen', 'grupos', 'llave'
         let modoVistaActual = 'embed'; // 'embed' (Inserción Oficial de Challonge) de forma exclusiva
+        let filtroCronogramaTab = 'proximos'; // 'proximos' | 'anteriores' | 'todos'
+        let limiteCronograma = 8; // 8 partidos mostrados inicialmente
+
+        window.cambiarFiltroCronograma = (filtro) => {
+            filtroCronogramaTab = filtro;
+            limiteCronograma = 8;
+            renderizarTorneoDetalle();
+        };
+
+        window.expandirCronograma = () => {
+            limiteCronograma += 8;
+            renderizarTorneoDetalle();
+        };
+
+        window.contraerCronograma = () => {
+            limiteCronograma = 8;
+            renderizarTorneoDetalle();
+        };
 
         window.abrirBaseDatosJugadores = () => {
             alert("👥 Próximamente: Base de Datos de Jugadores y Equipos LBL.\nAcceso centralizado al historial de jugadores, convocatorias y estadísticas oficiales.");
@@ -578,6 +596,8 @@
         window.seleccionarTorneo = (id) => {
             torneoSeleccionadoId = id;
             etapaActiva = 'resumen';
+            filtroCronogramaTab = 'proximos';
+            limiteCronograma = 8;
             renderizarVista();
             actualizarURL(true);
         };
@@ -812,49 +832,54 @@
 
 
             container.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <!-- COLUMNA IZQUIERDA: RESUMEN DEL SPLIT & PODIO -->
-                    <div class="lg:col-span-7 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
-                        <div class="space-y-2 border-b border-gray-800/80 pb-4">
-                            <h3 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight">
-                                Resumen de ${torneo.nombre || `Torneo LBL ${divisionActiva}`}
-                            </h3>
-                            <p class="text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
-                                El torneo principal de la Liga Boliviana de LoL. En esta competencia, los equipos de la región se enfrentan para disputar la gloria y los puestos de honor.
-                            </p>
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <!-- COLUMNA IZQUIERDA: RESUMEN DEL SPLIT & PODIO -->
+                        <div class="lg:col-span-7 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
+                            <div class="space-y-2 border-b border-gray-800/80 pb-4">
+                                <h3 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight">
+                                    Resumen de ${torneo.nombre || `Torneo LBL`}
+                                </h3>
+                                <p class="text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
+                                    El torneo principal de la Liga Boliviana de LoL. En esta competencia, los equipos de la región se enfrentan para disputar la gloria y los puestos de honor.
+                                </p>
+                            </div>
+
+                            <!-- CUADRO DE POSICIONES PRINCIPALES -->
+                            <div class="space-y-3">
+                                <h4 class="text-xs font-black text-cyan-400 uppercase tracking-widest italic flex items-center gap-2">
+                                    <i class="fas fa-trophy text-yellow-400"></i> Puestos del Torneo
+                                </h4>
+                                ${podioHTML}
+                            </div>
+
+                            <!-- FASES DEL EVENTO -->
+                            <div class="space-y-2 border-t border-gray-800/80 pt-4">
+                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Fases del Evento</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed">
+                                    • <strong class="text-gray-300">Temporada Regular:</strong> Formato de todos contra todos o fases de grupos.<br>
+                                    • <strong class="text-gray-300">Eliminatorias / Play-offs:</strong> Cuadrante directo de eliminación con Upper y Lower Bracket al mejor de 3 y 5 partidas (BO3 / BO5).
+                                </p>
+                            </div>
                         </div>
 
-                        <!-- CUADRO DE POSICIONES PRINCIPALES -->
-                        <div class="space-y-3">
-                            <h4 class="text-xs font-black text-cyan-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <i class="fas fa-trophy text-yellow-400"></i> Puestos del Torneo
-                            </h4>
-                            ${podioHTML}
-                        </div>
+                        <!-- COLUMNA DERECHA: EQUIPOS PARTICIPANTES -->
+                        <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl">
+                            <div class="border-b border-gray-800/80 pb-3">
+                                <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight">
+                                    Equipos participantes
+                                </h3>
+                                <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                    Todos los equipos de la región participan en este evento.
+                                </span>
+                            </div>
 
-                        <!-- FASES DEL EVENTO -->
-                        <div class="space-y-2 border-t border-gray-800/80 pt-4">
-                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Fases del Evento</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                • <strong class="text-gray-300">Temporada Regular:</strong> Formato de todos contra todos o fases de grupos.<br>
-                                • <strong class="text-gray-300">Eliminatorias / Play-offs:</strong> Cuadrante directo de eliminación con Upper y Lower Bracket al mejor de 3 y 5 partidas (BO3 / BO5).
-                            </p>
+                            ${equiposGridHTML}
                         </div>
                     </div>
 
-                    <!-- COLUMNA DERECHA: EQUIPOS PARTICIPANTES -->
-                    <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl">
-                        <div class="border-b border-gray-800/80 pb-3">
-                            <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight">
-                                Equipos participantes
-                            </h3>
-                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
-                                Todos los equipos de la región participan en este evento.
-                            </span>
-                        </div>
-
-                        ${equiposGridHTML}
-                    </div>
+                    <!-- CRONOGRAMA DE PARTIDOS & HORARIOS OFICIALES -->
+                    ${renderizarCronogramaPartidos(docTorneo)}
                 </div>`;
         }
 
@@ -913,6 +938,259 @@
                 p1Winner,
                 p2Winner
             };
+        }
+
+        // --- HELPER PARA FORMATEAR FECHA Y HORA DE CADA PARTIDA ---
+        function formatearFechaHoraMatch(isoString) {
+            if (!isoString) {
+                return {
+                    fechaTexto: 'Fecha por definir',
+                    horaTexto: 'Por Definir',
+                    completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
+                };
+            }
+            try {
+                const d = new Date(isoString);
+                if (isNaN(d.getTime())) {
+                    return {
+                        fechaTexto: 'Fecha por definir',
+                        horaTexto: 'Por Definir',
+                        completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
+                    };
+                }
+                const dias = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+                const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+                const diaSem = dias[d.getDay()];
+                const diaNum = d.getDate();
+                const mesStr = meses[d.getMonth()];
+                const horas = String(d.getHours()).padStart(2, '0');
+                const mins = String(d.getMinutes()).padStart(2, '0');
+
+                return {
+                    fechaTexto: `${diaSem} ${diaNum} ${mesStr}`,
+                    horaTexto: `${horas}:${mins}`,
+                    completo: `${diaSem} ${diaNum} ${mesStr} • ${horas}:${mins}`
+                };
+            } catch(e) {
+                return {
+                    fechaTexto: 'Fecha por definir',
+                    horaTexto: 'Por Definir',
+                    completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
+                };
+            }
+        }
+
+        // --- RENDERIZADOR DEL CRONOGRAMA VERTICAL DE PARTIDOS (HORARIOS, RESULTADOS, VER MÁS) ---
+        function renderizarCronogramaPartidos(docTorneo) {
+            const torneo = docTorneo.datosChallonge || docTorneo;
+            const matches = Array.isArray(torneo.matches) ? torneo.matches : [];
+            const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
+
+            if (matches.length === 0) {
+                return '';
+            }
+
+            const partidosPendientes = [];
+            const partidosAnteriores = [];
+
+            matches.forEach(m => {
+                const isCompleted = m.state === 'completed' || m.state === 'complete' || !!m.winner_id;
+                if (isCompleted) {
+                    partidosAnteriores.push(m);
+                } else {
+                    partidosPendientes.push(m);
+                }
+            });
+
+            let matchesFiltrados = [];
+            if (filtroCronogramaTab === 'proximos') {
+                matchesFiltrados = partidosPendientes.length > 0 ? partidosPendientes : matches;
+            } else if (filtroCronogramaTab === 'anteriores') {
+                matchesFiltrados = partidosAnteriores;
+            } else {
+                matchesFiltrados = matches;
+            }
+
+            const totalMatches = matchesFiltrados.length;
+            const matchesVisibles = matchesFiltrados.slice(0, limiteCronograma);
+            const hayMas = totalMatches > limiteCronograma;
+
+            let matchesCardsHTML = '';
+            if (matchesVisibles.length === 0) {
+                matchesCardsHTML = `
+                    <div class="col-span-full py-12 text-center rounded-2xl bg-[#030712] border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-2 shadow-inner">
+                        <i class="fas fa-calendar-check text-2xl text-cyan-500/60 block mb-1"></i>
+                        <p class="text-white text-sm font-black">
+                            ${filtroCronogramaTab === 'anteriores' ? 'No hay partidos anteriores registrados en este torneo' : 'No hay más partidos pendientes programados'}
+                        </p>
+                    </div>`;
+            } else {
+                matchesCardsHTML = `<div class="space-y-3">`;
+                matchesVisibles.forEach((m) => {
+                    const dt = formatearFechaHoraMatch(m.scheduled_time || m.underway_at);
+                    const scoreData = parseMatchScores(m);
+
+                    const p1Name = m.player1?.nombre || m.player1?.name || 'TBD';
+                    const p1Tag = resolverTag(m.player1) || p1Name.substring(0, 3).toUpperCase();
+                    const p1Logo = esLigaLBL ? (m.player1?.logo || '') : '';
+
+                    const p2Name = m.player2?.nombre || m.player2?.name || 'TBD';
+                    const p2Tag = resolverTag(m.player2) || p2Name.substring(0, 3).toUpperCase();
+                    const p2Logo = esLigaLBL ? (m.player2?.logo || '') : '';
+
+                    let p1Avatar = '';
+                    if (esLigaLBL && p1Logo) {
+                        p1Avatar = `
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-[#070c14] border border-gray-800 p-1 flex items-center justify-center shrink-0 shadow">
+                                <img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1Name)}'" class="w-full h-full object-contain">
+                            </div>`;
+                    } else {
+                        p1Avatar = `
+                            <span class="px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-cyan-400 font-mono font-black text-xs shrink-0">${p1Tag}</span>`;
+                    }
+
+                    let p2Avatar = '';
+                    if (esLigaLBL && p2Logo) {
+                        p2Avatar = `
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-[#070c14] border border-gray-800 p-1 flex items-center justify-center shrink-0 shadow">
+                                <img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2Name)}'" class="w-full h-full object-contain">
+                            </div>`;
+                    } else {
+                        p2Avatar = `
+                            <span class="px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-cyan-400 font-mono font-black text-xs shrink-0">${p2Tag}</span>`;
+                    }
+
+                    let centerStatusHTML = '';
+                    if (scoreData.isCompleted) {
+                        centerStatusHTML = `
+                            <div class="px-3.5 py-1.5 rounded-xl bg-[#030712] border border-gray-800 font-black text-sm md:text-base tracking-widest flex items-center gap-2 shrink-0 shadow-inner">
+                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-base md:text-lg' : 'text-gray-400'}">${scoreData.p1Score}</span>
+                                <span class="text-gray-600 font-normal">-</span>
+                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-base md:text-lg' : 'text-gray-400'}">${scoreData.p2Score}</span>
+                            </div>`;
+                    } else if (m.state === 'live') {
+                        centerStatusHTML = `
+                            <div class="px-3 py-1 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-black text-xs flex items-center gap-1.5 animate-pulse shrink-0">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span> EN VIVO
+                            </div>`;
+                    } else {
+                        centerStatusHTML = `
+                            <div class="px-3 py-1 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-black text-xs flex items-center gap-1 shrink-0 shadow-inner">
+                                VS
+                            </div>`;
+                    }
+
+                    let stateBadge = '';
+                    if (scoreData.isCompleted) {
+                        stateBadge = `<span class="px-2.5 py-0.5 rounded-md bg-slate-500/15 text-slate-400 border border-slate-500/25 text-[10px] font-black uppercase">FINALIZADO</span>`;
+                    } else if (m.state === 'live') {
+                        stateBadge = `<span class="px-2.5 py-0.5 rounded-md bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
+                    } else {
+                        stateBadge = `<span class="px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[10px] font-black uppercase">PRÓXIMO</span>`;
+                    }
+
+                    const rondaText = m.group_id 
+                        ? `FASE DE GRUPOS • JORNADA ${m.round || 1}`
+                        : (m.round > 0 ? `RONDA ${m.round}` : `LOWER BRACKET • RONDA ${Math.abs(m.round)}`);
+                    const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
+
+                    matchesCardsHTML += `
+                        <div class="p-4 md:p-5 rounded-2xl bg-[#030712] hover:bg-[#070c14] border border-gray-800/80 hover:border-cyan-500/40 transition-all shadow-md space-y-3 group">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <!-- LADO IZQUIERDO: FECHA, HORA Y ESTADO -->
+                                <div class="flex items-center gap-3 shrink-0">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs md:text-sm font-black text-white flex items-center gap-1.5">
+                                            <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
+                                        </span>
+                                        <span class="text-[10px] md:text-xs text-gray-400 font-bold tracking-wider uppercase">
+                                            ${dt.fechaTexto}
+                                        </span>
+                                    </div>
+                                    <div class="ml-1">
+                                        ${stateBadge}
+                                    </div>
+                                </div>
+
+                                <!-- CENTRO: EQUIPOS Y RESULTADO -->
+                                <div class="flex items-center justify-center sm:justify-end gap-3 md:gap-5 flex-1 min-w-0">
+                                    <!-- Equipo 1 -->
+                                    <div class="flex items-center justify-end gap-2.5 flex-1 min-w-0">
+                                        <span class="text-xs md:text-sm font-black text-white uppercase tracking-wider truncate text-right ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1Name}</span>
+                                        ${p1Avatar}
+                                    </div>
+
+                                    <!-- Marcador central / VS -->
+                                    ${centerStatusHTML}
+
+                                    <!-- Equipo 2 -->
+                                    <div class="flex items-center justify-start gap-2.5 flex-1 min-w-0">
+                                        ${p2Avatar}
+                                        <span class="text-xs md:text-sm font-black text-white uppercase tracking-wider truncate text-left ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2Name}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SUB-BARRA INFERIOR: FASE / RONDA Y FORMATO -->
+                            <div class="flex items-center justify-between pt-2.5 border-t border-gray-800/60 text-[10px] md:text-[11px] text-gray-500 font-bold uppercase tracking-wider">
+                                <span><i class="fas fa-layer-group text-cyan-500/70 mr-1.5"></i> ${rondaText}</span>
+                                <span><i class="fas fa-gamepad text-amber-400/80 mr-1.5"></i> ${formatoText}</span>
+                            </div>
+                        </div>`;
+                });
+                matchesCardsHTML += `</div>`;
+            }
+
+            let paginationButtonHTML = '';
+            if (hayMas) {
+                paginationButtonHTML = `
+                    <div class="text-center pt-2">
+                        <button onclick="expandirCronograma()" class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-lg inline-flex items-center justify-center gap-2">
+                            <i class="fas fa-chevron-down"></i> VER MÁS PARTIDOS (${totalMatches - limiteCronograma} restantes)
+                        </button>
+                    </div>`;
+            } else if (limiteCronograma > 8 && totalMatches > 8) {
+                paginationButtonHTML = `
+                    <div class="text-center pt-2">
+                        <button onclick="contraerCronograma()" class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-white border border-gray-800 text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-lg inline-flex items-center justify-center gap-2">
+                            <i class="fas fa-chevron-up"></i> VER MENOS
+                        </button>
+                    </div>`;
+            }
+
+            return `
+                <div class="w-full glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
+                    <!-- CABECERA DEL CRONOGRAMA Y TABS DE ESTADO -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800/80 pb-4">
+                        <div>
+                            <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
+                                <i class="far fa-calendar-alt text-cyan-400"></i> Cronograma de Partidos & Horarios
+                            </h3>
+                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                Fechas, horarios oficiales y resultados del torneo.
+                            </span>
+                        </div>
+
+                        <!-- SELECTOR DE FILTRO: PRÓXIMOS vs ANTERIORES vs TODOS -->
+                        <div class="flex items-center gap-2 bg-[#030712] p-1.5 rounded-xl border border-gray-800 shrink-0">
+                            <button onclick="cambiarFiltroCronograma('proximos')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'proximos' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                ⏳ Próximos (${partidosPendientes.length})
+                            </button>
+                            <button onclick="cambiarFiltroCronograma('anteriores')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'anteriores' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                🏁 Anteriores (${partidosAnteriores.length})
+                            </button>
+                            <button onclick="cambiarFiltroCronograma('todos')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'todos' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                Todos (${matches.length})
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LISTA VERTICAL DE PARTIDOS -->
+                    ${matchesCardsHTML}
+
+                    <!-- PAGINACIÓN VER MÁS -->
+                    ${paginationButtonHTML}
+                </div>`;
         }
 
         function renderizarFeedMatches(matches) {

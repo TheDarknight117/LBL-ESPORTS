@@ -312,6 +312,9 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
             player2_prereq_match_id: m.player2_prereq_match_id,
             player1: p1 ? p1.lblInfo : { nombre: 'TBD', tag: 'TBD', logo: '' },
             player2: p2 ? p2.lblInfo : { nombre: 'TBD', tag: 'TBD', logo: '' },
+            scheduled_time: m.scheduled_time || null,
+            underway_at: m.underway_at || null,
+            completed_at: m.completed_at || null,
             updated_at: m.updated_at
         };
     });
