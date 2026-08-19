@@ -109,11 +109,14 @@
                         Explora los torneos en vivo en curso y el historial de campeonatos de la Liga Boliviana de Esports.
                     </p>
                 </div>
+                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES (OCULTADO TEMPORALMENTE) -->
+                <!--
                 <div class="flex items-center gap-3">
                     <button onclick="abrirBaseDatosJugadores()" class="px-5 py-3 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
                         <i class="fas fa-users-gear text-cyan-400"></i> Base de Datos de Jugadores
                     </button>
                 </div>
+                -->
             </section>
 
             <!-- BARRA DE FILTROS DEL CATÁLOGO -->
@@ -180,12 +183,14 @@
                     </p>
                 </div>
 
-                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES -->
+                <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES (OCULTADO TEMPORALMENTE) -->
+                <!--
                 <div class="flex items-center gap-3 shrink-0">
                     <button onclick="abrirBaseDatosJugadores()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
                         <i class="fas fa-users text-cyan-400"></i> Base de Datos de Jugadores
                     </button>
                 </div>
+                -->
             </section>
 
             <!-- BARRA DE ETAPAS DEL TORNEO (RESUMEN / POSICIONES / CUADRANTE) -->
@@ -202,14 +207,11 @@
                     </button>
                 </div>
 
-                <!-- CONTROLES ADICIONALES (TOGGLE DE VISTA EN LLAVE) -->
+                <!-- CONTROLES ADICIONALES (VISOR CHALLONGE) -->
                 <div id="bracket-view-toggle" class="hidden items-center gap-2">
-                    <button id="btn-view-cards" onclick="cambiarModoVista('cards')" class="px-3 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg">
-                        <i class="fas fa-sitemap text-cyan-400"></i> Vista de Tarjetas LBL
-                    </button>
-                    <button id="btn-view-embed" onclick="cambiarModoVista('embed')" class="px-3 py-1.5 rounded-xl border border-gray-800 bg-[#070c14] text-gray-400 font-bold text-xs flex items-center gap-1.5 transition-all hover:text-white cursor-pointer">
-                        <i class="fas fa-window-maximize"></i> Visor Challonge
-                    </button>
+                    <span id="btn-view-embed" class="px-3.5 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-black text-xs flex items-center gap-1.5 shadow-lg">
+                        <i class="fas fa-window-maximize text-cyan-400"></i> Challonge
+                    </span>
                 </div>
             </div>
 
@@ -444,7 +446,7 @@
         let filtroCategoriaCatalogo = 'todos'; // 'todos' | 'liga_lbl' | 'abierto'
 
         let etapaActiva = 'resumen'; // 'resumen', 'grupos', 'llave'
-        let modoVistaActual = 'cards'; // 'cards' (Vista de Tarjetas LBL por defecto) o 'embed'
+        let modoVistaActual = 'embed'; // 'embed' (Visor Oficial Challonge) por defecto
 
         window.abrirBaseDatosJugadores = () => {
             alert("👥 Próximamente: Base de Datos de Jugadores y Equipos LBL.\nAcceso centralizado al historial de jugadores, convocatorias y estadísticas oficiales.");
@@ -835,11 +837,7 @@
             } else if (etapaActiva === 'grupos') {
                 renderizarTablaPosiciones(torneo, mainContainer);
             } else if (etapaActiva === 'llave') {
-                if (modoVistaActual === 'embed') {
-                    renderizarChallongeEmbed(docTorneo, mainContainer);
-                } else {
-                    renderizarAdaptativoSegunFormato(docTorneo, mainContainer);
-                }
+                renderizarChallongeEmbed(docTorneo, mainContainer);
             }
         }
 
