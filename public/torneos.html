@@ -539,16 +539,18 @@
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    baseList = [...DEFAULT_TORNEOS_INICIALES, ...parsed];
+                    // ORDEN CORRECTO: caché primero (tiene datos reales), DEFAULT al final (agrega entradas nuevas que no estén en caché)
+                    baseList = [...parsed, ...DEFAULT_TORNEOS_INICIALES];
                 }
             }
             listaTorneosRegistrados = deduplicarTorneos(baseList.filter(t => !eliminados.includes(t.id)));
 
-            // Migración: asegurar que torneos con datos estáticos (ej: wc2026lbl) siempre usen la versión del sistema
+            // Migración: solo inyectar datosChallonge del sistema en entradas que NO lo tienen (ej: wc2026lbl en caché viejo)
             listaTorneosRegistrados = listaTorneosRegistrados.map(t => {
-                const systemVersion = DEFAULT_TORNEOS_INICIALES.find(d => d.id === t.id);
+                const systemVersion = DEFAULT_TORNEOS_INICIALES.find(d => d.id === t.id || d.slug === t.slug);
                 if (systemVersion && systemVersion.datosChallonge && !t.datosChallonge) {
-                    return { ...t, ...systemVersion };
+                    // Solo agrega datosChallonge, NO sobreescribe datos reales del caché
+                    return { ...t, datosChallonge: systemVersion.datosChallonge, challongeStandings: t.challongeStandings || systemVersion.challongeStandings, participantes: t.participantes || systemVersion.participantes, podio: t.podio || systemVersion.podio };
                 }
                 return t;
             });

@@ -877,8 +877,8 @@
                 }
             }
 
-            // Fusionar siempre la lista por defecto para asegurar que torneos del sistema (como WC2026LBL) estén siempre disponibles
-            lista = [...DEFAULT_TORNEOS_INICIALES, ...lista];
+            // ORDEN CORRECTO: datos reales primero (Firestore/localStorage), DEFAULT al final (agrega entradas del sistema no en BD)
+            lista = [...lista, ...DEFAULT_TORNEOS_INICIALES];
 
             // Filtrar eliminados y deduplicar
             let eliminados = [];
@@ -989,15 +989,37 @@
             const selector = document.getElementById('t-challonge-selector');
             if (!selector) return;
             selector.innerHTML = `<option value="">🔄 Consultando torneos de todas las cuentas Challonge...</option>`;
-            
-            listaTorneosCuentaChallonge = await obtenerListaTorneosTodasLasCuentas();
-            
+
+            // Consultar cada API key individualmente con try-catch para que un fallo no bloquee la otra
+            let listaCombinada = [];
+            try {
+                const listaPrincipal = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+                if (Array.isArray(listaPrincipal)) listaCombinada.push(...listaPrincipal);
+            } catch(e) {}
+            try {
+                const listaLuico = await obtenerListaTorneosChallonge(LUICO_CHALLONGE_API_KEY);
+                if (Array.isArray(listaLuico)) listaCombinada.push(...listaLuico);
+            } catch(e) {}
+
+            // Deduplicar por id numérico y url
+            const vistosId = new Set(); const vistosUrl = new Set(); const unicos = [];
+            for (const t of listaCombinada) {
+                const idKey = (t.id || '').toString().trim();
+                const urlKey = (t.url || '').toString().trim().toLowerCase();
+                if (idKey && vistosId.has(idKey)) continue;
+                if (urlKey && vistosUrl.has(urlKey)) continue;
+                if (idKey) vistosId.add(idKey);
+                if (urlKey) vistosUrl.add(urlKey);
+                unicos.push(t);
+            }
+            listaTorneosCuentaChallonge = unicos;
+
             if (!listaTorneosCuentaChallonge || listaTorneosCuentaChallonge.length === 0) {
                 selector.innerHTML = `<option value="">No se encontraron torneos en la cuenta</option>`;
                 return;
             }
 
-            let html = `<option value="">-- Selecciona un torneo de tu cuenta (${listaTorneosCuentaChallonge.length} encontrados) --</option>`;
+            let html = `<option value="">-- Selecciona un torneo (${listaTorneosCuentaChallonge.length} encontrados) --</option>`;
             listaTorneosCuentaChallonge.forEach(t => {
                 const stateLabel = t.state === 'complete' ? '🏁 FINALIZADO' : (t.state === 'pending' ? '⏳ PRÓXIMO' : '🔴 EN VIVO');
                 html += `<option value="${t.id}">${t.name} (${t.url}) [${stateLabel}]</option>`;
