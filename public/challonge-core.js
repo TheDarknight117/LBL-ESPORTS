@@ -294,7 +294,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
     if (!data || !data.tournament) {
         // Fallback inteligente para torneos públicos alojados en cualquier cuenta u organización de Challonge
         if (cleanSlug && cleanSlug.length >= 3) {
-            console.warn(`Torneo ${cleanSlug} no pertenece a la API Key principal. Generando estructura de integración embed por URL pública.`);
+            console.info(`[Challonge Core] Modo Embed Activo para el torneo "${cleanSlug}".`);
             return {
                 id: cleanSlug.toLowerCase(),
                 slug: cleanSlug,

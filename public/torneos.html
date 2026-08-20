@@ -454,7 +454,7 @@
                 creadoEn: '2026-01-05T00:00:00.000Z'
             },
             {
-                id: 'winter_cup_2026',
+                id: 'wc2026lbl',
                 nombre: 'Winter Cup LBL 2026',
                 slug: 'WC2026LBL',
                 challongeId: 'WC2026LBL',
@@ -980,15 +980,26 @@
             }
         }
 
+        const PODIOS_OFICIALES_SISTEMA = {
+            'wc2026lbl': {
+                primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
+                segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
+                tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
+            }
+        };
+
         // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
         function renderizarEtapaResumen(docTorneo, container) {
             const torneo = docTorneo.datosChallonge || docTorneo;
-            const podioObj = (torneo.podio && (torneo.podio.primerLugar || torneo.podio.segundoLugar)) ? torneo.podio : (docTorneo.podio || {});
+            const slugKey = (docTorneo.slug || docTorneo.id || '').toLowerCase();
+            const fallbackPodio = PODIOS_OFICIALES_SISTEMA[slugKey] || PODIOS_OFICIALES_SISTEMA['wc2026lbl'];
+
+            const podioObj = (torneo.podio && (torneo.podio.primerLugar || torneo.podio.segundoLugar)) ? torneo.podio : (docTorneo.podio || fallbackPodio);
             const challongeStandings = Array.isArray(torneo.challongeStandings) ? torneo.challongeStandings : [];
 
-            let p1 = podioObj.primerLugar;
-            let p2 = podioObj.segundoLugar;
-            let p3 = podioObj.tercerLugar;
+            let p1 = podioObj.primerLugar || fallbackPodio?.primerLugar;
+            let p2 = podioObj.segundoLugar || fallbackPodio?.segundoLugar;
+            let p3 = podioObj.tercerLugar || fallbackPodio?.tercerLugar;
 
             // Si el podio está incompleto o tiene duplicados, resolver desde challongeStandings oficiales
             if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
