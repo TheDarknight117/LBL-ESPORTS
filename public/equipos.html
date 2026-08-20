@@ -112,20 +112,21 @@
                     </div>
                     <h2 id="modal-name" class="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white mb-2 truncate">Nombre</h2>
                     
-                    <div id="modal-rep" class="flex flex-wrap gap-2 mb-2"></div>
-                    <div id="modal-socials" class="flex flex-wrap gap-2 mb-3"></div>
+                    <div id="modal-rep" class="flex flex-wrap gap-2.5 mb-2.5"></div>
+                    <div id="modal-socials" class="flex flex-wrap gap-2.5 mb-3.5"></div>
 
-                    <!-- LAYER: MOVIMIENTOS & FICHAJES CON BOTONES DESPLEGABLES -->
-                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-2.5 pt-3.5 mt-2 border-t border-gray-800/80 w-full">
+                    <!-- LAYER: MOVIMIENTOS & FICHAJES CON MENÚ FLOTANTE HORIZONTAL -->
+                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-2.5 pt-3.5 mt-2 border-t border-gray-800/80 w-full relative">
                         <div class="flex items-center justify-between flex-wrap gap-2">
-                            <div class="flex items-center gap-2 flex-wrap" id="modal-moves-buttons-container">
-                                <!-- Botones inyectados dinámicamente: Fichajes (Verde) y Movimientos (Celeste) -->
+                            <div class="flex items-center gap-2.5 flex-wrap" id="modal-moves-buttons-container">
+                                <!-- Botones flotantes: Fichajes (Verde) y Movimientos (Celeste) -->
                             </div>
                             <span id="modal-moves-date" class="text-gray-500 font-mono text-[10px]">Última act.</span>
                         </div>
-                        <div id="modal-moves-dropdown-container" class="hidden flex-col gap-2 p-3 bg-[#030712]/95 rounded-2xl transition-all shadow-inner" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
-                            <div id="modal-moves-badges" class="flex flex-col sm:flex-row sm:flex-wrap gap-2 max-h-60 overflow-y-auto pr-1">
-                                <!-- Badges inyectados al desplegar -->
+                        <!-- MENÚ FLOTANTE HORIZONTAL -->
+                        <div id="modal-moves-dropdown-container" class="hidden flex-col gap-2 p-3 bg-[#030712]/95 backdrop-blur-xl rounded-2xl transition-all shadow-2xl z-30 overflow-hidden" style="border: 1.5px solid rgba(255, 255, 255, 0.1) !important;">
+                            <div id="modal-moves-badges" class="flex flex-row flex-nowrap items-center gap-3 overflow-x-auto py-1 max-w-full scrollbar-thin">
+                                <!-- Badges horizontales inyectados al desplegar -->
                             </div>
                         </div>
                     </div>
@@ -293,18 +294,20 @@
                 tagEl.style.display = equipo.equipo.tag ? 'inline-block' : 'none';
             }
 
-            // Inyectar Representantes EXPLÍCITAMENTE en el Modal (WhatsApp Verde Oficial)
+            // Inyectar Representantes EXPLÍCITAMENTE en el Modal (Icono -> Espacio -> Nombre -> Espacio -> WhatsApp)
             let repsInfoHTML = '';
             if (equipo.representantes && equipo.representantes.length > 0) {
                 equipo.representantes.forEach((rep, idx) => {
                     if (rep.nombre && rep.tel) {
                         const numLink = rep.tel.replace(/[^0-9]/g, '');
                         repsInfoHTML += `
-                            <div class="text-xs font-bold text-gray-200 bg-[#070c14] px-4 py-2 rounded-xl flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
-                                <i class="fas fa-user-tie text-gray-400 text-xs"></i> 
-                                <span>${rep.nombre}</span>
-                                <a href="https://wa.me/${numLink}" target="_blank" class="text-[#25D366] hover:text-white hover:bg-[#25D366] ml-1.5 bg-[#25D366]/10 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm" style="border: 1px solid #25D366 !important;" title="Contactar por WhatsApp">
-                                    <i class="fab fa-whatsapp text-sm"></i> ${rep.tel}
+                            <div class="text-xs md:text-sm font-bold text-gray-200 bg-[#080d1a] px-4 py-2.5 rounded-2xl flex items-center justify-between sm:justify-start gap-3 shadow-md border border-gray-800/80 hover:border-gray-700 transition-colors">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <i class="fas fa-user-tie text-cyan-400 text-sm shrink-0"></i> 
+                                    <span class="truncate">${rep.nombre}</span>
+                                </div>
+                                <a href="https://wa.me/${numLink}" target="_blank" class="ml-2 text-[#25D366] hover:text-white hover:bg-[#25D366] bg-[#25D366]/10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 shadow-sm" style="border: 1.5px solid #25D366 !important;" title="Contactar por WhatsApp">
+                                    <i class="fab fa-whatsapp text-sm"></i> <span>${rep.tel}</span>
                                 </a>
                             </div>`;
                     }
@@ -315,11 +318,11 @@
             // Redes Sociales del Equipo (Instagram & Stream con espacio y estética pro)
             let redesHTML = '';
             if (equipo.media?.streamer_link) {
-                redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-950/40 hover:bg-cyan-900/60 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.45) !important;"><i class="fas fa-video text-cyan-400 text-sm"></i> Stream Oficial</a>`;
+                redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-950/40 hover:bg-cyan-900/60 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-md" style="border: 1.5px solid rgba(6, 182, 212, 0.45) !important;"><i class="fas fa-video text-cyan-400 text-sm"></i> <span>Stream</span></a>`;
             }
             if (equipo.media?.ig) {
                 const igUser = equipo.media.ig.replace('@','');
-                redesHTML += `<a href="https://instagram.com/${igUser}" target="_blank" class="text-[#E1306C] hover:text-white bg-gradient-to-r from-[#E1306C]/15 to-[#833AB4]/15 hover:from-[#E1306C]/30 hover:to-[#833AB4]/30 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" style="border: 1px solid #E1306C !important;"><i class="fab fa-instagram text-[#E1306C] text-sm"></i> Instagram (@${igUser})</a>`;
+                redesHTML += `<a href="https://instagram.com/${igUser}" target="_blank" class="text-[#E1306C] hover:text-white bg-gradient-to-r from-[#E1306C]/15 to-[#833AB4]/15 hover:from-[#E1306C]/30 hover:to-[#833AB4]/30 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-md" style="border: 1.5px solid #E1306C !important;"><i class="fab fa-instagram text-[#E1306C] text-sm"></i> <span>Instagram</span></a>`;
             }
             document.getElementById('modal-socials').innerHTML = redesHTML;
 
@@ -478,6 +481,16 @@
             document.body.style.overflow = 'auto';
         };
 
+        function extraerSoloRiotId(val) {
+            if (!val) return '';
+            const s = val.toString().trim();
+            const idx = s.indexOf('(');
+            if (idx !== -1) {
+                return s.slice(0, idx).trim();
+            }
+            return s;
+        }
+
         window.toggleMovesPanel = (tab) => {
             const dropdown = document.getElementById('modal-moves-dropdown-container');
             const badgesContainer = document.getElementById('modal-moves-badges');
@@ -508,52 +521,54 @@
             if (tab === 'fichajes') {
                 if (iconFichajes) iconFichajes.style.transform = 'rotate(180deg)';
                 if (btnFichajes) btnFichajes.style.backgroundColor = 'rgba(16, 185, 129, 0.25)';
-                dropdown.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                dropdown.style.borderColor = 'rgba(16, 185, 129, 0.45)';
 
                 window.modalFichajesCache.forEach(c => {
+                    const nickOnly = extraerSoloRiotId(c.nuevo);
                     html += `
-                        <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-950/40 text-emerald-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(16, 185, 129, 0.35) !important;">
-                            <i class="fas fa-user-plus text-emerald-400 text-sm"></i> 
-                            <span class="text-emerald-400 font-black">FICHAJE:</span> 
-                            <span class="text-white text-sm">${c.nuevo}</span> 
-                            <span class="text-gray-400 text-xs">(${c.campo})</span>
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#061e16] text-emerald-300 shrink-0 shadow-lg whitespace-nowrap" style="border: 1.5px solid rgba(16, 185, 129, 0.4) !important;">
+                            <i class="fas fa-user-plus text-emerald-400 text-xs"></i> 
+                            <span class="text-emerald-400 font-black tracking-wider text-xs">FICHAJE:</span> 
+                            <span class="text-white font-bold text-xs">${nickOnly}</span> 
+                            <span class="text-emerald-300 text-[11px] font-bold bg-emerald-950/80 px-2 py-0.5 rounded-lg border border-emerald-500/30">${c.campo || 'Roster'}</span>
                         </div>`;
                 });
             } else if (tab === 'movimientos') {
                 if (iconMovimientos) iconMovimientos.style.transform = 'rotate(180deg)';
                 if (btnMovimientos) btnMovimientos.style.backgroundColor = 'rgba(6, 182, 212, 0.25)';
-                dropdown.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+                dropdown.style.borderColor = 'rgba(6, 182, 212, 0.45)';
 
                 window.modalMovimientosCache.forEach(c => {
                     if (c.tipoCambio === 'reemplazo') {
+                        const cleanDetalle = c.detalle ? c.detalle : `<span class="text-white font-bold">${extraerSoloRiotId(c.nuevo)}</span> en <span class="text-cyan-300 font-bold">${c.campo}</span>`;
                         html += `
-                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-cyan-950/40 text-cyan-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.35) !important;">
-                                <i class="fas fa-arrows-rotate text-cyan-400 text-sm"></i> 
-                                ${c.detalle || `<span class="text-white text-sm">${c.nuevo}</span> en <span class="text-cyan-300">${c.campo}</span>`}
+                            <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#071c26] text-cyan-300 shrink-0 shadow-lg whitespace-nowrap" style="border: 1.5px solid rgba(6, 182, 212, 0.4) !important;">
+                                <i class="fas fa-arrows-rotate text-cyan-400 text-xs"></i> 
+                                <span class="text-white font-bold text-xs">${cleanDetalle}</span>
                             </div>`;
                     } else if (c.tipoCambio === 'cambio_nombre') {
                         html += `
-                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-purple-950/40 text-purple-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(168, 85, 247, 0.35) !important;">
-                                <i class="fas fa-sync-alt text-purple-400 text-sm"></i> 
-                                <span class="text-purple-400 font-black">RENOMBRE:</span> <span class="text-white text-sm">${c.anterior}</span> ➔ <span class="text-purple-300 text-sm">${c.nuevo}</span>
+                            <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-purple-950/60 text-purple-300 shrink-0 shadow-lg whitespace-nowrap" style="border: 1.5px solid rgba(168, 85, 247, 0.4) !important;">
+                                <i class="fas fa-sync-alt text-purple-400 text-xs"></i> 
+                                <span class="text-purple-400 font-black text-xs">RENOMBRE:</span> <span class="text-white font-bold text-xs">${extraerSoloRiotId(c.anterior)}</span> ➔ <span class="text-purple-300 font-bold text-xs">${extraerSoloRiotId(c.nuevo)}</span>
                             </div>`;
                     } else if (c.tipoCambio === 'transferencia') {
                         html += `
-                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-950/40 text-amber-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.35) !important;">
-                                <i class="fas fa-arrow-right-arrow-left text-amber-400 text-sm"></i> 
-                                <span class="text-amber-400 font-black">TRASPASO:</span> <span class="text-white text-sm">${c.nuevo}</span> <span class="text-gray-400 text-xs">(${c.anterior})</span>
+                            <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-amber-950/60 text-amber-300 shrink-0 shadow-lg whitespace-nowrap" style="border: 1.5px solid rgba(245, 158, 11, 0.4) !important;">
+                                <i class="fas fa-arrow-right-arrow-left text-amber-400 text-xs"></i> 
+                                <span class="text-amber-400 font-black text-xs">TRASPASO:</span> <span class="text-white font-bold text-xs">${extraerSoloRiotId(c.nuevo)}</span> <span class="text-amber-300 text-[11px] font-bold bg-amber-950 px-2 py-0.5 rounded-lg border border-amber-500/30">(${extraerSoloRiotId(c.anterior)})</span>
                             </div>`;
                     } else if (c.tipoCambio === 'baja') {
                         html += `
-                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-950/40 text-rose-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(244, 63, 94, 0.35) !important;">
-                                <i class="fas fa-user-minus text-rose-400 text-sm"></i> 
-                                <span class="text-rose-400 font-black">BAJA:</span> <span class="text-gray-200 text-sm">${c.anterior}</span>
+                            <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-rose-950/60 text-rose-300 shrink-0 shadow-lg whitespace-nowrap" style="border: 1.5px solid rgba(244, 63, 94, 0.4) !important;">
+                                <i class="fas fa-user-minus text-rose-400 text-xs"></i> 
+                                <span class="text-rose-400 font-black text-xs">BAJA:</span> <span class="text-gray-200 font-bold text-xs">${extraerSoloRiotId(c.anterior)}</span>
                             </div>`;
                     }
                 });
             }
 
-            badgesContainer.innerHTML = html || `<p class="text-xs text-gray-500 italic p-2">Sin registros en esta sección.</p>`;
+            badgesContainer.innerHTML = html || `<p class="text-xs text-gray-500 italic p-2 whitespace-nowrap">Sin registros en esta sección.</p>`;
         };
 
         cargarEquipos();
