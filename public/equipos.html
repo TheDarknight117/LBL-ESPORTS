@@ -418,7 +418,7 @@
             let btnsHTML = '';
             if (fichajesHistoricos.length > 0) {
                 btnsHTML += `
-                    <button type="button" onclick="abrirMovesHistoryModal('fichajes')" class="text-green-400 hover:text-white bg-green-900/20 hover:bg-green-900/40 px-3 py-1.5 rounded-lg border border-green-900/50 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
+                    <button type="button" onclick="abrirMovesHistoryModal('fichajes')" class="text-green-400 hover:text-white bg-green-900/20 hover:bg-green-900/40 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm" style="border: 1px solid #4ade80 !important;">
                         <i class="fas fa-user-plus text-xs"></i> 
                         <span>Fichajes (${fichajesHistoricos.length})</span>
                     </button>`;
@@ -426,7 +426,7 @@
 
             if (movimientosHistoricos.length > 0) {
                 btnsHTML += `
-                    <button type="button" onclick="abrirMovesHistoryModal('movimientos')" class="text-cyan-400 hover:text-white bg-cyan-900/20 hover:bg-cyan-900/40 px-3 py-1.5 rounded-lg border border-cyan-900/50 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
+                    <button type="button" onclick="abrirMovesHistoryModal('movimientos')" class="text-cyan-400 hover:text-white bg-cyan-900/20 hover:bg-cyan-900/40 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm" style="border: 1px solid #22d3ee !important;">
                         <i class="fas fa-arrows-rotate text-xs"></i> 
                         <span>Movimientos (${movimientosHistoricos.length})</span>
                     </button>`;
