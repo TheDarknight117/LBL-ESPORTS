@@ -490,7 +490,7 @@
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    baseList = [...parsed, ...DEFAULT_TORNEOS_INICIALES];
+                    baseList = [...DEFAULT_TORNEOS_INICIALES, ...parsed];
                 }
             }
             listaTorneosRegistrados = deduplicarTorneos(baseList.filter(t => !eliminados.includes(t.id)));
@@ -926,9 +926,9 @@
             if (descEl) descEl.innerText = `Torneo ${docTorneo.categoria === 'liga_lbl' ? 'oficial de la Liga LBL' : 'Abierto de Esports'} • División: ${docTorneo.division || 'General'}`;
 
             if (statusBadge) {
-                const chState = (torneo.estado || docTorneo.estado || '').toLowerCase();
+                const chState = (docTorneo.estado || torneo.estado || '').toLowerCase();
                 const isPending = chState === 'pending' || chState === 'proximamente';
-                const isCompleted = chState === 'complete' || chState === 'finalizado';
+                const isCompleted = chState === 'complete' || chState === 'finalizado' || chState === 'ended';
 
                 if (isCompleted) {
                     statusBadge.innerHTML = `<i class="fas fa-flag-checkered text-[8px] mr-1 text-slate-400"></i> Torneo Finalizado`;
@@ -942,16 +942,15 @@
                 }
             }
 
-            if (!torneo || !torneo.matches) {
-                if (countText) countText.innerText = '0 partidas sincronizadas';
+            if (!torneo || !torneo.matches || torneo.matches.length === 0) {
+                if (countText) countText.innerText = 'Módulo Interactivo Challonge';
                 if (feedSection) feedSection.style.display = 'none';
 
-                mainContainer.innerHTML = `
-                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
-                        <i class="fas fa-diagram-project text-4xl text-cyan-400 block mb-2"></i>
-                        <p>Este torneo aún no ha sido sincronizado con Challonge desde el Dashboard de Staff.</p>
-                        <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug}</strong></span>
-                    </div>`;
+                if (etapaActiva === 'resumen') {
+                    renderizarEtapaResumen(docTorneo, mainContainer);
+                } else {
+                    renderizarChallongeEmbed(docTorneo, mainContainer);
+                }
                 return;
             }
 
@@ -984,24 +983,24 @@
         // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
         function renderizarEtapaResumen(docTorneo, container) {
             const torneo = docTorneo.datosChallonge || docTorneo;
-            const podio = torneo.podio || {};
+            const podioObj = (torneo.podio && (torneo.podio.primerLugar || torneo.podio.segundoLugar)) ? torneo.podio : (docTorneo.podio || {});
             const challongeStandings = Array.isArray(torneo.challongeStandings) ? torneo.challongeStandings : [];
 
-            let p1 = podio.primerLugar;
-            let p2 = podio.segundoLugar;
-            let p3 = podio.tercerLugar;
+            let p1 = podioObj.primerLugar;
+            let p2 = podioObj.segundoLugar;
+            let p3 = podioObj.tercerLugar;
 
-            // Si el podio está incompleto o tiene duplicados (ej. p2 == p3), resolver desde challongeStandings oficiales
+            // Si el podio está incompleto o tiene duplicados, resolver desde challongeStandings oficiales
             if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
                 const s1 = challongeStandings.find(s => s.rank === 1);
                 const s2 = challongeStandings.find(s => s.rank === 2);
                 const s3 = challongeStandings.find(s => s.rank === 3);
-                if (s1) p1 = s1.equipo;
-                if (s2) p2 = s2.equipo;
-                if (s3) p3 = s3.equipo;
+                if (s1 && !p1) p1 = s1.equipo;
+                if (s2 && !p2) p2 = s2.equipo;
+                if (s3 && !p3) p3 = s3.equipo;
             }
 
-            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || !!p1;
+            const isCompleted = (docTorneo.estado === 'finalizado') || (torneo.estado === 'complete') || !!p1;
 
             // Extraer participantes únicos para la tarjeta derecha "Equipos participantes"
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
@@ -1021,6 +1020,13 @@
                     if (m.player2 && m.player2.nombre && m.player2.nombre !== 'TBD') {
                         participantesMap.set(m.player2.nombre.toLowerCase().trim(), m.player2);
                     }
+                });
+            }
+
+            if (participantesMap.size === 0 && (p1 || p2 || p3)) {
+                [p1, p2, p3].filter(Boolean).forEach(eq => {
+                    const name = eq.nombre || eq.name || '';
+                    if (name) participantesMap.set(name.toLowerCase().trim(), { lblInfo: eq, nombre: name, tag: eq.tag, logo: eq.logo });
                 });
             }
 

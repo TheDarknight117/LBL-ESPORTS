@@ -867,7 +867,7 @@
             }
 
             // Fusionar siempre la lista por defecto para asegurar que torneos del sistema (como WC2026LBL) estén siempre disponibles
-            lista = [...lista, ...DEFAULT_TORNEOS_INICIALES];
+            lista = [...DEFAULT_TORNEOS_INICIALES, ...lista];
 
             // Filtrar eliminados y deduplicar
             let eliminados = [];
