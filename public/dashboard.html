@@ -1348,11 +1348,14 @@
 
                 renderizarTablaTorneosRegistrados(torneosRegistradosList);
 
+                const numMatches = (resultado.matches && Array.isArray(resultado.matches)) ? resultado.matches.length : 0;
+                const numEquipos = (resultado.participantes && Array.isArray(resultado.participantes)) ? resultado.participantes.length : 0;
+
                 const horaStr = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> "${torneoItem.nombre}" sincronizado a las ${horaStr}! (${resultado.matches.length} partidas, ${resultado.participantes.length} equipos)</span>`;
+                    statusEl.innerHTML = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> "${torneoItem.nombre}" sincronizado a las ${horaStr}! (${numMatches} partidas, ${numEquipos} equipos)</span>`;
                 }
-                alert(`✅ "${torneoItem.nombre}" sincronizado con éxito!\nPartidas cargadas: ${resultado.matches.length}\nEquipos participantes: ${resultado.participantes.length}`);
+                alert(`✅ "${torneoItem.nombre}" sincronizado con éxito!\nPartidas cargadas: ${numMatches}\nEquipos participantes: ${numEquipos}`);
             } catch (err) {
                 console.error("Error al sincronizar torneo:", err);
                 if (statusEl) {
