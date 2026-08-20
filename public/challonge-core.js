@@ -221,11 +221,11 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         const separator = endpointPath.includes('?') ? '&' : '?';
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
 
-        // Proxies en orden de velocidad y estabilidad
+        // Proxies en orden de velocidad y estabilidad comprobada
         const proxyList = [
-            `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
+            `https://proxy.cors.sh/${targetUrl}`,
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-            `https://cors.eu.org/${targetUrl}`,
+            `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
             targetUrl // Intento directo
         ];
 

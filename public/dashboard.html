@@ -947,7 +947,7 @@
             if (!selector) return;
             selector.innerHTML = `<option value="">🔄 Consultando torneos de tu cuenta oficial...</option>`;
             
-            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(null);
             
             if (!listaTorneosCuentaChallonge || listaTorneosCuentaChallonge.length === 0) {
                 selector.innerHTML = `<option value="">No se encontraron torneos en la cuenta</option>`;
