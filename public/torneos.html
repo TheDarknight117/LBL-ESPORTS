@@ -898,7 +898,7 @@
                 if (typeof procesarTorneoChallonge === 'function') {
                     procesarTorneoChallonge(slugToFetch, DEFAULT_CHALLONGE_API_KEY, [], docTorneo.division || 'Tier 1')
                         .then(liveData => {
-                            if (liveData && liveData.matches && liveData.matches.length > 0) {
+                            if (liveData && !liveData.isFallback && liveData.matches && liveData.matches.length > 0) {
                                 docTorneo.datosChallonge = liveData;
                                 localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
                                 if (torneoSeleccionadoId === docTorneo.id) {
