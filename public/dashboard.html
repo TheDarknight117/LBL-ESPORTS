@@ -2507,14 +2507,19 @@
                 exList.forEach(ex => {
                     const fechaSal = new Date(ex.fechaSalida).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', year: 'numeric' });
                     exHTML += `
-                        <div class="p-3.5 bg-[#111] rounded-xl border border-gray-800 flex items-center justify-between text-xs">
-                            <div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="font-black text-white">${ex.riotId}</span>
-                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-800 text-gray-400 uppercase">${ex.rol || 'Jugador'}</span>
+                        <div class="p-4 bg-[#0a0507]/90 rounded-2xl flex flex-col justify-between gap-2 shadow-md hover:bg-[#12070a] transition-colors" style="border: 1px solid rgba(244, 63, 94, 0.25) !important;">
+                            <div class="flex items-center justify-between gap-2 pt-0.5">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="font-black text-gray-100 text-sm tracking-tight truncate">${ex.riotId}</span>
                                 </div>
-                                <p class="text-[10px] text-gray-400 mt-0.5">${ex.nombre} ${ex.ci ? `· CI: ${ex.ci}` : ''}</p>
-                                <p class="text-[9px] text-rose-400/80 mt-1"><i class="fas fa-sign-out-alt mr-1"></i> ${ex.motivo || 'Baja'} (${fechaSal})</p>
+                                <span class="text-[10px] font-black px-2 py-0.5 rounded-md bg-rose-950/60 text-rose-300 border border-rose-500/30 uppercase shrink-0">${ex.rol || 'Jugador'}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 font-medium">${ex.nombre || 'Nombre no registrado'} ${ex.ci ? `· CI: ${ex.ci}` : ''}</p>
+                            <div class="pt-2 mt-0.5 border-t border-rose-950/50 flex items-center justify-between text-[11px]">
+                                <span class="text-rose-400 font-bold flex items-center gap-1.5">
+                                    <i class="fas fa-arrow-right-from-bracket text-rose-400 text-[10px]"></i> ${ex.motivo || 'Baja de Roster'}
+                                </span>
+                                <span class="text-gray-500 text-[10px] font-mono">${fechaSal}</span>
                             </div>
                         </div>`;
                 });

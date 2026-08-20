@@ -115,15 +115,15 @@
                     <div id="modal-rep" class="flex flex-wrap gap-2 mb-2"></div>
                     <div id="modal-socials" class="flex flex-wrap gap-2 mb-3"></div>
 
-                    <!-- LAYER ESTILO LIQUIPEDIA: MOVIMIENTOS & FICHAJES RECIENTES -->
-                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-1.5 pt-2.5 border-t border-gray-800/80 w-full">
-                        <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-gray-400">
-                            <span class="flex items-center gap-1.5 text-cyan-400">
-                                <i class="fas fa-arrow-right-arrow-left"></i> Movimientos Recientes (Liquipedia)
+                    <!-- LAYER: MOVIMIENTOS & FICHAJES RECIENTES -->
+                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-2.5 pt-3.5 mt-2 border-t border-gray-800/80 w-full bg-[#030712]/60 p-3 rounded-2xl" style="border: 1px solid rgba(6, 182, 212, 0.2) !important;">
+                        <div class="flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-400">
+                            <span class="flex items-center gap-2 text-cyan-400">
+                                <i class="fas fa-arrow-right-arrow-left text-cyan-400"></i> Movimientos Recientes
                             </span>
-                            <span id="modal-moves-date" class="text-gray-500 font-mono text-[9px]">Última act.</span>
+                            <span id="modal-moves-date" class="text-gray-500 font-mono text-[10px]">Última act.</span>
                         </div>
-                        <div id="modal-moves-badges" class="flex flex-wrap gap-1.5">
+                        <div id="modal-moves-badges" class="flex flex-wrap gap-2">
                             <!-- Badges inyectados dinámicamente -->
                         </div>
                     </div>
@@ -260,18 +260,18 @@
             }
 
             return `
-                <div class="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-2xl border border-gray-800 hover:border-gray-600 transition-colors shadow-lg">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-[#050505] p-2 rounded-xl border border-gray-800 flex items-center justify-center shrink-0">
+                <div class="flex items-center justify-between p-4 bg-[#070c14] rounded-2xl transition-colors shadow-lg hover:bg-[#0a1220]" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="bg-[#030712] p-2.5 rounded-xl flex items-center justify-center shrink-0" style="border: 1px solid rgba(255, 255, 255, 0.06) !important;">
                             ${iconHTML}
                         </div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 font-black tracking-widest uppercase mb-0.5">${rolNombre} ${badgeCapitan}</p>
-                            <p class="text-white font-bold text-sm md:text-lg tracking-tight">${jugadorData.riotId}</p>
+                        <div class="min-w-0">
+                            <p class="text-[10px] text-gray-400 font-black tracking-widest uppercase mb-0.5">${rolNombre} ${badgeCapitan}</p>
+                            <p class="text-white font-bold text-sm md:text-base tracking-tight truncate">${jugadorData.riotId}</p>
                             ${linkSecundarioHTML}
                         </div>
                     </div>
-                    <a href="${jugadorData.opgg}" target="_blank" class="bg-blue-600/10 text-blue-400 border border-blue-900/50 hover:bg-blue-600 hover:text-white w-12 h-12 rounded-xl flex items-center justify-center transition-all shrink-0 text-lg shadow-inner" title="Ver OP.GG">
+                    <a href="${jugadorData.opgg}" target="_blank" class="bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-black w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0 text-base shadow-inner ml-2" style="border: 1px solid rgba(6, 182, 212, 0.3) !important;" title="Ver OP.GG">
                         <i class="fas fa-external-link-alt"></i>
                     </a>
                 </div>
@@ -298,10 +298,10 @@
                     if (rep.nombre && rep.tel) {
                         const numLink = rep.tel.replace(/[^0-9]/g, '');
                         repsInfoHTML += `
-                            <div class="text-[11px] font-bold text-gray-300 bg-[#0a0a0a] px-3 py-2 rounded-xl border border-gray-700 flex items-center gap-2">
-                                <i class="fas fa-user-tie text-gray-500"></i> 
+                            <div class="text-[11px] font-bold text-gray-300 bg-[#070c14] px-3.5 py-2 rounded-xl flex items-center gap-2" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                                <i class="fas fa-user-tie text-gray-400"></i> 
                                 ${rep.nombre} 
-                                <a href="https://wa.me/${numLink}" target="_blank" class="text-green-400 hover:text-green-300 ml-1 bg-green-900/20 px-2 py-0.5 rounded border border-green-800 transition-colors">
+                                <a href="https://wa.me/${numLink}" target="_blank" class="text-emerald-400 hover:text-emerald-300 ml-1 bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/30 transition-colors">
                                     <i class="fab fa-whatsapp"></i> ${rep.tel}
                                 </a>
                             </div>`;
@@ -312,11 +312,11 @@
 
             // Redes Sociales del Equipo
             let redesHTML = '';
-            if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-blue-400 hover:text-white bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50 text-xs font-bold transition-colors"><i class="fas fa-video mr-1"></i> Stream</a>`;
-            if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-900/20 px-3 py-1.5 rounded-lg border border-pink-900/50 text-xs font-bold transition-colors"><i class="fab fa-instagram mr-1"></i> Instagram</a>`;
+            if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-950/30 px-3.5 py-1.5 rounded-xl border border-cyan-500/30 text-xs font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-video"></i> Stream</a>`;
+            if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-950/30 px-3.5 py-1.5 rounded-xl border border-pink-500/30 text-xs font-bold transition-colors flex items-center gap-1.5"><i class="fab fa-instagram"></i> Instagram</a>`;
             document.getElementById('modal-socials').innerHTML = redesHTML;
 
-            // LAYER ESTILO LIQUIPEDIA: MOVIMIENTOS & FICHAJES
+            // LAYER DE MOVIMIENTOS & FICHAJES
             const liquiLayer = document.getElementById('modal-liquipedia-layer');
             const movesBadges = document.getElementById('modal-moves-badges');
             const movesDate = document.getElementById('modal-moves-date');
@@ -331,29 +331,29 @@
                     ultEvento.cambios.forEach(c => {
                         if (c.tipoCambio === 'cambio_nombre') {
                             badgesHTML += `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-500/30 flex items-center gap-1 shadow-sm">
-                                    <i class="fas fa-sync-alt text-[8px]"></i> Renombre: ${c.anterior} ➔ ${c.nuevo}
-                                </span>`;
+                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-950/40 text-purple-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(168, 85, 247, 0.35) !important;">
+                                    <i class="fas fa-sync-alt text-purple-400 text-[10px]"></i> Renombre: <span class="text-white">${c.anterior}</span> ➔ <span class="text-purple-300">${c.nuevo}</span>
+                                </div>`;
                         } else if (c.tipoCambio === 'fichaje') {
                             badgesHTML += `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 shadow-sm">
-                                    <i class="fas fa-user-plus text-[8px]"></i> Fichaje: ${c.nuevo} (${c.campo})
-                                </span>`;
+                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-950/40 text-emerald-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(16, 185, 129, 0.35) !important;">
+                                    <i class="fas fa-user-plus text-emerald-400 text-[10px]"></i> <span class="text-emerald-400 font-black">FICHAJE:</span> <span class="text-white">${c.nuevo}</span> <span class="text-gray-400 text-[11px]">(${c.campo})</span>
+                                </div>`;
                         } else if (c.tipoCambio === 'transferencia') {
                             badgesHTML += `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-sm">
-                                    <i class="fas fa-arrow-right-arrow-left text-[8px]"></i> Traspaso: ${c.nuevo} (${c.anterior})
-                                </span>`;
+                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-950/40 text-amber-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.35) !important;">
+                                    <i class="fas fa-arrow-right-arrow-left text-amber-400 text-[10px]"></i> <span class="text-amber-400 font-black">TRASPASO:</span> <span class="text-white">${c.nuevo}</span> <span class="text-gray-400 text-[11px]">(${c.anterior})</span>
+                                </div>`;
                         } else if (c.tipoCambio === 'baja') {
                             badgesHTML += `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/30 flex items-center gap-1 shadow-sm">
-                                    <i class="fas fa-user-minus text-[8px]"></i> Baja: ${c.anterior}
-                                </span>`;
+                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-950/40 text-rose-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(244, 63, 94, 0.35) !important;">
+                                    <i class="fas fa-user-minus text-rose-400 text-[10px]"></i> <span class="text-rose-400 font-black">BAJA:</span> <span class="text-gray-200">${c.anterior}</span>
+                                </div>`;
                         } else if (c.tipoCambio === 'reemplazo') {
                             badgesHTML += `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950/60 text-blue-300 border border-blue-500/30 flex items-center gap-1 shadow-sm">
-                                    <i class="fas fa-arrows-rotate text-[8px]"></i> ${c.detalle || `${c.nuevo} en ${c.campo}`}
-                                </span>`;
+                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-950/40 text-cyan-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.35) !important;">
+                                    <i class="fas fa-arrows-rotate text-cyan-400 text-[10px]"></i> ${c.detalle || `<span class="text-white">${c.nuevo}</span> en <span class="text-cyan-300">${c.campo}</span>`}
+                                </div>`;
                         }
                     });
                 }
@@ -376,8 +376,8 @@
             // SECCIÓN: TITULARES
             let rosterHTML = `
                 <div>
-                    <h4 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-gamepad mr-2"></i> Roster Titular</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <h4 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2 flex items-center gap-2"><i class="fas fa-gamepad text-yellow-500"></i> Roster Titular</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         ${crearFilaJugador('Top', roleIcons['TOP'], r.TOP, equipo.capitan === 'TOP')}
                         ${crearFilaJugador('Jungla', roleIcons['JG'], r.JG, equipo.capitan === 'JG')}
                         ${crearFilaJugador('Mid', roleIcons['MID'], r.MID, equipo.capitan === 'MID')}
@@ -390,8 +390,8 @@
             if (equipo.suplentes && equipo.suplentes.length > 0) {
                 rosterHTML += `
                 <div class="mt-8">
-                    <h4 class="text-sm font-black text-teal-400 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-user-clock mr-2"></i> Suplentes Autorizados</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                    <h4 class="text-sm font-black text-teal-400 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2 flex items-center gap-2"><i class="fas fa-user-clock text-teal-400"></i> Suplentes Autorizados</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">`;
                 equipo.suplentes.forEach(sup => {
                     let iconCode = 'SUPLENTE';
                     if (sup.rol_seleccionado) {
@@ -410,8 +410,8 @@
             if (equipo.coaches && equipo.coaches.length > 0) {
                 rosterHTML += `
                 <div class="mt-8">
-                    <h4 class="text-sm font-black text-rose-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2"><i class="fas fa-chalkboard-user mr-2"></i> Staff Técnico</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                    <h4 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-3 border-b border-gray-800 pb-2 flex items-center gap-2"><i class="fas fa-chalkboard-user text-rose-400"></i> Staff Técnico</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">`;
                 equipo.coaches.forEach(coach => {
                     rosterHTML += crearFilaJugador('Coach Estratégico', roleIcons['COACH'], coach);
                 });
@@ -422,22 +422,27 @@
             if (equipo.ex_jugadores && equipo.ex_jugadores.length > 0) {
                 rosterHTML += `
                 <div class="mt-8 border-t border-gray-800/80 pt-6">
-                    <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center justify-between">
-                        <span><i class="fas fa-history text-cyan-500 mr-2"></i> Ex-Jugadores del Equipo</span>
-                        <span class="text-[10px] text-gray-500 font-bold">${equipo.ex_jugadores.length} ex-integrante(s)</span>
+                    <h4 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-4 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fas fa-history text-rose-500"></i> Ex-Jugadores del Equipo</span>
+                        <span class="text-xs text-gray-400 font-bold bg-[#070c14] px-3 py-1 rounded-xl" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">${equipo.ex_jugadores.length} ex-integrante(s)</span>
                     </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">`;
                 equipo.ex_jugadores.forEach(ex => {
                     const fechaSal = new Date(ex.fechaSalida).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', year: 'numeric' });
                     rosterHTML += `
-                        <div class="flex items-center justify-between p-3.5 bg-[#0a0a0a] rounded-2xl border border-gray-800/60 text-xs">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-black text-gray-200">${ex.riotId}</span>
-                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-900 text-gray-400 border border-gray-800 uppercase">${ex.rol || 'Jugador'}</span>
+                        <div class="p-4 bg-[#0a0507]/90 rounded-2xl flex flex-col justify-between gap-2.5 shadow-md hover:bg-[#12070a] transition-colors" style="border: 1px solid rgba(244, 63, 94, 0.25) !important;">
+                            <div class="flex items-center justify-between gap-2 pt-0.5">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="font-black text-gray-100 text-sm tracking-tight truncate">${ex.riotId}</span>
                                 </div>
-                                <p class="text-[10px] text-gray-500 mt-0.5">${ex.nombre}</p>
-                                <p class="text-[9px] text-rose-400/90 mt-1"><i class="fas fa-arrow-right-from-bracket mr-1"></i> ${ex.motivo || 'Baja'} (${fechaSal})</p>
+                                <span class="text-[10px] font-black px-2 py-0.5 rounded-md bg-rose-950/60 text-rose-300 border border-rose-500/30 uppercase shrink-0">${ex.rol || 'Jugador'}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 font-medium">${ex.nombre || 'Nombre no registrado'}</p>
+                            <div class="pt-2 mt-0.5 border-t border-rose-950/50 flex items-center justify-between text-[11px]">
+                                <span class="text-rose-400 font-bold flex items-center gap-1.5">
+                                    <i class="fas fa-arrow-right-from-bracket text-rose-400 text-[10px]"></i> ${ex.motivo || 'Baja de Roster'}
+                                </span>
+                                <span class="text-gray-500 text-[10px] font-mono">${fechaSal}</span>
                             </div>
                         </div>`;
                 });
