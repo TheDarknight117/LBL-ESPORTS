@@ -481,12 +481,14 @@
         try {
             const cached = localStorage.getItem('lbl_torneos_registrados_cache');
             const eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
+            let baseList = [...DEFAULT_TORNEOS_INICIALES];
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    listaTorneosRegistrados = deduplicarTorneos(parsed.filter(t => !eliminados.includes(t.id)));
+                    baseList = [...parsed, ...DEFAULT_TORNEOS_INICIALES];
                 }
             }
+            listaTorneosRegistrados = deduplicarTorneos(baseList.filter(t => !eliminados.includes(t.id)));
         } catch(e) {}
 
         let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle

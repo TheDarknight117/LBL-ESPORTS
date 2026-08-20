@@ -858,10 +858,8 @@
                 }
             }
 
-            // Si aún está vacío, inicializar con la lista predeterminada oficial
-            if (lista.length === 0) {
-                lista = [...DEFAULT_TORNEOS_INICIALES];
-            }
+            // Fusionar siempre la lista por defecto para asegurar que torneos del sistema (como WC2026LBL) estén siempre disponibles
+            lista = [...lista, ...DEFAULT_TORNEOS_INICIALES];
 
             // Filtrar eliminados y deduplicar
             let eliminados = [];
