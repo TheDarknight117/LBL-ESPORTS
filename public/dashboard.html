@@ -553,7 +553,10 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" onclick="cargarTorneosRegistrados()" class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                    <button type="button" onclick="cambiarChallongeApiKeyPrompt()" class="px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                        <i class="fas fa-key text-[10px]"></i> Configurar API Key
+                    </button>
+                    <button type="button" onclick="cargarTorneosRegistrados()" class="px-3.5 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
                         <i class="fas fa-redo-alt text-[10px]"></i> Refrescar
                     </button>
                 </div>
@@ -812,10 +815,15 @@
                 slug: 'WC2026LBL',
                 challongeId: 'WC2026LBL',
                 categoria: 'abierto',
-                division: 'General',
-                formatoLabel: 'Eliminatoria Directa',
-                estado: 'vivo',
-                creadoEn: '2026-07-01T00:00:00.000Z'
+                division: 'Tier 1, Tier 2',
+                formatoLabel: 'Doble Eliminación',
+                estado: 'finalizado',
+                creadoEn: '2026-06-24T00:00:00.000Z',
+                podio: {
+                    primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
+                    segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
+                    tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
+                }
             },
             {
                 id: 'winter_cup',
@@ -951,12 +959,28 @@
             container.innerHTML = html;
         }
 
+        window.cambiarChallongeApiKeyPrompt = () => {
+            const actual = localStorage.getItem('lbl_challonge_apikey') || DEFAULT_CHALLONGE_API_KEY;
+            const nueva = prompt(
+                "🔑 Configurar API Key de Challonge (Opcional):\n\n" +
+                "Si un torneo pertenece a otra cuenta o administrador, ingresa aquí la API Key de esa cuenta para importar todas sus partidas y equipos.\n\n" +
+                "Encuentra tu API Key en: https://challonge.com/settings/developer",
+                actual
+            );
+            if (nueva !== null && nueva.trim() !== "") {
+                localStorage.setItem('lbl_challonge_apikey', nueva.trim());
+                alert("✅ API Key actualizada. Se usará para las próximas consultas a Challonge.");
+                cargarTorneosDeCuentaChallonge();
+            }
+        };
+
         window.cargarTorneosDeCuentaChallonge = async () => {
             const selector = document.getElementById('t-challonge-selector');
             if (!selector) return;
             selector.innerHTML = `<option value="">🔄 Consultando torneos de tu cuenta oficial...</option>`;
             
-            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+            const currentKey = localStorage.getItem('lbl_challonge_apikey') || DEFAULT_CHALLONGE_API_KEY;
+            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(currentKey);
             
             if (!listaTorneosCuentaChallonge || listaTorneosCuentaChallonge.length === 0) {
                 selector.innerHTML = `<option value="">No se encontraron torneos en la cuenta</option>`;
@@ -1300,7 +1324,7 @@
             if (!torneoItem) return;
 
             const statusEl = document.getElementById('challonge-sync-status');
-            const apiKey = DEFAULT_CHALLONGE_API_KEY;
+            const apiKey = localStorage.getItem('lbl_challonge_apikey') || DEFAULT_CHALLONGE_API_KEY;
 
             if (statusEl) {
                 statusEl.innerHTML = `<span class="text-yellow-400"><i class="fas fa-spinner fa-spin mr-1"></i> Sincronizando "${torneoItem.nombre}" con Challonge API...</span>`;
@@ -1310,21 +1334,23 @@
                 const resultado = await procesarTorneoChallonge(torneoItem.slug, apiKey, equiposLocales, torneoItem.division);
 
                 let autoEstado = torneoItem.estado;
-                if (resultado.estado === 'pending') autoEstado = 'proximamente';
-                else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
-                else if (resultado.estado === 'complete' || resultado.estado === 'awaiting_review') autoEstado = 'finalizado';
+                if (!resultado.isFallback) {
+                    if (resultado.estado === 'pending') autoEstado = 'proximamente';
+                    else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
+                    else if (resultado.estado === 'complete' || resultado.estado === 'awaiting_review') autoEstado = 'finalizado';
+                }
 
                 const updatedDoc = {
                     ...torneoItem,
-                    nombre: resultado.nombre || torneoItem.nombre,
+                    nombre: (resultado.nombre && resultado.nombre !== 'WC2026LBL') ? resultado.nombre : torneoItem.nombre,
                     estado: autoEstado,
                     actualizadoEn: new Date().toISOString(),
                     formatoLabel: torneoItem.formatoLabel || resultado.tipoFormatLabel || 'Doble Eliminación',
-                    podio: resultado.podio,
-                    challongeStandings: resultado.challongeStandings,
-                    participantes: resultado.participantes,
-                    standings: resultado.standings,
-                    matches: resultado.matches,
+                    podio: torneoItem.podio || resultado.podio,
+                    challongeStandings: (resultado.challongeStandings && resultado.challongeStandings.length > 0) ? resultado.challongeStandings : (torneoItem.challongeStandings || []),
+                    participantes: (resultado.participantes && resultado.participantes.length > 0) ? resultado.participantes : (torneoItem.participantes || []),
+                    standings: (resultado.standings && resultado.standings.length > 0) ? resultado.standings : (torneoItem.standings || []),
+                    matches: (resultado.matches && resultado.matches.length > 0) ? resultado.matches : (torneoItem.matches || []),
                     datosChallonge: resultado
                 };
 
