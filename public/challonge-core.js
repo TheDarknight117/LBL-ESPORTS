@@ -11,6 +11,7 @@
  */
 
 export const DEFAULT_CHALLONGE_API_KEY = '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8';
+export const LUICO_CHALLONGE_API_KEY   = '9addea784754ed234a45d394f064050c7c2309c2d183731b';
 
 // Directorio oficial de respaldo para Logos HD de Equipos LBL
 export const OFFICIAL_LBL_TEAM_LOGOS = {
@@ -219,6 +220,34 @@ export async function obtenerListaTorneosChallonge(apiKey = DEFAULT_CHALLONGE_AP
 }
 
 /**
+ * Lista todos los torneos de AMBAS cuentas de Challonge (Luico + cuenta principal),
+ * combinando y deduplicando por ID numérico y URL (slug).
+ */
+export async function obtenerListaTorneosTodasLasCuentas() {
+    const [listaPrincipal, listaLuico] = await Promise.all([
+        obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY),
+        obtenerListaTorneosChallonge(LUICO_CHALLONGE_API_KEY)
+    ]);
+
+    const combined = [...listaLuico, ...listaPrincipal];
+    const vistosId  = new Set();
+    const vistosUrl = new Set();
+    const unicos = [];
+
+    for (const t of combined) {
+        const idKey  = (t.id  || '').toString().trim();
+        const urlKey = (t.url || '').toString().trim().toLowerCase();
+        if (idKey && vistosId.has(idKey)) continue;
+        if (urlKey && vistosUrl.has(urlKey)) continue;
+        if (idKey)  vistosId.add(idKey);
+        if (urlKey) vistosUrl.add(urlKey);
+        unicos.push(t);
+    }
+
+    return unicos;
+}
+
+/**
  * Resuelve un slug/URL/nombre a un ID numérico de Challonge buscando en la lista de la cuenta.
  */
 async function resolverTorneoANumericId(inputSlug, apiKey) {
@@ -269,8 +298,8 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
  */
 export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAULT_CHALLONGE_API_KEY, equiposLBL = [], tierLabel = 'Tier 1') {
     const cleanKey = (apiKey || DEFAULT_CHALLONGE_API_KEY).trim();
-    if (!tournamentSlugOrId || !cleanKey) {
-        throw new Error("Se requiere el ID o URL del Torneo y la API Key de Challonge.");
+    if (!tournamentSlugOrId) {
+        throw new Error("Se requiere el ID o URL del Torneo.");
     }
 
     const cleanSlug = extraerChallongeSlug(tournamentSlugOrId);
@@ -280,15 +309,22 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
 
     let data = null;
 
-    const resolved = await resolverTorneoANumericId(cleanSlug, cleanKey);
-    if (resolved) {
-        const fullUrl = `https://api.challonge.com/v1/tournaments/${resolved.id}.json?api_key=${encodeURIComponent(cleanKey)}&include_participants=1&include_matches=1`;
-        data = await apiCall(fullUrl);
-    }
+    // Intentar con todas las keys disponibles: primero Luico (primaria), luego la key recibida
+    const keysToTry = [...new Set([LUICO_CHALLONGE_API_KEY, cleanKey, DEFAULT_CHALLONGE_API_KEY])];
 
-    if (!data || !data.tournament) {
-        const directUrl = `https://api.challonge.com/v1/tournaments/${cleanSlug}.json?api_key=${encodeURIComponent(cleanKey)}&include_participants=1&include_matches=1`;
-        data = await apiCall(directUrl);
+    for (const tryKey of keysToTry) {
+        if (data && data.tournament) break;
+
+        const resolved = await resolverTorneoANumericId(cleanSlug, tryKey);
+        if (resolved) {
+            const fullUrl = `https://api.challonge.com/v1/tournaments/${resolved.id}.json?api_key=${encodeURIComponent(tryKey)}&include_participants=1&include_matches=1`;
+            data = await apiCall(fullUrl);
+        }
+
+        if (!data || !data.tournament) {
+            const directUrl = `https://api.challonge.com/v1/tournaments/${cleanSlug}.json?api_key=${encodeURIComponent(tryKey)}&include_participants=1&include_matches=1`;
+            data = await apiCall(directUrl);
+        }
     }
 
     if (!data || !data.tournament) {

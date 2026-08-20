@@ -281,7 +281,7 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS } from "/challonge-core.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, LUICO_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS } from "/challonge-core.js";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -467,6 +467,55 @@
                     primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
                     segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
                     tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
+                },
+                challongeStandings: [
+                    { rank: 1, equipo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
+                    { rank: 2, equipo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
+                    { rank: 3, equipo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } }
+                ],
+                participantes: [
+                    { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', final_rank: 1 },
+                    { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', final_rank: 2 },
+                    { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', final_rank: 3 }
+                ],
+                matches: [],
+                datosChallonge: {
+                    id: 'wc2026lbl',
+                    slug: 'WC2026LBL',
+                    nombre: 'Winter Cup LBL 2026',
+                    tipoFormat: 'double_elimination',
+                    estado: 'complete',
+                    isFallback: false,
+                    totalEquipos: 20,
+                    participantes: [
+                        { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', final_rank: 1, lblInfo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
+                        { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', final_rank: 2, lblInfo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
+                        { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', final_rank: 3, lblInfo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } },
+                        { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png', final_rank: 4, lblInfo: { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png' } },
+                        { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png', final_rank: 5, lblInfo: { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png' } },
+                        { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png', final_rank: 5, lblInfo: { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png' } },
+                        { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', final_rank: 7, lblInfo: { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png' } },
+                        { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png', final_rank: 7, lblInfo: { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png' } }
+                    ],
+                    matches: [],
+                    standings: [],
+                    challongeStandings: [
+                        { rank: 1, equipo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
+                        { rank: 2, equipo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
+                        { rank: 3, equipo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } },
+                        { rank: 4, equipo: { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png' } },
+                        { rank: 5, equipo: { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png' } },
+                        { rank: 5, equipo: { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png' } },
+                        { rank: 7, equipo: { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png' } },
+                        { rank: 7, equipo: { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png' } }
+                    ],
+                    podio: {
+                        primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
+                        segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
+                        tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
+                    },
+                    embedUrl: 'https://challonge.com/es/WC2026LBL/module',
+                    urlChallonge: 'https://challonge.com/es/WC2026LBL'
                 }
             },
             {
@@ -494,6 +543,15 @@
                 }
             }
             listaTorneosRegistrados = deduplicarTorneos(baseList.filter(t => !eliminados.includes(t.id)));
+
+            // Migración: asegurar que torneos con datos estáticos (ej: wc2026lbl) siempre usen la versión del sistema
+            listaTorneosRegistrados = listaTorneosRegistrados.map(t => {
+                const systemVersion = DEFAULT_TORNEOS_INICIALES.find(d => d.id === t.id);
+                if (systemVersion && systemVersion.datosChallonge && !t.datosChallonge) {
+                    return { ...t, ...systemVersion };
+                }
+                return t;
+            });
         } catch(e) {}
 
         let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle
@@ -896,7 +954,7 @@
                 docTorneo._sincronizadoLiveChallonge = true;
                 const slugToFetch = docTorneo.slug || docTorneo.url || docTorneo.id;
                 if (typeof procesarTorneoChallonge === 'function') {
-                    procesarTorneoChallonge(slugToFetch, DEFAULT_CHALLONGE_API_KEY, [], docTorneo.division || 'Tier 1')
+                    procesarTorneoChallonge(slugToFetch, LUICO_CHALLONGE_API_KEY, [], docTorneo.division || 'Tier 1')
                         .then(liveData => {
                             if (liveData && !liveData.isFallback && liveData.matches && liveData.matches.length > 0) {
                                 docTorneo.datosChallonge = liveData;
