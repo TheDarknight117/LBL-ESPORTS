@@ -115,16 +115,18 @@
                     <div id="modal-rep" class="flex flex-wrap gap-2 mb-2"></div>
                     <div id="modal-socials" class="flex flex-wrap gap-2 mb-3"></div>
 
-                    <!-- LAYER: MOVIMIENTOS & FICHAJES RECIENTES -->
-                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-2.5 pt-3.5 mt-2 border-t border-gray-800/80 w-full bg-[#030712]/60 p-3 rounded-2xl" style="border: 1px solid rgba(6, 182, 212, 0.2) !important;">
-                        <div class="flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-400">
-                            <span class="flex items-center gap-2 text-cyan-400">
-                                <i class="fas fa-arrow-right-arrow-left text-cyan-400"></i> Movimientos Recientes
-                            </span>
+                    <!-- LAYER: MOVIMIENTOS & FICHAJES CON BOTONES DESPLEGABLES -->
+                    <div id="modal-liquipedia-layer" class="hidden flex-col gap-2.5 pt-3.5 mt-2 border-t border-gray-800/80 w-full">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2 flex-wrap" id="modal-moves-buttons-container">
+                                <!-- Botones inyectados dinámicamente: Fichajes (Verde) y Movimientos (Celeste) -->
+                            </div>
                             <span id="modal-moves-date" class="text-gray-500 font-mono text-[10px]">Última act.</span>
                         </div>
-                        <div id="modal-moves-badges" class="flex flex-wrap gap-2">
-                            <!-- Badges inyectados dinámicamente -->
+                        <div id="modal-moves-dropdown-container" class="hidden flex-col gap-2 p-3 bg-[#030712]/95 rounded-2xl transition-all shadow-inner" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                            <div id="modal-moves-badges" class="flex flex-col sm:flex-row sm:flex-wrap gap-2 max-h-60 overflow-y-auto pr-1">
+                                <!-- Badges inyectados al desplegar -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -291,18 +293,18 @@
                 tagEl.style.display = equipo.equipo.tag ? 'inline-block' : 'none';
             }
 
-            // Inyectar Representantes EXPLÍCITAMENTE en el Modal
+            // Inyectar Representantes EXPLÍCITAMENTE en el Modal (WhatsApp Verde Oficial)
             let repsInfoHTML = '';
             if (equipo.representantes && equipo.representantes.length > 0) {
                 equipo.representantes.forEach((rep, idx) => {
                     if (rep.nombre && rep.tel) {
                         const numLink = rep.tel.replace(/[^0-9]/g, '');
                         repsInfoHTML += `
-                            <div class="text-[11px] font-bold text-gray-300 bg-[#070c14] px-3.5 py-2 rounded-xl flex items-center gap-2" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
-                                <i class="fas fa-user-tie text-gray-400"></i> 
-                                ${rep.nombre} 
-                                <a href="https://wa.me/${numLink}" target="_blank" class="text-emerald-400 hover:text-emerald-300 ml-1 bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/30 transition-colors">
-                                    <i class="fab fa-whatsapp"></i> ${rep.tel}
+                            <div class="text-xs font-bold text-gray-200 bg-[#070c14] px-4 py-2 rounded-xl flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                                <i class="fas fa-user-tie text-gray-400 text-xs"></i> 
+                                <span>${rep.nombre}</span>
+                                <a href="https://wa.me/${numLink}" target="_blank" class="text-[#25D366] hover:text-white hover:bg-[#25D366] ml-1.5 bg-[#25D366]/10 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm" style="border: 1px solid #25D366 !important;" title="Contactar por WhatsApp">
+                                    <i class="fab fa-whatsapp text-sm"></i> ${rep.tel}
                                 </a>
                             </div>`;
                     }
@@ -310,56 +312,71 @@
             }
             document.getElementById('modal-rep').innerHTML = repsInfoHTML;
 
-            // Redes Sociales del Equipo
+            // Redes Sociales del Equipo (Instagram & Stream con espacio y estética pro)
             let redesHTML = '';
-            if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-950/30 px-3.5 py-1.5 rounded-xl border border-cyan-500/30 text-xs font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-video"></i> Stream</a>`;
-            if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-950/30 px-3.5 py-1.5 rounded-xl border border-pink-500/30 text-xs font-bold transition-colors flex items-center gap-1.5"><i class="fab fa-instagram"></i> Instagram</a>`;
+            if (equipo.media?.streamer_link) {
+                redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-950/40 hover:bg-cyan-900/60 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.45) !important;"><i class="fas fa-video text-cyan-400 text-sm"></i> Stream Oficial</a>`;
+            }
+            if (equipo.media?.ig) {
+                const igUser = equipo.media.ig.replace('@','');
+                redesHTML += `<a href="https://instagram.com/${igUser}" target="_blank" class="text-[#E1306C] hover:text-white bg-gradient-to-r from-[#E1306C]/15 to-[#833AB4]/15 hover:from-[#E1306C]/30 hover:to-[#833AB4]/30 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" style="border: 1px solid #E1306C !important;"><i class="fab fa-instagram text-[#E1306C] text-sm"></i> Instagram (@${igUser})</a>`;
+            }
             document.getElementById('modal-socials').innerHTML = redesHTML;
 
-            // LAYER DE MOVIMIENTOS & FICHAJES
+            // LAYER DE MOVIMIENTOS & FICHAJES (DOS BOTONES DESPLEGABLES: FICHAJES [VERDE] & MOVIMIENTOS [CELESTE])
             const liquiLayer = document.getElementById('modal-liquipedia-layer');
-            const movesBadges = document.getElementById('modal-moves-badges');
+            const movesBtnContainer = document.getElementById('modal-moves-buttons-container');
+            const movesDropdown = document.getElementById('modal-moves-dropdown-container');
             const movesDate = document.getElementById('modal-moves-date');
             
+            window.modalFichajesCache = [];
+            window.modalMovimientosCache = [];
+            window.activeMovesTab = null;
+
             if (equipo.historial_ediciones && equipo.historial_ediciones.length > 0) {
                 const ultEvento = equipo.historial_ediciones[0];
                 const fechaFormat = new Date(ultEvento.fecha).toLocaleDateString('es-BO', { day: '2-digit', month: 'short' });
                 movesDate.innerText = `Act. ${fechaFormat}`;
                 
-                let badgesHTML = '';
+                const fichajes = [];
+                const movimientos = [];
+
                 if (Array.isArray(ultEvento.cambios)) {
                     ultEvento.cambios.forEach(c => {
-                        if (c.tipoCambio === 'cambio_nombre') {
-                            badgesHTML += `
-                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-950/40 text-purple-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(168, 85, 247, 0.35) !important;">
-                                    <i class="fas fa-sync-alt text-purple-400 text-[10px]"></i> Renombre: <span class="text-white">${c.anterior}</span> ➔ <span class="text-purple-300">${c.nuevo}</span>
-                                </div>`;
-                        } else if (c.tipoCambio === 'fichaje') {
-                            badgesHTML += `
-                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-950/40 text-emerald-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(16, 185, 129, 0.35) !important;">
-                                    <i class="fas fa-user-plus text-emerald-400 text-[10px]"></i> <span class="text-emerald-400 font-black">FICHAJE:</span> <span class="text-white">${c.nuevo}</span> <span class="text-gray-400 text-[11px]">(${c.campo})</span>
-                                </div>`;
-                        } else if (c.tipoCambio === 'transferencia') {
-                            badgesHTML += `
-                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-950/40 text-amber-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.35) !important;">
-                                    <i class="fas fa-arrow-right-arrow-left text-amber-400 text-[10px]"></i> <span class="text-amber-400 font-black">TRASPASO:</span> <span class="text-white">${c.nuevo}</span> <span class="text-gray-400 text-[11px]">(${c.anterior})</span>
-                                </div>`;
-                        } else if (c.tipoCambio === 'baja') {
-                            badgesHTML += `
-                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-950/40 text-rose-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(244, 63, 94, 0.35) !important;">
-                                    <i class="fas fa-user-minus text-rose-400 text-[10px]"></i> <span class="text-rose-400 font-black">BAJA:</span> <span class="text-gray-200">${c.anterior}</span>
-                                </div>`;
-                        } else if (c.tipoCambio === 'reemplazo') {
-                            badgesHTML += `
-                                <div class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-950/40 text-cyan-300 flex items-center gap-2 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.35) !important;">
-                                    <i class="fas fa-arrows-rotate text-cyan-400 text-[10px]"></i> ${c.detalle || `<span class="text-white">${c.nuevo}</span> en <span class="text-cyan-300">${c.campo}</span>`}
-                                </div>`;
+                        if (c.tipoCambio === 'fichaje') {
+                            fichajes.push(c);
+                        } else {
+                            movimientos.push(c);
                         }
                     });
                 }
 
-                if (badgesHTML) {
-                    movesBadges.innerHTML = badgesHTML;
+                window.modalFichajesCache = fichajes;
+                window.modalMovimientosCache = movimientos;
+
+                let btnsHTML = '';
+                if (fichajes.length > 0) {
+                    btnsHTML += `
+                        <button type="button" onclick="toggleMovesPanel('fichajes')" id="btn-tab-fichajes" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-950/60 text-emerald-300 hover:bg-emerald-900/80 active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer" style="border: 1px solid rgba(16, 185, 129, 0.5) !important;">
+                            <i class="fas fa-user-plus text-emerald-400 text-xs"></i> 
+                            <span>Fichajes (${fichajes.length})</span>
+                            <i id="icon-tab-fichajes" class="fas fa-chevron-down text-[10px] text-emerald-400 transition-transform"></i>
+                        </button>`;
+                }
+
+                if (movimientos.length > 0) {
+                    btnsHTML += `
+                        <button type="button" onclick="toggleMovesPanel('movimientos')" id="btn-tab-movimientos" class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-950/60 text-cyan-300 hover:bg-cyan-900/80 active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer" style="border: 1px solid rgba(6, 182, 212, 0.5) !important;">
+                            <i class="fas fa-arrows-rotate text-cyan-400 text-xs"></i> 
+                            <span>Movimientos (${movimientos.length})</span>
+                            <i id="icon-tab-movimientos" class="fas fa-chevron-down text-[10px] text-cyan-400 transition-transform"></i>
+                        </button>`;
+                }
+
+                if (btnsHTML) {
+                    movesBtnContainer.innerHTML = btnsHTML;
+                    movesDropdown.classList.add('hidden');
+                    movesDropdown.classList.remove('flex');
                     liquiLayer.classList.remove('hidden');
                     liquiLayer.classList.add('flex');
                 } else {
@@ -459,6 +476,84 @@
             document.getElementById('team-modal').classList.add('hidden');
             document.getElementById('team-modal').classList.remove('flex');
             document.body.style.overflow = 'auto';
+        };
+
+        window.toggleMovesPanel = (tab) => {
+            const dropdown = document.getElementById('modal-moves-dropdown-container');
+            const badgesContainer = document.getElementById('modal-moves-badges');
+            const iconFichajes = document.getElementById('icon-tab-fichajes');
+            const iconMovimientos = document.getElementById('icon-tab-movimientos');
+            const btnFichajes = document.getElementById('btn-tab-fichajes');
+            const btnMovimientos = document.getElementById('btn-tab-movimientos');
+
+            // Reset icons
+            if (iconFichajes) iconFichajes.style.transform = 'rotate(0deg)';
+            if (iconMovimientos) iconMovimientos.style.transform = 'rotate(0deg)';
+            if (btnFichajes) btnFichajes.style.backgroundColor = '';
+            if (btnMovimientos) btnMovimientos.style.backgroundColor = '';
+
+            if (window.activeMovesTab === tab) {
+                // Cerrar
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('flex');
+                window.activeMovesTab = null;
+                return;
+            }
+
+            window.activeMovesTab = tab;
+            dropdown.classList.remove('hidden');
+            dropdown.classList.add('flex');
+
+            let html = '';
+            if (tab === 'fichajes') {
+                if (iconFichajes) iconFichajes.style.transform = 'rotate(180deg)';
+                if (btnFichajes) btnFichajes.style.backgroundColor = 'rgba(16, 185, 129, 0.25)';
+                dropdown.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+
+                window.modalFichajesCache.forEach(c => {
+                    html += `
+                        <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-950/40 text-emerald-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(16, 185, 129, 0.35) !important;">
+                            <i class="fas fa-user-plus text-emerald-400 text-sm"></i> 
+                            <span class="text-emerald-400 font-black">FICHAJE:</span> 
+                            <span class="text-white text-sm">${c.nuevo}</span> 
+                            <span class="text-gray-400 text-xs">(${c.campo})</span>
+                        </div>`;
+                });
+            } else if (tab === 'movimientos') {
+                if (iconMovimientos) iconMovimientos.style.transform = 'rotate(180deg)';
+                if (btnMovimientos) btnMovimientos.style.backgroundColor = 'rgba(6, 182, 212, 0.25)';
+                dropdown.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+
+                window.modalMovimientosCache.forEach(c => {
+                    if (c.tipoCambio === 'reemplazo') {
+                        html += `
+                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-cyan-950/40 text-cyan-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(6, 182, 212, 0.35) !important;">
+                                <i class="fas fa-arrows-rotate text-cyan-400 text-sm"></i> 
+                                ${c.detalle || `<span class="text-white text-sm">${c.nuevo}</span> en <span class="text-cyan-300">${c.campo}</span>`}
+                            </div>`;
+                    } else if (c.tipoCambio === 'cambio_nombre') {
+                        html += `
+                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-purple-950/40 text-purple-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(168, 85, 247, 0.35) !important;">
+                                <i class="fas fa-sync-alt text-purple-400 text-sm"></i> 
+                                <span class="text-purple-400 font-black">RENOMBRE:</span> <span class="text-white text-sm">${c.anterior}</span> ➔ <span class="text-purple-300 text-sm">${c.nuevo}</span>
+                            </div>`;
+                    } else if (c.tipoCambio === 'transferencia') {
+                        html += `
+                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-950/40 text-amber-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(245, 158, 11, 0.35) !important;">
+                                <i class="fas fa-arrow-right-arrow-left text-amber-400 text-sm"></i> 
+                                <span class="text-amber-400 font-black">TRASPASO:</span> <span class="text-white text-sm">${c.nuevo}</span> <span class="text-gray-400 text-xs">(${c.anterior})</span>
+                            </div>`;
+                    } else if (c.tipoCambio === 'baja') {
+                        html += `
+                            <div class="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-950/40 text-rose-300 flex items-center gap-2.5 shadow-sm" style="border: 1px solid rgba(244, 63, 94, 0.35) !important;">
+                                <i class="fas fa-user-minus text-rose-400 text-sm"></i> 
+                                <span class="text-rose-400 font-black">BAJA:</span> <span class="text-gray-200 text-sm">${c.anterior}</span>
+                            </div>`;
+                    }
+                });
+            }
+
+            badgesContainer.innerHTML = html || `<p class="text-xs text-gray-500 italic p-2">Sin registros en esta sección.</p>`;
         };
 
         cargarEquipos();
