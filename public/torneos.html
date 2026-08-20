@@ -32,6 +32,23 @@
             color: #f3f4f6;
         }
 
+        @media (min-width: 640px) {
+            .web-only-flex {
+                display: flex !important;
+            }
+            .mobile-only-flex {
+                display: none !important;
+            }
+        }
+        @media (max-width: 639px) {
+            .web-only-flex {
+                display: none !important;
+            }
+            .mobile-only-flex {
+                display: flex !important;
+            }
+        }
+
         .glass-panel {
             background: rgba(10, 16, 26, 0.85);
             backdrop-filter: blur(16px);
@@ -106,34 +123,62 @@
             </section>
 
             <!-- BARRA DE FILTROS DEL CATÁLOGO -->
-            <div class="glass-panel p-3 rounded-2xl bg-[#070c14] border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <!-- TABS ESTADO (EN VIVO vs FINALIZADOS) -->
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <button id="tab-filtro-vivo" onclick="filtrarEstadoCatalogo('vivo')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg">
-                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Torneos En Vivo
-                    </button>
-                    <button id="tab-filtro-finalizado" onclick="filtrarEstadoCatalogo('finalizado')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
-                        <i class="fas fa-flag-checkered"></i> Torneos Pasados
-                    </button>
+            <div class="glass-panel p-2.5 rounded-2xl bg-[#050a12] shadow-xl" style="border: 1px solid rgba(6, 182, 212, 0.25) !important;">
+                <!-- VISTA ESCRITORIO (WEB): REFINADA, EN VIVO/PASADOS A LA IZQUIERDA Y FILTRO TRIMMED A LA DERECHA -->
+                <div class="web-only-flex items-center justify-between gap-4">
+                    <!-- TABS ESTADO (EN VIVO vs PASADOS) COMPACTOS A LA IZQUIERDA -->
+                    <div class="bg-[#02050b] p-1.5 rounded-xl flex items-center gap-1.5 shadow-inner shrink-0" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                        <button id="tab-filtro-vivo" onclick="filtrarEstadoCatalogo('vivo')" class="px-5 py-2 rounded-lg font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-cyan-950/80 to-cyan-900/60 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]" style="border: 1px solid rgba(6, 182, 212, 0.5) !important;">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Torneos En Vivo
+                        </button>
+                        <button id="tab-filtro-finalizado" onclick="filtrarEstadoCatalogo('finalizado')" class="px-5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5" style="border: 1px solid transparent !important;">
+                            <i class="fas fa-flag-checkered"></i> Torneos Pasados
+                        </button>
+                    </div>
+
+                    <!-- DESPLEGABLE DE CATEGORÍAS RECORTADO (TRIMMED) A LA DERECHA -->
+                    <div class="flex items-center gap-2 bg-[#02050b] p-1.5 rounded-xl shrink-0" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                        <span class="text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 shrink-0 pl-1">
+                            <i class="fas fa-filter text-cyan-400"></i> FILTRO:
+                        </span>
+                        <select id="select-filtro-cat-web" onchange="filtrarCategoriaCatalogo(this.value)" 
+                                style="color-scheme: dark; background-color: #070c14; color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.4) !important;"
+                                class="w-56 bg-[#070c14] text-cyan-300 text-xs font-black uppercase tracking-wider rounded-lg p-2 focus:outline-none cursor-pointer shadow">
+                            <option value="todos" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🌐 Todos los Torneos</option>
+                            <option value="liga_lbl" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🏆 Liga LBL</option>
+                            <option value="clasificacion_lbl" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🎯 Clasificación LBL</option>
+                            <option value="lbl_series" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">⚡ LBL Series</option>
+                            <option value="abierto" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🌐 Torneos Abiertos</option>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- PILLS CATEGORÍA (LIGA LBL, CLASIFICACIÓN, LBL SERIES, ABIERTOS) -->
-                <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-                    <button id="pill-cat-todos" onclick="filtrarCategoriaCatalogo('todos')" class="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition-all bg-gray-800 text-white border border-gray-700 cursor-pointer">
-                        Todos
-                    </button>
-                    <button id="pill-cat-liga_lbl" onclick="filtrarCategoriaCatalogo('liga_lbl')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 cursor-pointer">
-                        🏆 Liga LBL
-                    </button>
-                    <button id="pill-cat-clasificacion_lbl" onclick="filtrarCategoriaCatalogo('clasificacion_lbl')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 cursor-pointer">
-                        🎯 Clasificación LBL
-                    </button>
-                    <button id="pill-cat-lbl_series" onclick="filtrarCategoriaCatalogo('lbl_series')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-amber-400 hover:bg-amber-500/10 cursor-pointer">
-                        ⚡ LBL Series
-                    </button>
-                    <button id="pill-cat-abierto" onclick="filtrarCategoriaCatalogo('abierto')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 cursor-pointer">
-                        🌐 Torneos Abiertos
-                    </button>
+                <!-- VISTA MÓVIL (RESPONSIVE): INTANCTA -->
+                <div class="mobile-only-flex flex-col gap-3">
+                    <div class="flex items-center gap-2 w-full">
+                        <button id="tab-filtro-vivo-mobile" onclick="filtrarEstadoCatalogo('vivo')" class="flex-1 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 shadow-lg" style="border: 1px solid rgba(6, 182, 212, 0.4) !important;">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> En Vivo
+                        </button>
+                        <button id="tab-filtro-finalizado-mobile" onclick="filtrarEstadoCatalogo('finalizado')" class="flex-1 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white bg-gray-900/60" style="border: 1px solid rgba(31, 41, 55, 0.6) !important;">
+                            <i class="fas fa-flag-checkered"></i> Pasados
+                        </button>
+                    </div>
+
+                    <!-- DESPLEGABLE CON ETIQUETA "FILTRO" PARA MÓVIL -->
+                    <div class="flex items-center gap-2 bg-[#030712] p-2 rounded-xl" style="border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+                        <span class="text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 shrink-0 pl-1">
+                            <i class="fas fa-filter text-cyan-400"></i> FILTRO:
+                        </span>
+                        <select id="select-filtro-cat-mobile" onchange="filtrarCategoriaCatalogo(this.value)" 
+                                style="color-scheme: dark; background-color: #070c14; color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.4) !important;"
+                                class="w-full bg-[#070c14] text-cyan-300 text-xs font-black uppercase tracking-wider rounded-xl p-2.5 focus:outline-none cursor-pointer shadow-lg">
+                            <option value="todos" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🌐 Todos los Torneos</option>
+                            <option value="liga_lbl" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🏆 Liga LBL</option>
+                            <option value="clasificacion_lbl" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🎯 Clasificación LBL</option>
+                            <option value="lbl_series" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">⚡ LBL Series</option>
+                            <option value="abierto" style="background-color: #070c14; color: #ffffff;" class="bg-[#070c14] text-white font-bold">🌐 Torneos Abiertos</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -178,25 +223,25 @@
             </section>
 
             <!-- BARRA DE ETAPAS DEL TORNEO (RESUMEN / CRONOGRAMA / POSICIONES / CUADRANTE) -->
-            <div class="glass-panel p-2 rounded-2xl bg-[#070c14] border border-gray-800 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                    <button id="tab-stage-resumen" onclick="cambiarEtapa('resumen')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg">
+            <div class="glass-panel p-2 rounded-2xl bg-[#070c14] border border-gray-800 flex items-center justify-between gap-3 overflow-x-auto scrollbar-none">
+                <div class="flex items-center gap-2 overflow-x-auto scrollbar-none flex-nowrap shrink-0 w-full sm:w-auto">
+                    <button id="tab-stage-resumen" onclick="cambiarEtapa('resumen')" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg whitespace-nowrap shrink-0">
                         <i class="fas fa-layer-group"></i> Resumen
                     </button>
-                    <button id="tab-stage-cronograma" onclick="cambiarEtapa('cronograma')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                    <button id="tab-stage-cronograma" onclick="cambiarEtapa('cronograma')" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 whitespace-nowrap shrink-0">
                         <i class="far fa-calendar-alt"></i> Cronograma
                     </button>
-                    <button id="tab-stage-grupos" onclick="cambiarEtapa('grupos')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                    <button id="tab-stage-grupos" onclick="cambiarEtapa('grupos')" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 whitespace-nowrap shrink-0">
                         <i class="fas fa-list-ol"></i> Posiciones
                     </button>
-                    <button id="tab-stage-llave" onclick="cambiarEtapa('llave')" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5">
+                    <button id="tab-stage-llave" onclick="cambiarEtapa('llave')" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 whitespace-nowrap shrink-0">
                         <i class="fas fa-sitemap"></i> Eliminatorias (Llave)
                     </button>
                 </div>
 
                 <!-- CONTROLES ADICIONALES (VISOR CHALLONGE) -->
-                <div id="bracket-view-toggle" class="hidden items-center gap-2">
-                    <span id="btn-view-embed" class="px-3.5 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-black text-xs flex items-center gap-1.5 shadow-lg">
+                <div id="bracket-view-toggle" class="hidden items-center gap-2 shrink-0">
+                    <span id="btn-view-embed" class="px-3.5 py-1.5 rounded-xl border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 font-black text-xs flex items-center gap-1.5 shadow-lg whitespace-nowrap">
                         <i class="fas fa-window-maximize text-cyan-400"></i> Challonge
                     </span>
                 </div>
@@ -274,7 +319,8 @@
             'aether core':        'ATC',
             'riot pls game':      'RPG',
             'team dark':          'TDK',
-            'marines del altiplano':'MDA'
+            'marines del altiplano':'MDA',
+            'uka kitties':          'UKT',
             
         };
 
@@ -359,7 +405,7 @@
                 challongeId: '18378786',
                 categoria: 'liga_lbl',
                 division: 'Tier 1',
-                formatoLabel: 'Fase de Grupos (Round Robin)',
+                formatoLabel: 'Fase de Grupos',
                 estado: 'vivo',
                 creadoEn: '2026-02-15T00:00:00.000Z'
             },
@@ -370,7 +416,7 @@
                 challongeId: '18383807',
                 categoria: 'liga_lbl',
                 division: 'Tier 2',
-                formatoLabel: 'Fase de Grupos (Round Robin)',
+                formatoLabel: 'Fase de Grupos',
                 estado: 'vivo',
                 creadoEn: '2026-02-15T00:00:00.000Z'
             },
@@ -640,15 +686,25 @@
             filtroEstadoCatalogo = estado;
             const btnVivo = document.getElementById('tab-filtro-vivo');
             const btnFin = document.getElementById('tab-filtro-finalizado');
+            const btnVivoMob = document.getElementById('tab-filtro-vivo-mobile');
+            const btnFinMob = document.getElementById('tab-filtro-finalizado-mobile');
 
-            if (btnVivo && btnFin) {
-                if (estado === 'vivo') {
-                    btnVivo.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
-                    btnFin.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
-                } else {
-                    btnFin.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
-                    btnVivo.className = 'flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
-                }
+            const activeWeb = 'px-5 py-2 rounded-lg font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-cyan-950/80 to-cyan-900/60 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]';
+            const inactiveWeb = 'px-5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
+
+            const activeMob = 'flex-1 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 shadow-lg';
+            const inactiveMob = 'flex-1 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer text-gray-400 hover:text-white bg-gray-900/60';
+
+            if (estado === 'vivo') {
+                if (btnVivo) { btnVivo.className = activeWeb; btnVivo.style.borderColor = 'rgba(6, 182, 212, 0.5)'; }
+                if (btnFin) { btnFin.className = inactiveWeb; btnFin.style.borderColor = 'transparent'; }
+                if (btnVivoMob) { btnVivoMob.className = activeMob; btnVivoMob.style.borderColor = 'rgba(6, 182, 212, 0.4)'; }
+                if (btnFinMob) { btnFinMob.className = inactiveMob; btnFinMob.style.borderColor = 'rgba(31, 41, 55, 0.6)'; }
+            } else {
+                if (btnFin) { btnFin.className = activeWeb; btnFin.style.borderColor = 'rgba(6, 182, 212, 0.5)'; }
+                if (btnVivo) { btnVivo.className = inactiveWeb; btnVivo.style.borderColor = 'transparent'; }
+                if (btnFinMob) { btnFinMob.className = activeMob; btnFinMob.style.borderColor = 'rgba(6, 182, 212, 0.4)'; }
+                if (btnVivoMob) { btnVivoMob.className = inactiveMob; btnVivoMob.style.borderColor = 'rgba(31, 41, 55, 0.6)'; }
             }
 
             renderizarCatalogo();
@@ -656,16 +712,16 @@
 
         window.filtrarCategoriaCatalogo = (cat) => {
             filtroCategoriaCatalogo = cat;
-            ['todos', 'liga_lbl', 'clasificacion_lbl', 'lbl_series', 'abierto'].forEach(c => {
-                const btn = document.getElementById(`pill-cat-${c}`);
-                if (btn) {
-                    if (c === cat) {
-                        btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition-all bg-gray-800 text-white border border-gray-700 cursor-pointer shadow';
-                    } else {
-                        btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white hover:bg-white/5 cursor-pointer';
-                    }
-                }
-            });
+
+            const selMob = document.getElementById('select-filtro-cat-mobile');
+            if (selMob && selMob.value !== cat) {
+                selMob.value = cat;
+            }
+
+            const selWeb = document.getElementById('select-filtro-cat-web');
+            if (selWeb && selWeb.value !== cat) {
+                selWeb.value = cat;
+            }
 
             renderizarCatalogo();
         };
@@ -886,7 +942,7 @@
             
             let formatText = docTorneo.formatoLabel || 'Eliminatoria Directa';
             if (tipoFormat.includes('double')) formatText = 'Eliminatoria Doble (Upper / Lower)';
-            else if (tipoFormat.includes('round') || tipoFormat.includes('group')) formatText = 'Fase de Grupos (Round Robin)';
+            else if (tipoFormat.includes('round') || tipoFormat.includes('group')) formatText = 'Fase de Grupos';
             else if (tipoFormat.includes('swiss')) formatText = 'Sistema Suizo';
             
             formatBadge.innerText = `Formato: ${formatText}`;
@@ -955,7 +1011,7 @@
             const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
             let equiposGridHTML = '';
             if (participantes.length > 0) {
-                equiposGridHTML = `<div class="flex flex-col gap-3.5 pt-2">`;
+                equiposGridHTML = `<div class="flex flex-col gap-3 pt-2">`;
                 participantes.forEach(p => {
                     const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || 'Equipo';
                     const tag = resolverTag(p.lblInfo || p) || name.substring(0, 3).toUpperCase();
@@ -964,18 +1020,18 @@
                     let avatarHTML = '';
                     if (esLigaLBL && logo) {
                         avatarHTML = `
-                            <div class="w-12 h-12 rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
-                                <img src="${logo}" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-xl">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
+                                <img src="${logo}" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-lg sm:rounded-xl">
                             </div>`;
                     } else {
                         avatarHTML = `
-                            <div class="w-12 h-12 rounded-2xl bg-[#030712] border border-gray-800 flex items-center justify-center shrink-0 shadow-inner group-hover:border-cyan-500/40 transition-colors">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#030712] border border-gray-800 flex items-center justify-center shrink-0 shadow-inner group-hover:border-cyan-500/40 transition-colors">
                                 <span class="font-black text-xs text-cyan-400 font-mono">${tag}</span>
                             </div>`;
                     }
 
                     equiposGridHTML += `
-                        <div class="flex items-center gap-6 p-4 rounded-2xl bg-[#030712] hover:bg-[#070c14] border-0 transition-all shadow-md group">
+                        <div class="flex items-center gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#030712] hover:bg-[#070c14] transition-all shadow-md group">
                             ${avatarHTML}
                             <span class="text-sm md:text-base font-black text-white tracking-wider uppercase truncate" title="${name}">${name}</span>
                         </div>`;
@@ -1200,6 +1256,31 @@
             }
         }
 
+        // Helper para formatear nombres de equipo en el Cronograma (WEB): máximo 2 líneas con salto de línea
+        function formatearNombreEquipoCronograma(nombre) {
+            if (!nombre || typeof nombre !== 'string') return '';
+            const clean = nombre.trim();
+            const words = clean.split(/\s+/);
+
+            if (words.length <= 1) {
+                return clean;
+            }
+
+            if (words.length === 2) {
+                return `${words[0]}<br>${words[1]}`;
+            }
+
+            if (words.length === 3) {
+                return `${words[0]} ${words[1]}<br>${words[2]}`;
+            }
+
+            // 4 o más palabras -> partir a la mitad exacta de palabras para garantizar MÁXIMO 2 LÍNEAS
+            const mid = Math.ceil(words.length / 2);
+            const line1 = words.slice(0, mid).join(' ');
+            const line2 = words.slice(mid).join(' ');
+            return `${line1}<br>${line2}`;
+        }
+
         // --- RENDERIZADOR DEL CRONOGRAMA VERTICAL DE PARTIDOS (HORARIOS, RESULTADOS, VER MÁS) ---
         function renderizarCronogramaPartidos(docTorneo) {
             const torneo = docTorneo.datosChallonge || docTorneo;
@@ -1253,60 +1334,58 @@
                     const p1Name = m.player1?.nombre || m.player1?.name || 'TBD';
                     const p1Tag = resolverTag(m.player1) || p1Name.substring(0, 3).toUpperCase();
                     const p1Logo = esLigaLBL ? obtenerLogoEquipo(m.player1, p1Name) : '';
+                    const p1FormattedName = formatearNombreEquipoCronograma(p1Name);
 
                     const p2Name = m.player2?.nombre || m.player2?.name || 'TBD';
                     const p2Tag = resolverTag(m.player2) || p2Name.substring(0, 3).toUpperCase();
                     const p2Logo = esLigaLBL ? obtenerLogoEquipo(m.player2, p2Name) : '';
+                    const p2FormattedName = formatearNombreEquipoCronograma(p2Name);
 
                     let p1Avatar = '';
                     if (esLigaLBL && p1Logo) {
                         p1Avatar = `
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#070c14] p-1 flex items-center justify-center shrink-0 shadow-lg">
-                                <img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1Name)}'" class="w-full h-full object-contain">
-                            </div>`;
+                            <img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p1Name}">`;
                     } else {
                         p1Avatar = `
-                            <span class="px-3 py-1.5 rounded-xl bg-[#070c14] text-cyan-400 font-mono font-black text-xs sm:text-sm shrink-0">${p1Tag}</span>`;
+                            <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p1Tag}</span>`;
                     }
 
                     let p2Avatar = '';
                     if (esLigaLBL && p2Logo) {
                         p2Avatar = `
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#070c14] p-1 flex items-center justify-center shrink-0 shadow-lg">
-                                <img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2Name)}'" class="w-full h-full object-contain">
-                            </div>`;
+                            <img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p2Name}">`;
                     } else {
                         p2Avatar = `
-                            <span class="px-3 py-1.5 rounded-xl bg-[#070c14] text-cyan-400 font-mono font-black text-xs sm:text-sm shrink-0">${p2Tag}</span>`;
+                            <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p2Tag}</span>`;
                     }
 
                     let centerStatusHTML = '';
                     if (scoreData.isCompleted) {
                         centerStatusHTML = `
-                            <div class="px-4 py-1.5 sm:px-5 sm:py-2 rounded-2xl bg-[#02050d] font-black text-base sm:text-xl md:text-2xl tracking-widest flex items-center gap-2.5 shadow-inner shrink-0">
-                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
+                            <div class="px-3 py-1 sm:px-5 sm:py-2 rounded-xl sm:rounded-2xl bg-[#02050d] font-black text-sm sm:text-xl md:text-2xl tracking-widest flex items-center gap-1.5 sm:gap-2.5 shadow-inner shrink-0">
+                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-base sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
                                 <span class="text-gray-600 font-normal">-</span>
-                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
+                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-base sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
                             </div>`;
                     } else if (m.state === 'live') {
                         centerStatusHTML = `
-                            <div class="px-3.5 py-1.5 rounded-xl bg-red-500/20 text-red-300 font-black text-xs sm:text-sm uppercase tracking-wider animate-pulse flex items-center gap-1.5 shrink-0 shadow">
-                                <span class="w-2 h-2 rounded-full bg-red-400"></span> EN VIVO
+                            <div class="px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-red-500/20 text-red-300 font-black text-[10px] sm:text-sm uppercase tracking-wider animate-pulse flex items-center gap-1 sm:gap-1.5 shrink-0 shadow">
+                                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-400"></span> EN VIVO
                             </div>`;
                     } else {
                         centerStatusHTML = `
-                            <span class="text-lg sm:text-2xl md:text-3xl font-black italic tracking-widest text-cyan-400 shrink-0 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                            <span class="text-base sm:text-2xl md:text-3xl lg:text-4xl font-black italic tracking-widest text-cyan-400 shrink-0 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
                                 VS
                             </span>`;
                     }
 
                     let stateBadge = '';
                     if (scoreData.isCompleted) {
-                        stateBadge = `<span class="px-2.5 py-1 rounded-md bg-slate-500/15 text-slate-400 text-[10px] sm:text-xs font-black uppercase">FINALIZADO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-slate-500/15 text-slate-400 text-[9px] sm:text-xs font-black uppercase">FINALIZADO</span>`;
                     } else if (m.state === 'live') {
-                        stateBadge = `<span class="px-2.5 py-1 rounded-md bg-red-500/20 text-red-300 text-[10px] sm:text-xs font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-red-500/20 text-red-300 text-[9px] sm:text-xs font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
                     } else {
-                        stateBadge = `<span class="px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-amber-500/15 text-amber-300 text-[9px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
                     }
 
                     const rondaText = m.group_id 
@@ -1315,14 +1394,14 @@
                     const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
-                        <div class="p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 group">
+                        <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group">
                             <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
                             <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-44">
                                 <div class="flex flex-col">
-                                    <span class="text-sm md:text-base font-black text-white flex items-center gap-1.5">
+                                    <span class="text-xs sm:text-sm md:text-base font-black text-white flex items-center gap-1.5">
                                         <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
                                     </span>
-                                    <span class="text-xs md:text-sm text-gray-400 font-bold tracking-wider uppercase">
+                                    <span class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider uppercase">
                                         ${dt.fechaTexto}
                                     </span>
                                 </div>
@@ -1332,31 +1411,35 @@
                             </div>
 
                             <!-- COLUMNA 2 (CENTRAL): ENFRENTAMIENTO SIMÉTRICO [EQUIPO 1] [VS / SCORE] [EQUIPO 2] -->
-                            <div class="flex items-center justify-center flex-1 w-full min-w-0 py-2 lg:py-0">
+                            <div class="flex items-center justify-center flex-1 w-full min-w-0 py-2 sm:py-3 lg:py-0 px-2 sm:px-4">
                                 <!-- Equipo 1 -->
-                                <div class="flex items-center justify-end gap-3 sm:gap-4 flex-1 min-w-0">
-                                    <span class="text-sm sm:text-lg md:text-xl font-black text-white uppercase tracking-tight truncate text-right ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1Name}</span>
+                                <div class="flex items-center justify-end gap-3 sm:gap-5 flex-1 min-w-0">
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-right truncate mr-2 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-0.5 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] mr-3 sm:mr-4" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                    <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-right leading-tight px-1 ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1FormattedName}</span>
                                     ${p1Avatar}
                                 </div>
 
-                                <!-- Eje Central: VS / Marcador -->
-                                <div class="px-3 sm:px-5 md:px-7 shrink-0 flex items-center justify-center">
+                                <!-- Eje Central: VS / Marcador (SEPARACIÓN AMPLIA Y ELEGANTE) -->
+                                <div class="px-4 sm:px-8 md:px-12 shrink-0 flex items-center justify-center">
                                     ${centerStatusHTML}
                                 </div>
 
                                 <!-- Equipo 2 -->
-                                <div class="flex items-center justify-start gap-3 sm:gap-4 flex-1 min-w-0">
+                                <div class="flex items-center justify-start gap-3 sm:gap-5 flex-1 min-w-0">
                                     ${p2Avatar}
-                                    <span class="text-sm sm:text-lg md:text-xl font-black text-white uppercase tracking-tight truncate text-left ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2Name}</span>
+                                    <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-left leading-tight px-1 ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2FormattedName}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] ml-3 sm:ml-4" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-left truncate ml-2 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-0.5 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
                                 </div>
                             </div>
 
                             <!-- COLUMNA 3: RONDA / FASE Y FORMATO -->
                             <div class="flex items-center lg:items-end justify-between lg:justify-center lg:flex-col gap-1 shrink-0 lg:w-48 text-right pt-2 lg:pt-0 border-t border-white/[0.04] lg:border-0">
-                                <span class="text-xs md:text-sm text-gray-400 font-bold uppercase tracking-wider">
-                                    <i class="fas fa-layer-group text-cyan-500/70 mr-1.5"></i> ${rondaText}
+                                <span class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-bold uppercase tracking-wider">
+                                    <i class="fas fa-layer-group text-cyan-500/70 mr-1"></i> ${rondaText}
                                 </span>
-                                <span class="text-[11px] md:text-xs text-amber-400/80 font-bold uppercase tracking-wider">
+                                <span class="text-[9px] sm:text-[11px] md:text-xs text-amber-400/80 font-bold uppercase tracking-wider">
                                     <i class="fas fa-gamepad mr-1"></i> ${formatoText}
                                 </span>
                             </div>

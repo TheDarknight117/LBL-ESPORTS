@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v73';
+const CACHE_NAME = 'lbl-cache-v77';
 const ASSETS = [
   '/',
   '/torneos',
@@ -42,7 +42,36 @@ self.addEventListener('activate', (e) => {
 
 // Fetch Event - Stale-while-revalidate strategy for local assets
 self.addEventListener('fetch', (e) => {
-  if (!e.request.url.startsWith(self.location.origin)) return;
+  // Cache external team logos (Discord CDN, Imgur, Firebase Storage, Google, etc.)
+  if (!e.request.url.startsWith(self.location.origin)) {
+    const isImage = e.request.destination === 'image' || 
+                    e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
+                    e.request.url.includes('discordapp') ||
+                    e.request.url.includes('imgur.com') ||
+                    e.request.url.includes('firebasestorage') ||
+                    e.request.url.includes('googleusercontent.com');
+
+    if (isImage && e.request.method === 'GET') {
+      e.respondWith(
+        caches.open('lbl-team-logos-cache').then((cache) => {
+          return cache.match(e.request).then((cachedResponse) => {
+            if (cachedResponse) {
+              // Background update
+              fetch(e.request).then((netRes) => {
+                if (netRes && netRes.ok) cache.put(e.request, netRes);
+              }).catch(() => {});
+              return cachedResponse;
+            }
+            return fetch(e.request).then((netRes) => {
+              if (netRes && netRes.ok) cache.put(e.request, netRes.clone());
+              return netRes;
+            }).catch(() => {});
+          });
+        })
+      );
+    }
+    return;
+  }
 
   // Ignore Firebase SDK/API calls
   if (
