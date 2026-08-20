@@ -4,14 +4,20 @@
  * ==============================================================================
  * 
  * Funcionalidad:
- * 1. Consultar torneo y partidas mediante la API de Challonge.
- * 2. Detectar automáticamente el formato (Round Robin / Grupos vs Eliminatoria Directa / Doble).
- * 3. Mapear los equipos de Challonge con la base de datos de Firestore (Logos HD, Rosters, TAGs).
- * 4. Generar la estructura de datos lista para publicar en `torneos_activos`.
+ * 1. Consultar torneo y partidas mediante la API de Challonge (Pool de 2 API Keys = 1,000 req/mes).
+ * 2. 1 sola petición directa por torneo (?include_participants=1&include_matches=1).
+ * 3. Auto-Sync Adaptativo Inteligente por Día de la Semana (Jue-Dom: 10 min | Lun-Mié: 45 min).
+ * 4. Tolerancia a fallos con AbortController de 4.5s (Cero congelamientos de navegador).
+ * 5. Mapear equipos con Firestore (Logos HD, Rosters, TAGs, Podios y Standings).
  */
 
-export const DEFAULT_CHALLONGE_API_KEY = '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8';
-export const LUICO_CHALLONGE_API_KEY   = '9addea784754ed234a45d394f064050c7c2309c2d183731b';
+// POOL MULTI-KEY OFICIAL LBL (1,000 requests/mes combinados)
+export const CHALLONGE_API_KEYS = [
+    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 1: LBL Principal (500 req/mes)
+    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 2: LBL Backup (500 req/mes)
+];
+
+export const DEFAULT_CHALLONGE_API_KEY = CHALLONGE_API_KEYS[0];
 
 // Directorio oficial de respaldo para Logos HD de Equipos LBL
 export const OFFICIAL_LBL_TEAM_LOGOS = {
@@ -173,11 +179,11 @@ export function calcularTablaRoundRobin(participantsMap, matches) {
 }
 
 /**
- * Extrae limpiamente el slug o ID de un torneo desde cualquier URL o texto de Challonge.
+ * Limpia y extrae el identificador/slug de Challonge
  */
-export function extraerChallongeSlug(inputStr) {
-    if (!inputStr) return '';
-    let str = inputStr.trim();
+export function extraerChallongeSlug(urlOrSlug) {
+    if (!urlOrSlug) return '';
+    let str = urlOrSlug.toString().trim();
     str = str.replace(/^https?:\/\//i, '');
     str = str.replace(/^(?:[a-zA-Z0-9-]+\.)?challonge\.com\//i, '');
     str = str.replace(/^(?:es|en|pt|fr|de|it|ja)\//i, '');
@@ -185,70 +191,75 @@ export function extraerChallongeSlug(inputStr) {
 }
 
 /**
- * Helper centralizado de peticiones con fallback de proxies CORS para navegadores.
+ * Fetch con AbortController para evitar congelamientos de pantalla.
  */
-async function apiCall(targetUrl) {
-    // 1. Petición directa oficial a Challonge API
+async function fetchWithTimeout(url, options = {}, timeoutMs = 4500) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-        const res = await fetch(targetUrl);
-        if (res.ok) return await res.json();
-    } catch(e) {}
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timer);
+        return response;
+    } catch (err) {
+        clearTimeout(timer);
+        throw err;
+    }
+}
 
-    // 2. Fallback secundario silencioso si se requiere proxy
-    try {
-        const corsUrl = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
-        const res = await fetch(corsUrl);
-        if (res.ok) return await res.json();
-    } catch(e) {}
+/**
+ * Helper centralizado con Failover automático de Multi-Keys y Proxies rápidos.
+ */
+async function apiCall(endpointPath, preferredApiKey = null) {
+    const keysToTry = preferredApiKey 
+        ? [preferredApiKey, ...CHALLONGE_API_KEYS.filter(k => k !== preferredApiKey)]
+        : [...CHALLONGE_API_KEYS];
+
+    for (const key of keysToTry) {
+        const cleanKey = (key || '').trim();
+        if (!cleanKey) continue;
+
+        const separator = endpointPath.includes('?') ? '&' : '?';
+        const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
+
+        // Proxies en orden de velocidad y estabilidad
+        const proxyList = [
+            `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+            `https://cors.eu.org/${targetUrl}`,
+            targetUrl // Intento directo
+        ];
+
+        for (const pUrl of proxyList) {
+            try {
+                const res = await fetchWithTimeout(pUrl, {}, 4000);
+                if (res.ok) {
+                    const parsed = await res.json();
+                    if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                        return { data: parsed, keyUsed: cleanKey };
+                    }
+                }
+            } catch (e) {
+                // Timeout o CORS error en este proxy -> intentar el siguiente sin congelar
+            }
+        }
+    }
 
     return null;
 }
 
 /**
- * Lista todos los torneos de la cuenta de Challonge asociada a la API Key.
+ * Lista todos los torneos de la cuenta de Challonge (Solo bajo demanda explícita).
  */
-export async function obtenerListaTorneosChallonge(apiKey = DEFAULT_CHALLONGE_API_KEY) {
-    const cleanKey = (apiKey || DEFAULT_CHALLONGE_API_KEY).trim();
-    if (!cleanKey) return [];
-
-    const targetUrl = `https://api.challonge.com/v1/tournaments.json?api_key=${encodeURIComponent(cleanKey)}`;
-    const data = await apiCall(targetUrl);
-    if (Array.isArray(data)) {
-        return data.map(item => item.tournament).filter(Boolean);
+export async function obtenerListaTorneosChallonge(apiKey = null) {
+    const result = await apiCall('tournaments.json', apiKey);
+    if (result && Array.isArray(result.data)) {
+        return result.data.map(item => item.tournament).filter(Boolean);
     }
     return [];
 }
 
 /**
- * Lista todos los torneos de AMBAS cuentas de Challonge (Luico + cuenta principal),
- * combinando y deduplicando por ID numérico y URL (slug).
- */
-export async function obtenerListaTorneosTodasLasCuentas() {
-    const [listaPrincipal, listaLuico] = await Promise.all([
-        obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY),
-        obtenerListaTorneosChallonge(LUICO_CHALLONGE_API_KEY)
-    ]);
-
-    const combined = [...listaLuico, ...listaPrincipal];
-    const vistosId  = new Set();
-    const vistosUrl = new Set();
-    const unicos = [];
-
-    for (const t of combined) {
-        const idKey  = (t.id  || '').toString().trim();
-        const urlKey = (t.url || '').toString().trim().toLowerCase();
-        if (idKey && vistosId.has(idKey)) continue;
-        if (urlKey && vistosUrl.has(urlKey)) continue;
-        if (idKey)  vistosId.add(idKey);
-        if (urlKey) vistosUrl.add(urlKey);
-        unicos.push(t);
-    }
-
-    return unicos;
-}
-
-/**
- * Resuelve un slug/URL/nombre a un ID numérico de Challonge buscando en la lista de la cuenta.
+ * Resuelve un slug a ID solo si no es numérico y como fallback de emergencia.
  */
 async function resolverTorneoANumericId(inputSlug, apiKey) {
     const listData = await obtenerListaTorneosChallonge(apiKey);
@@ -257,35 +268,8 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
     const qClean = inputSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
 
     let target = listData.find(t => t.id && t.id.toString() === inputSlug);
-
-    if (!target) {
-        target = listData.find(t => t.url && t.url.toLowerCase() === inputSlug.toLowerCase());
-    }
-
-    if (!target) {
-        target = listData.find(t => {
-            const u = (t.url || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-            return u === qClean;
-        });
-    }
-
-    if (!target) {
-        target = listData.find(t => {
-            const u = (t.url || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-            return u.includes(qClean) || qClean.includes(u);
-        });
-    }
-
-    if (!target) {
-        target = listData.find(t => {
-            const n = (t.name || '').toLowerCase().replace(/[^a-z0-9 ]/g, '');
-            const q = inputSlug.toLowerCase().replace(/[^a-z0-9 ]/g, '');
-            if (n.includes(q) || q.includes(n)) return true;
-            const words = q.split(/\s+/).filter(w => w.length > 2);
-            if (words.length > 0 && words.every(w => n.includes(w))) return true;
-            return false;
-        });
-    }
+    if (!target) target = listData.find(t => t.url && t.url.toLowerCase() === inputSlug.toLowerCase());
+    if (!target) target = listData.find(t => (t.url || '').toLowerCase().replace(/[^a-z0-9]/g, '') === qClean);
 
     if (target && target.id) {
         return { id: target.id, tournament: target };
@@ -294,10 +278,9 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
 }
 
 /**
- * Consulta la API de Challonge v1 y construye la estructura completa del torneo.
+ * Consulta la API de Challonge v1 y construye la estructura completa en 1 SOLA llamada limpia.
  */
-export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAULT_CHALLONGE_API_KEY, equiposLBL = [], tierLabel = 'Tier 1') {
-    const cleanKey = (apiKey || DEFAULT_CHALLONGE_API_KEY).trim();
+export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null, equiposLBL = [], tierLabel = 'Tier 1') {
     if (!tournamentSlugOrId) {
         throw new Error("Se requiere el ID o URL del Torneo.");
     }
@@ -307,62 +290,37 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
         throw new Error("ID o URL de torneo no válido.");
     }
 
-    let data = null;
+    let payload = null;
+    let keyUsada = null;
 
-    // Intentar con todas las keys disponibles: primero Luico (primaria), luego la key recibida
-    const keysToTry = [...new Set([LUICO_CHALLONGE_API_KEY, cleanKey, DEFAULT_CHALLONGE_API_KEY])];
+    // 1. INTENTO DIRECTO EN 1 SOLA LLAMADA (Prioridad por ID numérico o Slug)
+    const directPath = `tournaments/${encodeURIComponent(cleanSlug)}.json?include_participants=1&include_matches=1`;
+    const directRes = await apiCall(directPath, apiKey);
+    if (directRes && directRes.data && directRes.data.tournament) {
+        payload = directRes.data;
+        keyUsada = directRes.keyUsed;
+    }
 
-    for (const tryKey of keysToTry) {
-        if (data && data.tournament) break;
-
-        const resolved = await resolverTorneoANumericId(cleanSlug, tryKey);
-        if (resolved) {
-            const fullUrl = `https://api.challonge.com/v1/tournaments/${resolved.id}.json?api_key=${encodeURIComponent(tryKey)}&include_participants=1&include_matches=1`;
-            data = await apiCall(fullUrl);
-        }
-
-        if (!data || !data.tournament) {
-            const directUrl = `https://api.challonge.com/v1/tournaments/${cleanSlug}.json?api_key=${encodeURIComponent(tryKey)}&include_participants=1&include_matches=1`;
-            data = await apiCall(directUrl);
+    // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL INTENTO DIRECTO FALLÓ
+    if (!payload) {
+        const resolved = await resolverTorneoANumericId(cleanSlug, apiKey);
+        if (resolved && resolved.id) {
+            const res2 = await apiCall(`tournaments/${resolved.id}.json?include_participants=1&include_matches=1`, apiKey);
+            if (res2 && res2.data && res2.data.tournament) {
+                payload = res2.data;
+                keyUsada = res2.keyUsed;
+            }
         }
     }
 
-    if (!data || !data.tournament) {
-        // Fallback inteligente para torneos públicos alojados en cualquier cuenta u organización de Challonge
-        if (cleanSlug && cleanSlug.length >= 3) {
-            console.info(`[Challonge Core] Modo Embed Activo para el torneo "${cleanSlug}".`);
-            return {
-                id: cleanSlug.toLowerCase(),
-                slug: cleanSlug,
-                nombre: cleanSlug.toUpperCase() === 'WC2026LBL' ? 'Winter Cup LBL 2026' : (cleanSlug.toUpperCase()),
-                tipoFormat: 'single_elimination',
-                tier: tierLabel || 'General',
-                categoria: 'abierto',
-                division: tierLabel || 'General',
-                formatoType: 'single_elimination',
-                formatoLabel: 'Eliminatoria Directa',
-                estado: 'complete',
-                isFallback: true,
-                totalEquipos: 0,
-                actualizadoEn: new Date().toISOString(),
-                urlChallonge: `https://challonge.com/es/${cleanSlug}`,
-                embedUrl: `https://challonge.com/es/${cleanSlug}/module`,
-                equiposMap: {},
-                participantes: [],
-                matches: [],
-                standings: [],
-                challongeStandings: [],
-                podio: { primerLugar: null, segundoLugar: null, tercerLugar: null },
-                creadoEn: new Date().toISOString()
-            };
-        }
+    if (!payload || !payload.tournament) {
         throw new Error(
-            `No se encontró el torneo "${cleanSlug}" en tu cuenta de Challonge.\n` +
-            `Verifica que el torneo pertenezca a tu cuenta o usa el selector "Importar desde mi Cuenta Challonge".`
+            `No se pudo consultar el torneo "${cleanSlug}" con la API de Challonge.\n` +
+            `Verifica el ID/enlace o que los proxies de red tengan conexión.`
         );
     }
 
-    const tData = data.tournament;
+    const tData = payload.tournament;
     const tournamentType = (tData.tournament_type || 'single_elimination').toLowerCase();
 
     // 1. Participantes únicos (sin duplicados por group_player_ids)
@@ -381,7 +339,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
         })
         : [];
 
-    // Mapa completo de participantes (incluyendo alias de grupos para lookup de partidas)
+    // Mapa completo de participantes
     const participantsMap = {};
     listaParticipantesUnicos.forEach(pObj => {
         participantsMap[pObj.id] = pObj;
@@ -428,7 +386,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
         tablaStandings = calcularTablaRoundRobin(participantsMap, rawMatches.map(m => m.match));
     }
 
-    // 4. Construir standings oficiales de Challonge usando final_rank DIRECTAMENTE sobre participantes únicos
+    // 4. Standings oficiales de Challonge usando final_rank
     const challongeStandings = listaParticipantesUnicos
         .filter(p => p.final_rank !== null && p.final_rank !== undefined)
         .sort((a, b) => a.final_rank - b.final_rank)
@@ -456,8 +414,89 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = DEFAU
         matches: matchesProcesadas,
         standings: tablaStandings,
         challongeStandings: challongeStandings,
-        podio: podio
+        podio: podio,
+        keyUsed: keyUsada
     };
+}
+
+/**
+ * Calcula el tiempo de Cooldown inteligente según el día de la semana.
+ * - Jueves a Domingo (Días de Torneo): 10 minutos
+ * - Lunes a Miércoles (Días de Semana / Reprogramaciones): 45 minutos
+ */
+export function obtenerCooldownRecomendadoMs() {
+    const dia = new Date().getDay(); // 0 = Domingo, 1 = Lunes, ..., 4 = Jueves, 5 = Viernes, 6 = Sábado
+    const esDiaTorneo = (dia === 0 || dia >= 4);
+    return esDiaTorneo ? (10 * 60 * 1000) : (45 * 60 * 1000);
+}
+
+/**
+ * Helper de Auto-Sincronización Silenciosa para torneos activos.
+ * Solo ejecuta si el torneo está activo y ha transcurrido el tiempo de cooldown.
+ */
+export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = [], updateFirestoreCallback = null) {
+    if (!torneoDoc) return { synced: false, data: torneoDoc, reason: 'sin_documento' };
+
+    const estado = (torneoDoc.estado || '').toLowerCase();
+    const esActivo = estado === 'en_curso' || estado === 'activo' || estado === 'vivo' || estado === 'underway' || estado === 'group_stages' || estado === 'awaiting_review';
+    
+    // NUNCA gastar llamadas en torneos finalizados
+    if (!esActivo) {
+        return { synced: false, data: torneoDoc, reason: 'torneo_finalizado' };
+    }
+
+    const slugOId = torneoDoc.challongeId || torneoDoc.datosChallonge?.id || torneoDoc.slug || torneoDoc.id;
+    if (!slugOId) {
+        return { synced: false, data: torneoDoc, reason: 'sin_id_challonge' };
+    }
+
+    const ahora = Date.now();
+    const ultimaSync = torneoDoc.ultimaSincronizacionTimestamp || (torneoDoc.actualizadoEn ? new Date(torneoDoc.actualizadoEn).getTime() : 0);
+    const cooldownMs = obtenerCooldownRecomendadoMs();
+
+    if (ahora - ultimaSync < cooldownMs) {
+        return { 
+            synced: false, 
+            data: torneoDoc, 
+            reason: 'en_cooldown', 
+            minutosRestantes: Math.ceil((cooldownMs - (ahora - ultimaSync)) / 60000) 
+        };
+    }
+
+    try {
+        console.log(`[Auto-Sync LBL] Sincronizando en segundo plano torneo activo "${torneoDoc.nombre}"...`);
+        const resultado = await procesarTorneoChallonge(slugOId, null, equiposLBL, torneoDoc.division || torneoDoc.tier || 'Tier 1');
+        if (resultado) {
+            let autoEstado = torneoDoc.estado;
+            if (resultado.estado === 'pending') autoEstado = 'proximamente';
+            else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
+            else if (resultado.estado === 'complete') autoEstado = 'finalizado';
+
+            const torneoActualizado = {
+                ...torneoDoc,
+                nombre: resultado.nombre || torneoDoc.nombre,
+                estado: autoEstado,
+                datosChallonge: resultado,
+                partidas: resultado.matches || [],
+                matches: resultado.matches || [],
+                standings: resultado.standings || [],
+                challongeStandings: resultado.challongeStandings || [],
+                podio: resultado.podio || torneoDoc.podio,
+                ultimaSincronizacionTimestamp: ahora,
+                actualizadoEn: new Date().toISOString()
+            };
+
+            if (typeof updateFirestoreCallback === 'function') {
+                await updateFirestoreCallback(torneoDoc.id, torneoActualizado);
+            }
+
+            return { synced: true, data: torneoActualizado, keyUsed: resultado.keyUsed };
+        }
+    } catch (err) {
+        console.warn('[Auto-Sync LBL] Advertencia de sincronización en segundo plano:', err.message);
+    }
+
+    return { synced: false, data: torneoDoc, reason: 'error_red' };
 }
 
 /**

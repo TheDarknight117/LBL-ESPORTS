@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v86';
+const CACHE_NAME = 'lbl-cache-v78';
 const ASSETS = [
   '/',
   '/torneos',
@@ -87,23 +87,25 @@ self.addEventListener('fetch', (e) => {
   
   // Normalize SPA /torneos/* navigation requests to clean /torneos
   if (url.pathname.startsWith('/torneos') && !url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|json)$/i)) {
-    e.respondWith(
-      caches.match('/torneos').then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-        return fetch('/torneos');
-      })
-    );
-    return;
+    url.pathname = '/torneos';
+    requestToProcess = new Request(url.toString(), {
+      method: e.request.method,
+      headers: e.request.headers,
+      mode: e.request.mode,
+      credentials: e.request.credentials,
+      redirect: 'follow'
+    });
   } else if (url.pathname.endsWith('.html')) {
     let cleanPath = url.pathname.slice(0, -5);
     if (cleanPath === '/index') cleanPath = '/';
-    e.respondWith(
-      caches.match(cleanPath).then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-        return fetch(e.request);
-      })
-    );
-    return;
+    url.pathname = cleanPath;
+    requestToProcess = new Request(url.toString(), {
+      method: e.request.method,
+      headers: e.request.headers,
+      mode: e.request.mode,
+      credentials: e.request.credentials,
+      redirect: 'follow'
+    });
   }
 
   e.respondWith(

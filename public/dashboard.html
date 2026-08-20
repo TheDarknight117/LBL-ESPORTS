@@ -553,10 +553,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" onclick="cambiarChallongeApiKeyPrompt()" class="px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
-                        <i class="fas fa-key text-[10px]"></i> Configurar API Key
-                    </button>
-                    <button type="button" onclick="cargarTorneosRegistrados()" class="px-3.5 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
+                    <button type="button" onclick="cargarTorneosRegistrados()" class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5">
                         <i class="fas fa-redo-alt text-[10px]"></i> Refrescar
                     </button>
                 </div>
@@ -696,7 +693,7 @@
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, obtenerListaTorneosTodasLasCuentas, DEFAULT_CHALLONGE_API_KEY, LUICO_CHALLONGE_API_KEY } from "/challonge-core.js";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS } from "/challonge-core.js";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -810,33 +807,6 @@
                 creadoEn: '2026-01-05T00:00:00.000Z'
             },
             {
-                id: 'wc2026lbl',
-                nombre: 'Winter Cup LBL 2026',
-                slug: 'WC2026LBL',
-                challongeId: 'WC2026LBL',
-                categoria: 'abierto',
-                division: 'Tier 1, Tier 2',
-                formatoLabel: 'Doble Eliminación',
-                estado: 'finalizado',
-                creadoEn: '2026-06-24T00:00:00.000Z',
-                podio: {
-                    primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
-                    segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
-                    tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
-                },
-                challongeStandings: [
-                    { rank: 1, equipo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
-                    { rank: 2, equipo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
-                    { rank: 3, equipo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } }
-                ],
-                participantes: [
-                    { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', final_rank: 1 },
-                    { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', final_rank: 2 },
-                    { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', final_rank: 3 }
-                ],
-                matches: []
-            },
-            {
                 id: 'winter_cup',
                 nombre: 'Winter Cup LBL 2025',
                 slug: 'winterlolcito',
@@ -877,8 +847,10 @@
                 }
             }
 
-            // ORDEN CORRECTO: datos reales primero (Firestore/localStorage), DEFAULT al final (agrega entradas del sistema no en BD)
-            lista = [...lista, ...DEFAULT_TORNEOS_INICIALES];
+            // Si aún está vacío, inicializar con la lista predeterminada oficial
+            if (lista.length === 0) {
+                lista = [...DEFAULT_TORNEOS_INICIALES];
+            }
 
             // Filtrar eliminados y deduplicar
             let eliminados = [];
@@ -970,56 +942,19 @@
             container.innerHTML = html;
         }
 
-        window.cambiarChallongeApiKeyPrompt = () => {
-            const actual = localStorage.getItem('lbl_challonge_apikey') || DEFAULT_CHALLONGE_API_KEY;
-            const nueva = prompt(
-                "🔑 Configurar API Key de Challonge (Opcional):\n\n" +
-                "Si un torneo pertenece a otra cuenta o administrador, ingresa aquí la API Key de esa cuenta para importar todas sus partidas y equipos.\n\n" +
-                "Encuentra tu API Key en: https://challonge.com/settings/developer",
-                actual
-            );
-            if (nueva !== null && nueva.trim() !== "") {
-                localStorage.setItem('lbl_challonge_apikey', nueva.trim());
-                alert("✅ API Key actualizada. Se usará para las próximas consultas a Challonge.");
-                cargarTorneosDeCuentaChallonge();
-            }
-        };
-
         window.cargarTorneosDeCuentaChallonge = async () => {
             const selector = document.getElementById('t-challonge-selector');
             if (!selector) return;
-            selector.innerHTML = `<option value="">🔄 Consultando torneos de todas las cuentas Challonge...</option>`;
-
-            // Consultar cada API key individualmente con try-catch para que un fallo no bloquee la otra
-            let listaCombinada = [];
-            try {
-                const listaPrincipal = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
-                if (Array.isArray(listaPrincipal)) listaCombinada.push(...listaPrincipal);
-            } catch(e) {}
-            try {
-                const listaLuico = await obtenerListaTorneosChallonge(LUICO_CHALLONGE_API_KEY);
-                if (Array.isArray(listaLuico)) listaCombinada.push(...listaLuico);
-            } catch(e) {}
-
-            // Deduplicar por id numérico y url
-            const vistosId = new Set(); const vistosUrl = new Set(); const unicos = [];
-            for (const t of listaCombinada) {
-                const idKey = (t.id || '').toString().trim();
-                const urlKey = (t.url || '').toString().trim().toLowerCase();
-                if (idKey && vistosId.has(idKey)) continue;
-                if (urlKey && vistosUrl.has(urlKey)) continue;
-                if (idKey) vistosId.add(idKey);
-                if (urlKey) vistosUrl.add(urlKey);
-                unicos.push(t);
-            }
-            listaTorneosCuentaChallonge = unicos;
-
+            selector.innerHTML = `<option value="">🔄 Consultando torneos de tu cuenta oficial...</option>`;
+            
+            listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
+            
             if (!listaTorneosCuentaChallonge || listaTorneosCuentaChallonge.length === 0) {
                 selector.innerHTML = `<option value="">No se encontraron torneos en la cuenta</option>`;
                 return;
             }
 
-            let html = `<option value="">-- Selecciona un torneo (${listaTorneosCuentaChallonge.length} encontrados) --</option>`;
+            let html = `<option value="">-- Selecciona un torneo de tu cuenta (${listaTorneosCuentaChallonge.length} encontrados) --</option>`;
             listaTorneosCuentaChallonge.forEach(t => {
                 const stateLabel = t.state === 'complete' ? '🏁 FINALIZADO' : (t.state === 'pending' ? '⏳ PRÓXIMO' : '🔴 EN VIVO');
                 html += `<option value="${t.id}">${t.name} (${t.url}) [${stateLabel}]</option>`;
@@ -1060,19 +995,21 @@
             detectTimer = setTimeout(() => autoDetectarTorneoDesdeSlug(val), 400);
         };
 
-        window.autoDetectarTorneoDesdeSlug = async (slugOrUrl) => {
+        window.autoDetectarTorneoDesdeSlug = (slugOrUrl) => {
             const statusEl = document.getElementById('t-slug-status');
-            if (statusEl) {
-                statusEl.classList.remove('hidden');
-                statusEl.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Detectando torneo en Challonge...`;
+            const cleanSlug = extraerChallongeSlug(slugOrUrl);
+            if (!cleanSlug) {
+                if (statusEl) statusEl.classList.add('hidden');
+                return;
             }
 
-            try {
-                const cleanSlug = extraerChallongeSlug(slugOrUrl);
-                if (listaTorneosCuentaChallonge.length === 0) {
-                    listaTorneosCuentaChallonge = await obtenerListaTorneosChallonge(DEFAULT_CHALLONGE_API_KEY);
-                }
+            if (statusEl) {
+                statusEl.classList.remove('hidden');
+                statusEl.innerHTML = `<span class="text-cyan-400 font-mono font-bold"><i class="fas fa-link mr-1"></i> ID/Slug: ${cleanSlug}</span>`;
+            }
 
+            // Si ya tenemos torneos cargados en memoria de la cuenta, auto-completar datos
+            if (listaTorneosCuentaChallonge.length > 0) {
                 const qClean = cleanSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
                 const match = listaTorneosCuentaChallonge.find(t => {
                     const uClean = (t.url || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -1105,13 +1042,7 @@
                     if (statusEl) {
                         statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fas fa-check-circle mr-1"></i> Detectado: ${match.name}</span>`;
                     }
-                } else {
-                    if (statusEl) {
-                        statusEl.innerHTML = `<span class="text-yellow-400 font-bold"><i class="fas fa-info-circle mr-1"></i> Slug verificado</span>`;
-                    }
                 }
-            } catch(e) {
-                if (statusEl) statusEl.classList.add('hidden');
             }
         };
 
@@ -1356,34 +1287,31 @@
             if (!torneoItem) return;
 
             const statusEl = document.getElementById('challonge-sync-status');
-            // procesarTorneoChallonge intentará internamente con ambas APIs (Luico primero, luego principal)
-            const apiKey = LUICO_CHALLONGE_API_KEY;
 
             if (statusEl) {
-                statusEl.innerHTML = `<span class="text-yellow-400"><i class="fas fa-spinner fa-spin mr-1"></i> Sincronizando "${torneoItem.nombre}" con Challonge API...</span>`;
+                statusEl.innerHTML = `<span class="text-yellow-400"><i class="fas fa-spinner fa-spin mr-1"></i> Sincronizando "${torneoItem.nombre}" mediante Pool Multi-Key LBL...</span>`;
             }
 
             try {
-                const resultado = await procesarTorneoChallonge(torneoItem.slug, apiKey, equiposLocales, torneoItem.division);
+                const resultado = await procesarTorneoChallonge(torneoItem.slug, null, equiposLocales, torneoItem.division);
 
                 let autoEstado = torneoItem.estado;
-                if (!resultado.isFallback) {
-                    if (resultado.estado === 'pending') autoEstado = 'proximamente';
-                    else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
-                    else if (resultado.estado === 'complete' || resultado.estado === 'awaiting_review') autoEstado = 'finalizado';
-                }
+                if (resultado.estado === 'pending') autoEstado = 'proximamente';
+                else if (resultado.estado === 'underway' || resultado.estado === 'group_stages_underway') autoEstado = 'vivo';
+                else if (resultado.estado === 'complete' || resultado.estado === 'awaiting_review') autoEstado = 'finalizado';
 
                 const updatedDoc = {
                     ...torneoItem,
-                    nombre: (resultado.nombre && resultado.nombre !== 'WC2026LBL') ? resultado.nombre : torneoItem.nombre,
+                    nombre: resultado.nombre || torneoItem.nombre,
                     estado: autoEstado,
                     actualizadoEn: new Date().toISOString(),
+                    ultimaSincronizacionTimestamp: Date.now(),
                     formatoLabel: torneoItem.formatoLabel || resultado.tipoFormatLabel || 'Doble Eliminación',
-                    podio: torneoItem.podio || resultado.podio,
-                    challongeStandings: (resultado.challongeStandings && resultado.challongeStandings.length > 0) ? resultado.challongeStandings : (torneoItem.challongeStandings || []),
-                    participantes: (resultado.participantes && resultado.participantes.length > 0) ? resultado.participantes : (torneoItem.participantes || []),
-                    standings: (resultado.standings && resultado.standings.length > 0) ? resultado.standings : (torneoItem.standings || []),
-                    matches: (resultado.matches && resultado.matches.length > 0) ? resultado.matches : (torneoItem.matches || []),
+                    podio: resultado.podio,
+                    challongeStandings: resultado.challongeStandings,
+                    participantes: resultado.participantes,
+                    standings: resultado.standings,
+                    matches: resultado.matches,
                     datosChallonge: resultado
                 };
 
@@ -1407,14 +1335,11 @@
 
                 renderizarTablaTorneosRegistrados(torneosRegistradosList);
 
-                const numMatches = (resultado.matches && Array.isArray(resultado.matches)) ? resultado.matches.length : 0;
-                const numEquipos = (resultado.participantes && Array.isArray(resultado.participantes)) ? resultado.participantes.length : 0;
-
                 const horaStr = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> "${torneoItem.nombre}" sincronizado a las ${horaStr}! (${numMatches} partidas, ${numEquipos} equipos)</span>`;
+                    statusEl.innerHTML = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> "${torneoItem.nombre}" sincronizado a las ${horaStr}! (Pool Multi-Key 1,000 req/mes)</span>`;
                 }
-                alert(`✅ "${torneoItem.nombre}" sincronizado con éxito!\nPartidas cargadas: ${numMatches}\nEquipos participantes: ${numEquipos}`);
+                alert(`✅ "${torneoItem.nombre}" sincronizado con éxito!\nPartidas cargadas: ${resultado.matches.length}\nEquipos participantes: ${resultado.participantes.length}`);
             } catch (err) {
                 console.error("Error al sincronizar torneo:", err);
                 if (statusEl) {

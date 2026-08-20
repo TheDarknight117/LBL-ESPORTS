@@ -281,7 +281,7 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, LUICO_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS } from "/challonge-core.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -454,71 +454,6 @@
                 creadoEn: '2026-01-05T00:00:00.000Z'
             },
             {
-                id: 'wc2026lbl',
-                nombre: 'Winter Cup LBL 2026',
-                slug: 'WC2026LBL',
-                challongeId: 'WC2026LBL',
-                categoria: 'abierto',
-                division: 'Tier 1, Tier 2',
-                formatoLabel: 'Doble Eliminación',
-                estado: 'finalizado',
-                creadoEn: '2026-06-24T00:00:00.000Z',
-                podio: {
-                    primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
-                    segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
-                    tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
-                },
-                challongeStandings: [
-                    { rank: 1, equipo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
-                    { rank: 2, equipo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
-                    { rank: 3, equipo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } }
-                ],
-                participantes: [
-                    { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', final_rank: 1 },
-                    { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', final_rank: 2 },
-                    { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', final_rank: 3 }
-                ],
-                matches: [],
-                datosChallonge: {
-                    id: 'wc2026lbl',
-                    slug: 'WC2026LBL',
-                    nombre: 'Winter Cup LBL 2026',
-                    tipoFormat: 'double_elimination',
-                    estado: 'complete',
-                    isFallback: false,
-                    totalEquipos: 20,
-                    participantes: [
-                        { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', final_rank: 1, lblInfo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
-                        { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png', final_rank: 2, lblInfo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
-                        { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', final_rank: 3, lblInfo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } },
-                        { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png', final_rank: 4, lblInfo: { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png' } },
-                        { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png', final_rank: 5, lblInfo: { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png' } },
-                        { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png', final_rank: 5, lblInfo: { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png' } },
-                        { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', final_rank: 7, lblInfo: { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png' } },
-                        { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png', final_rank: 7, lblInfo: { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png' } }
-                    ],
-                    matches: [],
-                    standings: [],
-                    challongeStandings: [
-                        { rank: 1, equipo: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' } },
-                        { rank: 2, equipo: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' } },
-                        { rank: 3, equipo: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' } },
-                        { rank: 4, equipo: { nombre: 'Kaox Red', tag: 'KXRED', logo: 'https://i.ibb.co/nqkx7WDb/Red.png' } },
-                        { rank: 5, equipo: { nombre: 'Team Dark', tag: 'TDK', logo: 'https://i.ibb.co/CKK956Sh/team-dark-4.png' } },
-                        { rank: 5, equipo: { nombre: 'Kaox Green', tag: 'KXG', logo: 'https://i.ibb.co/SHV7G65/Green.png' } },
-                        { rank: 7, equipo: { nombre: 'Condor Nexus', tag: 'CRN', logo: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png' } },
-                        { rank: 7, equipo: { nombre: 'Mapaches Apaches', tag: 'MAP', logo: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png' } }
-                    ],
-                    podio: {
-                        primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
-                        segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
-                        tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
-                    },
-                    embedUrl: 'https://challonge.com/es/WC2026LBL/module',
-                    urlChallonge: 'https://challonge.com/es/WC2026LBL'
-                }
-            },
-            {
                 id: 'winter_cup',
                 nombre: 'Winter Cup LBL 2025',
                 slug: 'winterlolcito',
@@ -535,25 +470,12 @@
         try {
             const cached = localStorage.getItem('lbl_torneos_registrados_cache');
             const eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
-            let baseList = [...DEFAULT_TORNEOS_INICIALES];
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    // ORDEN CORRECTO: caché primero (tiene datos reales), DEFAULT al final (agrega entradas nuevas que no estén en caché)
-                    baseList = [...parsed, ...DEFAULT_TORNEOS_INICIALES];
+                    listaTorneosRegistrados = deduplicarTorneos(parsed.filter(t => !eliminados.includes(t.id)));
                 }
             }
-            listaTorneosRegistrados = deduplicarTorneos(baseList.filter(t => !eliminados.includes(t.id)));
-
-            // Migración: solo inyectar datosChallonge del sistema en entradas que NO lo tienen (ej: wc2026lbl en caché viejo)
-            listaTorneosRegistrados = listaTorneosRegistrados.map(t => {
-                const systemVersion = DEFAULT_TORNEOS_INICIALES.find(d => d.id === t.id || d.slug === t.slug);
-                if (systemVersion && systemVersion.datosChallonge && !t.datosChallonge) {
-                    // Solo agrega datosChallonge, NO sobreescribe datos reales del caché
-                    return { ...t, datosChallonge: systemVersion.datosChallonge, challongeStandings: t.challongeStandings || systemVersion.challongeStandings, participantes: t.participantes || systemVersion.participantes, podio: t.podio || systemVersion.podio };
-                }
-                return t;
-            });
         } catch(e) {}
 
         let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle
@@ -951,23 +873,27 @@
 
             actualizarTabsUI(etapaActiva);
 
-            // Sincronización en segundo plano con Challonge API para reflejar cambios de horarios y marcadores en vivo
-            if (!docTorneo._sincronizadoLiveChallonge) {
-                docTorneo._sincronizadoLiveChallonge = true;
-                const slugToFetch = docTorneo.slug || docTorneo.url || docTorneo.id;
-                if (typeof procesarTorneoChallonge === 'function') {
-                    procesarTorneoChallonge(slugToFetch, LUICO_CHALLONGE_API_KEY, [], docTorneo.division || 'Tier 1')
-                        .then(liveData => {
-                            if (liveData && !liveData.isFallback && liveData.matches && liveData.matches.length > 0) {
-                                docTorneo.datosChallonge = liveData;
+            // Sincronización inteligente en segundo plano (Solo torneos activos y respetando Cooldown adaptativo)
+            const estadoActual = (docTorneo.estado || '').toLowerCase();
+            const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
+            
+            if (esTorneoActivo && !docTorneo._syncingLive) {
+                docTorneo._syncingLive = true;
+                verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache)
+                    .then(res => {
+                        if (res && res.synced && res.data) {
+                            const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
+                            if (idx !== -1) {
+                                listaTorneosRegistrados[idx] = res.data;
                                 localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
                                 if (torneoSeleccionadoId === docTorneo.id) {
                                     renderizarTorneoDetalle();
                                 }
                             }
-                        })
-                        .catch(e => console.warn("Live Challonge sync:", e.message));
-                }
+                        }
+                    })
+                    .catch(e => console.warn("Live Challonge auto-sync:", e.message))
+                    .finally(() => { docTorneo._syncingLive = false; });
             }
 
             const torneo = docTorneo.datosChallonge || docTorneo;
@@ -986,9 +912,9 @@
             if (descEl) descEl.innerText = `Torneo ${docTorneo.categoria === 'liga_lbl' ? 'oficial de la Liga LBL' : 'Abierto de Esports'} • División: ${docTorneo.division || 'General'}`;
 
             if (statusBadge) {
-                const chState = (docTorneo.estado || torneo.estado || '').toLowerCase();
+                const chState = (torneo.estado || docTorneo.estado || '').toLowerCase();
                 const isPending = chState === 'pending' || chState === 'proximamente';
-                const isCompleted = chState === 'complete' || chState === 'finalizado' || chState === 'ended';
+                const isCompleted = chState === 'complete' || chState === 'finalizado';
 
                 if (isCompleted) {
                     statusBadge.innerHTML = `<i class="fas fa-flag-checkered text-[8px] mr-1 text-slate-400"></i> Torneo Finalizado`;
@@ -1002,15 +928,16 @@
                 }
             }
 
-            if (!torneo || !torneo.matches || torneo.matches.length === 0) {
-                if (countText) countText.innerText = 'Módulo Interactivo Challonge';
+            if (!torneo || !torneo.matches) {
+                if (countText) countText.innerText = '0 partidas sincronizadas';
                 if (feedSection) feedSection.style.display = 'none';
 
-                if (etapaActiva === 'resumen') {
-                    renderizarEtapaResumen(docTorneo, mainContainer);
-                } else {
-                    renderizarChallongeEmbed(docTorneo, mainContainer);
-                }
+                mainContainer.innerHTML = `
+                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
+                        <i class="fas fa-diagram-project text-4xl text-cyan-400 block mb-2"></i>
+                        <p>Este torneo aún no ha sido sincronizado con Challonge desde el Dashboard de Staff.</p>
+                        <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug}</strong></span>
+                    </div>`;
                 return;
             }
 
@@ -1040,38 +967,27 @@
             }
         }
 
-        const PODIOS_OFICIALES_SISTEMA = {
-            'wc2026lbl': {
-                primerLugar: { nombre: 'Strugglers Esports', tag: 'SGE', logo: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png' },
-                segundoLugar: { nombre: 'Grieta Cumbiera', tag: 'GRC', logo: 'https://i.ibb.co/LdVwgvQ3/Grieta-Cumbiera.png' },
-                tercerLugar: { nombre: 'Aether Core', tag: 'ATC', logo: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png' }
-            }
-        };
-
         // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
         function renderizarEtapaResumen(docTorneo, container) {
             const torneo = docTorneo.datosChallonge || docTorneo;
-            const slugKey = (docTorneo.slug || docTorneo.id || '').toLowerCase();
-            const fallbackPodio = PODIOS_OFICIALES_SISTEMA[slugKey] || PODIOS_OFICIALES_SISTEMA['wc2026lbl'];
-
-            const podioObj = (torneo.podio && (torneo.podio.primerLugar || torneo.podio.segundoLugar)) ? torneo.podio : (docTorneo.podio || fallbackPodio);
+            const podio = torneo.podio || {};
             const challongeStandings = Array.isArray(torneo.challongeStandings) ? torneo.challongeStandings : [];
 
-            let p1 = podioObj.primerLugar || fallbackPodio?.primerLugar;
-            let p2 = podioObj.segundoLugar || fallbackPodio?.segundoLugar;
-            let p3 = podioObj.tercerLugar || fallbackPodio?.tercerLugar;
+            let p1 = podio.primerLugar;
+            let p2 = podio.segundoLugar;
+            let p3 = podio.tercerLugar;
 
-            // Si el podio está incompleto o tiene duplicados, resolver desde challongeStandings oficiales
+            // Si el podio está incompleto o tiene duplicados (ej. p2 == p3), resolver desde challongeStandings oficiales
             if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
                 const s1 = challongeStandings.find(s => s.rank === 1);
                 const s2 = challongeStandings.find(s => s.rank === 2);
                 const s3 = challongeStandings.find(s => s.rank === 3);
-                if (s1 && !p1) p1 = s1.equipo;
-                if (s2 && !p2) p2 = s2.equipo;
-                if (s3 && !p3) p3 = s3.equipo;
+                if (s1) p1 = s1.equipo;
+                if (s2) p2 = s2.equipo;
+                if (s3) p3 = s3.equipo;
             }
 
-            const isCompleted = (docTorneo.estado === 'finalizado') || (torneo.estado === 'complete') || !!p1;
+            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || !!p1;
 
             // Extraer participantes únicos para la tarjeta derecha "Equipos participantes"
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
@@ -1091,13 +1007,6 @@
                     if (m.player2 && m.player2.nombre && m.player2.nombre !== 'TBD') {
                         participantesMap.set(m.player2.nombre.toLowerCase().trim(), m.player2);
                     }
-                });
-            }
-
-            if (participantesMap.size === 0 && (p1 || p2 || p3)) {
-                [p1, p2, p3].filter(Boolean).forEach(eq => {
-                    const name = eq.nombre || eq.name || '';
-                    if (name) participantesMap.set(name.toLowerCase().trim(), { lblInfo: eq, nombre: name, tag: eq.tag, logo: eq.logo });
                 });
             }
 
