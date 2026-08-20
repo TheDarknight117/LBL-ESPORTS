@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v87';
+const CACHE_NAME = 'lbl-cache-v88';
 const ASSETS = [
   '/',
   '/torneos',
