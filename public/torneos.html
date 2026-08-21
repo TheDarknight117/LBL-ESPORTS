@@ -1288,12 +1288,15 @@
         // --- RENDERIZADOR DEL CRONOGRAMA VERTICAL DE PARTIDOS (HORARIOS, RESULTADOS, VER MÁS) ---
         function renderizarCronogramaPartidos(docTorneo) {
             const torneo = docTorneo.datosChallonge || docTorneo;
-            const matches = Array.isArray(torneo.matches) ? torneo.matches : [];
+            const matches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
             const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
 
             if (matches.length === 0) {
                 return '';
             }
+
+            const estadoActual = (docTorneo.estado || torneo.estado || '').toLowerCase();
+            const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
 
             const partidosPendientes = [];
             const partidosAnteriores = [];
@@ -1306,6 +1309,85 @@
                     partidosPendientes.push(m);
                 }
             });
+
+            // Helper para obtener timestamp numérico seguro de un match
+            const getMatchTime = (m) => {
+                const raw = m.scheduled_time || m.underway_at || m.completed_at || m.updated_at;
+                if (!raw) return null;
+                const t = new Date(raw).getTime();
+                return isNaN(t) ? null : t;
+            };
+
+            // ORDENAMIENTO DINÁMICO POR FECHAS Y REPROGRAMACIONES (Solo en torneos activos / en vivo)
+            if (esTorneoActivo) {
+                // 1. Partidos Pendientes / Próximos:
+                // - Partidas EN VIVO siempre primero
+                // - Partidas con fecha programada ordenadas cronológicamente (más cercana primero)
+                // - Partidas sin fecha definida (TBD) al final
+                partidosPendientes.sort((a, b) => {
+                    const isLiveA = a.state === 'live' || !!a.underway_at;
+                    const isLiveB = b.state === 'live' || !!b.underway_at;
+                    if (isLiveA && !isLiveB) return -1;
+                    if (!isLiveA && isLiveB) return 1;
+
+                    const timeA = getMatchTime(a);
+                    const timeB = getMatchTime(b);
+
+                    if (timeA !== null && timeB !== null) {
+                        return timeA - timeB; // Ascendente (más próximo primero)
+                    }
+                    if (timeA !== null && timeB === null) return -1;
+                    if (timeA === null && timeB !== null) return 1;
+
+                    return (a.round || 0) - (b.round || 0);
+                });
+
+                // 2. Partidos Anteriores:
+                // - El partido terminado más recientemente va arriba (descendente)
+                partidosAnteriores.sort((a, b) => {
+                    const timeA = getMatchTime(a);
+                    const timeB = getMatchTime(b);
+
+                    if (timeA !== null && timeB !== null) {
+                        return timeB - timeA; // Descendente (más reciente arriba)
+                    }
+                    if (timeA !== null && timeB === null) return -1;
+                    if (timeA === null && timeB !== null) return 1;
+
+                    return (b.round || 0) - (a.round || 0);
+                });
+
+                // 3. Lista completa (Todos):
+                // Partidos pendientes ordenados cronológicamente seguidos de los anteriores
+                matches.sort((a, b) => {
+                    const isCompA = a.state === 'completed' || a.state === 'complete' || !!a.winner_id;
+                    const isCompB = b.state === 'completed' || b.state === 'complete' || !!b.winner_id;
+
+                    if (!isCompA && isCompB) return -1;
+                    if (isCompA && !isCompB) return 1;
+
+                    if (!isCompA && !isCompB) {
+                        const isLiveA = a.state === 'live' || !!a.underway_at;
+                        const isLiveB = b.state === 'live' || !!b.underway_at;
+                        if (isLiveA && !isLiveB) return -1;
+                        if (!isLiveA && isLiveB) return 1;
+
+                        const timeA = getMatchTime(a);
+                        const timeB = getMatchTime(b);
+                        if (timeA !== null && timeB !== null) return timeA - timeB;
+                        if (timeA !== null && timeB === null) return -1;
+                        if (timeA === null && timeB !== null) return 1;
+                        return (a.round || 0) - (b.round || 0);
+                    } else {
+                        const timeA = getMatchTime(a);
+                        const timeB = getMatchTime(b);
+                        if (timeA !== null && timeB !== null) return timeB - timeA;
+                        if (timeA !== null && timeB === null) return -1;
+                        if (timeA === null && timeB !== null) return 1;
+                        return (b.round || 0) - (a.round || 0);
+                    }
+                });
+            }
 
             let matchesFiltrados = [];
             if (filtroCronogramaTab === 'proximos') {
