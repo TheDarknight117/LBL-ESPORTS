@@ -355,10 +355,20 @@
             }
             document.getElementById('modal-rep').innerHTML = repsInfoHTML;
 
-            // Redes Sociales del Equipo (Diseño inicial)
+            // Redes Sociales del Equipo
             let redesHTML = '';
-            if (equipo.media?.streamer_link) redesHTML += `<a href="${equipo.media.streamer_link}" target="_blank" class="text-blue-400 hover:text-white bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50 text-xs font-bold transition-colors"><i class="fas fa-video mr-1"></i> Stream</a>`;
-            if (equipo.media?.ig) redesHTML += `<a href="https://instagram.com/${equipo.media.ig.replace('@','')}" target="_blank" class="text-pink-400 hover:text-white bg-pink-900/20 px-3 py-1.5 rounded-lg border border-pink-900/50 text-xs font-bold transition-colors"><i class="fab fa-instagram mr-1"></i> Instagram</a>`;
+            const streamerUrl = equipo.media?.streamers?.[0]?.link || equipo.media?.streamer_link;
+            if (streamerUrl) redesHTML += `<a href="${streamerUrl}" target="_blank" class="text-purple-400 hover:text-white bg-purple-900/20 px-3 py-1.5 rounded-lg border border-purple-900/50 text-xs font-bold transition-colors"><i class="fas fa-video mr-1"></i> Stream</a>`;
+            const igHandle = (equipo.media?.instagram || equipo.media?.ig || '').trim();
+            if (igHandle) {
+                const igUrl = igHandle.startsWith('http') ? igHandle : `https://instagram.com/${igHandle.replace('@','')}`;
+                redesHTML += `<a href="${igUrl}" target="_blank" class="text-pink-400 hover:text-white bg-pink-900/20 px-3 py-1.5 rounded-lg border border-pink-900/50 text-xs font-bold transition-colors"><i class="fab fa-instagram mr-1"></i> Instagram</a>`;
+            }
+            const tkHandle = (equipo.media?.tiktok || equipo.media?.tk || '').trim();
+            if (tkHandle) {
+                const tkUrl = tkHandle.startsWith('http') ? tkHandle : `https://tiktok.com/@${tkHandle.replace('@','')}`;
+                redesHTML += `<a href="${tkUrl}" target="_blank" class="text-cyan-400 hover:text-white bg-cyan-900/20 px-3 py-1.5 rounded-lg border border-cyan-900/50 text-xs font-bold transition-colors"><i class="fab fa-tiktok mr-1"></i> TikTok</a>`;
+            }
             document.getElementById('modal-socials').innerHTML = redesHTML;
 
             // LAYER DE MOVIMIENTOS & FICHAJES (BOTONES PARA ABRIR VENTANA FLOTANTE HISTÓRICA)

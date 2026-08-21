@@ -193,70 +193,38 @@
             </div>`;
         };
 
-        const buildCoachBlock = (title, prefix, c) => {
-            const coach = c || { nombre: '', riotId: '', rol_seleccionado: 'Head Coach', ci: '', tel: '', mail: '', discordId: '', departamento: '' };
-            const cs = coach.cuenta_secundaria || { servidor: 'las', riotId2: '', opgg2: '' };
-
-            const secondaryHTML = `
-                <div class="md:col-span-4 bg-black/40 border border-gray-800 p-4 rounded-2xl mt-2 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-4"><p class="text-[10px] text-purple-400 font-bold uppercase tracking-widest border-b border-gray-800 pb-2"><i class="fas fa-plus-circle mr-1"></i> Cuenta Secundaria (Opcional)</p></div>
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Servidor</label>
-                        <select id="${prefix}_region2" class="input-login text-sm h-12 text-white bg-[#0a0a0a]" style="padding: 0 12px !important; color: white !important; background-color: #0a0a0a !important;">
-                            <option class="bg-gray-900 text-white" value="las" ${cs.servidor === 'las' ? 'selected' : ''}>LAS</option>
-                            <option class="bg-gray-900 text-white" value="lan" ${cs.servidor === 'lan' ? 'selected' : ''}>LAN</option>
-                            <option class="bg-gray-900 text-white" value="br" ${cs.servidor === 'br' ? 'selected' : ''}>BR</option>
-                            <option class="bg-gray-900 text-white" value="na" ${cs.servidor === 'na' ? 'selected' : ''}>NA</option>
-                            <option class="bg-gray-900 text-white" value="euw" ${cs.servidor === 'euw' ? 'selected' : ''}>EUW</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID</label>
-                        <input id="${prefix}_riotId2" value="${cs.riotId2||''}" class="input-login p-3 text-sm h-12 text-purple-300" placeholder="Smurf#Tag">
-                    </div>
-                </div>
-            `;
+        const buildCoachBlock = (title, prefix, c, defaultCargo = 'Head Coach') => {
+            const coach = c || { nombre: '', riotId: '', rol_seleccionado: defaultCargo, tel: '', departamento: '' };
 
             return `
             <div class="bg-[#0e0e0e] p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition-colors shadow-md">
                 <div class="flex justify-between items-center mb-4 border-b border-gray-800/80 pb-2">
-                    <h4 class="text-rose-400 font-black text-sm uppercase tracking-widest flex items-center gap-2"><i class="fas fa-chalkboard-user text-rose-500"></i> ${title}</h4>
-                    <span class="text-[10px] text-gray-500 font-bold">Staff Técnico</span>
+                    <h4 class="text-rose-400 font-black text-sm uppercase tracking-widest flex items-center gap-2">
+                        <i class="fas fa-chalkboard-user text-rose-500"></i> ${title}
+                    </h4>
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">Staff Técnico</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="md:col-span-2">
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label>
-                        <input id="${prefix}_nombre" value="${coach.nombre||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Dejar vacío para eliminar">
+                        <input id="${prefix}_nombre" value="${coach.nombre||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Dejar vacío si no aplica">
                     </div>
                     <div class="md:col-span-2">
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID (Ej: Coach#LAS)</label>
-                        <input id="${prefix}_riotId" value="${coach.riotId||''}" class="input-login mt-1 p-3 text-sm h-12 text-rose-300 font-bold border-rose-900/50">
+                        <input id="${prefix}_riotId" value="${coach.riotId||''}" class="input-login mt-1 p-3 text-sm h-12 text-rose-300 font-bold border-rose-900/50" placeholder="NombreInvocador#TAG">
                     </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Cargo / Rol</label>
-                        <input id="${prefix}_cargo" value="${coach.rol_seleccionado||coach.rol||'Coach Estratégico'}" class="input-login mt-1 p-3 text-sm h-12">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label>
-                        <input id="${prefix}_ci" value="${coach.ci||''}" class="input-login mt-1 p-3 text-sm h-12">
+                        <input id="${prefix}_cargo" value="${coach.rol_seleccionado||coach.rol||defaultCargo}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Ej: Head Coach, Analista">
                     </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label>
-                        <input id="${prefix}_tel" value="${coach.tel||coach.telefono||''}" class="input-login mt-1 p-3 text-sm h-12 text-green-400">
+                        <input id="${prefix}_tel" value="${coach.tel||coach.telefono||''}" class="input-login mt-1 p-3 text-sm h-12 text-green-400 font-bold" placeholder="Número de celular">
                     </div>
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label>
-                        <input id="${prefix}_discordId" value="${coach.discordId||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    <div class="sm:col-span-2 md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad / Departamento</label>
+                        <input id="${prefix}_departamento" value="${coach.departamento||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Ej: La Paz, Santa Cruz, Cochabamba, etc.">
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Correo Electrónico</label>
-                        <input id="${prefix}_mail" value="${coach.mail||coach.correo||''}" class="input-login mt-1 p-3 text-sm h-12">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad / Depto</label>
-                        <input id="${prefix}_departamento" value="${coach.departamento||''}" class="input-login mt-1 p-3 text-sm h-12">
-                    </div>
-                    ${secondaryHTML}
                 </div>
             </div>`;
         };
@@ -333,14 +301,14 @@
         };
 
         function generarFormulario(eq) {
-            // 1. IDENTIDAD DEL EQUIPO & REDES
+            // 1. IDENTIDAD DEL EQUIPO & REDES (CON INDICADORES PARA INSTAGRAM Y TIKTOK)
             let html = `
             <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
                 <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <i class="fas fa-shield-alt text-blue-500"></i> Identidad del Equipo & Redes
+                    <i class="fas fa-shield-alt text-blue-500"></i> Identidad del Equipo & Redes Sociales
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div class="md:col-span-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="lg:col-span-2">
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Equipo</label>
                         <input id="edit_eq_nombre" value="${eq.equipo?.nombre||''}" class="input-login mt-1 p-3 text-sm h-12">
                     </div>
@@ -348,17 +316,27 @@
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">TAG</label>
                         <input id="edit_eq_tag" value="${eq.equipo?.tag||''}" class="input-login mt-1 p-3 text-sm h-12">
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">URL del Logo</label>
-                        <input id="edit_eq_logo" value="${eq.equipo?.logo||''}" class="input-login mt-1 p-3 text-sm h-12">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Instagram (@usuario o URL)</label>
-                        <input id="edit_eq_instagram" value="${eq.media?.instagram||''}" class="input-login mt-1 p-3 text-sm h-12 text-pink-400" placeholder="@tu_equipo">
-                    </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Tier (Solo Lectura)</label>
                         <input value="${eq.equipo?.tier||'Tier 1'}" class="input-login mt-1 p-3 text-sm h-12 opacity-60" disabled>
+                    </div>
+                    <div class="lg:col-span-4">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">URL del Logo</label>
+                        <input id="edit_eq_logo" value="${eq.equipo?.logo||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    
+                    <!-- REDES SOCIALES CON INDICADORES E ICONOS -->
+                    <div class="lg:col-span-2 bg-[#0c0c0c] p-4 rounded-2xl border border-gray-800">
+                        <label class="text-[10px] text-pink-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1.5">
+                            <i class="fab fa-instagram text-base text-pink-500"></i> Instagram Oficial
+                        </label>
+                        <input id="edit_eq_instagram" value="${eq.media?.instagram||eq.media?.ig||''}" class="input-login p-3 text-sm h-12 text-pink-300 border-pink-900/30" placeholder="@tu_equipo o https://instagram.com/...">
+                    </div>
+                    <div class="lg:col-span-2 bg-[#0c0c0c] p-4 rounded-2xl border border-gray-800">
+                        <label class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1.5">
+                            <i class="fab fa-tiktok text-base text-cyan-400"></i> TikTok Oficial
+                        </label>
+                        <input id="edit_eq_tiktok" value="${eq.media?.tiktok||eq.media?.tk||''}" class="input-login p-3 text-sm h-12 text-cyan-300 border-cyan-900/30" placeholder="@tu_tiktok o https://tiktok.com/@...">
                     </div>
                 </div>
             </div>`;
@@ -417,7 +395,7 @@
                 </div>
             </div>`;
 
-            // 4. STAFF TÉCNICO & COACHES
+            // 4. STAFF TÉCNICO & COACHES (DATOS ESENCIALES)
             const coaches = eq.coaches || [];
             html += `
             <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
@@ -425,8 +403,8 @@
                     <i class="fas fa-chalkboard-user text-rose-400"></i> Staff Técnico & Coaches
                 </h3>
                 <div class="space-y-6">
-                    ${buildCoachBlock('Head Coach / Coach Principal', 'edit_COA_0', coaches[0])}
-                    ${buildCoachBlock('Analista / Coach Asistente', 'edit_COA_1', coaches[1])}
+                    ${buildCoachBlock('Head Coach / Coach Principal', 'edit_COA_0', coaches[0], 'Head Coach')}
+                    ${buildCoachBlock('Analista / Coach Asistente', 'edit_COA_1', coaches[1], 'Analista')}
                 </div>
             </div>`;
 
@@ -475,7 +453,7 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> ENVIANDO DATOS...';
             btn.disabled = true;
 
-            const extractPlayer = (prefix, original, isSub = false, isCoach = false) => {
+            const extractPlayer = (prefix, original, isSub = false) => {
                 const elRiot = document.getElementById(`${prefix}_riotId`);
                 const elNombre = document.getElementById(`${prefix}_nombre`);
                 if(!elRiot && !elNombre) return original || null;
@@ -483,7 +461,6 @@
                 const newRiot = elRiot ? elRiot.value.trim() : '';
                 const nombre = elNombre ? elNombre.value.trim() : '';
 
-                // Si el espacio está vacío (no hay nombre ni riotID), se descarta
                 if(nombre === "" && newRiot === "") return null;
 
                 let newOpgg = original?.opgg || '';
@@ -508,11 +485,6 @@
                     if(elRol) data.rol_seleccionado = elRol.value;
                 }
 
-                if(isCoach) {
-                    const elCargo = document.getElementById(`${prefix}_cargo`);
-                    if(elCargo) data.rol_seleccionado = elCargo.value;
-                }
-
                 const elRiot2 = document.getElementById(`${prefix}_riotId2`);
                 const elRegion2 = document.getElementById(`${prefix}_region2`);
                 if(elRiot2 && elRegion2) {
@@ -530,6 +502,32 @@
                 }
 
                 return data;
+            };
+
+            const extractCoach = (prefix, original, defaultCargo = 'Head Coach') => {
+                const elNombre = document.getElementById(`${prefix}_nombre`);
+                const elRiot = document.getElementById(`${prefix}_riotId`);
+                if(!elNombre && !elRiot) return original || null;
+
+                const nombre = elNombre ? elNombre.value.trim() : '';
+                const riotId = elRiot ? elRiot.value.trim() : '';
+
+                if(nombre === "" && riotId === "") return null;
+
+                let opgg = original?.opgg || '';
+                if(riotId && riotId.includes('#')) {
+                    opgg = `https://www.op.gg/summoners/las/${riotId.replace('#', '-').replace(/\s+/g, '%20')}`;
+                }
+
+                return {
+                    ...(original || {}),
+                    nombre: nombre,
+                    riotId: riotId,
+                    opgg: opgg,
+                    rol_seleccionado: document.getElementById(`${prefix}_cargo`)?.value.trim() || defaultCargo,
+                    tel: document.getElementById(`${prefix}_tel`)?.value.trim() || '',
+                    departamento: document.getElementById(`${prefix}_departamento`)?.value.trim() || ''
+                };
             };
 
             const extractRep = (prefix, original, defaultRol = 'Representante') => {
@@ -557,7 +555,7 @@
                 nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.trim().toUpperCase();
                 nuevoEquipo.logo = document.getElementById('edit_eq_logo').value.trim();
 
-                // 2. Media y Streamers
+                // 2. Media (Instagram, TikTok, Streamers)
                 const streamersList = [];
                 document.querySelectorAll('.edit-streamer-row').forEach(row => {
                     const sNombre = row.querySelector('.edit-streamer-nombre')?.value.trim() || '';
@@ -568,9 +566,13 @@
                 });
 
                 const instagramVal = document.getElementById('edit_eq_instagram')?.value.trim() || '';
+                const tiktokVal = document.getElementById('edit_eq_tiktok')?.value.trim() || '';
                 const nuevaMedia = {
                     ...(currentTeamData.media || {}),
                     instagram: instagramVal,
+                    ig: instagramVal,
+                    tiktok: tiktokVal,
+                    tk: tiktokVal,
                     streamers: streamersList,
                     streamer_nombre: streamersList.length > 0 ? streamersList[0].nombre : '',
                     streamer_link: streamersList.length > 0 ? streamersList[0].link : ''
@@ -583,10 +585,10 @@
                 if (rep1) nuevosReps.push(rep1);
                 if (rep2) nuevosReps.push(rep2);
 
-                // 4. Coaches
+                // 4. Coaches (Esenciales: Nombre, Riot ID, Cargo, WhatsApp, Ciudad)
                 const nuevosCoaches = [];
-                const c1 = extractPlayer('edit_COA_0', currentTeamData.coaches?.[0], false, true);
-                const c2 = extractPlayer('edit_COA_1', currentTeamData.coaches?.[1], false, true);
+                const c1 = extractCoach('edit_COA_0', currentTeamData.coaches?.[0], 'Head Coach');
+                const c2 = extractCoach('edit_COA_1', currentTeamData.coaches?.[1], 'Analista');
                 if (c1) nuevosCoaches.push(c1);
                 if (c2) nuevosCoaches.push(c2);
 
