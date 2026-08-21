@@ -58,9 +58,9 @@
         </div>
 
         <div id="edit-screen" class="hidden w-full max-w-5xl fade-in mt-6 mb-20">
-            <div class="bg-yellow-900/20 border border-yellow-700/50 p-4 rounded-xl text-yellow-500 text-sm font-bold flex items-start gap-3 mb-6">
+            <div class="bg-yellow-900/20 border border-yellow-700/50 p-4 rounded-2xl text-yellow-500 text-sm font-bold flex items-start gap-3 mb-6 shadow-lg">
                 <i class="fas fa-info-circle text-2xl mt-1"></i>
-                <p>Estás editando la información oficial de tu equipo. <br><span class="text-white">Para eliminar a un suplente, simplemente borra su "Nombre" y su "Riot ID" y dale a guardar.</span></p>
+                <p>Estás en el Portal Oficial de Edición de Equipo. Puedes modificar la identidad, redes, streamers, directiva, staff técnico, roster titular y suplentes. <br><span class="text-white font-medium">Para eliminar a un suplente o coach, simplemente borra sus campos y haz clic en "Actualizar Información".</span></p>
             </div>
 
             <div id="dynamic-edit-container" class="space-y-6"></div>
@@ -130,9 +130,139 @@
             }
         });
 
-        // GENERADOR DE BLOQUES DE FORMULARIO
+        // GENERADORES DE BLOQUES DE FORMULARIO
+        window.agregarStreamerFilaEdit = () => {
+            const container = document.getElementById('edit-streamers-list-container');
+            if(!container) return;
+            const count = container.querySelectorAll('.edit-streamer-row').length;
+            if(count >= 5) { alert("Máximo 5 streamers permitidos."); return; }
+
+            const div = document.createElement('div');
+            div.className = "flex flex-col sm:flex-row gap-3 items-end p-4 bg-black/50 rounded-2xl border border-gray-800 edit-streamer-row";
+            div.innerHTML = `
+                <div class="flex-1 w-full">
+                    <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre del Canal / Creador</label>
+                    <input type="text" placeholder="Ej: TwitchName" class="edit-streamer-nombre input-login mt-1 p-3 text-sm h-12">
+                </div>
+                <div class="flex-1 w-full">
+                    <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Enlace del Canal (Twitch / Kick / YT)</label>
+                    <input type="url" placeholder="https://..." class="edit-streamer-link input-login mt-1 p-3 text-sm h-12 text-purple-300">
+                </div>
+                <button type="button" onclick="this.closest('.edit-streamer-row').remove()" class="w-full sm:w-auto text-rose-400 hover:text-rose-300 bg-rose-950/20 hover:bg-rose-900/40 border border-rose-900/50 p-3 h-12 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            `;
+            container.appendChild(div);
+        };
+
+        const buildRepBlock = (title, prefix, rep, defaultRol = 'Representante') => {
+            const r = rep || { nombre: '', ci: '', tel: '', mail: '', discord: '', departamento: '', rol: defaultRol };
+            return `
+            <div class="bg-[#0e0e0e] p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition-colors shadow-md">
+                <h4 class="text-green-400 font-black text-sm uppercase tracking-widest mb-4 border-b border-gray-800/80 pb-2 flex items-center justify-between">
+                    <span><i class="fas fa-user-tie text-green-500 mr-2"></i> ${title}</span>
+                    <span class="text-[10px] text-gray-500 font-mono font-bold">${defaultRol}</span>
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Completo</label>
+                        <input id="${prefix}_nombre" value="${r.nombre||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Dejar vacío si no aplica">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label>
+                        <input id="${prefix}_ci" value="${r.ci||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label>
+                        <input id="${prefix}_tel" value="${r.tel||r.telefono||''}" class="input-login mt-1 p-3 text-sm h-12 text-green-400 font-bold">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Correo Electrónico</label>
+                        <input id="${prefix}_mail" value="${r.mail||r.correo||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label>
+                        <input id="${prefix}_discord" value="${r.discord||r.discordId||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad / Depto</label>
+                        <input id="${prefix}_departamento" value="${r.departamento||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <input type="hidden" id="${prefix}_rol" value="${r.rol||defaultRol}">
+                </div>
+            </div>`;
+        };
+
+        const buildCoachBlock = (title, prefix, c) => {
+            const coach = c || { nombre: '', riotId: '', rol_seleccionado: 'Head Coach', ci: '', tel: '', mail: '', discordId: '', departamento: '' };
+            const cs = coach.cuenta_secundaria || { servidor: 'las', riotId2: '', opgg2: '' };
+
+            const secondaryHTML = `
+                <div class="md:col-span-4 bg-black/40 border border-gray-800 p-4 rounded-2xl mt-2 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-4"><p class="text-[10px] text-purple-400 font-bold uppercase tracking-widest border-b border-gray-800 pb-2"><i class="fas fa-plus-circle mr-1"></i> Cuenta Secundaria (Opcional)</p></div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Servidor</label>
+                        <select id="${prefix}_region2" class="input-login text-sm h-12 text-white bg-[#0a0a0a]" style="padding: 0 12px !important; color: white !important; background-color: #0a0a0a !important;">
+                            <option class="bg-gray-900 text-white" value="las" ${cs.servidor === 'las' ? 'selected' : ''}>LAS</option>
+                            <option class="bg-gray-900 text-white" value="lan" ${cs.servidor === 'lan' ? 'selected' : ''}>LAN</option>
+                            <option class="bg-gray-900 text-white" value="br" ${cs.servidor === 'br' ? 'selected' : ''}>BR</option>
+                            <option class="bg-gray-900 text-white" value="na" ${cs.servidor === 'na' ? 'selected' : ''}>NA</option>
+                            <option class="bg-gray-900 text-white" value="euw" ${cs.servidor === 'euw' ? 'selected' : ''}>EUW</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID</label>
+                        <input id="${prefix}_riotId2" value="${cs.riotId2||''}" class="input-login p-3 text-sm h-12 text-purple-300" placeholder="Smurf#Tag">
+                    </div>
+                </div>
+            `;
+
+            return `
+            <div class="bg-[#0e0e0e] p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition-colors shadow-md">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-800/80 pb-2">
+                    <h4 class="text-rose-400 font-black text-sm uppercase tracking-widest flex items-center gap-2"><i class="fas fa-chalkboard-user text-rose-500"></i> ${title}</h4>
+                    <span class="text-[10px] text-gray-500 font-bold">Staff Técnico</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label>
+                        <input id="${prefix}_nombre" value="${coach.nombre||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="Dejar vacío para eliminar">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID (Ej: Coach#LAS)</label>
+                        <input id="${prefix}_riotId" value="${coach.riotId||''}" class="input-login mt-1 p-3 text-sm h-12 text-rose-300 font-bold border-rose-900/50">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Cargo / Rol</label>
+                        <input id="${prefix}_cargo" value="${coach.rol_seleccionado||coach.rol||'Coach Estratégico'}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label>
+                        <input id="${prefix}_ci" value="${coach.ci||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label>
+                        <input id="${prefix}_tel" value="${coach.tel||coach.telefono||''}" class="input-login mt-1 p-3 text-sm h-12 text-green-400">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label>
+                        <input id="${prefix}_discordId" value="${coach.discordId||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Correo Electrónico</label>
+                        <input id="${prefix}_mail" value="${coach.mail||coach.correo||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad / Depto</label>
+                        <input id="${prefix}_departamento" value="${coach.departamento||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    ${secondaryHTML}
+                </div>
+            </div>`;
+        };
+
         const buildPlayerBlock = (title, prefix, p, isSub = false, isCapitan = false) => {
-            if(!p) p = { nombre: '', riotId: '', ci: '', tel: '', discordId: '', departamento: '', rol_seleccionado: '' }; // Base vacía
+            if(!p) p = { nombre: '', riotId: '', ci: '', tel: '', mail: '', discordId: '', departamento: '', rol_seleccionado: '' };
 
             const r = p.rol_seleccionado || '';
             const subRoleHTML = isSub ? `
@@ -183,39 +313,129 @@
             }
 
             return `
-            <div class="bg-[#111] p-5 rounded-2xl border border-gray-800">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <div class="bg-[#0e0e0e] p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition-colors shadow-md">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-800/80 pb-2">
                     <h4 class="${isSub ? 'text-teal-400' : 'text-white'} font-black text-sm uppercase tracking-widest">${title}</h4>
                     ${capitanHTML}
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     ${subRoleHTML}
-                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label><input id="${prefix}_nombre" value="${p.nombre||''}" class="input-login p-3 text-sm h-12" placeholder="${isSub ? 'Dejar vacío para eliminar suplente' : ''}"></div>
-                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID (Ej: Jugador#LAS)</label><input id="${prefix}_riotId" value="${p.riotId||''}" class="input-login p-3 text-sm h-12 text-blue-400 font-bold border-blue-900/50"></div>
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label><input id="${prefix}_ci" value="${p.ci||''}" class="input-login p-3 text-sm h-12"></div>
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label><input id="${prefix}_tel" value="${p.tel||''}" class="input-login p-3 text-sm h-12"></div>
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label><input id="${prefix}_discordId" value="${p.discordId||''}" class="input-login p-3 text-sm h-12"></div>
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad</label><input id="${prefix}_departamento" value="${p.departamento||''}" class="input-login p-3 text-sm h-12"></div>
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Real</label><input id="${prefix}_nombre" value="${p.nombre||''}" class="input-login mt-1 p-3 text-sm h-12" placeholder="${isSub ? 'Dejar vacío para eliminar suplente' : ''}"></div>
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Riot ID (Ej: Jugador#LAS)</label><input id="${prefix}_riotId" value="${p.riotId||''}" class="input-login mt-1 p-3 text-sm h-12 text-blue-400 font-bold border-blue-900/50"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Carnet (C.I.)</label><input id="${prefix}_ci" value="${p.ci||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">WhatsApp</label><input id="${prefix}_tel" value="${p.tel||p.telefono||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Correo Electrónico</label><input id="${prefix}_mail" value="${p.mail||p.correo||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Discord</label><input id="${prefix}_discordId" value="${p.discordId||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
+                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ciudad / Depto</label><input id="${prefix}_departamento" value="${p.departamento||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
                     ${secondaryHTML}
                 </div>
             </div>`;
         };
 
         function generarFormulario(eq) {
+            // 1. IDENTIDAD DEL EQUIPO & REDES
             let html = `
-            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
-                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6"><i class="fas fa-shield-alt text-blue-500 mr-2"></i> Identidad del Equipo</h3>
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-blue-500"></i> Identidad del Equipo & Redes
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div class="md:col-span-2"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Equipo</label><input id="edit_eq_nombre" value="${eq.equipo.nombre||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">TAG</label><input id="edit_eq_tag" value="${eq.equipo.tag||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
-                    <div class="md:col-span-3"><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">URL del Logo</label><input id="edit_eq_logo" value="${eq.equipo.logo||''}" class="input-login mt-1 p-3 text-sm h-12"></div>
-                    
-                    <div><label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Tier (No editable)</label><input value="${eq.equipo.tier||''}" class="input-login mt-1 p-3 text-sm h-12" disabled></div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre Equipo</label>
+                        <input id="edit_eq_nombre" value="${eq.equipo?.nombre||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">TAG</label>
+                        <input id="edit_eq_tag" value="${eq.equipo?.tag||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">URL del Logo</label>
+                        <input id="edit_eq_logo" value="${eq.equipo?.logo||''}" class="input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Instagram (@usuario o URL)</label>
+                        <input id="edit_eq_instagram" value="${eq.media?.instagram||''}" class="input-login mt-1 p-3 text-sm h-12 text-pink-400" placeholder="@tu_equipo">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Tier (Solo Lectura)</label>
+                        <input value="${eq.equipo?.tier||'Tier 1'}" class="input-login mt-1 p-3 text-sm h-12 opacity-60" disabled>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
-                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6"><i class="fas fa-gamepad text-yellow-500 mr-2"></i> Roster Titular</h3>
+            </div>`;
+
+            // 2. STREAMERS & CREADORES DE CONTENIDO
+            let streamersHTML = '';
+            const listaStreamers = (eq.media?.streamers && Array.isArray(eq.media.streamers)) 
+                ? eq.media.streamers 
+                : (eq.media?.streamer_nombre ? [{ nombre: eq.media.streamer_nombre, link: eq.media.streamer_link }] : []);
+
+            listaStreamers.forEach(st => {
+                streamersHTML += `
+                <div class="flex flex-col sm:flex-row gap-3 items-end p-4 bg-black/50 rounded-2xl border border-gray-800 edit-streamer-row">
+                    <div class="flex-1 w-full">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Nombre del Canal / Creador</label>
+                        <input type="text" value="${st.nombre||''}" class="edit-streamer-nombre input-login mt-1 p-3 text-sm h-12">
+                    </div>
+                    <div class="flex-1 w-full">
+                        <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Enlace del Canal (Twitch / Kick / YT)</label>
+                        <input type="url" value="${st.link||''}" class="edit-streamer-link input-login mt-1 p-3 text-sm h-12 text-purple-300">
+                    </div>
+                    <button type="button" onclick="this.closest('.edit-streamer-row').remove()" class="w-full sm:w-auto text-rose-400 hover:text-rose-300 bg-rose-950/20 hover:bg-rose-900/40 border border-rose-900/50 p-3 h-12 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>`;
+            });
+
+            html += `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-2">
+                    <div>
+                        <h3 class="text-lg font-black text-white uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-video text-purple-400"></i> Streamers & Creadores de Contenido
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-1">Vincula los canales oficiales que transmiten las partidas de tu equipo.</p>
+                    </div>
+                    <button type="button" onclick="agregarStreamerFilaEdit()" class="text-xs font-bold text-purple-300 bg-purple-950/40 border border-purple-800 hover:bg-purple-800 hover:text-white px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md">
+                        <i class="fas fa-plus"></i> Añadir Streamer
+                    </button>
+                </div>
+                <div id="edit-streamers-list-container" class="space-y-4">
+                    ${streamersHTML || '<p id="empty-streamers-msg" class="text-xs text-gray-600 italic">No hay streamers registrados aún.</p>'}
+                </div>
+            </div>`;
+
+            // 3. REPRESENTANTES LEGALES & MÁNAGERS
+            const reps = eq.representantes || [];
+            html += `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <i class="fas fa-user-tie text-green-500"></i> Información de Representantes & Mánagers
+                </h3>
+                <div class="space-y-6">
+                    ${buildRepBlock('Representante Principal / Propietario', 'edit_rep_0', reps[0], 'Propietario / Representante Principal')}
+                    ${buildRepBlock('Representante Secundario / Mánager', 'edit_rep_1', reps[1], 'Mánager Secundario / Delegado')}
+                </div>
+            </div>`;
+
+            // 4. STAFF TÉCNICO & COACHES
+            const coaches = eq.coaches || [];
+            html += `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <i class="fas fa-chalkboard-user text-rose-400"></i> Staff Técnico & Coaches
+                </h3>
+                <div class="space-y-6">
+                    ${buildCoachBlock('Head Coach / Coach Principal', 'edit_COA_0', coaches[0])}
+                    ${buildCoachBlock('Analista / Coach Asistente', 'edit_COA_1', coaches[1])}
+                </div>
+            </div>`;
+
+            // 5. ROSTER TITULAR
+            html += `
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
+                <h3 class="text-lg font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <i class="fas fa-gamepad text-yellow-500"></i> Roster Titular
+                </h3>
                 <div class="space-y-6">`;
             
             if(eq.roster) {
@@ -228,11 +448,13 @@
             }
             html += `</div></div>`;
 
-            // SIEMPRE MOSTRAR 3 SLOTS DE SUPLENTES
+            // 6. SUPLENTES (3 SLOTS)
             html += `
-            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6">
+            <div class="glass-panel border-gray-800 p-6 rounded-3xl mb-6 shadow-xl">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-2">
-                    <h3 class="text-lg font-black text-white uppercase tracking-widest"><i class="fas fa-user-clock text-teal-400 mr-2"></i> Suplentes</h3>
+                    <h3 class="text-lg font-black text-white uppercase tracking-widest flex items-center gap-2">
+                        <i class="fas fa-user-clock text-teal-400"></i> Suplentes
+                    </h3>
                     <span class="text-xs text-gray-500 font-bold">Máximo 3 permitidos</span>
                 </div>
                 <div class="space-y-6">`;
@@ -247,20 +469,21 @@
             document.getElementById('dynamic-edit-container').innerHTML = html;
         }
 
-        // GUARDAR DATOS Y VALIDAR SUPLENTES
+        // GUARDAR DATOS Y VALIDAR INTEGRIDAD COMPLETA
         document.getElementById('btn-save-team').addEventListener('click', async () => {
             const btn = document.getElementById('btn-save-team');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> ENVIANDO DATOS...';
             btn.disabled = true;
 
-            const extractPlayer = (prefix, original, isSub = false) => {
+            const extractPlayer = (prefix, original, isSub = false, isCoach = false) => {
                 const elRiot = document.getElementById(`${prefix}_riotId`);
-                if(!elRiot) return original || null;
+                const elNombre = document.getElementById(`${prefix}_nombre`);
+                if(!elRiot && !elNombre) return original || null;
 
-                const newRiot = elRiot.value.trim();
-                const nombre = document.getElementById(`${prefix}_nombre`).value.trim();
+                const newRiot = elRiot ? elRiot.value.trim() : '';
+                const nombre = elNombre ? elNombre.value.trim() : '';
 
-                // Si el espacio está vacío (no hay nombre ni riotID), se descarta el jugador
+                // Si el espacio está vacío (no hay nombre ni riotID), se descarta
                 if(nombre === "" && newRiot === "") return null;
 
                 let newOpgg = original?.opgg || '';
@@ -273,15 +496,21 @@
                     nombre: nombre,
                     riotId: newRiot,
                     opgg: newOpgg,
-                    ci: document.getElementById(`${prefix}_ci`).value.trim(),
-                    tel: document.getElementById(`${prefix}_tel`).value.trim(),
-                    discordId: document.getElementById(`${prefix}_discordId`).value.trim(),
-                    departamento: document.getElementById(`${prefix}_departamento`).value.trim()
+                    ci: document.getElementById(`${prefix}_ci`)?.value.trim() || '',
+                    tel: document.getElementById(`${prefix}_tel`)?.value.trim() || '',
+                    mail: document.getElementById(`${prefix}_mail`)?.value.trim() || '',
+                    discordId: document.getElementById(`${prefix}_discordId`)?.value.trim() || '',
+                    departamento: document.getElementById(`${prefix}_departamento`)?.value.trim() || ''
                 };
 
                 if(isSub) {
                     const elRol = document.getElementById(`${prefix}_rol`);
                     if(elRol) data.rol_seleccionado = elRol.value;
+                }
+
+                if(isCoach) {
+                    const elCargo = document.getElementById(`${prefix}_cargo`);
+                    if(elCargo) data.rol_seleccionado = elCargo.value;
                 }
 
                 const elRiot2 = document.getElementById(`${prefix}_riotId2`);
@@ -303,12 +532,65 @@
                 return data;
             };
 
-            try {
-                const nuevoEquipo = { ...currentTeamData.equipo };
-                nuevoEquipo.nombre = document.getElementById('edit_eq_nombre').value;
-                nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.toUpperCase();
-                nuevoEquipo.logo = document.getElementById('edit_eq_logo').value;
+            const extractRep = (prefix, original, defaultRol = 'Representante') => {
+                const elNombre = document.getElementById(`${prefix}_nombre`);
+                if(!elNombre) return original || null;
+                const nombre = elNombre.value.trim();
+                if(nombre === "") return null;
 
+                return {
+                    ...(original || {}),
+                    nombre: nombre,
+                    ci: document.getElementById(`${prefix}_ci`)?.value.trim() || '',
+                    tel: document.getElementById(`${prefix}_tel`)?.value.trim() || '',
+                    mail: document.getElementById(`${prefix}_mail`)?.value.trim() || '',
+                    discord: document.getElementById(`${prefix}_discord`)?.value.trim() || '',
+                    departamento: document.getElementById(`${prefix}_departamento`)?.value.trim() || '',
+                    rol: document.getElementById(`${prefix}_rol`)?.value.trim() || defaultRol
+                };
+            };
+
+            try {
+                // 1. Datos del equipo
+                const nuevoEquipo = { ...currentTeamData.equipo };
+                nuevoEquipo.nombre = document.getElementById('edit_eq_nombre').value.trim();
+                nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.trim().toUpperCase();
+                nuevoEquipo.logo = document.getElementById('edit_eq_logo').value.trim();
+
+                // 2. Media y Streamers
+                const streamersList = [];
+                document.querySelectorAll('.edit-streamer-row').forEach(row => {
+                    const sNombre = row.querySelector('.edit-streamer-nombre')?.value.trim() || '';
+                    const sLink = row.querySelector('.edit-streamer-link')?.value.trim() || '';
+                    if(sNombre || sLink) {
+                        streamersList.push({ nombre: sNombre, link: sLink });
+                    }
+                });
+
+                const instagramVal = document.getElementById('edit_eq_instagram')?.value.trim() || '';
+                const nuevaMedia = {
+                    ...(currentTeamData.media || {}),
+                    instagram: instagramVal,
+                    streamers: streamersList,
+                    streamer_nombre: streamersList.length > 0 ? streamersList[0].nombre : '',
+                    streamer_link: streamersList.length > 0 ? streamersList[0].link : ''
+                };
+
+                // 3. Representantes
+                const nuevosReps = [];
+                const rep1 = extractRep('edit_rep_0', currentTeamData.representantes?.[0], 'Propietario / Representante Principal');
+                const rep2 = extractRep('edit_rep_1', currentTeamData.representantes?.[1], 'Mánager Secundario / Delegado');
+                if (rep1) nuevosReps.push(rep1);
+                if (rep2) nuevosReps.push(rep2);
+
+                // 4. Coaches
+                const nuevosCoaches = [];
+                const c1 = extractPlayer('edit_COA_0', currentTeamData.coaches?.[0], false, true);
+                const c2 = extractPlayer('edit_COA_1', currentTeamData.coaches?.[1], false, true);
+                if (c1) nuevosCoaches.push(c1);
+                if (c2) nuevosCoaches.push(c2);
+
+                // 5. Roster Titular
                 const nuevoRoster = {
                     TOP: extractPlayer('edit_TOP', currentTeamData.roster?.TOP),
                     JG: extractPlayer('edit_JG', currentTeamData.roster?.JG),
@@ -317,7 +599,7 @@
                     SUPP: extractPlayer('edit_SUPP', currentTeamData.roster?.SUPP),
                 };
 
-                // Extraemos los 3 posibles suplentes y filtramos los nulos (espacios vacíos)
+                // 6. Suplentes
                 const nuevosSubs = [];
                 for(let i=0; i<3; i++) {
                     const subOriginal = (currentTeamData.suplentes && currentTeamData.suplentes[i]) ? currentTeamData.suplentes[i] : null;
@@ -325,6 +607,7 @@
                     if(dataExtraida) nuevosSubs.push(dataExtraida);
                 }
 
+                // 7. Capitán
                 const capitanRadio = document.querySelector('input[name="edit_capitan"]:checked');
                 const nuevoCapitan = capitanRadio ? capitanRadio.value : (currentTeamData.capitan || 'TOP');
 
@@ -332,6 +615,9 @@
                 
                 const datosNuevos = {
                     equipo: nuevoEquipo,
+                    media: nuevaMedia,
+                    representantes: nuevosReps,
+                    coaches: nuevosCoaches,
                     roster: nuevoRoster,
                     suplentes: nuevosSubs,
                     capitan: nuevoCapitan
@@ -342,6 +628,9 @@
 
                 const payload = {
                     equipo: nuevoEquipo,
+                    media: nuevaMedia,
+                    representantes: nuevosReps,
+                    coaches: nuevosCoaches,
                     roster: nuevoRoster,
                     suplentes: nuevosSubs,
                     capitan: nuevoCapitan,
@@ -352,9 +641,12 @@
 
                 await updateDoc(docRef, payload);
                 
-                alert("✅ ¡Tus datos han sido actualizados con éxito en la LBL!\n\nPuedes seguir editando mientras tu código no haya expirado.");
+                alert("✅ ¡Toda la información oficial de tu equipo ha sido actualizada con éxito!\n\nPuedes seguir editando mientras tu código no haya expirado.");
                 
                 currentTeamData.equipo = nuevoEquipo;
+                currentTeamData.media = nuevaMedia;
+                currentTeamData.representantes = nuevosReps;
+                currentTeamData.coaches = nuevosCoaches;
                 currentTeamData.roster = nuevoRoster;
                 currentTeamData.suplentes = nuevosSubs;
                 currentTeamData.capitan = nuevoCapitan;
