@@ -1310,46 +1310,61 @@
                 }
             });
 
-            // Helper para obtener timestamp numérico seguro de un match
-            const getMatchTime = (m) => {
-                const raw = m.scheduled_time || m.underway_at || m.completed_at || m.updated_at;
+            // Helper para obtener timestamp programado (solo scheduled_time o underway_at para juegos pendientes)
+            const getScheduledTime = (m) => {
+                const raw = m.scheduled_time || m.underway_at;
                 if (!raw) return null;
                 const t = new Date(raw).getTime();
                 return isNaN(t) ? null : t;
             };
 
+            // Helper para obtener timestamp de juego completado
+            const getCompletedTime = (m) => {
+                const raw = m.completed_at || m.underway_at || m.scheduled_time;
+                if (!raw) return null;
+                const t = new Date(raw).getTime();
+                return isNaN(t) ? null : t;
+            };
+
+            // Timestamp actual para comparar proximidad con la fecha de hoy
+            const ahora = Date.now();
+
             // ORDENAMIENTO DINÁMICO POR FECHAS Y REPROGRAMACIONES (Solo en torneos activos / en vivo)
             if (esTorneoActivo) {
                 // 1. Partidos Pendientes / Próximos:
                 // - Partidas EN VIVO siempre primero
-                // - Partidas con fecha programada ordenadas cronológicamente (más cercana primero)
-                // - Partidas sin fecha definida (TBD) al final
+                // - Partidas programadas/reprogramadas ordenadas por cercanía a la fecha de hoy / más próximas cronológicamente
+                // - Partidas sin fecha definida (No programadas) al final
                 partidosPendientes.sort((a, b) => {
                     const isLiveA = a.state === 'live' || !!a.underway_at;
                     const isLiveB = b.state === 'live' || !!b.underway_at;
                     if (isLiveA && !isLiveB) return -1;
                     if (!isLiveA && isLiveB) return 1;
 
-                    const timeA = getMatchTime(a);
-                    const timeB = getMatchTime(b);
+                    const timeA = getScheduledTime(a);
+                    const timeB = getScheduledTime(b);
 
+                    // Si ambos tienen fecha programada: ordenar por la más próxima a la fecha actual (hoy)
                     if (timeA !== null && timeB !== null) {
-                        return timeA - timeB; // Ascendente (más próximo primero)
+                        return timeA - timeB; // Ascendente cronológico desde hoy en adelante
                     }
+                    // Si solo A está programada, va antes que B
                     if (timeA !== null && timeB === null) return -1;
+                    // Si solo B está programada, va antes que A
                     if (timeA === null && timeB !== null) return 1;
 
+                    // Si ninguna está programada, van al final ordenadas por ronda
                     return (a.round || 0) - (b.round || 0);
                 });
 
                 // 2. Partidos Anteriores:
-                // - El partido terminado más recientemente va arriba (descendente)
+                // - El partido completado más recientemente relativo a hoy va en la parte superior
                 partidosAnteriores.sort((a, b) => {
-                    const timeA = getMatchTime(a);
-                    const timeB = getMatchTime(b);
+                    const timeA = getCompletedTime(a);
+                    const timeB = getCompletedTime(b);
 
                     if (timeA !== null && timeB !== null) {
-                        return timeB - timeA; // Descendente (más reciente arriba)
+                        return timeB - timeA; // Descendente: más reciente arriba
                     }
                     if (timeA !== null && timeB === null) return -1;
                     if (timeA === null && timeB !== null) return 1;
@@ -1358,7 +1373,7 @@
                 });
 
                 // 3. Lista completa (Todos):
-                // Partidos pendientes ordenados cronológicamente seguidos de los anteriores
+                // Partidos pendientes (en vivo + programados cercanos a hoy + no programados) seguidos de anteriores recientes
                 matches.sort((a, b) => {
                     const isCompA = a.state === 'completed' || a.state === 'complete' || !!a.winner_id;
                     const isCompB = b.state === 'completed' || b.state === 'complete' || !!b.winner_id;
@@ -1372,15 +1387,15 @@
                         if (isLiveA && !isLiveB) return -1;
                         if (!isLiveA && isLiveB) return 1;
 
-                        const timeA = getMatchTime(a);
-                        const timeB = getMatchTime(b);
+                        const timeA = getScheduledTime(a);
+                        const timeB = getScheduledTime(b);
                         if (timeA !== null && timeB !== null) return timeA - timeB;
                         if (timeA !== null && timeB === null) return -1;
                         if (timeA === null && timeB !== null) return 1;
                         return (a.round || 0) - (b.round || 0);
                     } else {
-                        const timeA = getMatchTime(a);
-                        const timeB = getMatchTime(b);
+                        const timeA = getCompletedTime(a);
+                        const timeB = getCompletedTime(b);
                         if (timeA !== null && timeB !== null) return timeB - timeA;
                         if (timeA !== null && timeB === null) return -1;
                         if (timeA === null && timeB !== null) return 1;
