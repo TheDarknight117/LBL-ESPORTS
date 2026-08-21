@@ -156,6 +156,29 @@
         </div>
     </div>
 
+    <!-- BANNER FLOTANTE: SUGERENCIA DE INSTALACIÓN SOLO PARA MÓVILES -->
+    <div id="mobile-pwa-banner" class="fixed bottom-4 left-4 right-4 z-50 bg-[#0a0a0a]/95 backdrop-blur-md p-4 rounded-2xl border border-yellow-500/40 shadow-[0_0_25px_rgba(234,179,8,0.3)] hidden flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-500 translate-y-20 opacity-0">
+        <div class="flex items-center gap-3.5 w-full sm:w-auto">
+            <img src="assets/LBL Circular.png" alt="LBL App" class="w-12 h-12 rounded-xl object-contain border border-yellow-500/40 p-1 bg-black shrink-0 shadow-inner">
+            <div class="min-w-0 flex-grow">
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-yellow-500 text-black">LBL Oficial</span>
+                    <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-widest">App Móvil</span>
+                </div>
+                <h4 class="text-sm font-black text-white uppercase italic tracking-tight mt-0.5">INSTALAR LBL APP</h4>
+                <p class="text-[11px] text-gray-400 truncate">Resultados, brackets y horarios en tiempo real</p>
+            </div>
+            <button onclick="cerrarMobilePwaBanner()" class="text-gray-500 hover:text-white p-1.5 shrink-0 ml-1" title="Cerrar">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <button onclick="installPWA()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black text-xs px-6 py-2.5 rounded-xl uppercase tracking-wider transition-transform active:scale-95 shadow-md flex items-center justify-center gap-2">
+                <i class="fas fa-download text-xs"></i> Instalar
+            </button>
+        </div>
+    </div>
+
     <script type="module">
         import { db } from "/firebase-config.js"; 
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -289,7 +312,6 @@
                         <div class="min-w-0">
                             <p class="text-[10px] text-gray-500 font-black tracking-widest uppercase mb-0.5">${rolNombre} ${badgeCapitan}</p>
                             <p class="text-white font-bold text-sm md:text-lg tracking-tight truncate">${jugadorData.riotId}</p>
-                            ${jugadorData.nombre ? `<p class="text-xs text-gray-400 font-medium truncate">${jugadorData.nombre}</p>` : ''}
                             ${linkSecundarioHTML}
                         </div>
                     </div>
@@ -624,8 +646,76 @@
         });
     </script>
     
-    <!-- Register Service Worker for PWA -->
+    <!-- PWA Install & Service Worker Logic -->
     <script>
+        let deferredPrompt = null;
+
+        function mostrarSugerenciaMovil() {
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const dismissed = sessionStorage.getItem('lbl_pwa_banner_dismissed');
+
+            if (isMobile && !isStandalone && !dismissed) {
+                const banner = document.getElementById('mobile-pwa-banner');
+                if (banner) {
+                    banner.classList.remove('hidden');
+                    banner.classList.add('flex');
+                    setTimeout(() => {
+                        banner.classList.remove('translate-y-20', 'opacity-0');
+                        banner.classList.add('translate-y-0', 'opacity-100');
+                    }, 100);
+                }
+            }
+        }
+
+        window.cerrarMobilePwaBanner = () => {
+            sessionStorage.setItem('lbl_pwa_banner_dismissed', 'true');
+            const banner = document.getElementById('mobile-pwa-banner');
+            if (banner) {
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex');
+                }, 400);
+            }
+        };
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            mostrarSugerenciaMovil();
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            cerrarMobilePwaBanner();
+        });
+
+        window.installPWA = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    cerrarMobilePwaBanner();
+                }
+                deferredPrompt = null;
+            } else {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert('📱 Para instalar en tu iPhone/iPad:\n\n1. Toca el botón Compartir ⎋ (abajo en Safari)\n2. Selecciona "Agregar a inicio ⊞"');
+                } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                    alert('✅ ¡Ya tienes instalada la aplicación LBL Esports!');
+                } else {
+                    alert('📲 Para instalar la app:\nHaz clic en el ícono de instalación (⊕ o 📲) en la barra de direcciones de tu navegador.');
+                }
+            }
+        };
+
+        window.addEventListener('load', () => {
+            setTimeout(mostrarSugerenciaMovil, 1200);
+        });
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')

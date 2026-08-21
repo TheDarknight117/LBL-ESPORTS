@@ -242,13 +242,12 @@
 
         <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" class="h-48 md:h-64 w-auto object-contain mb-8 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
 
-        <!-- BOTÓN DESCARGAR APLICACIÓN (PWA INSTALL) [DESACTIVADO TEMPORALMENTE]
+        <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) -->
         <div class="mb-8 fade-in-up flex justify-center" style="animation-delay: 0.25s;">
-            <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer">
-                DESCARGAR APLICACIÓN
+            <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-download"></i> INSTALAR LBL APP
             </button>
         </div>
-        -->
 
         <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
             LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
@@ -260,13 +259,17 @@
 
         <div class="max-w-4xl mx-auto w-full px-4 mb-10 z-10 relative">
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6" style="animation-delay: 0.5s;">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6 flex-wrap" style="animation-delay: 0.5s;">
                 <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group">
                     <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
                     <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
                 </button>
                 <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-500 hover:bg-white/5 px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3">
                     <i class="fas fa-users"></i> VER ROSTERS
+                </a>
+                <a href="torneos" class="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black px-8 py-4 md:py-5 rounded-2xl text-lg transition-all shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.7)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
+                    <i class="fas fa-trophy text-black"></i> TORNEOS
                 </a>
             </div>
 
@@ -434,6 +437,29 @@
                     Cancelar
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- BANNER FLOTANTE: SUGERENCIA DE INSTALACIÓN SOLO PARA MÓVILES -->
+    <div id="mobile-pwa-banner" class="fixed bottom-4 left-4 right-4 z-50 bg-[#0a0a0a]/95 backdrop-blur-md p-4 rounded-2xl border border-yellow-500/40 shadow-[0_0_25px_rgba(234,179,8,0.3)] hidden flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-500 translate-y-20 opacity-0">
+        <div class="flex items-center gap-3.5 w-full sm:w-auto">
+            <img src="assets/LBL Circular.png" alt="LBL App" class="w-12 h-12 rounded-xl object-contain border border-yellow-500/40 p-1 bg-black shrink-0 shadow-inner">
+            <div class="min-w-0 flex-grow">
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-yellow-500 text-black">LBL Oficial</span>
+                    <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-widest">App Móvil</span>
+                </div>
+                <h4 class="text-sm font-black text-white uppercase italic tracking-tight mt-0.5">INSTALAR LBL APP</h4>
+                <p class="text-[11px] text-gray-400 truncate">Resultados, brackets y horarios en tiempo real</p>
+            </div>
+            <button onclick="cerrarMobilePwaBanner()" class="text-gray-500 hover:text-white p-1.5 shrink-0 ml-1" title="Cerrar">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <button onclick="installPWA()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black text-xs px-6 py-2.5 rounded-xl uppercase tracking-wider transition-transform active:scale-95 shadow-md flex items-center justify-center gap-2">
+                <i class="fas fa-download text-xs"></i> Instalar
+            </button>
         </div>
     </div>
 
@@ -846,11 +872,43 @@
     <script>
         let deferredPrompt = null;
 
+        function mostrarSugerenciaMovil() {
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const dismissed = sessionStorage.getItem('lbl_pwa_banner_dismissed');
+
+            if (isMobile && !isStandalone && !dismissed) {
+                const banner = document.getElementById('mobile-pwa-banner');
+                if (banner) {
+                    banner.classList.remove('hidden');
+                    banner.classList.add('flex');
+                    setTimeout(() => {
+                        banner.classList.remove('translate-y-20', 'opacity-0');
+                        banner.classList.add('translate-y-0', 'opacity-100');
+                    }, 100);
+                }
+            }
+        }
+
+        window.cerrarMobilePwaBanner = () => {
+            sessionStorage.setItem('lbl_pwa_banner_dismissed', 'true');
+            const banner = document.getElementById('mobile-pwa-banner');
+            if (banner) {
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex');
+                }, 400);
+            }
+        };
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             const btn = document.getElementById('pwa-install-btn');
             if (btn) btn.classList.remove('hidden');
+            mostrarSugerenciaMovil();
         });
 
         window.addEventListener('appinstalled', () => {
@@ -858,9 +916,10 @@
             console.log('LBL PWA instalada exitosamente');
             const btn = document.getElementById('pwa-install-btn');
             if (btn) {
-                btn.innerText = 'APLICACIÓN INSTALADA';
+                btn.innerHTML = '<i class="fas fa-check-circle mr-1.5"></i> APLICACIÓN INSTALADA';
                 btn.className = "px-6 py-2.5 rounded-full bg-emerald-950/40 text-emerald-300 border border-emerald-500/40 font-black text-xs md:text-sm tracking-wider uppercase";
             }
+            cerrarMobilePwaBanner();
         });
 
         window.installPWA = async () => {
@@ -869,10 +928,10 @@
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
                     console.log('Usuario aceptó instalar la PWA');
+                    cerrarMobilePwaBanner();
                 }
                 deferredPrompt = null;
             } else {
-                // Modo alternativo si el navegador no tiene soporte directo para prompt JS (ej: iOS Safari)
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
                 if (isIOS) {
                     alert('📱 Para instalar en tu iPhone/iPad:\n\n1. Toca el botón Compartir ⎋ (abajo en Safari)\n2. Selecciona "Agregar a inicio ⊞"');
@@ -883,6 +942,10 @@
                 }
             }
         };
+
+        window.addEventListener('load', () => {
+            setTimeout(mostrarSugerenciaMovil, 1200);
+        });
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
