@@ -81,6 +81,66 @@
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+
+        /* ANIMACIONES FLUIDAS Y ULTRA-LIGERAS PARA MÓVIL Y ESCRITORIO (GPU-ACCELERATED) */
+        .section-anim-enter {
+            animation: sectionFadeSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes sectionFadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .view-fade-enter {
+            animation: viewFadeSlide 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes viewFadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .match-card-anim {
+            animation: cardStaggerIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+            will-change: opacity, transform;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes cardStaggerIn {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .section-anim-enter, .view-fade-enter, .match-card-anim, .badge-live-pulse {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
@@ -614,50 +674,52 @@
             actualizarURL(false);
         });
 
-        // --- CARGA DE DATOS DESDE FIRESTORE / LOCALSTORAGE ---
+        // --- CARGA DE DATOS DESDE FIRESTORE / LOCALSTORAGE (PARALELIZADO Y OPTIMIZADO) ---
         async function cargarTorneosDesdeFirestore() {
+            // Renderizado ultra-rápido inicial desde caché
             procesarRutaURL();
             renderizarVista();
             actualizarURL(false);
 
-            // 1. Cargar equipos aceptados con logos HD oficiales
+            // Carga en paralelo para evitar cuellos de botella y reducir a la mitad el tiempo de red
             try {
-                const qEq = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
-                const snapEq = await getDocs(qEq);
-                const equipos = [];
-                snapEq.forEach(d => equipos.push({ id: d.id, ...d.data() }));
-                if (equipos.length > 0) {
-                    listaEquiposAceptadosCache = equipos;
-                    localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equipos));
+                const [snapEqResult, snapTorneosResult] = await Promise.allSettled([
+                    getDocs(query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"))),
+                    getDocs(collection(db, 'torneos_registrados'))
+                ]);
+
+                let cambioDetectado = false;
+
+                if (snapEqResult.status === 'fulfilled' && snapEqResult.value) {
+                    const equipos = [];
+                    snapEqResult.value.forEach(d => equipos.push({ id: d.id, ...d.data() }));
+                    if (equipos.length > 0) {
+                        listaEquiposAceptadosCache = equipos;
+                        localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equipos));
+                        cambioDetectado = true;
+                    }
                 }
-            } catch (e) {
-                console.warn("Inscripciones pendientes no accesibles públicamente, usando fallback.", e);
-            }
 
-            // 2. Cargar y deduplicar torneos registrados
-            try {
-                const snap = await getDocs(collection(db, 'torneos_registrados'));
-                const lista = [];
-                snap.forEach(docSnap => {
-                    lista.push({ ...docSnap.data(), id: docSnap.id });
-                });
+                if (snapTorneosResult.status === 'fulfilled' && snapTorneosResult.value) {
+                    const lista = [];
+                    snapTorneosResult.value.forEach(docSnap => {
+                        lista.push({ ...docSnap.data(), id: docSnap.id });
+                    });
 
-                if (lista.length > 0) {
-                    listaTorneosRegistrados = deduplicarTorneos(lista);
-                    localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                    procesarRutaURL();
-                    renderizarVista();
-                    actualizarURL(false);
-                } else {
+                    if (lista.length > 0) {
+                        listaTorneosRegistrados = deduplicarTorneos(lista);
+                        localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                        cambioDetectado = true;
+                    }
+                }
+
+                if (cambioDetectado) {
                     procesarRutaURL();
                     renderizarVista();
                     actualizarURL(false);
                 }
             } catch (err) {
-                console.warn("Firestore torneos_registrados inaccesible:", err);
-                procesarRutaURL();
-                renderizarVista();
-                actualizarURL(false);
+                console.warn("Error cargando Firestore torneos:", err);
             }
         }
 
@@ -666,12 +728,22 @@
             const viewDetail = document.getElementById('view-detail');
 
             if (!torneoSeleccionadoId) {
-                if (viewCatalog) viewCatalog.classList.remove('hidden');
+                if (viewCatalog) {
+                    viewCatalog.classList.remove('hidden');
+                    viewCatalog.classList.remove('view-fade-enter');
+                    void viewCatalog.offsetWidth;
+                    viewCatalog.classList.add('view-fade-enter');
+                }
                 if (viewDetail) viewDetail.classList.add('hidden');
                 renderizarCatalogo();
             } else {
                 if (viewCatalog) viewCatalog.classList.add('hidden');
-                if (viewDetail) viewDetail.classList.remove('hidden');
+                if (viewDetail) {
+                    viewDetail.classList.remove('hidden');
+                    viewDetail.classList.remove('view-fade-enter');
+                    void viewDetail.offsetWidth;
+                    viewDetail.classList.add('view-fade-enter');
+                }
                 renderizarTorneoDetalle();
             }
         }
@@ -749,7 +821,7 @@
                     : `No se encontraron torneos ${filtroEstadoCatalogo === 'vivo' ? 'activos / por iniciar' : 'pasados'} en la categoría seleccionada.`;
 
                 container.innerHTML = `
-                    <div class="col-span-full p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
+                    <div class="col-span-full p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3 section-anim-enter">
                         <i class="fas fa-trophy text-4xl text-gray-600 block mb-2"></i>
                         <p class="text-white text-sm font-black">${mensaje}</p>
                     </div>`;
@@ -757,7 +829,7 @@
             }
 
             let html = '';
-            filtrados.forEach(t => {
+            filtrados.forEach((t, idx) => {
                 const datos = t.datosChallonge || {};
                 const chState = (datos.estado || '').toLowerCase();
                 const localState = (t.estado || '').toLowerCase();
@@ -787,7 +859,7 @@
                 const formatoLabel = t.formatoLabel || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
 
                 html += `
-                    <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-6 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between">
+                    <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-6 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between match-card-anim" style="animation-delay: ${Math.min(idx * 0.04, 0.24)}s;">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between gap-2">
                                 ${catBadge}
@@ -955,7 +1027,13 @@
             // Feed de enfrentamiento (Ocultado temporalmente por directiva oficial)
             if (feedSection) feedSection.style.display = 'none';
 
-            // Renderizar según la etapa seleccionada (Estilo LoL Esports Adaptativo)
+            // Renderizar según la etapa seleccionada con micro-animación GPU-accelerated
+            if (mainContainer) {
+                mainContainer.classList.remove('section-anim-enter');
+                void mainContainer.offsetWidth; // Forzar reflow para reiniciar animación CSS
+                mainContainer.classList.add('section-anim-enter');
+            }
+
             if (etapaActiva === 'resumen') {
                 renderizarEtapaResumen(docTorneo, mainContainer);
             } else if (etapaActiva === 'cronograma') {
@@ -1406,7 +1484,8 @@
 
             let matchesFiltrados = [];
             if (filtroCronogramaTab === 'proximos') {
-                matchesFiltrados = partidosPendientes.length > 0 ? partidosPendientes : matches;
+                // Estricto: Solo mostrar partidos pendientes. NUNCA caer a partidas de rondas pasadas
+                matchesFiltrados = partidosPendientes;
             } else if (filtroCronogramaTab === 'anteriores') {
                 matchesFiltrados = partidosAnteriores;
             } else {
@@ -1420,15 +1499,18 @@
             let matchesCardsHTML = '';
             if (matchesVisibles.length === 0) {
                 matchesCardsHTML = `
-                    <div class="col-span-full py-12 text-center rounded-2xl bg-[#030712] border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-2 shadow-inner">
+                    <div class="col-span-full py-12 text-center rounded-2xl bg-[#030712] border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-2 shadow-inner section-anim-enter">
                         <i class="fas fa-calendar-check text-2xl text-cyan-500/60 block mb-1"></i>
                         <p class="text-white text-sm font-black">
-                            ${filtroCronogramaTab === 'anteriores' ? 'No hay partidos anteriores registrados en este torneo' : 'No hay más partidos pendientes programados'}
+                            ${filtroCronogramaTab === 'anteriores' ? 'No hay partidos anteriores registrados en este torneo' : (filtroCronogramaTab === 'proximos' ? 'No hay más partidos pendientes por disputar' : 'No hay partidas registradas')}
                         </p>
+                        <span class="text-gray-500 text-[11px] block lowercase">
+                            ${filtroCronogramaTab === 'proximos' && partidosAnteriores.length > 0 ? 'puedes consultar los partidos finalizados en la pestaña "anteriores"' : ''}
+                        </span>
                     </div>`;
             } else {
                 matchesCardsHTML = `<div class="space-y-3">`;
-                matchesVisibles.forEach((m) => {
+                matchesVisibles.forEach((m, idx) => {
                     const dt = formatearFechaHoraMatch(m.scheduled_time || m.underway_at);
                     const scoreData = parseMatchScores(m);
 
@@ -1495,7 +1577,7 @@
                     const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
-                        <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group">
+                        <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
                             <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
                             <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-44">
                                 <div class="flex flex-col">
