@@ -95,3 +95,41 @@
     text-align: center;
     overflow: hidden;
 }
+
+/* Efectos de brillo (Glow) en el Footer para Redes Sociales */
+.social-btn-discord:hover {
+    color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5) !important;
+}
+.social-btn-instagram:hover {
+    color: #ec4899 !important;
+    border-color: #ec4899 !important;
+    background-color: rgba(236, 72, 153, 0.15) !important;
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.5) !important;
+}
+.social-btn-tiktok:hover {
+    color: #22d3ee !important;
+    border-color: #22d3ee !important;
+    background-color: rgba(34, 211, 238, 0.15) !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.5) !important;
+}
+.social-btn-twitch:hover {
+    color: #a855f7 !important;
+    border-color: #a855f7 !important;
+    background-color: rgba(168, 85, 247, 0.15) !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5) !important;
+}
+.social-btn-youtube:hover {
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) !important;
+}
+.social-btn-kick:hover {
+    color: #53fc18 !important;
+    border-color: #53fc18 !important;
+    background-color: rgba(83, 252, 24, 0.15) !important;
+    box-shadow: 0 0 15px rgba(83, 252, 24, 0.5) !important;
+}
