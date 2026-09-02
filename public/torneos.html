@@ -149,7 +149,7 @@
     <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-4 md:px-8 py-3.5 flex justify-between items-center">
         <div class="flex items-center">
             <a href="/" class="flex items-center gap-5 group">
-                <img src="/assets/logo.png" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-3">
+                <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-3">
                 <span class="font-black text-lg md:text-xl tracking-wider text-white uppercase italic">LBL <span class="text-cyan-400">TORNEOS</span></span>
             </a>
         </div>
@@ -1103,7 +1103,7 @@
                     if (esLigaLBL && logo) {
                         avatarHTML = `
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
-                                <img src="${logo}" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-lg sm:rounded-xl">
+                                <img src="${logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-lg sm:rounded-xl" alt="${name}">
                             </div>`;
                     } else {
                         avatarHTML = `
@@ -1527,7 +1527,7 @@
                     let p1Avatar = '';
                     if (esLigaLBL && p1Logo) {
                         p1Avatar = `
-                            <img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p1Name}">`;
+                            <img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p1Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p1Name}">`;
                     } else {
                         p1Avatar = `
                             <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p1Tag}</span>`;
@@ -1536,7 +1536,7 @@
                     let p2Avatar = '';
                     if (esLigaLBL && p2Logo) {
                         p2Avatar = `
-                            <img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p2Name}">`;
+                            <img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p2Name)}'" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p2Name}">`;
                     } else {
                         p2Avatar = `
                             <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p2Tag}</span>`;
@@ -1723,11 +1723,11 @@
                 const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
                 const p1Avatar = (esLigaLBL && p1Logo)
-                    ? `<img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
+                    ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p1.nombre}">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p1.tag || resolverTag(p1)}</div>`;
 
                 const p2Avatar = (esLigaLBL && p2Logo)
-                    ? `<img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
+                    ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p2.nombre}">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p2.tag || resolverTag(p2)}</div>`;
 
                 html += `
@@ -2198,11 +2198,11 @@
             const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
             const p1Avatar = (esLigaLBL && p1Logo)
-                ? `<img src="${p1Logo}" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
+                ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p1.nombre}">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p1.tag || p1.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             const p2Avatar = (esLigaLBL && p2Logo)
-                ? `<img src="${p2Logo}" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
+                ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p2.nombre}">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p2.tag || p2.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             return `

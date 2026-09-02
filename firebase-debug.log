@@ -1,0 +1,322 @@
+[debug] [2026-09-02T16:07:37.503Z] ----------------------------------------------------------------------
+[debug] [2026-09-02T16:07:37.505Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\jhona\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-09-02T16:07:37.505Z] CLI Version:   15.1.0
+[debug] [2026-09-02T16:07:37.505Z] Platform:      win32
+[debug] [2026-09-02T16:07:37.505Z] Node Version:  v22.16.0
+[debug] [2026-09-02T16:07:37.505Z] Time:          Wed Sep 02 2026 12:07:37 GMT-0400 (hora de Bolivia)
+[debug] [2026-09-02T16:07:37.505Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-09-02T16:07:39.237Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-02T16:07:39.237Z] > authorizing via signed-in user (jhonatan123progame@gmail.com)
+[debug] [2026-09-02T16:07:39.238Z] [iam] checking project lbl-esports for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-09-02T16:07:39.239Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:39.239Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:39.240Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions [none]
+[debug] [2026-09-02T16:07:39.240Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions x-goog-quota-user=projects/lbl-esports
+[debug] [2026-09-02T16:07:39.240Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-02T16:07:44.773Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions 200
+[debug] [2026-09-02T16:07:44.773Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-02T16:07:44.773Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:44.773Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:44.773Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports [none]
+[debug] [2026-09-02T16:07:46.871Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports 200
+[debug] [2026-09-02T16:07:46.872Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports {"projectId":"lbl-esports","projectNumber":"124596723477","displayName":"LBL-ESPORTS","name":"projects/lbl-esports","resources":{"hostingSite":"lbl-esports"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_b8371ad4-7962-46b2-a3cd-a4825838e373"}
+[info] 
+[info] === Deploying to 'lbl-esports'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-09-02T16:07:46.878Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:46.878Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:07:46.878Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions [none]
+[debug] [2026-09-02T16:07:46.878Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-09-02T16:07:57.034Z] *** [apiv2] error from fetch(https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions, {"headers":{},"method":"POST","body":"{\"status\":\"CREATED\",\"labels\":{\"deployment-tool\":\"cli-firebase\"}}"}): FetchError: request to https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions failed, reason: read ECONNRESET
+[debug] [2026-09-02T16:08:02.053Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\jhona\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:275:49)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-09-02T16:08:51.992Z] ----------------------------------------------------------------------
+[debug] [2026-09-02T16:08:51.994Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\jhona\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --debug
+[debug] [2026-09-02T16:08:51.994Z] CLI Version:   15.1.0
+[debug] [2026-09-02T16:08:51.994Z] Platform:      win32
+[debug] [2026-09-02T16:08:51.994Z] Node Version:  v22.16.0
+[debug] [2026-09-02T16:08:51.995Z] Time:          Wed Sep 02 2026 12:08:51 GMT-0400 (hora de Bolivia)
+[debug] [2026-09-02T16:08:51.995Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-09-02T16:08:53.911Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-02T16:08:53.912Z] > authorizing via signed-in user (jhonatan123progame@gmail.com)
+[debug] [2026-09-02T16:08:53.912Z] [iam] checking project lbl-esports for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-09-02T16:08:53.914Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:08:53.914Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:08:53.915Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions [none]
+[debug] [2026-09-02T16:08:53.915Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions x-goog-quota-user=projects/lbl-esports
+[debug] [2026-09-02T16:08:53.915Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-02T16:09:07.080Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions 200
+[debug] [2026-09-02T16:09:07.080Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/lbl-esports:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-02T16:09:07.080Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:07.081Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:07.081Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports [none]
+[debug] [2026-09-02T16:09:11.577Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports 200
+[debug] [2026-09-02T16:09:11.577Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/lbl-esports {"projectId":"lbl-esports","projectNumber":"124596723477","displayName":"LBL-ESPORTS","name":"projects/lbl-esports","resources":{"hostingSite":"lbl-esports"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_b8371ad4-7962-46b2-a3cd-a4825838e373"}
+[info] 
+[info] === Deploying to 'lbl-esports'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-09-02T16:09:11.584Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:11.584Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:11.584Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions [none]
+[debug] [2026-09-02T16:09:11.584Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-09-02T16:09:13.749Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions 200
+[debug] [2026-09-02T16:09:13.750Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions {"name":"projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[lbl-esports]: beginning deploy... 
+[info] i  hosting[lbl-esports]: found 62 files in public 
+[debug] [2026-09-02T16:09:13.770Z] [hosting] uploading with 200 concurrency
+[debug] [2026-09-02T16:09:13.802Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:13.803Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:13.804Z] [hosting] hash cache [cHVibGlj] stored for 62 files
+[debug] [2026-09-02T16:09:13.805Z] [hosting][hash queue][FINAL] {"max":25,"min":0,"avg":8.741977694453212,"active":0,"complete":62,"success":62,"errored":0,"retried":0,"total":62,"elapsed":32}
+[debug] [2026-09-02T16:09:13.805Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8:populateFiles [none]
+[debug] [2026-09-02T16:09:13.805Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8:populateFiles {"files":{"/staff-config.js":"badeb938bac5dfd28dfc6490b1c10ba2ead8c5ec7a20084a6aa8a897b68b83d3","/manifest.json":"b850cba366bda33676bcf0c0f57472eaa6edb9465eb643252ba7b36ed65e84c6","/firebase-config.js":"a8dc43323730dbfe13c20d7a3c475daa3fbc4d95a553c3695af81db36da09579","/debug-torneo.html":"46a7d073b75cc8062b2d33d726c9de8c949ecf149a9196f02e8cb0db5bfb75ff","/dashboard_ant2.html":"37898174a17079eba5929c333ee1f981b573ae941f32393e87dfabefc2838d11","/challonge-core.js":"3a5f22848dabfa010725ee26f1ff95fe9accc091a01fbf89ad161ec3cfbb45ad","/auditoria-core.js":"f7cbe999deb6f4b197db1a1dd9ac93a193e60006adc1ed51d0842bd2ced75268","/app.js":"36af9c27c2be6fe4d5bc1722930d7917f4fdc46b12c30b7e4c96e42f09969c1d","/404.html":"aadb9cf9abe02e0b3fa857aedc753e26b17bff1e11f679bdbe06ac5e73fa799f","/dist/output.css":"740f23447c23327ae80c7f7428350b0b38438c636c7bf4c5f9fa278ca38accb0","/assets/𝐓𝐎𝐑𝐍𝐄𝐎 𝐃𝐄 𝐒𝐂𝐎𝐔𝐓𝐈𝐍𝐆 1 _ 𝐋𝐁𝐋 𝐓𝐈𝐄𝐑 𝟐 (respuestas).xlsx":"828ca58dd5c8cf1de7aef2b427994e793b5869cad14062ca80bdbf6b32539722","/assets/𝐎𝐩𝐞𝐧 𝐐𝐮𝐚𝐥𝐢𝐟𝐢𝐞𝐫 _ 𝐋𝐁𝐋  (Respuestas).xlsx":"916ca18756db3b9e67085105ccff2d4d8f62dd1a7a0533b75e465948e59df7c0","/assets/vacuos.png":"ef8e0fe3291de581003b384ad4fe6a0d2cec4d4588852fc0b77916abe8332a57","/assets/SEO LBL etiqueta.png":"247c42a1715f0398d34d755f4afb46fe14767a3bfa0f510b9c9bb15eab5cce99","/assets/scouting1.png":"4ed78afdc7cb8cdc5f25bc1bf01d93507bde375a97b75fd9c0efe704db486d64","/assets/scouting1.json":"54927003d388f924954ef107812aa67d6e5c4fba9a155788541032736eff2e83","/assets/qualifier.json":"75d3b1efa7cd2f037f7f4903c69c5a6a70ec304c7cf649589d6d37f6a74a9953","/assets/open_qualifier.png":"1ff3776a7eb51b317fb36a693acb5b8f7be0437e8646a006255bc22e5599a8c0","/assets/logo2.png":"a49efc03aa5ab916473290b87b55c545f93ed9e1629ea40b2f482f7bac16803b","/assets/logo.png":"d5360a4b8aab55ac538641646d0399335578dc53702349b6d8001e875667bc8d","/assets/LIGA_BOLIVIANA_DE_LEAGUE_OF_LEGENDS.png":"c2bc9f567354edd567f0433405bb400634f5a8bc539bea35ad5a643662ed9c03","/assets/LBL Circular.png":"00b2150d9fa569a2c41f393ae60d0fd9cdb6a60d6f29f69f608759dbea1ea026","/assets/icon-512.png":"d5360a4b8aab55ac538641646d0399335578dc53702349b6d8001e875667bc8d","/assets/icon-192.png":"d5360a4b8aab55ac538641646d0399335578dc53702349b6d8001e875667bc8d","/assets/icon 1 lbl square.png":"ed77997e7535a6f199bc32a6f9a3525cc3f12f4bd10ac4162aff2682f4fe289a","/assets/heraldo.png":"c681f36ee9b3728cc23ed690b70d79d172c59f0eb491127f55a1a50c4c06dbf6","/assets/BARON.png":"a1c2f9eae952228f849f6b391e07722a4c535709905a8b920aefffc4d9d579bd","/assets/icons staff/ren noroi.png":"e17f4da5903f4a5d29e1a1e574af0d17d7f7433bf2045473af81d633d929bb32","/assets/icons staff/Pol.png":"49529a8884e4c1b607beb3907b8f0d16dcf7ee6878ea95769e1e84ddd9289545","/assets/icons staff/luico.png":"e7f45006a20d2dc99c54cc6ec753c76a6a164e643228021e1b896e553fa2390c","/assets/icons staff/ketwi2.png":"c71d49a1a573b1b0ae739f593919ff8f0c5e548e8889fb0901f17f4c8ac326a4","/assets/icons staff/ketwi.png":"db7e15c20106c38ae9010c9e1cdf451cb176eb757d39baf2e3fb6781e021db33","/assets/icons staff/darkcito.png":"db8bb888e702e66c53ae76c4a25ba7b17874a4c7fcc6191aa9b3e85818ad7d55","/assets/icons staff/aliaselalex.png":"452cc3039e0403ce7130517f886e379f3f9b8b2db1cd8529307212e4e677673c","/sw.js":"b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669","/registro.html":"94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652","/scouting.html":"ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839","/index.html":"9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1","/editar.html":"443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276","/equipos.html":"5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41","/assets/icons staff/luico.webp":"d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d","/assets/scouting1.webp":"34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec","/assets/SEO LBL etiqueta.webp":"6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80","/assets/icons staff/ren noroi.webp":"10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214","/assets/icons staff/Pol.webp":"23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78","/assets/icons staff/ketwi.webp":"cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419","/assets/icons staff/darkcito.webp":"b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437","/assets/logo.webp":"e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89","/assets/icon-512.webp":"e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89","/assets/LIGA_BOLIVIANA_DE_LEAGUE_OF_LEGENDS.webp":"864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670","/assets/icon-192.webp":"e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89","/assets/logo2.webp":"cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804","/assets/open_qualifier.webp":"57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2","/assets/icons staff/ketwi2.webp":"de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243","/assets/LBL Circular.webp":"84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9","/assets/icons staff/aliaselalex.webp":"54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce","/assets/icon 1 lbl square.webp":"30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01","/torneos.html":"14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a","/dashboard.html":"c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6","/assets/heraldo.webp":"379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26","/assets/vacuos.webp":"d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f","/assets/BARON.webp":"67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1"}}
+[debug] [2026-09-02T16:09:14.420Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8:populateFiles 200
+[debug] [2026-09-02T16:09:14.421Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8:populateFiles {"uploadRequiredHashes":["c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6","443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276","de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243","5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41","9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1","14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a","b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437","84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9","67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1","54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce","10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214","23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78","cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419","cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804","d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d","b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669","864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670","d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f","6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80","e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89","379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26","30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01","ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839","94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652","34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec","57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files"}
+[debug] [2026-09-02T16:09:14.421Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.421Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.422Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.423Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.424Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.425Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:14.426Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6 [none]
+[debug] [2026-09-02T16:09:14.426Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6 [stream]
+[debug] [2026-09-02T16:09:14.428Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276 [none]
+[debug] [2026-09-02T16:09:14.428Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276 [stream]
+[debug] [2026-09-02T16:09:14.430Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243 [none]
+[debug] [2026-09-02T16:09:14.430Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243 [stream]
+[debug] [2026-09-02T16:09:14.431Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41 [none]
+[debug] [2026-09-02T16:09:14.431Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41 [stream]
+[debug] [2026-09-02T16:09:14.432Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1 [none]
+[debug] [2026-09-02T16:09:14.432Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1 [stream]
+[debug] [2026-09-02T16:09:14.433Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a [none]
+[debug] [2026-09-02T16:09:14.433Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a [stream]
+[debug] [2026-09-02T16:09:14.434Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437 [none]
+[debug] [2026-09-02T16:09:14.434Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437 [stream]
+[debug] [2026-09-02T16:09:14.435Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9 [none]
+[debug] [2026-09-02T16:09:14.435Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9 [stream]
+[debug] [2026-09-02T16:09:14.435Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1 [none]
+[debug] [2026-09-02T16:09:14.435Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1 [stream]
+[debug] [2026-09-02T16:09:14.436Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce [none]
+[debug] [2026-09-02T16:09:14.436Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce [stream]
+[debug] [2026-09-02T16:09:14.436Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214 [none]
+[debug] [2026-09-02T16:09:14.436Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214 [stream]
+[debug] [2026-09-02T16:09:14.437Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78 [none]
+[debug] [2026-09-02T16:09:14.437Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78 [stream]
+[debug] [2026-09-02T16:09:14.439Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419 [none]
+[debug] [2026-09-02T16:09:14.440Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419 [stream]
+[debug] [2026-09-02T16:09:14.440Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804 [none]
+[debug] [2026-09-02T16:09:14.440Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804 [stream]
+[debug] [2026-09-02T16:09:14.441Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d [none]
+[debug] [2026-09-02T16:09:14.441Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d [stream]
+[debug] [2026-09-02T16:09:14.441Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669 [none]
+[debug] [2026-09-02T16:09:14.441Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669 [stream]
+[debug] [2026-09-02T16:09:14.442Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670 [none]
+[debug] [2026-09-02T16:09:14.442Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670 [stream]
+[debug] [2026-09-02T16:09:14.443Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f [none]
+[debug] [2026-09-02T16:09:14.443Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f [stream]
+[debug] [2026-09-02T16:09:14.443Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80 [none]
+[debug] [2026-09-02T16:09:14.443Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80 [stream]
+[debug] [2026-09-02T16:09:14.444Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89 [none]
+[debug] [2026-09-02T16:09:14.444Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89 [stream]
+[debug] [2026-09-02T16:09:14.444Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26 [none]
+[debug] [2026-09-02T16:09:14.444Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26 [stream]
+[debug] [2026-09-02T16:09:14.445Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01 [none]
+[debug] [2026-09-02T16:09:14.445Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01 [stream]
+[debug] [2026-09-02T16:09:14.445Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839 [none]
+[debug] [2026-09-02T16:09:14.446Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839 [stream]
+[debug] [2026-09-02T16:09:14.446Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652 [none]
+[debug] [2026-09-02T16:09:14.446Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652 [stream]
+[debug] [2026-09-02T16:09:14.447Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec [none]
+[debug] [2026-09-02T16:09:14.447Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec [stream]
+[debug] [2026-09-02T16:09:14.448Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2 [none]
+[debug] [2026-09-02T16:09:14.448Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2 [stream]
+[debug] [2026-09-02T16:09:14.448Z] [hosting][populate queue][FINAL] {"max":624,"min":624,"avg":624,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":646}
+[debug] [2026-09-02T16:09:14.448Z] [hosting] uploads queued: 26
+[info] i  hosting: uploading new files [0/26] (0%) 
+[debug] [2026-09-02T16:09:16.316Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d 200
+[debug] [2026-09-02T16:09:16.316Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d0eced7fc552651ee9a5afcc057d0e6fb46e5896f45bd8962d58c87882aecf0d [stream]
+[debug] [2026-09-02T16:09:16.590Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652 200
+[debug] [2026-09-02T16:09:16.590Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/94a8ad8e523b00e144c29debdfdc055d89553f4ae6e351cbe59924427acdf652 [stream]
+[debug] [2026-09-02T16:09:16.591Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839 200
+[debug] [2026-09-02T16:09:16.591Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/ec95ec4055c039c1d0fb6b7d6e8d99f142e1de5296dfdc28b75ce3e1b9175839 [stream]
+[debug] [2026-09-02T16:09:16.694Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669 200
+[debug] [2026-09-02T16:09:16.695Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b448990d31a03f3bf6d490a1963f89297735a446f80d52fb86360f2b76467669 [stream]
+[debug] [2026-09-02T16:09:16.802Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1 200
+[debug] [2026-09-02T16:09:16.802Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/9f3c7c5b3405d20c3dbc7cefd10d30f7f3a3654989be28e755e9edce9c514ab1 [stream]
+[debug] [2026-09-02T16:09:17.691Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89 200
+[debug] [2026-09-02T16:09:17.691Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/e868748ef1abf2491cda5e561f8460a33d01989bcb637c195798fb16b29bea89 [stream]
+[debug] [2026-09-02T16:09:17.719Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a 200
+[debug] [2026-09-02T16:09:17.719Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/14ff51412711c9ea8d7e844b444a295843f81c898d49c5261346333b6da2350a [stream]
+[debug] [2026-09-02T16:09:17.760Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419 200
+[debug] [2026-09-02T16:09:17.760Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cac9bbf1a3d44ad41a1cba08f43dc72d633bf66081fce7c8c8b06b8e8aadb419 [stream]
+[info] i  hosting: uploading new files [8/26] (30%) 
+[debug] [2026-09-02T16:09:17.801Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276 200
+[debug] [2026-09-02T16:09:17.801Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/443769096da7c5b4b909673920d5a953c39bc5dbf191debd110f9afe17f9f276 [stream]
+[debug] [2026-09-02T16:09:17.851Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670 200
+[debug] [2026-09-02T16:09:17.851Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/864b66dce444680cbefcd94f5d03cb985893643358a1d4f3170680b4cb145670 [stream]
+[debug] [2026-09-02T16:09:17.864Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41 200
+[debug] [2026-09-02T16:09:17.864Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/5588b4de12fe658ef4e2dc16e32c2a4b8986e3c92eebb5b26c87ac10c40fbf41 [stream]
+[debug] [2026-09-02T16:09:18.093Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437 200
+[debug] [2026-09-02T16:09:18.093Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/b32c8364a938066b23f1fccf5598423b74d20d0611cb3fb9c872201842862437 [stream]
+[debug] [2026-09-02T16:09:18.125Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243 200
+[debug] [2026-09-02T16:09:18.125Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/de781d04808304d777d94532345e0b1bc553261edd44b8519efeec94179a1243 [stream]
+[debug] [2026-09-02T16:09:18.411Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214 200
+[debug] [2026-09-02T16:09:18.411Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/10ce13cedf39dba0c740e2fdc824ebca18ba89bb1670561a0c6e3c61a42f4214 [stream]
+[debug] [2026-09-02T16:09:18.477Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80 200
+[debug] [2026-09-02T16:09:18.477Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/6ae6a577546b1e48a0d17d8f984665803d4e3109c725db80e5a03e77b4c5ff80 [stream]
+[debug] [2026-09-02T16:09:18.627Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec 200
+[debug] [2026-09-02T16:09:18.627Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/34c03a14f7d60e4ae2ae7b67bcf7033e32bd433f3486df3de0733691762839ec [stream]
+[debug] [2026-09-02T16:09:18.978Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804 200
+[debug] [2026-09-02T16:09:18.978Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/cdf04a6a29f9db3c473ab6ec70d38d726fa01c7ef9f6c2c8c8346f80ab234804 [stream]
+[debug] [2026-09-02T16:09:18.985Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01 200
+[debug] [2026-09-02T16:09:18.986Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/30834f5a5d45f18a11ad7d479569c316ab950ffb0665ce51eafc94638674ca01 [stream]
+[debug] [2026-09-02T16:09:18.986Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce 200
+[debug] [2026-09-02T16:09:18.986Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/54951498b4fbcd025133bae039a012a2b79172dafc9f961778eeab7aa8bbf8ce [stream]
+[debug] [2026-09-02T16:09:19.116Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9 200
+[debug] [2026-09-02T16:09:19.116Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/84bdaff154ad1a319ecc71f5ffc935a8c2e8d91ee63e11948e219c0af4ee63c9 [stream]
+[debug] [2026-09-02T16:09:19.326Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2 200
+[debug] [2026-09-02T16:09:19.327Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/57130baa51844bab9f58e984d7e1dedde43bfac3430d4bce10b7350200e674a2 [stream]
+[debug] [2026-09-02T16:09:19.480Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26 200
+[debug] [2026-09-02T16:09:19.480Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/379954ce1fab65ecd879e767aca3ef713e9b87751a498ed677e8ccf6c0fc2d26 [stream]
+[debug] [2026-09-02T16:09:19.505Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f 200
+[debug] [2026-09-02T16:09:19.505Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/d18343c39b11649e21bd19a92f682be0540613794ebeaa1aba365bf8c4190a0f [stream]
+[info] i  hosting: uploading new files [23/26] (88%) 
+[info] i  hosting: uploading new files [23/26] (88%) 
+[debug] [2026-09-02T16:09:22.681Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1 200
+[debug] [2026-09-02T16:09:22.681Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/67d9fbe964723b7e642b1c3c435bfc7b5a7261700caa63a8a8c019f95de9f1b1 [stream]
+[info] i  hosting: uploading new files [24/26] (92%) 
+[debug] [2026-09-02T16:09:24.070Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6 200
+[debug] [2026-09-02T16:09:24.071Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/c2af1270304b51823dfdb6136640d13411542f6b0f8b4d54776e1badb6906cb6 [stream]
+[debug] [2026-09-02T16:09:25.084Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78 200
+[debug] [2026-09-02T16:09:25.084Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/lbl-esports/versions/7794e53a3c49fbe8/files/23dcd903543051f9672ec9a9969eed85fb74e8563e232996213b76397d10df78 [stream]
+[debug] [2026-09-02T16:09:25.084Z] [hosting][upload queue][FINAL] {"max":10661,"min":1892,"avg":4331.5,"active":0,"complete":26,"success":26,"errored":0,"retried":0,"total":26,"elapsed":10663}
+[info] i  hosting: upload complete 
+[info] +  hosting[lbl-esports]: file upload complete 
+[debug] [2026-09-02T16:09:25.085Z] [hosting] deploy completed after 11333ms
+[debug] [2026-09-02T16:09:25.085Z] [
+  {
+    "config": {
+      "public": "public",
+      "cleanUrls": true,
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "/sw.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.json",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/assets/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "/torneos/**",
+          "destination": "/torneos.html"
+        }
+      ],
+      "site": "lbl-esports"
+    },
+    "version": "projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8"
+  }
+]
+[info] i  hosting[lbl-esports]: finalizing version... 
+[debug] [2026-09-02T16:09:25.086Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:25.087Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:25.087Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions/7794e53a3c49fbe8 updateMask=status%2Cconfig
+[debug] [2026-09-02T16:09:25.088Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions/7794e53a3c49fbe8 {"status":"FINALIZED","config":{"rewrites":[{"glob":"/torneos/**","path":"/torneos.html"}],"headers":[{"glob":"/sw.js","headers":{"Cache-Control":"no-cache, no-store, must-revalidate"}},{"glob":"/manifest.json","headers":{"Cache-Control":"no-cache, no-store, must-revalidate"}},{"glob":"/assets/**","headers":{"Cache-Control":"public, max-age=31536000, immutable"}}],"cleanUrls":true}}
+[debug] [2026-09-02T16:09:27.027Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions/7794e53a3c49fbe8 200
+[debug] [2026-09-02T16:09:27.027Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/versions/7794e53a3c49fbe8 {"name":"projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/manifest.json"},{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"/assets/**"}],"rewrites":[{"glob":"/torneos/**","path":"/torneos.html"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-09-02T16:09:12.725810Z","createUser":{"email":"jhonatan123progame@gmail.com"},"finalizeTime":"2026-09-02T16:09:26.211212Z","finalizeUser":{"email":"jhonatan123progame@gmail.com"}}
+[debug] [2026-09-02T16:09:27.027Z] [hosting] finalized version for lbl-esports:[object Object]
+[info] +  hosting[lbl-esports]: version finalized 
+[info] i  hosting[lbl-esports]: releasing new version... 
+[debug] [2026-09-02T16:09:27.028Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:27.028Z] Checked if tokens are valid: true, expires at: 1788368764121
+[debug] [2026-09-02T16:09:27.028Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/channels/live/releases versionName=projects%2F124596723477%2Fsites%2Flbl-esports%2Fversions%2F7794e53a3c49fbe8
+[debug] [2026-09-02T16:09:27.028Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/channels/live/releases {}
+[debug] [2026-09-02T16:09:27.796Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/channels/live/releases 200
+[debug] [2026-09-02T16:09:27.797Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/lbl-esports/channels/live/releases {"name":"projects/124596723477/sites/lbl-esports/channels/live/releases/1788365366304000","version":{"name":"projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/manifest.json"},{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"/assets/**"}],"rewrites":[{"glob":"/torneos/**","path":"/torneos.html"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-09-02T16:09:12.725810Z","createUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"},"finalizeTime":"2026-09-02T16:09:26.211212Z","finalizeUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"}},"type":"DEPLOY","releaseTime":"2026-09-02T16:09:26.304Z","releaseUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"}}
+[debug] [2026-09-02T16:09:27.797Z] [hosting] release: {"name":"projects/124596723477/sites/lbl-esports/channels/live/releases/1788365366304000","version":{"name":"projects/124596723477/sites/lbl-esports/versions/7794e53a3c49fbe8","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/manifest.json"},{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"/assets/**"}],"rewrites":[{"glob":"/torneos/**","path":"/torneos.html"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-09-02T16:09:12.725810Z","createUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"},"finalizeTime":"2026-09-02T16:09:26.211212Z","finalizeUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"}},"type":"DEPLOY","releaseTime":"2026-09-02T16:09:26.304Z","releaseUser":{"email":"jhonatan123progame@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocIuGf-eghvwFwDwu5AfRUw1d5vhF-fhVhonix_gBYrOBFb0F-vftw"}}
+[info] +  hosting[lbl-esports]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/lbl-esports/overview
+[info] Hosting URL: https://lbl-esports.web.app

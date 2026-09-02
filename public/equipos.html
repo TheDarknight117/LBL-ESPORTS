@@ -56,7 +56,7 @@
 
     <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
         <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-10 w-auto object-contain">
+            <img src="assets/logo.webp" decoding="async" onerror="this.src='assets/logo.png'" alt="LBL" class="h-10 w-auto object-contain">
             <span class="text-xl font-black tracking-widest uppercase italic hidden sm:block"><span class="text-blue-500">LBL</span></span>
             <span id="staff-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)] ml-2">
                 <i class="fas fa-shield-alt"></i> Staff View
@@ -104,7 +104,7 @@
 
             <div id="modal-header" class="p-6 md:p-8 border-b border-gray-800 flex flex-col md:flex-row items-start md:items-center gap-6 shrink-0 relative overflow-hidden rounded-t-3xl">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent -z-10"></div>
-                <img id="modal-logo" src="" class="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-xl bg-black/50 p-2 border border-gray-800 shrink-0">
+                <img id="modal-logo" src="" loading="lazy" decoding="async" class="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-xl bg-black/50 p-2 border border-gray-800 shrink-0" alt="Logo Equipo">
                 <div class="w-full min-w-0">
                     <div class="flex items-center gap-2 mb-1 flex-wrap">
                         <span id="modal-tier" class="text-[10px] font-black tracking-widest px-2.5 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 uppercase">Tier</span>
@@ -159,7 +159,7 @@
     <!-- BANNER FLOTANTE: SUGERENCIA DE INSTALACIÓN SOLO PARA MÓVILES -->
     <div id="mobile-pwa-banner" class="fixed bottom-4 left-4 right-4 z-50 bg-[#0a0a0a]/95 backdrop-blur-md p-4 rounded-2xl border border-yellow-500/40 shadow-[0_0_25px_rgba(234,179,8,0.3)] hidden flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-500 translate-y-20 opacity-0">
         <div class="flex items-center gap-3.5 w-full sm:w-auto">
-            <img src="assets/LBL Circular.png" alt="LBL App" class="w-12 h-12 rounded-xl object-contain border border-yellow-500/40 p-1 bg-black shrink-0 shadow-inner">
+            <img src="assets/LBL Circular.webp" decoding="async" loading="lazy" onerror="this.src='assets/LBL Circular.png'" alt="LBL App" class="w-12 h-12 rounded-xl object-contain border border-yellow-500/40 p-1 bg-black shrink-0 shadow-inner">
             <div class="min-w-0 flex-grow">
                 <div class="flex items-center gap-2">
                     <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-yellow-500 text-black">LBL Oficial</span>
@@ -265,7 +265,7 @@
                         ${btnWapp}
                     </div>
                     <div class="w-24 h-24 mx-auto mb-4 bg-black p-2 rounded-2xl border border-gray-800 group-hover:border-gray-600 transition-colors shadow-inner">
-                        <img src="${logoAUsar}" onerror="this.src='https://ui-avatars.com/api/?name=${eq.equipo.nombre}&background=0D0D0D&color=fff'" class="w-full h-full object-contain drop-shadow-lg">
+                        <img src="${logoAUsar}" loading="lazy" decoding="async" onerror="this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent('${eq.equipo.nombre}') + '&background=0D0D0D&color=fff'" alt="${eq.equipo.nombre}" class="w-full h-full object-contain drop-shadow-lg">
                     </div>
                     <h3 class="text-xl font-black uppercase tracking-tight mb-2 truncate px-2 text-white">${eq.equipo.nombre}</h3>
                     

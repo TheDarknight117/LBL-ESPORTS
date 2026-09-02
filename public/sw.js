@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v96';
+const CACHE_NAME = 'lbl-cache-v97';
 const ASSETS = [
   '/',
   '/torneos',
@@ -10,13 +10,17 @@ const ASSETS = [
   '/auditoria-core.js',
   '/staff-config.js',
   '/dist/output.css',
+  '/assets/logo.webp',
   '/assets/logo.png',
-  '/assets/logo2.png',
-  '/assets/LBL%20Circular.png',
-  '/assets/SEO%20LBL%20etiqueta.png',
+  '/assets/logo2.webp',
+  '/assets/LBL%20Circular.webp',
+  '/assets/BARON.webp',
+  '/assets/vacuos.webp',
+  '/assets/scouting1.webp',
+  '/assets/open_qualifier.webp',
+  '/assets/SEO%20LBL%20etiqueta.webp',
   '/assets/scouting1.json',
-  '/assets/qualifier.json',
-  '/assets/heraldo.png'
+  '/assets/qualifier.json'
 ];
 
 // Install Event - cache assets
@@ -42,12 +46,16 @@ self.addEventListener('activate', (e) => {
 
 // Fetch Event - Stale-while-revalidate strategy for local assets
 self.addEventListener('fetch', (e) => {
-  // Cache external team logos (Discord CDN, Imgur, Firebase Storage, Google, etc.)
+  // Cache external team logos (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.)
   if (!e.request.url.startsWith(self.location.origin)) {
     const isImage = e.request.destination === 'image' || 
                     e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
                     e.request.url.includes('discordapp') ||
                     e.request.url.includes('imgur.com') ||
+                    e.request.url.includes('ibb.co') ||
+                    e.request.url.includes('postimg.') ||
+                    e.request.url.includes('postimages.org') ||
+                    e.request.url.includes('ui-avatars.com') ||
                     e.request.url.includes('firebasestorage') ||
                     e.request.url.includes('googleusercontent.com');
 

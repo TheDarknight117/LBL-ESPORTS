@@ -66,7 +66,7 @@
 
     <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
         <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">   
-            <img src="assets/logo.png" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=3B82F6'" alt="LBL" class="h-10 w-auto object-contain">
+            <img src="assets/logo.webp" decoding="async" onerror="this.src='assets/logo.png'" alt="LBL" class="h-10 w-auto object-contain">
             <span class="text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-cyan-400">LEAGUE OF LEGENDS</span></span>
             <span id="staff-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)] ml-2">
                 <i class="fas fa-shield-alt"></i> Staff View
@@ -90,13 +90,13 @@
             <!-- Selector de Torneo (Botones con Logos) -->
             <div class="flex flex-row overflow-x-auto md:overflow-x-visible justify-center items-center gap-3 md:gap-6 max-w-3xl mx-auto mb-8 no-scrollbar pb-2 px-4 w-full">
                 <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/scouting1.png" alt="Scouting Tournament 1" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
                 <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/logo2.png" alt="Scouting Tournament 2" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
                 <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/open_qualifier.png" alt="Open Qualifier" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
             </div>
         </div>
@@ -104,12 +104,23 @@
         <!-- Sección de Descripción del Torneo Activo -->
         <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-7xl mx-auto mb-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/5 shadow-lg w-full">
             <div class="flex justify-center shrink-0 w-full md:w-auto">
-                <img id="td-logo" src="assets/logo2.png" alt="Torneo Logo" class="h-20 md:h-28 w-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+                <img id="td-logo" src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Torneo Logo" class="h-20 md:h-28 w-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]">
             </div>
             <div class="text-left w-full">
                 <p id="td-text" class="text-gray-300 text-sm md:text-base leading-relaxed font-medium">
                     <!-- Cargado dinámicamente -->
                 </p>
+            </div>
+        </div>
+
+        <div id="qualifier-extra-banner" class="hidden max-w-7xl mx-auto mb-10 p-6 md:p-8 glass-panel rounded-3xl border border-cyan-500/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+            <div class="space-y-3 max-w-2xl text-left">
+                <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-black uppercase tracking-widest"><i class="fas fa-trophy mr-1"></i> Torneo Oficial LBL</span>
+                <h3 class="text-2xl md:text-3xl font-black uppercase italic tracking-tight text-white leading-none">Clasificatorio Abierto a Tier 1 y Tier 2</h3>
+                <p class="text-xs md:text-sm text-gray-400 font-medium">Los mejores equipos compitieron por un cupo directo a la Liga Boliviana de League of Legends. Consulta aquí los rosters oficiales y estadísticas del clasificatorio.</p>
+            </div>
+            <div class="shrink-0 flex items-center justify-center">
+                <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier Logo" class="h-16 w-auto object-contain">
             </div>
         </div>
 
@@ -263,22 +274,22 @@
             btn2.className = normalClass;
             btnQual.className = normalClass;
 
-            // Datos de descripción por Torneo
+            // Datos de descripción por Torneo (Optimizados WebP)
             const descripciones = {
                 1: {
-                    logo: "assets/scouting1.png",
+                    logo: "assets/scouting1.webp",
                     text: "Fue el primer paso de la Liga Boliviana, esto propuso la antesala para reclutar a los primeros equipos que conformarian nuestra liga, se realizo en Septiembre de 2025, con +50 equipos inscritos y +300 jugadores registrados, de los cuales solo unos pocos fueron invitados por su gran desempeño en la competencia.",
                     shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
                 },
                 2: {
-                    logo: "assets/logo2.png",
+                    logo: "assets/logo2.webp",
                     text: "El Scouting Tournament 2 tuvo la maxima cantidad de equipos registrados de entre todos los torneos de clasificacion que tuvimos hasta la fecha, con la gran suma de 87 equipos en competencia con +500 jugadores inscritos... Fue sin duda uno de los Torneos de Scouting mas grandes que hicimos...",
                     shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
                 },
                 3: {
-                    logo: "assets/open_qualifier.png",
-                    text: "El Open Qualifier fue un torneo que realizamos por la exigencia misma de nuestra comunidad, el planteamiento original era realizar el Scouting Tournament 3 a fines de 2026, pero al ver tanto apoyo de nuestra comunidad, decidimos hacer un torneo para buscar mas equipos que entrarian a Tier 2, y nació el Open Qualifier, y nos gusto la idea de un torneo a mediados de año y posiblemente se vuelva a repetir... Contamos con 32 equipos y +200 jugadores registrados.",
-                    shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+                    logo: "assets/open_qualifier.webp",
+                    text: "El Open Qualifier fue el torneo clasificatorio definitivo donde se definieron los cupos finales para el Tier 1 y Tier 2 de la Liga Boliviana de League of Legends. Equipos de todo el país compitieron intensamente en llaves eliminatorias por el acceso al circuito oficial.",
+                    shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.25)]"
                 }
             };
 
