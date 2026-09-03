@@ -50,7 +50,9 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'kaox blue':          { nombre: 'Kaox Blue', tag: 'KXB', logo: '/assets/teams/kaox_blue.webp', logoFallback: 'https://i.ibb.co/FbYdnqM5/KAOX-BLUE.png', tier: 'Torneos Pasados' },
     'kaox purple':        { nombre: 'Kaox Purple', tag: 'KXP', logo: '/assets/teams/kaox_purple.webp', logoFallback: 'https://i.ibb.co/zWZwFbRh/Kao-X-purple.png', tier: 'Torneos Pasados' },
     'viktus':             { nombre: 'Viktus', tag: 'VKT', logo: '/assets/teams/viktus.webp', logoFallback: 'https://i.ibb.co/WNXgSRMT/Viktus-O.png', tier: 'Torneos Pasados' },
-    'solo kill pro':      { nombre: 'Solo Kill Pro', tag: 'SKP', logo: '/assets/teams/solo_kill_pro.webp', logoFallback: 'https://i.ibb.co/spm5rQxf/Solo-Kill-pro.png', tier: 'Torneos Pasados' }
+    'solo kill pro':      { nombre: 'Solo Kill Pro', tag: 'SKP', logo: '/assets/teams/solo_kill_pro.webp', logoFallback: 'https://i.ibb.co/spm5rQxf/Solo-Kill-pro.png', tier: 'Torneos Pasados' },
+    'nox reign esports':  { nombre: 'NOX REIGN ESPORTS', tag: 'NRE', logo: '/assets/teams/nox_reign.webp', logoFallback: 'https://i.ibb.co/nMPB9pMw/nox-reign-nuevo.png', tier: 'Torneos Pasados' },
+    'nox reign':          { nombre: 'NOX REIGN ESPORTS', tag: 'NRE', logo: '/assets/teams/nox_reign.webp', logoFallback: 'https://i.ibb.co/nMPB9pMw/nox-reign-nuevo.png', tier: 'Torneos Pasados' }
 };
 
 /**
@@ -122,6 +124,7 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     if (cleanTag === 'KXP' || cleanName.includes('kaox purple') || cleanUrl.includes('kao-x-purple') || cleanUrl.includes('zwzwfbrh')) return '/assets/teams/kaox_purple.webp';
     if (cleanTag === 'VKT' || cleanName.includes('viktus') || cleanUrl.includes('viktus') || cleanUrl.includes('wnxgsrmt')) return '/assets/teams/viktus.webp';
     if (cleanTag === 'SKP' || cleanName.includes('solo kill') || cleanUrl.includes('solo-kill') || cleanUrl.includes('spm5rqxf')) return '/assets/teams/solo_kill_pro.webp';
+    if (cleanTag === 'NRE' || cleanName.includes('nox reign') || cleanUrl.includes('nox-reign') || cleanUrl.includes('nmpb9pmw')) return '/assets/teams/nox_reign.webp';
 
     // 9. Resto de equipos oficiales
     if (cleanUrl.includes('sge') || cleanUrl.includes('nm64w9kn') || cleanName.includes('strugglers') || cleanTag === 'SGE') return '/assets/teams/strugglers_esports.webp';

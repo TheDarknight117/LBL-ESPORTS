@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v116';
+const CACHE_NAME = 'lbl-cache-v117';
 const ASSETS = [
   '/',
   '/torneos',
@@ -41,7 +41,8 @@ const ASSETS = [
   '/assets/teams/kaox_blue.webp',
   '/assets/teams/kaox_purple.webp',
   '/assets/teams/viktus.webp',
-  '/assets/teams/solo_kill_pro.webp'
+  '/assets/teams/solo_kill_pro.webp',
+  '/assets/teams/nox_reign.webp'
 ];
 
 // Install Event - cache assets
