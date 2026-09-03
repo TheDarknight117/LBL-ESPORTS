@@ -136,36 +136,42 @@
 
 /* --- REGLAS DEFINITIVAS DE CRONOGRAMA: LOGOS LIBRES, TAGS Y VISIBILIDAD RESPONSIVE --- */
 .cronograma-team-logo {
-    width: 52px !important;
-    height: 52px !important;
-    max-width: 52px !important;
-    max-height: 52px !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    max-width: 48px !important;
+    max-height: 48px !important;
     object-fit: contain !important;
     flex-shrink: 0 !important;
-    filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.4)) !important;
+    filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)) !important;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .cronograma-team-logo:hover {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 16px rgba(6, 182, 212, 0.7)) !important;
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.7)) !important;
 }
 
 @media (min-width: 640px) {
     .cronograma-team-logo {
-        width: 68px !important;
-        height: 68px !important;
-        max-width: 68px !important;
-        max-height: 68px !important;
+        width: 56px !important;
+        height: 56px !important;
+        min-width: 56px !important;
+        min-height: 56px !important;
+        max-width: 56px !important;
+        max-height: 56px !important;
     }
 }
 
 @media (min-width: 1024px) {
     .cronograma-team-logo {
-        width: 76px !important;
-        height: 76px !important;
-        max-width: 76px !important;
-        max-height: 76px !important;
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        max-width: 64px !important;
+        max-height: 64px !important;
     }
 }
 

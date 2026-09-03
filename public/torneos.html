@@ -1580,11 +1580,11 @@
                     const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
-                        <div class="p-3.5 sm:p-4 md:p-5 rounded-2xl bg-[#040814] hover:bg-[#081022] border border-gray-800/80 hover:border-cyan-500/40 transition-all shadow-md space-y-3 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
+                        <div class="p-4 sm:p-5 rounded-2xl bg-[#040814] hover:bg-[#081022] border border-gray-800/80 hover:border-cyan-500/40 transition-all shadow-xl space-y-3 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
                             <!-- FILA PRINCIPAL: FECHA/HORA/ESTADO (IZQ) Y ENFRENTAMIENTO (DER) -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <!-- LADO IZQUIERDO: FECHA, HORA Y ESTADO -->
-                                <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                                <div class="flex items-center md:items-start justify-between md:justify-center md:flex-col gap-2 shrink-0 md:w-40">
                                     <div class="flex flex-col">
                                         <span class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
                                             <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
@@ -1593,27 +1593,29 @@
                                             ${dt.fechaTexto}
                                         </span>
                                     </div>
-                                    <div class="ml-1">
+                                    <div>
                                         ${stateBadge}
                                     </div>
                                 </div>
 
                                 <!-- CENTRO / DERECHA: EQUIPO 1 [TAG + NOMBRE + LOGO] [VS/SCORE] [LOGO + NOMBRE + TAG] EQUIPO 2 -->
-                                <div class="flex items-center justify-center sm:justify-end gap-2.5 sm:gap-4 md:gap-5 flex-1 min-w-0">
+                                <div class="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 flex-1 min-w-0">
                                     <!-- Equipo 1 -->
-                                    <div class="flex items-center justify-end gap-2.5 sm:gap-3.5 flex-1 min-w-0">
+                                    <div class="flex items-center justify-end gap-2 sm:gap-3 flex-1 min-w-0">
                                         ${p1TagBadge}
-                                        <span class="cronograma-team-name text-base sm:text-lg md:text-xl lg:text-2xl font-black text-white uppercase tracking-tight text-right leading-tight ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1FormattedName}</span>
+                                        <span class="cronograma-team-name text-xs sm:text-sm md:text-base font-black text-white uppercase tracking-wider text-right leading-tight ${scoreData.p1Winner ? 'text-cyan-300' : ''}" style="max-width: 170px;" title="${p1Name}">${p1FormattedName}</span>
                                         ${p1Avatar}
                                     </div>
 
                                     <!-- Marcador central / VS -->
-                                    ${centerStatusHTML}
+                                    <div class="shrink-0 flex items-center justify-center px-1">
+                                        ${centerStatusHTML}
+                                    </div>
 
                                     <!-- Equipo 2 -->
-                                    <div class="flex items-center justify-start gap-2.5 sm:gap-3.5 flex-1 min-w-0">
+                                    <div class="flex items-center justify-start gap-2 sm:gap-3 flex-1 min-w-0">
                                         ${p2Avatar}
-                                        <span class="cronograma-team-name text-base sm:text-lg md:text-xl lg:text-2xl font-black text-white uppercase tracking-tight text-left leading-tight ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2FormattedName}</span>
+                                        <span class="cronograma-team-name text-xs sm:text-sm md:text-base font-black text-white uppercase tracking-wider text-left leading-tight ${scoreData.p2Winner ? 'text-cyan-300' : ''}" style="max-width: 170px;" title="${p2Name}">${p2FormattedName}</span>
                                         ${p2TagBadge}
                                     </div>
                                 </div>
