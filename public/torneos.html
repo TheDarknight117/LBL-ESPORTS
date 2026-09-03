@@ -914,7 +914,8 @@
 
                 const numMatches = datos.matches?.length || 0;
                 const numEquipos = datos.totalEquipos ?? datos.participantes?.length ?? 0;
-                const formatoLabel = t.formatoLabel || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
+                const rawFormato = (t.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop();
+                const formatoLabel = rawFormato || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
 
                 html += `
                     <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-6 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between match-card-anim" style="animation-delay: ${Math.min(idx * 0.04, 0.24)}s;">
@@ -1054,8 +1055,9 @@
             const countText = document.getElementById('txt-matches-count');
             const feedSection = document.getElementById('section-feed-matches');
 
+            const cleanFmt = (docTorneo.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop();
             if (titleEl) titleEl.innerText = docTorneo.nombre || torneo.nombre || 'Torneo LBL';
-            if (formatBadge) formatBadge.innerText = `Formato: ${docTorneo.formatoLabel || torneo.tipoFormatLabel || 'Doble Eliminación'}`;
+            if (formatBadge) formatBadge.innerText = `Formato: ${cleanFmt || 'Doble Eliminación'}`;
             if (descEl) descEl.innerText = `Torneo ${docTorneo.categoria === 'liga_lbl' ? 'oficial de la Liga LBL' : 'Abierto de Esports'} • División: ${docTorneo.division || 'General'}`;
 
             if (statusBadge) {
@@ -1091,10 +1093,14 @@
             titleEl.innerText = torneo.nombre || docTorneo.nombre || 'Torneo LBL';
             const tipoFormat = (torneo.tipoFormat || docTorneo.formatoLabel || 'single_elimination').toLowerCase();
             
-            let formatText = docTorneo.formatoLabel || 'Eliminatoria Directa';
-            if (tipoFormat.includes('double')) formatText = 'Eliminatoria Doble (Upper / Lower)';
-            else if (tipoFormat.includes('round') || tipoFormat.includes('group')) formatText = 'Fase de Grupos';
-            else if (tipoFormat.includes('swiss')) formatText = 'Sistema Suizo';
+            const cleanDocFmt = (docTorneo.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop();
+            let formatText = cleanDocFmt;
+            if (!formatText) {
+                if (tipoFormat.includes('double')) formatText = 'Eliminatoria Doble (Upper / Lower)';
+                else if (tipoFormat.includes('round') || tipoFormat.includes('group')) formatText = 'Fase de Grupos';
+                else if (tipoFormat.includes('swiss')) formatText = 'Sistema Suizo';
+                else formatText = 'Eliminatoria Directa';
+            }
             
             formatBadge.innerText = `Formato: ${formatText}`;
             if (countText) countText.innerText = `${torneo.matches.length} partidas registradas`;
@@ -1649,7 +1655,7 @@
                     const rondaText = m.group_id 
                         ? `FASE DE GRUPOS • JORNADA ${m.round || 1}`
                         : (m.round > 0 ? `RONDA ${m.round}` : `LOWER BRACKET • RONDA ${Math.abs(m.round)}`);
-                    const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
+                    const formatoText = (docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)').split(',').map(s => s.trim()).filter(Boolean).pop() || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
                         <div class="p-4 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">

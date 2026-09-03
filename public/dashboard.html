@@ -1050,9 +1050,9 @@
         // --- SISTEMA DE PILLS / ETIQUETAS DINÁMICAS PARA PARTICIPANTES Y FORMATO ---
         const PARTICIPANTES_POR_CATEGORIA = {
             'liga_lbl': ['Tier 1', 'Tier 2'],
-            'clasificacion_lbl': ['Tier 1, Tier 2', 'Tier 1', 'Tier 2', 'Open Qualifier'],
-            'lbl_series': ['Tier 1', 'Tier 2', 'Comunidad'],
-            'abierto': ['Open Qualifier', 'Scouting', 'Comunidad', 'Tier 2, Tier 1']
+            'clasificacion_lbl': ['Scouting', 'Open Qualifier'],
+            'lbl_series': ['ARAM', 'TFT', 'Challenge'],
+            'abierto': ['Rising Stars', 'Low Elo', 'Mid Elo', 'High Elo']
         };
 
         const OPCIONES_FORMATOS = [
@@ -1074,7 +1074,15 @@
             participantesSeleccionados.clear();
 
             if (preseleccionado) {
-                preseleccionado.split(',').map(s => s.trim()).filter(Boolean).forEach(p => participantesSeleccionados.add(p));
+                const parts = preseleccionado.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+                opciones.forEach(op => {
+                    if (parts.includes(op.toLowerCase())) {
+                        participantesSeleccionados.add(op);
+                    }
+                });
+                if (participantesSeleccionados.size === 0 && opciones.length > 0) {
+                    participantesSeleccionados.add(opciones[0]);
+                }
             } else if (opciones.length > 0) {
                 participantesSeleccionados.add(opciones[0]);
             }
@@ -1103,7 +1111,9 @@
 
         window.togglePillParticipante = (op) => {
             if (participantesSeleccionados.has(op)) {
-                participantesSeleccionados.delete(op);
+                if (participantesSeleccionados.size > 1) {
+                    participantesSeleccionados.delete(op);
+                }
             } else {
                 participantesSeleccionados.add(op);
             }
@@ -1114,9 +1124,18 @@
         window.actualizarPillsFormatos = (preseleccionado = null) => {
             formatosSeleccionados.clear();
             if (preseleccionado) {
-                preseleccionado.split(',').map(s => s.trim()).filter(Boolean).forEach(f => formatosSeleccionados.add(f));
+                const lista = preseleccionado.split(',').map(s => s.trim()).filter(Boolean);
+                const encontrado = lista.reverse().find(f => 
+                    OPCIONES_FORMATOS.some(opt => opt.toLowerCase() === f.toLowerCase())
+                );
+                if (encontrado) {
+                    const exact = OPCIONES_FORMATOS.find(opt => opt.toLowerCase() === encontrado.toLowerCase());
+                    formatosSeleccionados.add(exact);
+                } else {
+                    formatosSeleccionados.add(lista[0] || 'Doble Eliminación');
+                }
             } else {
-                formatosSeleccionados.add('Doble Eliminación');
+                formatosSeleccionados.add('Fase de Grupos + Playoffs');
             }
             renderPillsFormatos();
         };
@@ -1141,11 +1160,8 @@
         }
 
         window.togglePillFormato = (op) => {
-            if (formatosSeleccionados.has(op)) {
-                formatosSeleccionados.delete(op);
-            } else {
-                formatosSeleccionados.add(op);
-            }
+            formatosSeleccionados.clear();
+            formatosSeleccionados.add(op);
             renderPillsFormatos();
         };
 
@@ -1209,7 +1225,7 @@
             const categoria = document.getElementById('t-categoria').value;
             const division = Array.from(participantesSeleccionados).join(', ');
             const estado = document.getElementById('t-estado').value;
-            const formatoLabel = Array.from(formatosSeleccionados).join(', ');
+            const formatoLabel = Array.from(formatosSeleccionados).pop() || 'Doble Eliminación';
 
             // Extraer slug limpio sin error de prefijo de idioma
             const slug = extraerChallongeSlug(rawSlug) || rawSlug.trim();
@@ -1308,7 +1324,7 @@
                     estado: autoEstado,
                     actualizadoEn: new Date().toISOString(),
                     ultimaSincronizacionTimestamp: Date.now(),
-                    formatoLabel: torneoItem.formatoLabel || resultado.tipoFormatLabel || 'Doble Eliminación',
+                    formatoLabel: (torneoItem.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop() || 'Doble Eliminación',
                     podio: resultado.podio,
                     challongeStandings: resultado.challongeStandings,
                     participantes: resultado.participantes,
