@@ -2767,6 +2767,7 @@
                 
                 alert("✅ ¡Base de datos y auditoría actualizadas con éxito!");
                 await cargarDatos();
+                try { localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equiposLocales.filter(e => e.estado === 'Aceptado'))); } catch(err){}
                 verEquipo(id);
                 switchTab('audit'); 
             } catch(e) {

@@ -413,36 +413,34 @@
         } catch(e) {}
 
         function obtenerLogoEquipo(equipoObj, nombreStr) {
-            const rawLogo = equipoObj?.logo || equipoObj?.lblInfo?.logo || '';
+            const rawLogo = (equipoObj?.logo || equipoObj?.lblInfo?.logo || '').trim();
             const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim();
-            const tagToSearch = equipoObj?.tag || equipoObj?.lblInfo?.tag || '';
-            
-            // 1. Intentar mapeo adaptativo WebP
-            if (typeof obtenerLogoAdaptativoWebp === 'function') {
-                const optLogo = obtenerLogoAdaptativoWebp(rawLogo, nameToSearch, tagToSearch);
-                if (optLogo && (optLogo.endsWith('.webp') || optLogo.startsWith('data:image/webp'))) return optLogo;
-            } else if (typeof mapearLogoAWebp === 'function') {
-                const optLogo = mapearLogoAWebp(rawLogo, nameToSearch, tagToSearch);
-                if (optLogo && optLogo.endsWith('.webp')) return optLogo;
-            }
+            const tagToSearch = (equipoObj?.tag || equipoObj?.lblInfo?.tag || '').trim();
 
             if (!nameToSearch || nameToSearch.toLowerCase() === 'tbd') return '';
 
-            // 2. Buscar en memoria/Firestore
+            // 1. PRIORIDAD MÁXIMA: Buscar en Firestore (datos editados en Dashboard / registro)
             const cleanSearch = nameToSearch.toLowerCase().replace(/\s*\(.*?\)\s*/g, '').trim();
             const found = listaEquiposAceptadosCache.find(eq => {
                 const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
                 const tag = (eq.equipo?.tag || '').trim().toLowerCase();
                 return nom === cleanSearch || tag === cleanSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
             });
-            if (found && found.equipo?.logo) {
-                if (typeof obtenerLogoAdaptativoWebp === 'function') {
-                    return obtenerLogoAdaptativoWebp(found.equipo.logo, found.equipo.nombre, found.equipo.tag);
-                }
-                return found.equipo.logo;
+            if (found && found.equipo?.logo && found.equipo.logo.trim()) {
+                return found.equipo.logo.trim();
             }
 
-            // 3. Buscar en diccionario oficial de respaldo
+            // 2. Si el objeto ya trae su propio logo válido
+            if (rawLogo) {
+                return rawLogo;
+            }
+
+            // 3. PRIORIDAD SECUNDARIA: Respaldo estático local oficial
+            if (typeof mapearLogoAWebp === 'function') {
+                const optLogo = mapearLogoAWebp('', nameToSearch, tagToSearch);
+                if (optLogo && optLogo.endsWith('.webp')) return optLogo;
+            }
+
             if (OFFICIAL_LBL_TEAM_LOGOS) {
                 const fbKey = Object.keys(OFFICIAL_LBL_TEAM_LOGOS).find(k => {
                     if (cleanSearch === 'aether core' && k.includes('academy')) return false;
@@ -454,7 +452,7 @@
                 }
             }
 
-            return rawLogo || '';
+            return '';
         }
 
         // --- DEDUPLICADOR ROBUSTO DE TORNEOS ---

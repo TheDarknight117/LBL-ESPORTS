@@ -54,6 +54,10 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
+    if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') || cleanUrl.startsWith('data:')) {
+        return url;
+    }
+
     if (cleanUrl.includes('anti_kaox') || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanTag === 'AKX') return '/assets/teams/anti_kaox.webp';
     if (cleanUrl.includes('ruined_king') || cleanName.includes('ruined') || cleanTag === 'RK') return '/assets/teams/ruined_king.webp';
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
@@ -123,8 +127,8 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
     }
 
     if (hallado) {
-        const rawLogo = hallado.equipo?.logo || '';
-        const optLogo = mapearLogoAWebp(rawLogo, hallado.equipo?.nombre, hallado.equipo?.tag);
+        const rawLogo = (hallado.equipo?.logo || '').trim();
+        const optLogo = rawLogo || mapearLogoAWebp('', hallado.equipo?.nombre, hallado.equipo?.tag);
         return {
             id: hallado.id,
             nombre: hallado.equipo?.nombre || participantName,
