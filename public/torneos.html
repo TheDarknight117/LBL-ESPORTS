@@ -508,6 +508,15 @@
             return unicos;
         }
 
+        function calcularFingerprintTorneos(lista) {
+            if (!Array.isArray(lista)) return '';
+            return lista.map(t => {
+                const matches = t.datosChallonge?.matches || t.matches || [];
+                const mFp = matches.map(m => `${m.id || ''}:${m.state || ''}:${m.scores_csv || ''}`).join('|');
+                return `${t.id}:${t.nombre}:${t.estado}:${t.actualizadoEn || ''}:${matches.length}:${mFp}`;
+            }).join(';;');
+        }
+
         // --- ESTADO GLOBAL DE NAVEGACIÓN Y MULTITORNEOS ---
         // --- ESTADO GLOBAL DE NAVEGACIÓN Y MULTITORNEOS ---
         const DEFAULT_TORNEOS_INICIALES = [
@@ -758,13 +767,13 @@
                         });
                         if (lista.length > 0) {
                             const nuevaDeduplicada = deduplicarTorneos(lista);
-                            const prevRaw = localStorage.getItem('lbl_torneos_registrados_cache') || '';
-                            const nuevoRaw = JSON.stringify(nuevaDeduplicada);
+                            const currentFp = calcularFingerprintTorneos(listaTorneosRegistrados);
+                            const newFp = calcularFingerprintTorneos(nuevaDeduplicada);
                             
                             // Solo re-renderizar si realmente cambiaron los datos
-                            if (prevRaw !== nuevoRaw) {
+                            if (currentFp !== newFp) {
                                 listaTorneosRegistrados = nuevaDeduplicada;
-                                localStorage.setItem('lbl_torneos_registrados_cache', nuevoRaw);
+                                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(nuevaDeduplicada));
                                 renderizarVista(false);
                             }
                         }
@@ -992,14 +1001,14 @@
         window.cambiarEtapa = (etapa) => {
             etapaActiva = etapa;
             actualizarTabsUI(etapaActiva);
-            renderizarTorneoDetalle();
+            renderizarTorneoDetalle(true);
             actualizarURL(true);
         };
 
         window.getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'LBL').trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
         const getFallbackImage = window.getFallbackImage;
 
-        function renderizarTorneoDetalle() {
+        function renderizarTorneoDetalle(animate = false) {
             const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
             if (!docTorneo) return;
 
@@ -1108,17 +1117,19 @@
             // Feed de enfrentamiento (Ocultado temporalmente por directiva oficial)
             if (feedSection) feedSection.style.display = 'none';
 
-            // Renderizar según la etapa seleccionada con micro-animación GPU-accelerated
+            // Renderizar según la etapa seleccionada con micro-animación opcional
             if (mainContainer) {
                 mainContainer.classList.remove('section-anim-enter');
-                void mainContainer.offsetWidth; // Forzar reflow para reiniciar animación CSS
-                mainContainer.classList.add('section-anim-enter');
+                if (animate) {
+                    void mainContainer.offsetWidth; // Forzar reflow para reiniciar animación CSS
+                    mainContainer.classList.add('section-anim-enter');
+                }
             }
 
             if (etapaActiva === 'resumen') {
                 renderizarEtapaResumen(docTorneo, mainContainer);
             } else if (etapaActiva === 'cronograma') {
-                mainContainer.innerHTML = renderizarCronogramaPartidos(docTorneo);
+                mainContainer.innerHTML = renderizarCronogramaPartidos(docTorneo, animate);
             } else if (etapaActiva === 'grupos') {
                 renderizarTablaPosiciones(torneo, mainContainer);
             } else if (etapaActiva === 'llave') {
@@ -1445,7 +1456,7 @@
         }
 
         // --- RENDERIZADOR DEL CRONOGRAMA VERTICAL DE PARTIDOS (HORARIOS, RESULTADOS, VER MÁS) ---
-        function renderizarCronogramaPartidos(docTorneo) {
+        function renderizarCronogramaPartidos(docTorneo, animateCards = false) {
             const torneo = docTorneo.datosChallonge || docTorneo;
             const matches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
             const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
@@ -1657,8 +1668,11 @@
                         : (m.round > 0 ? `RONDA ${m.round}` : `LOWER BRACKET • RONDA ${Math.abs(m.round)}`);
                     const formatoText = (docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)').split(',').map(s => s.trim()).filter(Boolean).pop() || 'MEJOR DE 1 (BO1)';
 
+                    const cardAnimClass = animateCards ? 'match-card-anim' : '';
+                    const animStyle = (animateCards && idx < 8) ? `style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;"` : '';
+
                     matchesCardsHTML += `
-                        <div class="p-4 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
+                        <div class="p-4 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group ${cardAnimClass}" ${animStyle}>
                             <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
                             <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-40">
                                 <div class="flex flex-col">
