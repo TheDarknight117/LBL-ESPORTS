@@ -2765,6 +2765,13 @@
 
                 const docRef = doc(db, "inscripciones_pendientes", id);
                 await updateDoc(docRef, payload);
+
+                // Si el logo fue actualizado a una nueva URL, desechar inmediatamente la imagen anterior de la caché
+                const logoAnterior = (eqOriginal.equipo?.logo || '').trim();
+                const nuevoLogo = nuevoEquipo.logo;
+                if (logoAnterior && logoAnterior !== nuevoLogo && 'caches' in window) {
+                    caches.open('lbl-team-logos-cache').then(c => c.delete(logoAnterior)).catch(() => {});
+                }
                 
                 alert("✅ ¡Base de datos y auditoría actualizadas con éxito!");
                 await cargarDatos();

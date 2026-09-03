@@ -643,6 +643,13 @@
                 };
 
                 await updateDoc(docRef, payload);
+
+                // Si el logo fue actualizado a una nueva URL, desechar inmediatamente la imagen anterior de la caché
+                const logoAnterior = (currentTeamData.equipo?.logo || '').trim();
+                const nuevoLogo = nuevoEquipo.logo;
+                if (logoAnterior && logoAnterior !== nuevoLogo && 'caches' in window) {
+                    caches.open('lbl-team-logos-cache').then(c => c.delete(logoAnterior)).catch(() => {});
+                }
                 
                 alert("✅ ¡Toda la información oficial de tu equipo ha sido actualizada con éxito!\n\nPuedes seguir editando mientras tu código no haya expirado.");
                 

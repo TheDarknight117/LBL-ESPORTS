@@ -55,32 +55,54 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
-    // 1. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core
+    // 1. Si ya es una ruta local webp existente
+    if (rawUrl.startsWith('/assets/teams/') && rawUrl.endsWith('.webp')) {
+        return rawUrl;
+    }
+
+    // 2. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core
     if (cleanTag === 'ATA' || cleanName.includes('academy') || cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq')) {
+        // Si se cargó un nuevo link externo que no es el oficial de academy, servir el nuevo
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('aether-core-academy') && !cleanUrl.includes('mfcwgplq')) {
+            return rawUrl;
+        }
         return '/assets/teams/aether_core_academy.webp';
     }
 
-    // 2. Aether Core Tier 1 (ATC) - Solo si NO es academy
-    if (cleanTag === 'ATC' || cleanName === 'aether core' || cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || cleanUrl.includes('atc-no-bg') || (cleanName.includes('aether') && !cleanName.includes('academy'))) {
+    // 3. Aether Core Tier 1 (ATC) - Solo si NO es academy
+    if (cleanTag === 'ATC' || cleanName === 'aether core' || cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || (cleanName.includes('aether') && !cleanName.includes('academy'))) {
+        // Si se cargó un nuevo link externo que no es ATCv3, servir el nuevo y desechar el anterior
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('atcv3') && !cleanUrl.includes('kjpdt5kb')) {
+            return rawUrl;
+        }
         return '/assets/teams/aether_core.webp';
     }
 
-    // 3. Anti Kaox (AKX)
+    // 4. Anti Kaox (AKX)
     if (cleanTag === 'AKX' || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanUrl.includes('antikaox') || cleanUrl.includes('wnqj4xh8')) {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('antikaox') && !cleanUrl.includes('wnqj4xh8')) {
+            return rawUrl;
+        }
         return '/assets/teams/anti_kaox.webp';
     }
 
-    // 4. Kaox Esports Oficial (KX / KXE)
+    // 5. Kaox Esports Oficial (KX / KXE)
     if (cleanUrl.includes('kaox-esports') || cleanUrl.includes('ymkntgg2') || (cleanName.includes('kaox') && cleanName.includes('esport')) || cleanTag === 'KX' || cleanTag === 'KXE') {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('kaox-esports') && !cleanUrl.includes('ymkntgg2')) {
+            return rawUrl;
+        }
         return '/assets/teams/kaox_esports.webp';
     }
 
-    // 5. Ruined King (RK)
+    // 6. Ruined King (RK)
     if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined_king')) {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('ruined')) {
+            return rawUrl;
+        }
         return '/assets/teams/ruined_king.webp';
     }
 
-    // 5. Resto de equipos oficiales
+    // 7. Resto de equipos oficiales
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
     if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
     if (cleanUrl.includes('mda-nuevo') || cleanName.includes('marines') || cleanTag === 'MDA') return '/assets/teams/marines_del_altiplano.webp';
@@ -100,7 +122,7 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     if (cleanUrl.includes('condor') || cleanName.includes('condor') || cleanTag === 'CRN') return '/assets/teams/condor_nexus.webp';
     if (cleanUrl.includes('riot-plis') || cleanName.includes('riot pls') || cleanTag === 'RPG') return '/assets/teams/riot_pls_game.webp';
 
-    return url || '';
+    return rawUrl || '';
 }
 
 /**
