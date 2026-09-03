@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v111';
+const CACHE_NAME = 'lbl-cache-v112';
 const ASSETS = [
   '/',
   '/torneos',
@@ -33,7 +33,9 @@ const ASSETS = [
   '/assets/teams/rise_of_kings_order.webp',
   '/assets/teams/aether_core.webp',
   '/assets/teams/condor_nexus.webp',
-  '/assets/teams/riot_pls_game.webp'
+  '/assets/teams/riot_pls_game.webp',
+  '/assets/teams/anti_kaox.webp',
+  '/assets/teams/ruined_king.webp'
 ];
 
 // Install Event - cache assets

@@ -422,16 +422,35 @@
 
             // 1. PRIORIDAD MÁXIMA: Buscar en Firestore (datos editados en Dashboard / registro)
             const cleanSearch = nameToSearch.toLowerCase().replace(/\s*\(.*?\)\s*/g, '').trim();
-            const found = listaEquiposAceptadosCache.find(eq => {
-                const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
-                const tag = (eq.equipo?.tag || '').trim().toLowerCase();
-                return nom === cleanSearch || tag === cleanSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
-            });
-            if (found && found.equipo?.logo && found.equipo.logo.trim()) {
-                const fsLogo = found.equipo.logo.trim();
+            const cleanTag = tagToSearch.toLowerCase();
+            const isAcademy = cleanSearch.includes('academy') || cleanTag === 'ata';
+
+            let found = null;
+            // A. Coincidencia EXACTA por TAG
+            if (cleanTag) {
+                found = listaEquiposAceptadosCache.find(eq => (eq.equipo?.tag || '').trim().toLowerCase() === cleanTag);
+            }
+            // B. Coincidencia EXACTA por Nombre
+            if (!found) {
+                found = listaEquiposAceptadosCache.find(eq => (eq.equipo?.nombre || '').trim().toLowerCase() === cleanSearch);
+            }
+            // C. Coincidencia parcial estricta (no cruzar academy con principal)
+            if (!found) {
+                found = listaEquiposAceptadosCache.find(eq => {
+                    const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
+                    const eqIsAcademy = nom.includes('academy') || (eq.equipo?.tag || '').toLowerCase() === 'ata';
+                    if (isAcademy !== eqIsAcademy) return false;
+                    return nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
+                });
+            }
+
+            if (found && found.equipo) {
+                const fsLogo = (found.equipo.logo || '').trim();
+                const nom = found.equipo.nombre || nameToSearch;
+                const tag = found.equipo.tag || tagToSearch;
                 const opt = (typeof obtenerLogoAdaptativoWebp === 'function') 
-                    ? obtenerLogoAdaptativoWebp(fsLogo, found.equipo.nombre || nameToSearch, found.equipo.tag || tagToSearch)
-                    : mapearLogoAWebp(fsLogo, found.equipo.nombre || nameToSearch, found.equipo.tag || tagToSearch);
+                    ? obtenerLogoAdaptativoWebp(fsLogo, nom, tag)
+                    : mapearLogoAWebp(fsLogo, nom, tag);
                 return opt || fsLogo;
             }
 

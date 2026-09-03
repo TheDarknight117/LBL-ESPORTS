@@ -54,23 +54,23 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
-    // 1. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core para no colisionar
-    if (cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq') || (cleanName.includes('aether') && cleanName.includes('academy')) || cleanTag === 'ATA') {
+    // 1. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core
+    if (cleanTag === 'ATA' || cleanName.includes('academy') || cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq')) {
         return '/assets/teams/aether_core_academy.webp';
     }
 
     // 2. Aether Core Tier 1 (ATC) - Solo si NO es academy
-    if (cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || cleanUrl.includes('atc-no-bg') || ((cleanName === 'aether core' || cleanName.startsWith('aether core')) && !cleanName.includes('academy')) || cleanTag === 'ATC') {
+    if (cleanTag === 'ATC' || cleanName === 'aether core' || cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || cleanUrl.includes('atc-no-bg') || (cleanName.includes('aether') && !cleanName.includes('academy'))) {
         return '/assets/teams/aether_core.webp';
     }
 
     // 3. Anti Kaox (AKX)
-    if (cleanUrl.includes('antikaox') || cleanUrl.includes('wnqj4xh8') || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanTag === 'AKX') {
+    if (cleanTag === 'AKX' || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanUrl.includes('antikaox') || cleanUrl.includes('wnqj4xh8')) {
         return '/assets/teams/anti_kaox.webp';
     }
 
     // 4. Ruined King (RK)
-    if (cleanUrl.includes('ruined_king') || cleanName.includes('ruined') || cleanTag === 'RK') {
+    if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined_king')) {
         return '/assets/teams/ruined_king.webp';
     }
 
@@ -141,7 +141,7 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
 
     if (hallado) {
         const rawLogo = (hallado.equipo?.logo || '').trim();
-        const optLogo = rawLogo || mapearLogoAWebp('', hallado.equipo?.nombre, hallado.equipo?.tag);
+        const optLogo = mapearLogoAWebp(rawLogo, hallado.equipo?.nombre, hallado.equipo?.tag) || rawLogo;
         return {
             id: hallado.id,
             nombre: hallado.equipo?.nombre || participantName,
