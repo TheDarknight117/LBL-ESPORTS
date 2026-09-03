@@ -694,7 +694,6 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -2668,19 +2667,7 @@
                 nuevoEquipo.nombre = document.getElementById('edit_eq_nombre').value;
                 nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.toUpperCase();
                 nuevoEquipo.tier = document.getElementById('edit_eq_tier').value;
-
-                let logoDashboardEditado = document.getElementById('edit_eq_logo').value.trim();
-                if (logoDashboardEditado && logoDashboardEditado !== eqOriginal.equipo?.logo && !logoDashboardEditado.includes('.webp') && !logoDashboardEditado.startsWith('data:image/webp')) {
-                    try {
-                        const webpConverted = await convertirImagenAWebpBase64(logoDashboardEditado, 256, 0.88);
-                        if (webpConverted && webpConverted.length < 900000) {
-                            logoDashboardEditado = webpConverted;
-                        }
-                    } catch(e) {
-                        console.warn("Logo WebP conversion in dashboard edit:", e);
-                    }
-                }
-                nuevoEquipo.logo = logoDashboardEditado;
+                nuevoEquipo.logo = document.getElementById('edit_eq_logo').value.trim();
 
                 const streamersList = [];
                 document.querySelectorAll('.edit-streamer-row').forEach(row => {

@@ -86,36 +86,10 @@ export function obtenerLogoAdaptativoWebp(url, nombre = '', tag = '') {
     const nameStr = (nombre || '').trim();
     const tagStr = (tag || '').trim();
 
-    // 1. Mapeo estatico a assets/teams/*.webp
+    // 1. Mapeo estático a assets/teams/*.webp
     const mapped = mapearLogoAWebp(rawUrl, nameStr, tagStr);
     if (mapped && mapped.endsWith('.webp')) {
         return mapped;
-    }
-
-    // 2. Si ya es WebP o data:image/webp
-    if (rawUrl.toLowerCase().includes('.webp') || rawUrl.startsWith('data:image/webp')) {
-        return rawUrl;
-    }
-
-    // 3. Si ya se convirtio en esta sesion en memoria
-    if (runtimeWebpMemoryCache.has(rawUrl)) {
-        return runtimeWebpMemoryCache.get(rawUrl);
-    }
-
-    // 4. Si es una imagen PNG o JPG externa
-    if (rawUrl && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://') || rawUrl.startsWith('data:image/'))) {
-        convertirImagenAWebpBase64(rawUrl, 256, 0.88).then(webpResult => {
-            if (webpResult && webpResult.startsWith('data:image/webp')) {
-                runtimeWebpMemoryCache.set(rawUrl, webpResult);
-                try {
-                    document.querySelectorAll('img').forEach(el => {
-                        if (el.getAttribute('src') === rawUrl || el.src === rawUrl) {
-                            el.src = webpResult;
-                        }
-                    });
-                } catch(e) {}
-            }
-        }).catch(() => {});
     }
 
     return rawUrl;

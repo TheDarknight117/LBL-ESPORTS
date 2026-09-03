@@ -1,6 +1,5 @@
 import { db } from "/firebase-config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
 
 let currentStep = 1;
 const STORAGE_KEY = 'lbl_registro_data_v4';
@@ -151,18 +150,7 @@ document.getElementById('lbl-form').addEventListener('submit', async (e) => {
         }
     }
 
-    let logoUrlIngresada = document.getElementById('teamLogo').value.trim();
-    let logoOptimizado = logoUrlIngresada;
-    try {
-        if (logoUrlIngresada && !logoUrlIngresada.includes('.webp') && !logoUrlIngresada.startsWith('data:image/webp')) {
-            const webpConverted = await convertirImagenAWebpBase64(logoUrlIngresada, 256, 0.88);
-            if (webpConverted && webpConverted.length < 900000) {
-                logoOptimizado = webpConverted;
-            }
-        }
-    } catch (e) {
-        console.warn("Logo WebP conversion fallback:", e);
-    }
+    const logoUrlIngresada = document.getElementById('teamLogo').value.trim();
 
     const equipoLBL = {
         estado: "Pendiente",
@@ -171,7 +159,7 @@ document.getElementById('lbl-form').addEventListener('submit', async (e) => {
             nombre: document.getElementById('teamName').value, 
             tag: document.getElementById('teamTag').value.toUpperCase(), // GUARDAR TAG
             tier: document.getElementById('teamTier').value, 
-            logo: logoOptimizado 
+            logo: logoUrlIngresada 
         },
         media: { 
             streamers: streamersList, // GUARDAR ARREGLO DE STREAMERS
