@@ -45,14 +45,20 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'kaox esports':       { nombre: 'Kaox Esports', tag: 'KX', logo: '/assets/teams/kaox_esports.webp', logoFallback: 'https://i.ibb.co/ymKntgG2/Kaox-Esports-OF.png', tier: 'Tier 1' },
     'katz e-sports':      { nombre: 'Katz E-sports', tag: 'KAT', logo: '/assets/teams/katz_esports.webp', logoFallback: 'https://i.ibb.co/WNSTqLW3/KATZ.png', tier: 'Tier 1' },
     'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/prRd4NkH/Ruined-King.png', tier: 'Tier 2' },
-    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/prRd4NkH/Ruined-King.png', tier: 'Tier 2' }
+    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/prRd4NkH/Ruined-King.png', tier: 'Tier 2' },
+    // Equipos de Torneos Pasados (Históricos)
+    'kaox blue':          { nombre: 'Kaox Blue', tag: 'KXB', logo: '/assets/teams/kaox_blue.webp', logoFallback: 'https://i.ibb.co/FbYdnqM5/KAOX-BLUE.png', tier: 'Torneos Pasados' },
+    'kaox purple':        { nombre: 'Kaox Purple', tag: 'KXP', logo: '/assets/teams/kaox_purple.webp', logoFallback: 'https://i.ibb.co/zWZwFbRh/Kao-X-purple.png', tier: 'Torneos Pasados' },
+    'viktus':             { nombre: 'Viktus', tag: 'VKT', logo: '/assets/teams/viktus.webp', logoFallback: 'https://i.ibb.co/WNXgSRMT/Viktus-O.png', tier: 'Torneos Pasados' },
+    'solo kill pro':      { nombre: 'Solo Kill Pro', tag: 'SKP', logo: '/assets/teams/solo_kill_pro.webp', logoFallback: 'https://i.ibb.co/spm5rQxf/Solo-Kill-pro.png', tier: 'Torneos Pasados' }
 };
 
 /**
  * Mapea URLs de logos e identidades conocidas de equipos LBL a WebP local ultra-rápido.
  */
 export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
-    const cleanUrl = (url || '').toLowerCase();
+    const rawUrl = (url || '').trim();
+    const cleanUrl = rawUrl.toLowerCase();
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
@@ -111,7 +117,13 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
         return '/assets/teams/ruined_king.webp';
     }
 
-    // 8. Resto de equipos oficiales
+    // 8. Equipos de Torneos Pasados
+    if (cleanTag === 'KXB' || cleanName.includes('kaox blue') || cleanUrl.includes('kaox-blue') || cleanUrl.includes('fbydnqm5')) return '/assets/teams/kaox_blue.webp';
+    if (cleanTag === 'KXP' || cleanName.includes('kaox purple') || cleanUrl.includes('kao-x-purple') || cleanUrl.includes('zwzwfbrh')) return '/assets/teams/kaox_purple.webp';
+    if (cleanTag === 'VKT' || cleanName.includes('viktus') || cleanUrl.includes('viktus') || cleanUrl.includes('wnxgsrmt')) return '/assets/teams/viktus.webp';
+    if (cleanTag === 'SKP' || cleanName.includes('solo kill') || cleanUrl.includes('solo-kill') || cleanUrl.includes('spm5rqxf')) return '/assets/teams/solo_kill_pro.webp';
+
+    // 9. Resto de equipos oficiales
     if (cleanUrl.includes('sge') || cleanUrl.includes('nm64w9kn') || cleanName.includes('strugglers') || cleanTag === 'SGE') return '/assets/teams/strugglers_esports.webp';
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
     if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
