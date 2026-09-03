@@ -347,11 +347,10 @@
         <p>Liga Boliviana de Esports &copy; 2026 — Todos los derechos reservados.</p>
     </footer>
 
-    <!-- LÓGICA DE FIRESTORE Y RENDERIZADO (100% SOLO LECTURA) -->
-    <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
+        import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -423,8 +422,11 @@
             const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim();
             const tagToSearch = equipoObj?.tag || equipoObj?.lblInfo?.tag || '';
             
-            // 1. Intentar mapeo directo a WebP local
-            if (typeof mapearLogoAWebp === 'function') {
+            // 1. Intentar mapeo adaptativo WebP
+            if (typeof obtenerLogoAdaptativoWebp === 'function') {
+                const optLogo = obtenerLogoAdaptativoWebp(rawLogo, nameToSearch, tagToSearch);
+                if (optLogo && (optLogo.endsWith('.webp') || optLogo.startsWith('data:image/webp'))) return optLogo;
+            } else if (typeof mapearLogoAWebp === 'function') {
                 const optLogo = mapearLogoAWebp(rawLogo, nameToSearch, tagToSearch);
                 if (optLogo && optLogo.endsWith('.webp')) return optLogo;
             }
@@ -439,8 +441,8 @@
                 return nom === cleanSearch || tag === cleanSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
             });
             if (found && found.equipo?.logo) {
-                if (typeof mapearLogoAWebp === 'function') {
-                    return mapearLogoAWebp(found.equipo.logo, found.equipo.nombre, found.equipo.tag);
+                if (typeof obtenerLogoAdaptativoWebp === 'function') {
+                    return obtenerLogoAdaptativoWebp(found.equipo.logo, found.equipo.nombre, found.equipo.tag);
                 }
                 return found.equipo.logo;
             }

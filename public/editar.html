@@ -78,6 +78,7 @@
         import { db } from "/firebase-config.js"; 
         import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
+        import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
 
         let currentTeamId = null;
         let currentTeamData = null;
@@ -553,7 +554,19 @@
                 const nuevoEquipo = { ...currentTeamData.equipo };
                 nuevoEquipo.nombre = document.getElementById('edit_eq_nombre').value.trim();
                 nuevoEquipo.tag = document.getElementById('edit_eq_tag').value.trim().toUpperCase();
-                nuevoEquipo.logo = document.getElementById('edit_eq_logo').value.trim();
+                
+                let logoEditado = document.getElementById('edit_eq_logo').value.trim();
+                if (logoEditado && logoEditado !== currentTeamData.equipo?.logo && !logoEditado.includes('.webp') && !logoEditado.startsWith('data:image/webp')) {
+                    try {
+                        const webpConverted = await convertirImagenAWebpBase64(logoEditado, 256, 0.88);
+                        if (webpConverted && webpConverted.length < 900000) {
+                            logoEditado = webpConverted;
+                        }
+                    } catch(e) {
+                        console.warn("Logo WebP conversion in edit:", e);
+                    }
+                }
+                nuevoEquipo.logo = logoEditado;
 
                 // 2. Media (Instagram, TikTok, Streamers)
                 const streamersList = [];

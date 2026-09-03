@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v99';
+const CACHE_NAME = 'lbl-cache-v100';
 const ASSETS = [
   '/',
   '/torneos',
@@ -10,6 +10,7 @@ const ASSETS = [
   '/auditoria-core.js',
   '/staff-config.js',
   '/challonge-core.js',
+  '/image-optimizer.js',
   '/dist/output.css',
   '/assets/logo.webp',
   '/assets/logo2.webp',

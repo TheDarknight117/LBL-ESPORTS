@@ -195,10 +195,10 @@
         </div>
     </div>
 
-    <script type="module">
         import { db } from "/firebase-config.js"; 
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mapearLogoAWebp } from "/challonge-core.js";
+        import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
 
         let todosLosEquipos = [];
         let tierActual = 'Tier 1';
@@ -274,7 +274,7 @@
                 card.classList.add('border-t-4', borderColor);
 
                 const rawLogo = eq.equipo.logo || '';
-                const logoAUsar = mapearLogoAWebp(rawLogo, eq.equipo.nombre, eq.equipo.tag) || rawLogo || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(eq.equipo.nombre) + "&background=0D0D0D&color=fff");
+                const logoAUsar = obtenerLogoAdaptativoWebp(rawLogo, eq.equipo.nombre, eq.equipo.tag) || rawLogo || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(eq.equipo.nombre) + "&background=0D0D0D&color=fff");
 
                 card.innerHTML = `
                     <div class="flex justify-between items-center w-full mb-4">
@@ -344,7 +344,7 @@
         window.abrirModal = (equipo) => {
             const modal = document.getElementById('team-modal');
             const rawLogo = equipo.equipo.logo || '';
-            const logoOpt = mapearLogoAWebp(rawLogo, equipo.equipo.nombre, equipo.equipo.tag) || rawLogo;
+            const logoOpt = obtenerLogoAdaptativoWebp(rawLogo, equipo.equipo.nombre, equipo.equipo.tag) || rawLogo;
             document.getElementById('modal-logo').src = logoOpt || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(equipo.equipo.nombre) + "&background=0D0D0D&color=fff");
             document.getElementById('modal-name').innerText = equipo.equipo.nombre;
             document.getElementById('modal-tier').innerText = equipo.equipo.tier;
