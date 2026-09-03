@@ -44,6 +44,38 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
 };
 
 /**
+ * Mapea URLs de logos e identidades conocidas de equipos LBL a WebP local ultra-rápido.
+ */
+export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
+    const cleanUrl = (url || '').toLowerCase();
+    const cleanName = (nameStr || '').trim().toLowerCase();
+    const cleanTag = (tagStr || '').trim().toUpperCase();
+
+    if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
+    if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
+    if (cleanUrl.includes('mda-nuevo') || cleanName.includes('marines') || cleanTag === 'MDA') return '/assets/teams/marines_del_altiplano.webp';
+    if (cleanUrl.includes('aether-core-academy') || (cleanName.includes('aether') && cleanName.includes('academy')) || cleanTag === 'ATA') return '/assets/teams/aether_core_academy.webp';
+    if (cleanUrl.includes('kaox-pink') || cleanName.includes('pink') || cleanTag === 'KPK') return '/assets/teams/kaox_pink.webp';
+    if (cleanUrl.includes('kaox-green') || cleanName.includes('green') || cleanTag === 'KXG') return '/assets/teams/kaox_green.webp';
+    if (cleanUrl.includes('kaox-red') || cleanUrl.includes('red.png') || cleanName.includes('kaox red') || cleanTag === 'KXRED') return '/assets/teams/kaox_red.webp';
+    if (cleanUrl.includes('kaox-yellow') || cleanUrl.includes('yellow.png') || cleanName.includes('yellow') || cleanTag === 'KXY') return '/assets/teams/kaox_yellow.webp';
+    if (cleanUrl.includes('mapaches') || cleanName.includes('mapaches') || cleanTag === 'MAP') return '/assets/teams/mapaches_apaches.webp';
+    if (cleanUrl.includes('ukakitties') || cleanName.includes('uka') || cleanTag === 'UKAT') return '/assets/teams/uka_kitties.webp';
+    if (cleanUrl.includes('sge-logo') || cleanName.includes('strugglers') || cleanTag === 'SGE') return '/assets/teams/strugglers_esports.webp';
+    if (cleanUrl.includes('first-kill') || cleanName.includes('first kill') || cleanTag === 'TFK') return '/assets/teams/team_first_kill.webp';
+    if (cleanUrl.includes('quinteto') || cleanName.includes('quinteto') || cleanTag === 'QDN') return '/assets/teams/quinteto_de_nos.webp';
+    if (cleanUrl.includes('crimson') || cleanName.includes('crimson') || cleanTag === 'CRW') return '/assets/teams/crimson_weasels.webp';
+    if (cleanUrl.includes('grieta') || cleanName.includes('grieta') || cleanTag === 'GRC') return '/assets/teams/grieta_cumbiera.webp';
+    if (cleanUrl.includes('team-dark') || cleanName.includes('team dark') || cleanTag === 'TDK') return '/assets/teams/team_dark.webp';
+    if (cleanUrl.includes('snake-dinasty') || cleanUrl.includes('snake_dynasty') || cleanName.includes('snake') || cleanTag === 'SKD') return '/assets/teams/snake_dynasty.webp';
+    if (cleanUrl.includes('atc-no-bg') || (cleanName === 'aether core' || cleanName.startsWith('aether core')) || cleanTag === 'ATC') return '/assets/teams/aether_core.webp';
+    if (cleanUrl.includes('condor') || cleanName.includes('condor') || cleanTag === 'CRN') return '/assets/teams/condor_nexus.webp';
+    if (cleanUrl.includes('riot-plis') || cleanName.includes('riot pls') || cleanTag === 'RPG') return '/assets/teams/riot_pls_game.webp';
+
+    return url || '';
+}
+
+/**
  * Mapea el TAG o Nombre de Challonge con la colección de equipos LBL de Firestore.
  */
 export function buscarEquipoLBL(participantName, equiposLBL = []) {
@@ -86,11 +118,13 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
     }
 
     if (hallado) {
+        const rawLogo = hallado.equipo?.logo || '';
+        const optLogo = mapearLogoAWebp(rawLogo, hallado.equipo?.nombre, hallado.equipo?.tag);
         return {
             id: hallado.id,
             nombre: hallado.equipo?.nombre || participantName,
             tag: hallado.equipo?.tag || participantName,
-            logo: hallado.equipo?.logo || '',
+            logo: optLogo,
             tier: hallado.equipo?.tier || 'Tier 2'
         };
     }
@@ -118,7 +152,7 @@ export function buscarEquipoLBL(participantName, equiposLBL = []) {
         nombre: participantName,
         tag: participantName,
         logo: '',
-        tier: 'Invitado'
+        tier: 'Tier 2'
     };
 }
 
@@ -221,12 +255,11 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         const separator = endpointPath.includes('?') ? '&' : '?';
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
 
-        // Proxies en orden de velocidad y estabilidad comprobada
+        // Proxies estables y libres de límites 429/401
         const proxyList = [
-            `https://proxy.cors.sh/${targetUrl}`,
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-            `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
-            targetUrl // Intento directo
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+            `https://thingproxy.freeboard.io/fetch/${targetUrl}`
         ];
 
         for (const pUrl of proxyList) {

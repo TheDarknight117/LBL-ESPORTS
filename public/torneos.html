@@ -351,7 +351,7 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -419,21 +419,33 @@
         } catch(e) {}
 
         function obtenerLogoEquipo(equipoObj, nombreStr) {
-            if (equipoObj && equipoObj.logo) return equipoObj.logo;
-            if (equipoObj && equipoObj.lblInfo && equipoObj.lblInfo.logo) return equipoObj.lblInfo.logo;
-            const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim().toLowerCase();
-            if (!nameToSearch || nameToSearch === 'tbd') return '';
+            const rawLogo = equipoObj?.logo || equipoObj?.lblInfo?.logo || '';
+            const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim();
+            const tagToSearch = equipoObj?.tag || equipoObj?.lblInfo?.tag || '';
+            
+            // 1. Intentar mapeo directo a WebP local
+            if (typeof mapearLogoAWebp === 'function') {
+                const optLogo = mapearLogoAWebp(rawLogo, nameToSearch, tagToSearch);
+                if (optLogo && optLogo.endsWith('.webp')) return optLogo;
+            }
 
-            // 1. Buscar en memoria/Firestore
-            const cleanSearch = nameToSearch.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if (!nameToSearch || nameToSearch.toLowerCase() === 'tbd') return '';
+
+            // 2. Buscar en memoria/Firestore
+            const cleanSearch = nameToSearch.toLowerCase().replace(/\s*\(.*?\)\s*/g, '').trim();
             const found = listaEquiposAceptadosCache.find(eq => {
                 const nom = (eq.equipo?.nombre || '').trim().toLowerCase();
                 const tag = (eq.equipo?.tag || '').trim().toLowerCase();
-                return nom === nameToSearch || nom === cleanSearch || tag === nameToSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
+                return nom === cleanSearch || tag === cleanSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
             });
-            if (found && found.equipo?.logo) return found.equipo.logo;
+            if (found && found.equipo?.logo) {
+                if (typeof mapearLogoAWebp === 'function') {
+                    return mapearLogoAWebp(found.equipo.logo, found.equipo.nombre, found.equipo.tag);
+                }
+                return found.equipo.logo;
+            }
 
-            // 2. Buscar en diccionario oficial de respaldo
+            // 3. Buscar en diccionario oficial de respaldo
             if (OFFICIAL_LBL_TEAM_LOGOS) {
                 const fbKey = Object.keys(OFFICIAL_LBL_TEAM_LOGOS).find(k => {
                     if (cleanSearch === 'aether core' && k.includes('academy')) return false;
@@ -445,7 +457,7 @@
                 }
             }
 
-            return '';
+            return rawLogo || '';
         }
 
         // --- DEDUPLICADOR ROBUSTO DE TORNEOS ---

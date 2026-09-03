@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v98';
+const CACHE_NAME = 'lbl-cache-v99';
 const ASSETS = [
   '/',
   '/torneos',
@@ -9,18 +9,30 @@ const ASSETS = [
   '/scouting',
   '/auditoria-core.js',
   '/staff-config.js',
+  '/challonge-core.js',
   '/dist/output.css',
   '/assets/logo.webp',
-  '/assets/logo.png',
   '/assets/logo2.webp',
-  '/assets/LBL%20Circular.webp',
-  '/assets/BARON.webp',
-  '/assets/vacuos.webp',
-  '/assets/scouting1.webp',
-  '/assets/open_qualifier.webp',
-  '/assets/SEO%20LBL%20etiqueta.webp',
-  '/assets/scouting1.json',
-  '/assets/qualifier.json'
+  '/assets/teams/kaox_pink.webp',
+  '/assets/teams/marines_del_altiplano.webp',
+  '/assets/teams/uka_kitties.webp',
+  '/assets/teams/kaox_red.webp',
+  '/assets/teams/mapaches_apaches.webp',
+  '/assets/teams/kaox_yellow.webp',
+  '/assets/teams/strugglers_esports.webp',
+  '/assets/teams/team_first_kill.webp',
+  '/assets/teams/aether_core_academy.webp',
+  '/assets/teams/kaox_green.webp',
+  '/assets/teams/quinteto_de_nos.webp',
+  '/assets/teams/t1nacotas.webp',
+  '/assets/teams/crimson_weasels.webp',
+  '/assets/teams/grieta_cumbiera.webp',
+  '/assets/teams/team_dark.webp',
+  '/assets/teams/snake_dynasty.webp',
+  '/assets/teams/rise_of_kings_order.webp',
+  '/assets/teams/aether_core.webp',
+  '/assets/teams/condor_nexus.webp',
+  '/assets/teams/riot_pls_game.webp'
 ];
 
 // Install Event - cache assets
@@ -90,45 +102,44 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  let requestToProcess = e.request;
+  let matchKey = e.request;
   const url = new URL(e.request.url);
   
   // Normalize SPA /torneos/* navigation requests to clean /torneos
-  if (url.pathname.startsWith('/torneos') && !url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|json)$/i)) {
-    url.pathname = '/torneos';
-    requestToProcess = new Request(url.toString(), {
-      method: e.request.method,
-      headers: e.request.headers,
-      mode: e.request.mode,
-      credentials: e.request.credentials,
-      redirect: 'follow'
-    });
+  if (url.pathname.startsWith('/torneos') && !url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|json|webp)$/i)) {
+    matchKey = '/torneos';
   } else if (url.pathname.endsWith('.html')) {
     let cleanPath = url.pathname.slice(0, -5);
     if (cleanPath === '/index') cleanPath = '/';
-    url.pathname = cleanPath;
-    requestToProcess = new Request(url.toString(), {
-      method: e.request.method,
-      headers: e.request.headers,
-      mode: e.request.mode,
-      credentials: e.request.credentials,
-      redirect: 'follow'
-    });
+    matchKey = cleanPath;
   }
 
   e.respondWith(
-    caches.match(requestToProcess).then((cachedResponse) => {
+    caches.match(matchKey).then((cachedResponse) => {
       if (cachedResponse) {
         // Fetch updated version in the background and update cache
-        fetch(requestToProcess).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(requestToProcess, networkResponse));
+        fetch(e.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, networkResponse));
           }
         }).catch(() => {/* Ignore network errors */});
         
         return cachedResponse;
       }
-      return fetch(requestToProcess);
+
+      return fetch(e.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(matchKey, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        if (e.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+      });
     })
   );
 });
