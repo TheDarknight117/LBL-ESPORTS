@@ -332,15 +332,19 @@ async function apiCall(endpointPath, preferredApiKey = null) {
 
         // Proxies estables y libres de límites 429/401
         const proxyList = [
+            `https://proxy.cors.sh/${targetUrl}`,
             `https://cors.eu.org/${targetUrl}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
         ];
 
         for (const pUrl of proxyList) {
             try {
                 const res = await fetchWithTimeout(pUrl, {}, 4000);
-                if (res.ok) {
+                if (res && res.status === 429) {
+                    // Esta llave superó la cuota mensual de Challonge -> pasar a la siguiente llave del pool
+                    break;
+                }
+                if (res && res.ok) {
                     const parsed = await res.json();
                     if (parsed && (parsed.tournament || Array.isArray(parsed))) {
                         return { data: parsed, keyUsed: cleanKey };
