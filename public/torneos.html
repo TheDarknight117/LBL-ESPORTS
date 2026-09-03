@@ -729,50 +729,26 @@
 
         // --- CARGA DE DATOS DESDE FIRESTORE / LOCALSTORAGE (PARALELIZADO Y OPTIMIZADO) ---
         async function cargarTorneosDesdeFirestore() {
-            // Renderizado ultra-rápido inicial desde caché
+            // Renderizado ultra-rápido inicial desde caché (sin parpadeos de animación)
             procesarRutaURL();
-            renderizarVista();
+            renderizarVista(false);
             actualizarURL(false);
 
-            // Carga en paralelo para evitar cuellos de botella y reducir a la mitad el tiempo de red
             try {
-                const [snapEqResult, snapTorneosResult] = await Promise.allSettled([
-                    getDocs(query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"))),
-                    getDocs(collection(db, 'torneos_registrados'))
-                ]);
+                // 1. Cargar catálogo de equipos aceptados
+                getDocs(query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado")))
+                    .then(snapEq => {
+                        const equipos = [];
+                        snapEq.forEach(d => equipos.push({ id: d.id, ...d.data() }));
+                        if (equipos.length > 0) {
+                            listaEquiposAceptadosCache = equipos;
+                            localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equipos));
+                        }
+                    })
+                    .catch(e => console.warn("Cache equipos warning:", e));
 
-                let cambioDetectado = false;
-
-                if (snapEqResult.status === 'fulfilled' && snapEqResult.value) {
-                    const equipos = [];
-                    snapEqResult.value.forEach(d => equipos.push({ id: d.id, ...d.data() }));
-                    if (equipos.length > 0) {
-                        listaEquiposAceptadosCache = equipos;
-                        localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equipos));
-                        cambioDetectado = true;
-                    }
-                }
-
-                if (snapTorneosResult.status === 'fulfilled' && snapTorneosResult.value) {
-                    const lista = [];
-                    snapTorneosResult.value.forEach(docSnap => {
-                        lista.push({ ...docSnap.data(), id: docSnap.id });
-                    });
-
-                    if (lista.length > 0) {
-                        listaTorneosRegistrados = deduplicarTorneos(lista);
-                        localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                        cambioDetectado = true;
-                    }
-                }
-
-                if (cambioDetectado) {
-                    procesarRutaURL();
-                    renderizarVista();
-                    actualizarURL(false);
-                }
-
-                // Sincronización en tiempo real (WebSockets): cuando se actualiza un marcador, se refleja al instante en todos los navegadores
+                // 2. Sincronización en tiempo real única (WebSockets): 
+                // onSnapshot entrega los datos actuales y escucha cualquier cambio futuro de marcadores
                 if (!window._torneosRealtimeSubscribed) {
                     window._torneosRealtimeSubscribed = true;
                     onSnapshot(collection(db, 'torneos_registrados'), (snapshot) => {
@@ -781,9 +757,16 @@
                             lista.push({ ...docSnap.data(), id: docSnap.id });
                         });
                         if (lista.length > 0) {
-                            listaTorneosRegistrados = deduplicarTorneos(lista);
-                            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                            renderizarVista();
+                            const nuevaDeduplicada = deduplicarTorneos(lista);
+                            const prevRaw = localStorage.getItem('lbl_torneos_registrados_cache') || '';
+                            const nuevoRaw = JSON.stringify(nuevaDeduplicada);
+                            
+                            // Solo re-renderizar si realmente cambiaron los datos
+                            if (prevRaw !== nuevoRaw) {
+                                listaTorneosRegistrados = nuevaDeduplicada;
+                                localStorage.setItem('lbl_torneos_registrados_cache', nuevoRaw);
+                                renderizarVista(false);
+                            }
                         }
                     }, (err) => {
                         console.warn("Realtime onSnapshot torneos:", err.message);
@@ -794,16 +777,18 @@
             }
         }
 
-        function renderizarVista() {
+        function renderizarVista(animate = false) {
             const viewCatalog = document.getElementById('view-catalog');
             const viewDetail = document.getElementById('view-detail');
 
             if (!torneoSeleccionadoId) {
                 if (viewCatalog) {
                     viewCatalog.classList.remove('hidden');
-                    viewCatalog.classList.remove('view-fade-enter');
-                    void viewCatalog.offsetWidth;
-                    viewCatalog.classList.add('view-fade-enter');
+                    if (animate) {
+                        viewCatalog.classList.remove('view-fade-enter');
+                        void viewCatalog.offsetWidth;
+                        viewCatalog.classList.add('view-fade-enter');
+                    }
                 }
                 if (viewDetail) viewDetail.classList.add('hidden');
                 renderizarCatalogo();
@@ -811,9 +796,11 @@
                 if (viewCatalog) viewCatalog.classList.add('hidden');
                 if (viewDetail) {
                     viewDetail.classList.remove('hidden');
-                    viewDetail.classList.remove('view-fade-enter');
-                    void viewDetail.offsetWidth;
-                    viewDetail.classList.add('view-fade-enter');
+                    if (animate) {
+                        viewDetail.classList.remove('view-fade-enter');
+                        void viewDetail.offsetWidth;
+                        viewDetail.classList.add('view-fade-enter');
+                    }
                 }
                 renderizarTorneoDetalle();
             }
@@ -821,7 +808,7 @@
 
         window.volverAlCatalogo = () => {
             torneoSeleccionadoId = null;
-            renderizarVista();
+            renderizarVista(true);
             actualizarURL(true);
         };
 
@@ -1017,12 +1004,25 @@
 
             actualizarTabsUI(etapaActiva);
 
-            // Sincronización inteligente en segundo plano (Solo torneos activos y respetando Cooldown adaptativo)
+            // Sincronización inteligente en segundo plano (Protección estricta de cuota mensual Challonge)
             const estadoActual = (docTorneo.estado || '').toLowerCase();
             const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
+            const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
             
-            if (esTorneoActivo && !docTorneo._syncingLive) {
+            const ahora = Date.now();
+            const ultimaSyncFirestore = docTorneo.ultimaSincronizacionTimestamp || (docTorneo.actualizadoEn ? new Date(docTorneo.actualizadoEn).getTime() : 0);
+            const cooldownRequerido = isStaff ? (60 * 1000) : (180 * 1000);
+            const ultimaConsultaPestana = parseInt(sessionStorage.getItem('lbl_last_challonge_check') || '0', 10);
+
+            const puedeConsultarChallonge = esTorneoActivo && 
+                !docTorneo._syncingLive && 
+                (ahora - ultimaSyncFirestore >= cooldownRequerido) &&
+                (ahora - ultimaConsultaPestana >= 60000);
+            
+            if (puedeConsultarChallonge) {
                 docTorneo._syncingLive = true;
+                sessionStorage.setItem('lbl_last_challonge_check', ahora.toString());
+
                 verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache, async (torneoId, dataActualizada) => {
                     try {
                         await updateDoc(doc(db, 'torneos_registrados', torneoId), dataActualizada);
@@ -1036,9 +1036,6 @@
                             if (idx !== -1) {
                                 listaTorneosRegistrados[idx] = res.data;
                                 localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                                if (torneoSeleccionadoId === docTorneo.id) {
-                                    renderizarTorneoDetalle();
-                                }
                             }
                         }
                     })
