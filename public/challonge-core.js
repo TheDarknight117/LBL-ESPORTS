@@ -545,14 +545,20 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
 }
 
 /**
- * Calcula el tiempo de Cooldown inteligente según el día de la semana.
- * - Jueves a Domingo (Días de Torneo): 10 minutos
- * - Lunes a Miércoles (Días de Semana / Reprogramaciones): 45 minutos
+ * Calcula el tiempo de Cooldown inteligente según el estado del torneo.
+ * - Torneo en vivo (Vivo / Underway / Group Stages): 60 segundos (1 minuto) para actualizar marcadores casi de inmediato
+ * - Días de Torneo (Jueves a Domingo): 5 minutos
+ * - Lunes a Miércoles: 15 minutos
  */
-export function obtenerCooldownRecomendadoMs() {
-    const dia = new Date().getDay(); // 0 = Domingo, 1 = Lunes, ..., 4 = Jueves, 5 = Viernes, 6 = Sábado
+export function obtenerCooldownRecomendadoMs(estadoTorneo = 'vivo') {
+    const est = (estadoTorneo || '').toLowerCase();
+    const esEnVivo = est === 'vivo' || est === 'en_curso' || est === 'activo' || est === 'underway' || est === 'group_stages' || est === 'group_stages_underway';
+    if (esEnVivo) {
+        return 60 * 1000; // 60 segundos
+    }
+    const dia = new Date().getDay();
     const esDiaTorneo = (dia === 0 || dia >= 4);
-    return esDiaTorneo ? (10 * 60 * 1000) : (45 * 60 * 1000);
+    return esDiaTorneo ? (5 * 60 * 1000) : (15 * 60 * 1000);
 }
 
 /**
@@ -563,7 +569,7 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
     if (!torneoDoc) return { synced: false, data: torneoDoc, reason: 'sin_documento' };
 
     const estado = (torneoDoc.estado || '').toLowerCase();
-    const esActivo = estado === 'en_curso' || estado === 'activo' || estado === 'vivo' || estado === 'underway' || estado === 'group_stages' || estado === 'awaiting_review';
+    const esActivo = estado === 'en_curso' || estado === 'activo' || estado === 'vivo' || estado === 'underway' || estado === 'group_stages' || estado === 'group_stages_underway' || estado === 'awaiting_review';
     
     // NUNCA gastar llamadas en torneos finalizados
     if (!esActivo) {
@@ -577,7 +583,7 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
 
     const ahora = Date.now();
     const ultimaSync = torneoDoc.ultimaSincronizacionTimestamp || (torneoDoc.actualizadoEn ? new Date(torneoDoc.actualizadoEn).getTime() : 0);
-    const cooldownMs = obtenerCooldownRecomendadoMs();
+    const cooldownMs = obtenerCooldownRecomendadoMs(torneoDoc.estado);
 
     if (ahora - ultimaSync < cooldownMs) {
         return { 

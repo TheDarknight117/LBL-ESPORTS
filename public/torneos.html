@@ -340,7 +340,7 @@
     <!-- LÓGICA DE FIRESTORE Y RENDERIZADO (100% SOLO LECTURA) -->
     <script type="module">
         import { db } from "/firebase-config.js";
-        import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
 
@@ -384,7 +384,6 @@
             'uka kitties':          'UKT',
             'anti kaox':            'AKX',
             'antikaox':             'AKX',
-            'kaox esports':         'KX',
             'kaox blue':            'KXB',
             'kaox purple':          'KXP',
             'viktus':               'VKT',
@@ -772,6 +771,24 @@
                     renderizarVista();
                     actualizarURL(false);
                 }
+
+                // Sincronización en tiempo real (WebSockets): cuando se actualiza un marcador, se refleja al instante en todos los navegadores
+                if (!window._torneosRealtimeSubscribed) {
+                    window._torneosRealtimeSubscribed = true;
+                    onSnapshot(collection(db, 'torneos_registrados'), (snapshot) => {
+                        const lista = [];
+                        snapshot.forEach(docSnap => {
+                            lista.push({ ...docSnap.data(), id: docSnap.id });
+                        });
+                        if (lista.length > 0) {
+                            listaTorneosRegistrados = deduplicarTorneos(lista);
+                            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                            renderizarVista();
+                        }
+                    }, (err) => {
+                        console.warn("Realtime onSnapshot torneos:", err.message);
+                    });
+                }
             } catch (err) {
                 console.warn("Error cargando Firestore torneos:", err);
             }
@@ -1006,7 +1023,13 @@
             
             if (esTorneoActivo && !docTorneo._syncingLive) {
                 docTorneo._syncingLive = true;
-                verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache)
+                verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache, async (torneoId, dataActualizada) => {
+                    try {
+                        await updateDoc(doc(db, 'torneos_registrados', torneoId), dataActualizada);
+                    } catch(e) {
+                        console.warn("Auto-sync save to Firestore:", e.message);
+                    }
+                })
                     .then(res => {
                         if (res && res.synced && res.data) {
                             const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
@@ -2413,6 +2436,17 @@
 
         // Cargar torneos al iniciar la página
         cargarTorneosDesdeFirestore();
+
+        // Auto-sincronización viva cada 60 segundos si el torneo seleccionado está en vivo
+        setInterval(() => {
+            if (torneoSeleccionadoId) {
+                const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId);
+                const est = (docTorneo?.estado || '').toLowerCase();
+                if (est !== 'finalizado' && est !== 'complete') {
+                    renderizarTorneoDetalle();
+                }
+            }
+        }, 60000);
 
         window.addEventListener('load', () => {
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
