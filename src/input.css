@@ -134,44 +134,44 @@
     box-shadow: 0 0 15px rgba(83, 252, 24, 0.5) !important;
 }
 
-/* --- REGLAS DEFINITIVAS DE CRONOGRAMA: LOGOS LIBRES, TAGS Y VISIBILIDAD RESPONSIVE --- */
+/* --- REGLAS DEFINITIVAS DE CRONOGRAMA: 40% MÁS GRANDE Y DISTRIBUCIÓN 3 COLUMNAS --- */
 .cronograma-team-logo {
-    width: 48px !important;
-    height: 48px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    max-width: 48px !important;
-    max-height: 48px !important;
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    max-width: 58px !important;
+    max-height: 58px !important;
     object-fit: contain !important;
     flex-shrink: 0 !important;
-    filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)) !important;
+    filter: drop-shadow(0 0 14px rgba(6, 182, 212, 0.45)) !important;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .cronograma-team-logo:hover {
-    transform: scale(1.06);
-    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.7)) !important;
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.75)) !important;
 }
 
 @media (min-width: 640px) {
     .cronograma-team-logo {
-        width: 56px !important;
-        height: 56px !important;
-        min-width: 56px !important;
-        min-height: 56px !important;
-        max-width: 56px !important;
-        max-height: 56px !important;
+        width: 78px !important;
+        height: 78px !important;
+        min-width: 78px !important;
+        min-height: 78px !important;
+        max-width: 78px !important;
+        max-height: 78px !important;
     }
 }
 
 @media (min-width: 1024px) {
     .cronograma-team-logo {
-        width: 64px !important;
-        height: 64px !important;
-        min-width: 64px !important;
-        min-height: 64px !important;
-        max-width: 64px !important;
-        max-height: 64px !important;
+        width: 92px !important;
+        height: 92px !important;
+        min-width: 92px !important;
+        min-height: 92px !important;
+        max-width: 92px !important;
+        max-height: 92px !important;
     }
 }
 

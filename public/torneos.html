@@ -1537,30 +1537,30 @@
                     let centerStatusHTML = '';
                     if (scoreData.isCompleted) {
                         centerStatusHTML = `
-                            <div class="px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-xl sm:rounded-2xl bg-[#02050d] border border-gray-800/80 font-black text-sm sm:text-base md:text-xl tracking-widest flex items-center gap-2 sm:gap-3 shrink-0 shadow-inner">
-                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-base sm:text-xl md:text-2xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
+                            <div class="px-3 py-1 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-[#02050d] border border-gray-800/80 font-black text-base sm:text-2xl md:text-3xl tracking-widest flex items-center gap-2 sm:gap-3 shadow-inner shrink-0">
+                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
                                 <span class="text-gray-600 font-normal">-</span>
-                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-base sm:text-xl md:text-2xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
+                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
                             </div>`;
                     } else if (m.state === 'live') {
                         centerStatusHTML = `
-                            <div class="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-black text-xs sm:text-sm flex items-center gap-1.5 animate-pulse shrink-0">
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> EN VIVO
+                            <div class="px-2.5 py-1 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-black text-xs sm:text-sm uppercase tracking-wider animate-pulse flex items-center gap-1.5 shrink-0 shadow">
+                                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-400"></span> EN VIVO
                             </div>`;
                     } else {
                         centerStatusHTML = `
-                            <div class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-black text-sm sm:text-base md:text-lg tracking-wider flex items-center gap-1 shrink-0 shadow-inner">
+                            <span class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-widest text-cyan-400 shrink-0 drop-shadow-[0_0_18px_rgba(6,182,212,0.6)]">
                                 VS
-                            </div>`;
+                            </span>`;
                     }
 
                     let stateBadge = '';
                     if (scoreData.isCompleted) {
-                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-slate-500/15 text-slate-400 border border-slate-500/25 text-[9px] sm:text-[10px] font-black uppercase">FINALIZADO</span>`;
+                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-slate-500/15 text-slate-400 border border-slate-500/25 text-[10px] sm:text-xs font-black uppercase">FINALIZADO</span>`;
                     } else if (m.state === 'live') {
-                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-red-500/20 text-red-300 border border-red-500/40 text-[9px] sm:text-[10px] font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
+                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] sm:text-xs font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
                     } else {
-                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[9px] sm:text-[10px] font-black uppercase">PRÓXIMO</span>`;
+                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[10px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
                     }
 
                     const rondaText = m.group_id 
@@ -1569,51 +1569,54 @@
                     const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
-                        <div class="p-4 sm:p-5 rounded-2xl bg-[#040814] hover:bg-[#081022] border border-gray-800/80 hover:border-cyan-500/40 transition-all shadow-xl space-y-3 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
-                            <!-- FILA PRINCIPAL: FECHA/HORA/ESTADO (IZQ) Y ENFRENTAMIENTO (DER) -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
-                                <!-- LADO IZQUIERDO: FECHA, HORA Y ESTADO -->
-                                <div class="flex items-center md:items-start justify-between md:justify-center md:flex-col gap-2 shrink-0 md:w-40">
-                                    <div class="flex flex-col">
-                                        <span class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
-                                            <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
-                                        </span>
-                                        <span class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-wider uppercase">
-                                            ${dt.fechaTexto}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        ${stateBadge}
-                                    </div>
+                        <div class="p-4 sm:p-5 md:p-6 lg:p-7 rounded-3xl bg-[#040814] hover:bg-[#081022] border border-gray-800/80 hover:border-cyan-500/50 transition-all shadow-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
+                            <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
+                            <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-48">
+                                <div class="flex flex-col">
+                                    <span class="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-1.5">
+                                        <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
+                                    </span>
+                                    <span class="text-xs sm:text-sm text-gray-400 font-bold tracking-wider uppercase">
+                                        ${dt.fechaTexto}
+                                    </span>
                                 </div>
-
-                                <!-- CENTRO / DERECHA: EQUIPO 1 [TAG + NOMBRE + LOGO] [VS/SCORE] [LOGO + NOMBRE + TAG] EQUIPO 2 -->
-                                <div class="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 flex-1 min-w-0">
-                                    <!-- Equipo 1 -->
-                                    <div class="flex items-center justify-end gap-2 sm:gap-3 flex-1 min-w-0">
-                                        ${p1TagBadge}
-                                        <span class="cronograma-team-name text-xs sm:text-sm md:text-base font-black text-white uppercase tracking-wider text-right leading-tight ${scoreData.p1Winner ? 'text-cyan-300' : ''}" style="max-width: 170px;" title="${p1Name}">${p1FormattedName}</span>
-                                        ${p1Avatar}
-                                    </div>
-
-                                    <!-- Marcador central / VS -->
-                                    <div class="shrink-0 flex items-center justify-center px-1">
-                                        ${centerStatusHTML}
-                                    </div>
-
-                                    <!-- Equipo 2 -->
-                                    <div class="flex items-center justify-start gap-2 sm:gap-3 flex-1 min-w-0">
-                                        ${p2Avatar}
-                                        <span class="cronograma-team-name text-xs sm:text-sm md:text-base font-black text-white uppercase tracking-wider text-left leading-tight ${scoreData.p2Winner ? 'text-cyan-300' : ''}" style="max-width: 170px;" title="${p2Name}">${p2FormattedName}</span>
-                                        ${p2TagBadge}
-                                    </div>
+                                <div>
+                                    ${stateBadge}
                                 </div>
                             </div>
 
-                            <!-- SUB-BARRA INFERIOR: FASE / RONDA Y FORMATO -->
-                            <div class="flex items-center justify-between pt-2.5 border-t border-gray-800/60 text-[10px] sm:text-[11px] text-gray-400 font-bold uppercase tracking-wider">
-                                <span><i class="fas fa-layer-group text-cyan-500/70 mr-1.5"></i> ${rondaText}</span>
-                                <span><i class="fas fa-gamepad text-amber-400/80 mr-1.5"></i> ${formatoText}</span>
+                            <!-- COLUMNA 2 (CENTRAL): ENFRENTAMIENTO SIMÉTRICO [EQUIPO 1] [VS / SCORE] [EQUIPO 2] -->
+                            <div class="flex items-center justify-center flex-1 w-full min-w-0 py-2 sm:py-3 lg:py-0 px-2 sm:px-4">
+                                <!-- Equipo 1 -->
+                                <div class="flex items-center justify-end gap-2.5 sm:gap-4 md:gap-5 flex-1 min-w-0">
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-right truncate mr-1.5 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-1 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] mr-2 sm:mr-3" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                    <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-right leading-tight px-1 ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1FormattedName}</span>
+                                    ${p1Avatar}
+                                </div>
+
+                                <!-- Eje Central: VS / Marcador -->
+                                <div class="px-3 sm:px-6 md:px-10 shrink-0 flex items-center justify-center">
+                                    ${centerStatusHTML}
+                                </div>
+
+                                <!-- Equipo 2 -->
+                                <div class="flex items-center justify-start gap-2.5 sm:gap-4 md:gap-5 flex-1 min-w-0">
+                                    ${p2Avatar}
+                                    <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-left leading-tight px-1 ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2FormattedName}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] ml-2 sm:ml-3" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-left truncate ml-1.5 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-1 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA 3: RONDA / FASE Y FORMATO -->
+                            <div class="flex items-center lg:items-end justify-between lg:justify-center lg:flex-col gap-1 shrink-0 lg:w-48 text-right pt-2 lg:pt-0 border-t border-white/[0.04] lg:border-0">
+                                <span class="text-xs sm:text-sm text-gray-400 font-bold uppercase tracking-wider">
+                                    <i class="fas fa-layer-group text-cyan-500/70 mr-1"></i> ${rondaText}
+                                </span>
+                                <span class="text-[10px] sm:text-xs text-amber-400/80 font-bold uppercase tracking-wider">
+                                    <i class="fas fa-gamepad mr-1"></i> ${formatoText}
+                                </span>
                             </div>
                         </div>`;
                 });
