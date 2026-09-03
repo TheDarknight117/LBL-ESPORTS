@@ -40,7 +40,10 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'rise of kings order':{ nombre: 'Rise Of Kings Order', tag: 'RKO', logo: '/assets/teams/rise_of_kings_order.webp', logoFallback: 'https://i.ibb.co/pjkrMcp2/Rise-Of-King-Order.png', tier: 'Tier 2' },
     'aether core':        { nombre: 'Aether Core', tag: 'ATC', logo: '/assets/teams/aether_core.webp', logoFallback: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', tier: 'Tier 1' },
     'condor nexus':       { nombre: 'CONDOR NEXUS', tag: 'CRN', logo: '/assets/teams/condor_nexus.webp', logoFallback: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', tier: 'Tier 2' },
-    'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' }
+    'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' },
+    'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: '/assets/teams/anti_kaox.webp', tier: 'Tier 1' },
+    'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' },
+    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' }
 };
 
 /**
@@ -51,6 +54,8 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
+    if (cleanUrl.includes('anti_kaox') || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanTag === 'AKX') return '/assets/teams/anti_kaox.webp';
+    if (cleanUrl.includes('ruined_king') || cleanName.includes('ruined') || cleanTag === 'RK') return '/assets/teams/ruined_king.webp';
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
     if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
     if (cleanUrl.includes('mda-nuevo') || cleanName.includes('marines') || cleanTag === 'MDA') return '/assets/teams/marines_del_altiplano.webp';
