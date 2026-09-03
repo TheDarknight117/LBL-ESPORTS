@@ -25,6 +25,7 @@
     <link rel="apple-touch-icon" href="assets/LBL Circular.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#3b82f6">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
@@ -195,6 +196,7 @@
         </div>
     </div>
 
+    <script type="module">
         import { db } from "/firebase-config.js"; 
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mapearLogoAWebp } from "/challonge-core.js";
