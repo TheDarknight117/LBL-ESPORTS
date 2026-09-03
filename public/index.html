@@ -363,9 +363,9 @@
             
             <!-- Indicadores (Dots) -->
             <div class="flex justify-center gap-3 mt-8">
-                <button onclick="setSponsorSlide(0)" class="sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300"></button>
-                <button onclick="setSponsorSlide(1)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button>
-                <!-- <button onclick="setSponsorSlide(2)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300"></button> -->
+                <button onclick="setSponsorSlide(0)" class="sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 1"></button>
+                <button onclick="setSponsorSlide(1)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 2"></button>
+                <button onclick="setSponsorSlide(2)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 3"></button>
             </div>
         </div>
     </section>
@@ -570,21 +570,19 @@
                 desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends..."
             },
             {
-                image: "assets/vacuos.webp",
-                imageFallback: "assets/vacuos.png",
-                sub: "Cyrex Store presenta las vacuolarvas para el equipo....",
-                title: 'LOS MEJORES <span class="text-pink-500">PERIFERICOS</span> SOLO EN <span class="text-yellow-400">CYREX STORE</span>...',
-                desc: "Sponsor TECH de la Liga Boliviana de League of Legends"
-            }
-            /*,
+                image: "assets/pentakill.webp",
+                imageFallback: "assets/pentakill.png",
+                sub: "Legion Store presenta el Pentakill en la Grieta....",
+                title: 'DESATA EL <span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
+                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL"
+            },
             {
-                image: "assets/heraldo.webp",
-                imageFallback: "assets/heraldo.png",
-                sub: "Origin Gamer Store presenta el Heraldo de la Grieta....",
-                title: 'EQUIPAMIENTO DE <span class="text-rose-400">ALTO RENDIMIENTO</span> PARA TU CAMINO...',
-                desc: "Patrocinador Oficial de Hardware de la LBL"
+                image: "assets/legion_store.webp",
+                imageFallback: "assets/legion_store.png",
+                sub: "Legion Store presenta el Exterminio definitivo....",
+                title: 'ASEGURA EL <span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
+                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL"
             }
-            */
         ];
 
         let currentSponsorSlide = 0;
