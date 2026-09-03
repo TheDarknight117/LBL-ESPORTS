@@ -27,7 +27,7 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'kaox red':           { nombre: 'Kaox Red', tag: 'KXRED', logo: '/assets/teams/kaox_red.webp', logoFallback: 'https://i.ibb.co/nqkx7WDb/Red.png', tier: 'Tier 1' },
     'mapaches apaches':   { nombre: 'Mapaches Apaches', tag: 'MAP', logo: '/assets/teams/mapaches_apaches.webp', logoFallback: 'https://i.ibb.co/qFXxj74Y/mapaches-apaches.png', tier: 'Tier 1' },
     'kaox yellow':        { nombre: 'Kaox Yellow', tag: 'KXY', logo: '/assets/teams/kaox_yellow.webp', logoFallback: 'https://i.ibb.co/cKLS7ML6/Yellow.png', tier: 'Tier 2' },
-    'strugglers e-sports':{ nombre: 'STRUGGLERS E-SPORTS', tag: 'SGE', logo: '/assets/teams/strugglers_esports.webp', logoFallback: 'https://i.ibb.co/HJPtTY2/SGE-LOGO2.png', tier: 'Tier 1' },
+    'strugglers e-sports':{ nombre: 'STRUGGLERS E-SPORTS', tag: 'SGE', logo: '/assets/teams/strugglers_esports.webp', logoFallback: 'https://i.ibb.co/nM64w9kN/SGE-1.png', tier: 'Tier 1' },
     'team first kill':    { nombre: 'Team First Kill', tag: 'TFK', logo: '/assets/teams/team_first_kill.webp', logoFallback: 'https://i.ibb.co/yFJf62yw/first-kill.png', tier: 'Tier 2' },
     'aether core academy':{ nombre: 'Aether Core Academy', tag: 'ATA', logo: '/assets/teams/aether_core_academy.webp', logoFallback: 'https://i.ibb.co/mFCWgPLq/aether-core-academy.png', tier: 'Tier 2' },
     'kaox green':         { nombre: 'Kaox Green', tag: 'KXG', logo: '/assets/teams/kaox_green.webp', logoFallback: 'https://i.ibb.co/SHV7G65/Green.png', tier: 'Tier 2' },
@@ -43,8 +43,9 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' },
     'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: 'https://i.ibb.co/wNQj4xH8/antikaox3.png', tier: 'Tier 1' },
     'kaox esports':       { nombre: 'Kaox Esports', tag: 'KX', logo: '/assets/teams/kaox_esports.webp', logoFallback: 'https://i.ibb.co/ymKntgG2/Kaox-Esports-OF.png', tier: 'Tier 1' },
-    'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' },
-    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' }
+    'katz e-sports':      { nombre: 'Katz E-sports', tag: 'KAT', logo: '/assets/teams/katz_esports.webp', logoFallback: 'https://i.ibb.co/WNSTqLW3/KATZ.png', tier: 'Tier 1' },
+    'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/prRd4NkH/Ruined-King.png', tier: 'Tier 2' },
+    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/prRd4NkH/Ruined-King.png', tier: 'Tier 2' }
 };
 
 /**
@@ -94,15 +95,24 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
         return '/assets/teams/kaox_esports.webp';
     }
 
-    // 6. Ruined King (RK)
-    if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined_king')) {
-        if (cleanUrl.startsWith('http') && !cleanUrl.includes('ruined')) {
+    // 6. Katz E-sports (KAT)
+    if (cleanTag === 'KAT' || cleanName.includes('katz') || cleanUrl.includes('katz') || cleanUrl.includes('wnstqlw3')) {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('katz') && !cleanUrl.includes('wnstqlw3')) {
+            return rawUrl;
+        }
+        return '/assets/teams/katz_esports.webp';
+    }
+
+    // 7. Ruined King (RK)
+    if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined') || cleanUrl.includes('prrd4nkh')) {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('ruined') && !cleanUrl.includes('prrd4nkh')) {
             return rawUrl;
         }
         return '/assets/teams/ruined_king.webp';
     }
 
-    // 7. Resto de equipos oficiales
+    // 8. Resto de equipos oficiales
+    if (cleanUrl.includes('sge') || cleanUrl.includes('nm64w9kn') || cleanName.includes('strugglers') || cleanTag === 'SGE') return '/assets/teams/strugglers_esports.webp';
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
     if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
     if (cleanUrl.includes('mda-nuevo') || cleanName.includes('marines') || cleanTag === 'MDA') return '/assets/teams/marines_del_altiplano.webp';
