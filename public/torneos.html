@@ -392,9 +392,10 @@
             if (!equipoObj) return '';
             const nombre = (equipoObj.nombre || equipoObj.name || '').trim();
             const clean = nombre.toLowerCase();
+            if (clean.includes('academy') || clean.includes('ata')) return 'ATA';
             if (TAG_OVERRIDES[clean]) return TAG_OVERRIDES[clean];
             for (const [key, tag] of Object.entries(TAG_OVERRIDES)) {
-                if (clean.includes(key) || key.includes(clean)) return tag;
+                if (clean.includes(key)) return tag;
             }
             if (equipoObj.tag && equipoObj.tag.length <= 4) {
                 return equipoObj.tag.toUpperCase();
@@ -427,12 +428,19 @@
                 return nom === cleanSearch || tag === cleanSearch || nom.startsWith(cleanSearch) || cleanSearch.startsWith(nom);
             });
             if (found && found.equipo?.logo && found.equipo.logo.trim()) {
-                return found.equipo.logo.trim();
+                const fsLogo = found.equipo.logo.trim();
+                const opt = (typeof obtenerLogoAdaptativoWebp === 'function') 
+                    ? obtenerLogoAdaptativoWebp(fsLogo, found.equipo.nombre || nameToSearch, found.equipo.tag || tagToSearch)
+                    : mapearLogoAWebp(fsLogo, found.equipo.nombre || nameToSearch, found.equipo.tag || tagToSearch);
+                return opt || fsLogo;
             }
 
             // 2. Si el objeto ya trae su propio logo válido
             if (rawLogo) {
-                return rawLogo;
+                const opt = (typeof obtenerLogoAdaptativoWebp === 'function')
+                    ? obtenerLogoAdaptativoWebp(rawLogo, nameToSearch, tagToSearch)
+                    : mapearLogoAWebp(rawLogo, nameToSearch, tagToSearch);
+                return opt || rawLogo;
             }
 
             // 3. PRIORIDAD SECUNDARIA: Respaldo estático local oficial

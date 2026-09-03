@@ -38,10 +38,10 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'team dark':          { nombre: 'TEAM DARK', tag: 'TDK', logo: '/assets/teams/team_dark.webp', logoFallback: 'https://i.ibb.co/CKK956Sh/team-dark-4.png', tier: 'Tier 1' },
     'snake dynasty':      { nombre: 'Snake Dynasty', tag: 'SKD', logo: '/assets/teams/snake_dynasty.webp', logoFallback: 'https://i.ibb.co/Fqy1YXJ0/snake-dinasty-2.png', tier: 'Tier 2' },
     'rise of kings order':{ nombre: 'Rise Of Kings Order', tag: 'RKO', logo: '/assets/teams/rise_of_kings_order.webp', logoFallback: 'https://i.ibb.co/pjkrMcp2/Rise-Of-King-Order.png', tier: 'Tier 2' },
-    'aether core':        { nombre: 'Aether Core', tag: 'ATC', logo: '/assets/teams/aether_core.webp', logoFallback: 'https://i.ibb.co/RkS1hdyG/ATC-no-bg.png', tier: 'Tier 1' },
+    'aether core':        { nombre: 'Aether Core', tag: 'ATC', logo: '/assets/teams/aether_core.webp', logoFallback: 'https://i.ibb.co/Kjpdt5kB/ATCv3.png', tier: 'Tier 1' },
     'condor nexus':       { nombre: 'CONDOR NEXUS', tag: 'CRN', logo: '/assets/teams/condor_nexus.webp', logoFallback: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', tier: 'Tier 2' },
     'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' },
-    'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: '/assets/teams/anti_kaox.webp', tier: 'Tier 1' },
+    'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: 'https://i.ibb.co/wNQj4xH8/antikaox3.png', tier: 'Tier 1' },
     'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' },
     'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' }
 };
@@ -54,16 +54,30 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     const cleanName = (nameStr || '').trim().toLowerCase();
     const cleanTag = (tagStr || '').trim().toUpperCase();
 
-    if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') || cleanUrl.startsWith('data:')) {
-        return url;
+    // 1. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core para no colisionar
+    if (cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq') || (cleanName.includes('aether') && cleanName.includes('academy')) || cleanTag === 'ATA') {
+        return '/assets/teams/aether_core_academy.webp';
     }
 
-    if (cleanUrl.includes('anti_kaox') || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanTag === 'AKX') return '/assets/teams/anti_kaox.webp';
-    if (cleanUrl.includes('ruined_king') || cleanName.includes('ruined') || cleanTag === 'RK') return '/assets/teams/ruined_king.webp';
+    // 2. Aether Core Tier 1 (ATC) - Solo si NO es academy
+    if (cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || cleanUrl.includes('atc-no-bg') || ((cleanName === 'aether core' || cleanName.startsWith('aether core')) && !cleanName.includes('academy')) || cleanTag === 'ATC') {
+        return '/assets/teams/aether_core.webp';
+    }
+
+    // 3. Anti Kaox (AKX)
+    if (cleanUrl.includes('antikaox') || cleanUrl.includes('wnqj4xh8') || cleanName.includes('anti kaox') || cleanName.includes('antikaox') || cleanTag === 'AKX') {
+        return '/assets/teams/anti_kaox.webp';
+    }
+
+    // 4. Ruined King (RK)
+    if (cleanUrl.includes('ruined_king') || cleanName.includes('ruined') || cleanTag === 'RK') {
+        return '/assets/teams/ruined_king.webp';
+    }
+
+    // 5. Resto de equipos oficiales
     if (cleanUrl.includes('rise-of-king-order') || cleanName.includes('rise of') || cleanTag === 'RKO') return '/assets/teams/rise_of_kings_order.webp';
     if (cleanUrl.includes('t1-nacotas') || cleanUrl.includes('t1_nacotas') || cleanName.includes('tinacotas') || cleanName.includes('t1nacotas') || cleanTag === 'T1N') return '/assets/teams/t1nacotas.webp';
     if (cleanUrl.includes('mda-nuevo') || cleanName.includes('marines') || cleanTag === 'MDA') return '/assets/teams/marines_del_altiplano.webp';
-    if (cleanUrl.includes('aether-core-academy') || (cleanName.includes('aether') && cleanName.includes('academy')) || cleanTag === 'ATA') return '/assets/teams/aether_core_academy.webp';
     if (cleanUrl.includes('kaox-pink') || cleanName.includes('pink') || cleanTag === 'KPK') return '/assets/teams/kaox_pink.webp';
     if (cleanUrl.includes('kaox-green') || cleanName.includes('green') || cleanTag === 'KXG') return '/assets/teams/kaox_green.webp';
     if (cleanUrl.includes('kaox-red') || cleanUrl.includes('red.png') || cleanName.includes('kaox red') || cleanTag === 'KXRED') return '/assets/teams/kaox_red.webp';
@@ -77,7 +91,6 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     if (cleanUrl.includes('grieta') || cleanName.includes('grieta') || cleanTag === 'GRC') return '/assets/teams/grieta_cumbiera.webp';
     if (cleanUrl.includes('team-dark') || cleanName.includes('team dark') || cleanTag === 'TDK') return '/assets/teams/team_dark.webp';
     if (cleanUrl.includes('snake-dinasty') || cleanUrl.includes('snake_dynasty') || cleanName.includes('snake') || cleanTag === 'SKD') return '/assets/teams/snake_dynasty.webp';
-    if (cleanUrl.includes('atc-no-bg') || (cleanName === 'aether core' || cleanName.startsWith('aether core')) || cleanTag === 'ATC') return '/assets/teams/aether_core.webp';
     if (cleanUrl.includes('condor') || cleanName.includes('condor') || cleanTag === 'CRN') return '/assets/teams/condor_nexus.webp';
     if (cleanUrl.includes('riot-plis') || cleanName.includes('riot pls') || cleanTag === 'RPG') return '/assets/teams/riot_pls_game.webp';
 
