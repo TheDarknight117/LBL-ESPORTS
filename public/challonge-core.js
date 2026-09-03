@@ -42,6 +42,7 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'condor nexus':       { nombre: 'CONDOR NEXUS', tag: 'CRN', logo: '/assets/teams/condor_nexus.webp', logoFallback: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', tier: 'Tier 2' },
     'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' },
     'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: 'https://i.ibb.co/wNQj4xH8/antikaox3.png', tier: 'Tier 1' },
+    'kaox esports':       { nombre: 'Kaox Esports', tag: 'KX', logo: '/assets/teams/kaox_esports.webp', logoFallback: 'https://i.ibb.co/ymKntgG2/Kaox-Esports-OF.png', tier: 'Tier 1' },
     'ruined king':        { nombre: 'RUINED KING', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' },
     'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RK', logo: '/assets/teams/ruined_king.webp', logoFallback: '/assets/teams/ruined_king.webp', tier: 'Tier 1' }
 };
@@ -69,7 +70,12 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
         return '/assets/teams/anti_kaox.webp';
     }
 
-    // 4. Ruined King (RK)
+    // 4. Kaox Esports Oficial (KX / KXE)
+    if (cleanUrl.includes('kaox-esports') || cleanUrl.includes('ymkntgg2') || (cleanName.includes('kaox') && cleanName.includes('esport')) || cleanTag === 'KX' || cleanTag === 'KXE') {
+        return '/assets/teams/kaox_esports.webp';
+    }
+
+    // 5. Ruined King (RK)
     if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined_king')) {
         return '/assets/teams/ruined_king.webp';
     }

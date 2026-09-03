@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v112';
+const CACHE_NAME = 'lbl-cache-v113';
 const ASSETS = [
   '/',
   '/torneos',
@@ -35,6 +35,7 @@ const ASSETS = [
   '/assets/teams/condor_nexus.webp',
   '/assets/teams/riot_pls_game.webp',
   '/assets/teams/anti_kaox.webp',
+  '/assets/teams/kaox_esports.webp',
   '/assets/teams/ruined_king.webp'
 ];
 
