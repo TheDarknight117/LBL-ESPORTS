@@ -13,8 +13,8 @@
 
 // POOL MULTI-KEY OFICIAL LBL (1,000 requests/mes combinados)
 export const CHALLONGE_API_KEYS = [
-    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 1: LBL Principal (500 req/mes)
-    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 2: LBL Backup (500 req/mes)
+    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b', // Llave 1: LBL Activa (Con cuota disponible)
+    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8'  // Llave 2: LBL Backup
 ];
 
 export const DEFAULT_CHALLONGE_API_KEY = CHALLONGE_API_KEYS[0];
@@ -332,6 +332,7 @@ async function apiCall(endpointPath, preferredApiKey = null) {
 
         // Proxies estables y libres de límites 429/401
         const proxyList = [
+            `https://cors.eu.org/${targetUrl}`,
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
             `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
         ];
@@ -384,6 +385,18 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
     return null;
 }
 
+export const KNOWN_CHALLONGE_IDS = {
+    't1clbl2026':   '18378786',
+    't2clbl2026':   '18383807',
+    't1albl2026':   '17573081',
+    't2albl2026':   '17573105',
+    'lbl_oq26':     '17871688',
+    'lblsc2':       '17125906',
+    'lbl_scouting': '16870497',
+    'wintercup':    '16167943',
+    'wcup2026lbl':  '16167943'
+};
+
 /**
  * Consulta la API de Challonge v1 y construye la estructura completa en 1 SOLA llamada limpia.
  */
@@ -392,9 +405,14 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         throw new Error("Se requiere el ID o URL del Torneo.");
     }
 
-    const cleanSlug = extraerChallongeSlug(tournamentSlugOrId);
+    let cleanSlug = extraerChallongeSlug(tournamentSlugOrId);
     if (!cleanSlug) {
         throw new Error("ID o URL de torneo no válido.");
+    }
+
+    const lowerSlug = cleanSlug.toLowerCase();
+    if (KNOWN_CHALLONGE_IDS[lowerSlug]) {
+        cleanSlug = KNOWN_CHALLONGE_IDS[lowerSlug];
     }
 
     let payload = null;

@@ -1294,7 +1294,8 @@
             }
 
             try {
-                const resultado = await procesarTorneoChallonge(torneoItem.slug, null, equiposLocales, torneoItem.division);
+                const idTarget = torneoItem.challongeId || torneoItem.idChallonge || torneoItem.slug;
+                const resultado = await procesarTorneoChallonge(idTarget, null, equiposLocales, torneoItem.division);
 
                 let autoEstado = torneoItem.estado;
                 if (resultado.estado === 'pending') autoEstado = 'proximamente';
