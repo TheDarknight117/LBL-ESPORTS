@@ -149,7 +149,7 @@
     <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-4 md:px-8 py-3.5 flex justify-between items-center">
         <div class="flex items-center">
             <a href="/" class="flex items-center gap-5 group">
-                <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-3">
+                <img src="/assets/logo.png" alt="LBL Logo" style="max-height: 42px; width: auto;" class="h-9 w-auto object-contain transition-transform group-hover:scale-105 mr-3">
                 <span class="font-black text-lg md:text-xl tracking-wider text-white uppercase italic">LBL <span class="text-cyan-400">TORNEOS</span></span>
             </a>
         </div>
@@ -333,20 +333,12 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="w-full glass-panel border-t border-gray-800/80 p-6 text-center text-xs text-gray-500 font-bold uppercase tracking-widest mt-12 space-y-4">
-        <div class="flex justify-center flex-wrap gap-4 sm:gap-5">
-            <a href="https://discord.gg/4RgbnQJ79G" target="_blank" class="social-btn-discord w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="Discord"><i class="fab fa-discord text-sm"></i></a>
-            <a href="https://www.instagram.com/lbl.esports/" target="_blank" class="social-btn-instagram w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="Instagram"><i class="fab fa-instagram text-sm"></i></a>
-            <a href="https://www.tiktok.com/@lbl.esports" target="_blank" class="social-btn-tiktok w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="TikTok"><i class="fab fa-tiktok text-sm"></i></a>
-            <a href="https://www.twitch.tv/lbl_esports" target="_blank" class="social-btn-twitch w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="Twitch"><i class="fab fa-twitch text-sm"></i></a>
-            <a href="https://www.youtube.com/@LBLEsports" target="_blank" class="social-btn-youtube w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="YouTube"><i class="fab fa-youtube text-sm"></i></a>
-            <a href="https://kick.com/lbl-esports" target="_blank" class="social-btn-kick w-9 h-9 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 transition-all" title="Kick">
-                <svg role="img" viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg"><path d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/></svg>
-            </a>
-        </div>
-        <p>Liga Boliviana de Esports &copy; 2026 — Todos los derechos reservados.</p>
+    <footer class="w-full glass-panel border-t border-gray-800/80 p-6 text-center text-xs text-gray-500 font-bold uppercase tracking-widest mt-12">
+        Liga Boliviana de Esports &copy; 2026 — Todos los derechos reservados.
     </footer>
 
+    <!-- LÓGICA DE FIRESTORE Y RENDERIZADO (100% SOLO LECTURA) -->
+    <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
@@ -970,6 +962,29 @@
 
             actualizarTabsUI(etapaActiva);
 
+            // Sincronización inteligente en segundo plano (Solo torneos activos y respetando Cooldown adaptativo)
+            const estadoActual = (docTorneo.estado || '').toLowerCase();
+            const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
+            
+            if (esTorneoActivo && !docTorneo._syncingLive) {
+                docTorneo._syncingLive = true;
+                verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache)
+                    .then(res => {
+                        if (res && res.synced && res.data) {
+                            const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
+                            if (idx !== -1) {
+                                listaTorneosRegistrados[idx] = res.data;
+                                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                                if (torneoSeleccionadoId === docTorneo.id) {
+                                    renderizarTorneoDetalle();
+                                }
+                            }
+                        }
+                    })
+                    .catch(e => console.warn("Live Challonge auto-sync:", e.message))
+                    .finally(() => { docTorneo._syncingLive = false; });
+            }
+
             const torneo = docTorneo.datosChallonge || docTorneo;
 
             const titleEl = document.getElementById('detail-tournament-title');
@@ -1105,7 +1120,7 @@
                     if (esLigaLBL && logo) {
                         avatarHTML = `
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
-                                <img src="${logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(name)}';" class="w-full h-full object-contain rounded-lg sm:rounded-xl" alt="${name}">
+                                <img src="${logo}" onerror="this.onerror=null; this.src='${getFallbackImage(name)}';" class="w-full h-full object-contain rounded-lg sm:rounded-xl">
                             </div>`;
                     } else {
                         avatarHTML = `
@@ -1340,7 +1355,7 @@
             }
         }
 
-        // Helper para formatear nombres de equipo en el Cronograma: si tiene más de 1 palabra, ponerlo en exactamente 2 filas
+        // Helper para formatear nombres de equipo en el Cronograma (WEB): máximo 2 líneas con salto de línea
         function formatearNombreEquipoCronograma(nombre) {
             if (!nombre || typeof nombre !== 'string') return '';
             const clean = nombre.trim();
@@ -1354,7 +1369,11 @@
                 return `${words[0]}<br>${words[1]}`;
             }
 
-            // 3 o más palabras -> partir a la mitad exacta de palabras para garantizar solo 2 filas
+            if (words.length === 3) {
+                return `${words[0]} ${words[1]}<br>${words[2]}`;
+            }
+
+            // 4 o más palabras -> partir a la mitad exacta de palabras para garantizar MÁXIMO 2 LÍNEAS
             const mid = Math.ceil(words.length / 2);
             const line1 = words.slice(0, mid).join(' ');
             const line2 = words.slice(mid).join(' ');
@@ -1522,53 +1541,51 @@
                     const p2Logo = esLigaLBL ? obtenerLogoEquipo(m.player2, p2Name) : '';
                     const p2FormattedName = formatearNombreEquipoCronograma(p2Name);
 
-                    const p1Fallback = getFallbackImage(p1Name);
-                    const p2Fallback = getFallbackImage(p2Name);
-                    const p1FinalLogo = p1Logo || p1Fallback;
-                    const p2FinalLogo = p2Logo || p2Fallback;
-
                     let p1Avatar = '';
-                    if (esLigaLBL) {
+                    if (esLigaLBL && p1Logo) {
                         p1Avatar = `
-                            <img src="${p1FinalLogo}" decoding="async" onerror="this.onerror=null; this.src='${p1Fallback}';" class="cronograma-team-logo" alt="${p1Name}">`;
+                            <img src="${p1Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p1Name)}';" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p1Name}">`;
+                    } else {
+                        p1Avatar = `
+                            <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p1Tag}</span>`;
                     }
 
                     let p2Avatar = '';
-                    if (esLigaLBL) {
+                    if (esLigaLBL && p2Logo) {
                         p2Avatar = `
-                            <img src="${p2FinalLogo}" decoding="async" onerror="this.onerror=null; this.src='${p2Fallback}';" class="cronograma-team-logo" alt="${p2Name}">`;
+                            <img src="${p2Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p2Name)}';" class="w-8 h-8 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain shrink-0 drop-shadow-[0_0_14px_rgba(6,182,212,0.35)] mx-1.5 sm:mx-3" alt="${p2Name}">`;
+                    } else {
+                        p2Avatar = `
+                            <span class="px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-gray-900/90 text-cyan-400 font-mono font-black text-xs sm:text-xl md:text-2xl shrink-0 border border-cyan-500/50 shadow-lg mx-1.5 sm:mx-3" style="border-color: rgba(6, 182, 212, 0.5) !important;">${p2Tag}</span>`;
                     }
-
-                    const p1TagBadge = `<span class="cronograma-team-tag" title="${p1Name}">${p1Tag}</span>`;
-                    const p2TagBadge = `<span class="cronograma-team-tag" title="${p2Name}">${p2Tag}</span>`;
 
                     let centerStatusHTML = '';
                     if (scoreData.isCompleted) {
                         centerStatusHTML = `
-                            <div class="px-3 py-1 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-[#02050d] border border-gray-800/80 font-black text-base sm:text-2xl md:text-3xl tracking-widest flex items-center gap-2 sm:gap-3 shadow-inner shrink-0">
-                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
+                            <div class="px-3 py-1 sm:px-5 sm:py-2 rounded-xl sm:rounded-2xl bg-[#02050d] font-black text-sm sm:text-xl md:text-2xl tracking-widest flex items-center gap-1.5 sm:gap-2.5 shadow-inner shrink-0">
+                                <span class="${scoreData.p1Winner ? 'text-emerald-400 font-black text-base sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p1Score}</span>
                                 <span class="text-gray-600 font-normal">-</span>
-                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-lg sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
+                                <span class="${scoreData.p2Winner ? 'text-emerald-400 font-black text-base sm:text-2xl md:text-3xl' : 'text-gray-400'}">${scoreData.p2Score}</span>
                             </div>`;
                     } else if (m.state === 'live') {
                         centerStatusHTML = `
-                            <div class="px-2.5 py-1 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-black text-xs sm:text-sm uppercase tracking-wider animate-pulse flex items-center gap-1.5 shrink-0 shadow">
+                            <div class="px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-red-500/20 text-red-300 font-black text-[10px] sm:text-sm uppercase tracking-wider animate-pulse flex items-center gap-1 sm:gap-1.5 shrink-0 shadow">
                                 <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-400"></span> EN VIVO
                             </div>`;
                     } else {
                         centerStatusHTML = `
-                            <span class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-widest text-cyan-400 shrink-0 drop-shadow-[0_0_18px_rgba(6,182,212,0.6)]">
+                            <span class="text-base sm:text-2xl md:text-3xl lg:text-4xl font-black italic tracking-widest text-cyan-400 shrink-0 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
                                 VS
                             </span>`;
                     }
 
                     let stateBadge = '';
                     if (scoreData.isCompleted) {
-                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-slate-500/15 text-slate-400 border border-slate-500/25 text-[10px] sm:text-xs font-black uppercase">FINALIZADO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-slate-500/15 text-slate-400 text-[9px] sm:text-xs font-black uppercase">FINALIZADO</span>`;
                     } else if (m.state === 'live') {
-                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] sm:text-xs font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-red-500/20 text-red-300 text-[9px] sm:text-xs font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> EN VIVO</span>`;
                     } else {
-                        stateBadge = `<span class="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[10px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
+                        stateBadge = `<span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-amber-500/15 text-amber-300 text-[9px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
                     }
 
                     const rondaText = m.group_id 
@@ -1577,14 +1594,14 @@
                     const formatoText = docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)';
 
                     matchesCardsHTML += `
-                        <div class="p-4 sm:p-5 md:p-6 lg:p-7 rounded-3xl bg-[#040814] hover:bg-[#081022] border border-gray-800/80 hover:border-cyan-500/50 transition-all shadow-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
+                        <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group match-card-anim" style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;">
                             <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
-                            <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-48">
+                            <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-44">
                                 <div class="flex flex-col">
-                                    <span class="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-1.5">
+                                    <span class="text-xs sm:text-sm md:text-base font-black text-white flex items-center gap-1.5">
                                         <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
                                     </span>
-                                    <span class="text-xs sm:text-sm text-gray-400 font-bold tracking-wider uppercase">
+                                    <span class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider uppercase">
                                         ${dt.fechaTexto}
                                     </span>
                                 </div>
@@ -1596,33 +1613,33 @@
                             <!-- COLUMNA 2 (CENTRAL): ENFRENTAMIENTO SIMÉTRICO [EQUIPO 1] [VS / SCORE] [EQUIPO 2] -->
                             <div class="flex items-center justify-center flex-1 w-full min-w-0 py-2 sm:py-3 lg:py-0 px-2 sm:px-4">
                                 <!-- Equipo 1 -->
-                                <div class="flex items-center justify-end gap-2.5 sm:gap-4 md:gap-5 flex-1 min-w-0">
-                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-right truncate mr-1.5 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-1 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
-                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] mr-2 sm:mr-3" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                <div class="flex items-center justify-end gap-3 sm:gap-5 flex-1 min-w-0">
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-right truncate mr-2 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-0.5 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] mr-3 sm:mr-4" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p1Name}">${p1Tag}</span>
                                     <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-right leading-tight px-1 ${scoreData.p1Winner ? 'text-cyan-300' : ''}" title="${p1Name}">${p1FormattedName}</span>
                                     ${p1Avatar}
                                 </div>
 
-                                <!-- Eje Central: VS / Marcador -->
-                                <div class="px-3 sm:px-6 md:px-10 shrink-0 flex items-center justify-center">
+                                <!-- Eje Central: VS / Marcador (SEPARACIÓN AMPLIA Y ELEGANTE) -->
+                                <div class="px-4 sm:px-8 md:px-12 shrink-0 flex items-center justify-center">
                                     ${centerStatusHTML}
                                 </div>
 
                                 <!-- Equipo 2 -->
-                                <div class="flex items-center justify-start gap-2.5 sm:gap-4 md:gap-5 flex-1 min-w-0">
+                                <div class="flex items-center justify-start gap-3 sm:gap-5 flex-1 min-w-0">
                                     ${p2Avatar}
                                     <span class="hidden sm:block text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight text-left leading-tight px-1 ${scoreData.p2Winner ? 'text-cyan-300' : ''}" title="${p2Name}">${p2FormattedName}</span>
-                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] ml-2 sm:ml-3" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
-                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-left truncate ml-1.5 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-1 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
+                                    <span class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 text-base sm:text-xl md:text-2xl font-black font-mono text-cyan-400 bg-gray-900/90 border border-cyan-500/40 rounded-2xl shrink-0 tracking-wider shadow-[0_0_12px_rgba(6,182,212,0.25)] ml-3 sm:ml-4" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
+                                    <span class="block sm:hidden text-xs sm:text-sm font-black text-cyan-400 font-mono text-left truncate ml-2 shrink-0 bg-gray-900 border border-cyan-500/40 px-2.5 py-0.5 rounded-lg" style="border-color: rgba(6, 182, 212, 0.4) !important;" title="${p2Name}">${p2Tag}</span>
                                 </div>
                             </div>
 
                             <!-- COLUMNA 3: RONDA / FASE Y FORMATO -->
                             <div class="flex items-center lg:items-end justify-between lg:justify-center lg:flex-col gap-1 shrink-0 lg:w-48 text-right pt-2 lg:pt-0 border-t border-white/[0.04] lg:border-0">
-                                <span class="text-xs sm:text-sm text-gray-400 font-bold uppercase tracking-wider">
+                                <span class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-bold uppercase tracking-wider">
                                     <i class="fas fa-layer-group text-cyan-500/70 mr-1"></i> ${rondaText}
                                 </span>
-                                <span class="text-[10px] sm:text-xs text-amber-400/80 font-bold uppercase tracking-wider">
+                                <span class="text-[9px] sm:text-[11px] md:text-xs text-amber-400/80 font-bold uppercase tracking-wider">
                                     <i class="fas fa-gamepad mr-1"></i> ${formatoText}
                                 </span>
                             </div>
@@ -1723,11 +1740,11 @@
                 const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
                 const p1Avatar = (esLigaLBL && p1Logo)
-                    ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p1.nombre}">`
+                    ? `<img src="${p1Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p1.tag || resolverTag(p1)}</div>`;
 
                 const p2Avatar = (esLigaLBL && p2Logo)
-                    ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p2.nombre}">`
+                    ? `<img src="${p2Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p2.tag || resolverTag(p2)}</div>`;
 
                 html += `
@@ -2198,11 +2215,11 @@
             const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
             const p1Avatar = (esLigaLBL && p1Logo)
-                ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p1.nombre}">`
+                ? `<img src="${p1Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p1.tag || p1.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             const p2Avatar = (esLigaLBL && p2Logo)
-                ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p2.nombre}">`
+                ? `<img src="${p2Logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p2.tag || p2.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             return `
