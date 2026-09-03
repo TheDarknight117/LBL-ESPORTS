@@ -107,9 +107,13 @@ export function obtenerLogoAdaptativoWebp(url, nombre = '', tag = '') {
         convertirImagenAWebpBase64(rawUrl, 256, 0.88).then(webpResult => {
             if (webpResult && webpResult.startsWith('data:image/webp')) {
                 runtimeWebpMemoryCache.set(rawUrl, webpResult);
-                document.querySelectorAll(`img[src="${rawUrl}"]`).forEach(el => {
-                    el.src = webpResult;
-                });
+                try {
+                    document.querySelectorAll('img').forEach(el => {
+                        if (el.getAttribute('src') === rawUrl || el.src === rawUrl) {
+                            el.src = webpResult;
+                        }
+                    });
+                } catch(e) {}
             }
         }).catch(() => {});
     }

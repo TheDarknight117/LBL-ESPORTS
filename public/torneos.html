@@ -961,7 +961,8 @@
             actualizarURL(true);
         };
 
-        const getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'LBL').trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
+        window.getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent((name || 'LBL').trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
+        const getFallbackImage = window.getFallbackImage;
 
         function renderizarTorneoDetalle() {
             const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
@@ -1104,7 +1105,7 @@
                     if (esLigaLBL && logo) {
                         avatarHTML = `
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
-                                <img src="${logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(name)}'" class="w-full h-full object-contain rounded-lg sm:rounded-xl" alt="${name}">
+                                <img src="${logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(name)}';" class="w-full h-full object-contain rounded-lg sm:rounded-xl" alt="${name}">
                             </div>`;
                     } else {
                         avatarHTML = `
@@ -1521,16 +1522,21 @@
                     const p2Logo = esLigaLBL ? obtenerLogoEquipo(m.player2, p2Name) : '';
                     const p2FormattedName = formatearNombreEquipoCronograma(p2Name);
 
+                    const p1Fallback = getFallbackImage(p1Name);
+                    const p2Fallback = getFallbackImage(p2Name);
+                    const p1FinalLogo = p1Logo || p1Fallback;
+                    const p2FinalLogo = p2Logo || p2Fallback;
+
                     let p1Avatar = '';
-                    if (esLigaLBL && p1Logo) {
+                    if (esLigaLBL) {
                         p1Avatar = `
-                            <img src="${p1Logo}" decoding="async" onerror="this.src='${getFallbackImage(p1Name)}'" class="cronograma-team-logo" alt="${p1Name}">`;
+                            <img src="${p1FinalLogo}" decoding="async" onerror="this.onerror=null; this.src='${p1Fallback}';" class="cronograma-team-logo" alt="${p1Name}">`;
                     }
 
                     let p2Avatar = '';
-                    if (esLigaLBL && p2Logo) {
+                    if (esLigaLBL) {
                         p2Avatar = `
-                            <img src="${p2Logo}" decoding="async" onerror="this.src='${getFallbackImage(p2Name)}'" class="cronograma-team-logo" alt="${p2Name}">`;
+                            <img src="${p2FinalLogo}" decoding="async" onerror="this.onerror=null; this.src='${p2Fallback}';" class="cronograma-team-logo" alt="${p2Name}">`;
                     }
 
                     const p1TagBadge = `<span class="cronograma-team-tag" title="${p1Name}">${p1Tag}</span>`;
@@ -1717,11 +1723,11 @@
                 const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
                 const p1Avatar = (esLigaLBL && p1Logo)
-                    ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p1.nombre}">`
+                    ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p1.nombre}">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p1.tag || resolverTag(p1)}</div>`;
 
                 const p2Avatar = (esLigaLBL && p2Logo)
-                    ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p2.nombre}">`
+                    ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-9 h-9 object-contain rounded-lg bg-black border border-gray-800 p-0.5" alt="${p2.nombre}">`
                     : `<div class="w-9 h-9 rounded-lg bg-black border border-gray-800 flex items-center justify-center font-black text-[10px] text-cyan-400 font-mono">${p2.tag || resolverTag(p2)}</div>`;
 
                 html += `
@@ -2192,11 +2198,11 @@
             const p2Logo = esLigaLBL ? (p2.logo || '') : '';
 
             const p1Avatar = (esLigaLBL && p1Logo)
-                ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p1.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p1.nombre}">`
+                ? `<img src="${p1Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p1.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p1.nombre}">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p1.tag || p1.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             const p2Avatar = (esLigaLBL && p2Logo)
-                ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.src='${getFallbackImage(p2.nombre)}'" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p2.nombre}">`
+                ? `<img src="${p2Logo}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${getFallbackImage(p2.nombre)}';" class="w-4 h-4 rounded object-contain bg-black shrink-0" alt="${p2.nombre}">`
                 : `<span class="w-4 h-4 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-mono text-[8px] font-black flex items-center justify-center shrink-0">${(p2.tag || p2.nombre || 'T').substring(0, 1).toUpperCase()}</span>`;
 
             return `

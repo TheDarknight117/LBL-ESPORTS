@@ -1609,7 +1609,7 @@
                 tr.className = "hover:bg-[#111] transition-colors";
                 tr.innerHTML = `
                     <td class="px-6 py-4 font-bold text-white flex items-center gap-3">
-                        <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.src='${fallbackSrc}'" class="w-8 h-8 rounded bg-black object-contain border border-gray-800">
+                        <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-8 h-8 rounded bg-black object-contain border border-gray-800">
                         <span class="flex items-center">${eq.equipo.nombre} ${badgeModificado}</span>
                     </td>
                     <td class="px-6 py-4 text-gray-400"><span class="text-blue-400 font-bold">${teamTag}</span> ${eq.equipo.tier}</td>
@@ -1629,7 +1629,7 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between border-b border-gray-800/50 pb-3">
                         <div class="flex items-center gap-3">
-                            <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.src='${fallbackSrc}'" class="w-10 h-10 rounded bg-black object-contain border border-gray-800">
+                            <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-10 h-10 rounded bg-black object-contain border border-gray-800">
                             <div>
                                 <h4 class="font-bold text-white text-sm leading-tight flex items-center gap-1.5">${eq.equipo.nombre} ${badgeModificado}</h4>
                                 <p class="text-xs text-gray-500"><span class="text-blue-400 font-bold">${teamTag}</span> ${eq.equipo.tier}</p>
@@ -1953,7 +1953,7 @@
                     <div class="p-4 ${esLeido ? 'notif-card-muted' : 'notif-card-active'} flex flex-col gap-2.5 transition-all">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <img src="${ev.equipoLogo}" decoding="async" loading="lazy" onerror="this.src='${getFallbackImage(ev.equipoNombre)}'" class="w-8 h-8 rounded-lg bg-black object-contain border border-[#1e293b] shrink-0">
+                                <img src="${ev.equipoLogo}" decoding="async" loading="lazy" onerror="this.onerror=null; this.src='${getFallbackImage(ev.equipoNombre)}';" class="w-8 h-8 rounded-lg bg-black object-contain border border-[#1e293b] shrink-0">
                                 <div class="min-w-0">
                                     <h4 class="text-xs font-black text-white truncate tracking-wide">${ev.equipoNombre}</h4>
                                     <div class="flex items-center gap-1.5 mt-0.5">
