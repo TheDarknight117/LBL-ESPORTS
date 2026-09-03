@@ -967,29 +967,6 @@
 
             actualizarTabsUI(etapaActiva);
 
-            // Sincronización inteligente en segundo plano (Solo torneos activos y respetando Cooldown adaptativo)
-            const estadoActual = (docTorneo.estado || '').toLowerCase();
-            const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
-            
-            if (esTorneoActivo && !docTorneo._syncingLive) {
-                docTorneo._syncingLive = true;
-                verificarYAutoSincronizarTorneo(docTorneo, listaEquiposAceptadosCache)
-                    .then(res => {
-                        if (res && res.synced && res.data) {
-                            const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
-                            if (idx !== -1) {
-                                listaTorneosRegistrados[idx] = res.data;
-                                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                                if (torneoSeleccionadoId === docTorneo.id) {
-                                    renderizarTorneoDetalle();
-                                }
-                            }
-                        }
-                    })
-                    .catch(e => console.warn("Live Challonge auto-sync:", e.message))
-                    .finally(() => { docTorneo._syncingLive = false; });
-            }
-
             const torneo = docTorneo.datosChallonge || docTorneo;
 
             const titleEl = document.getElementById('detail-tournament-title');

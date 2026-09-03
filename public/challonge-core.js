@@ -258,8 +258,7 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         // Proxies estables y libres de límites 429/401
         const proxyList = [
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
-            `https://thingproxy.freeboard.io/fetch/${targetUrl}`
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
         ];
 
         for (const pUrl of proxyList) {
@@ -497,7 +496,6 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
     }
 
     try {
-        console.log(`[Auto-Sync LBL] Sincronizando en segundo plano torneo activo "${torneoDoc.nombre}"...`);
         const resultado = await procesarTorneoChallonge(slugOId, null, equiposLBL, torneoDoc.division || torneoDoc.tier || 'Tier 1');
         if (resultado) {
             let autoEstado = torneoDoc.estado;
@@ -526,7 +524,7 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
             return { synced: true, data: torneoActualizado, keyUsed: resultado.keyUsed };
         }
     } catch (err) {
-        console.warn('[Auto-Sync LBL] Advertencia de sincronización en segundo plano:', err.message);
+        // Silencioso en modo espectador
     }
 
     return { synced: false, data: torneoDoc, reason: 'error_red' };
