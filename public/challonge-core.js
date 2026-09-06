@@ -38,6 +38,7 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'team dark':          { nombre: 'TEAM DARK', tag: 'TDK', logo: '/assets/teams/team_dark.webp', logoFallback: 'https://i.ibb.co/CKK956Sh/team-dark-4.png', tier: 'Tier 1' },
     'snake dynasty':      { nombre: 'Snake Dynasty', tag: 'SKD', logo: '/assets/teams/snake_dynasty.webp', logoFallback: 'https://i.ibb.co/Fqy1YXJ0/snake-dinasty-2.png', tier: 'Tier 2' },
     'rise of kings order':{ nombre: 'Rise Of Kings Order', tag: 'RKO', logo: '/assets/teams/rise_of_kings_order.webp', logoFallback: 'https://i.ibb.co/pvsVjxs6/Rise-Of-King-Order2.png', tier: 'Tier 2' },
+    'rise of king order': { nombre: 'Rise Of Kings Order', tag: 'RKO', logo: '/assets/teams/rise_of_kings_order.webp', logoFallback: 'https://i.ibb.co/pvsVjxs6/Rise-Of-King-Order2.png', tier: 'Tier 2' },
     'aether core':        { nombre: 'Aether Core', tag: 'ATC', logo: '/assets/teams/aether_core.webp', logoFallback: 'https://i.ibb.co/Kjpdt5kB/ATCv3.png', tier: 'Tier 1' },
     'condor nexus':       { nombre: 'CONDOR NEXUS', tag: 'CRN', logo: '/assets/teams/condor_nexus.webp', logoFallback: 'https://i.ibb.co/YB1TM3GT/condor-nexus.png', tier: 'Tier 2' },
     'riot pls game':      { nombre: 'RIOT PLS GAME', tag: 'RPG', logo: '/assets/teams/riot_pls_game.webp', logoFallback: 'https://i.ibb.co/21yW1QxC/riot-plis.png', tier: 'Tier 1' },
