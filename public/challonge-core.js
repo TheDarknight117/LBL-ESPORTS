@@ -330,29 +330,45 @@ async function apiCall(endpointPath, preferredApiKey = null) {
 
         const separator = endpointPath.includes('?') ? '&' : '?';
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
+        const encodedTarget = encodeURIComponent(targetUrl);
 
-        // Proxies estables y libres de límites 429/401
+        // Lista de proxies de alto rendimiento: Worker dedicado LBL + proxies comunitarios resilientes
         const proxyList = [
-            `https://proxy.cors.sh/${targetUrl}`,
-            `https://cors.eu.org/${targetUrl}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
+            { url: `https://lbl-cors-proxy.vagabond-cerise.workers.dev/?url=${encodedTarget}`, isWrapper: false },
+            { url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
+            { url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false },
+            { url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false },
+            { url: `https://cors.eu.org/${targetUrl}`, isWrapper: false }
         ];
 
-        for (const pUrl of proxyList) {
+        for (const proxyItem of proxyList) {
             try {
-                const res = await fetchWithTimeout(pUrl, {}, 4000);
-                if (res && res.status === 429) {
-                    // Esta llave superó la cuota mensual de Challonge -> pasar a la siguiente llave del pool
-                    break;
+                const res = await fetchWithTimeout(proxyItem.url, {}, 3500);
+
+                if (!res || !res.ok) {
+                    // Si un proxy devuelve 429/500/502/403, es problema del proxy -> continuar con el siguiente proxy de la lista
+                    continue;
                 }
-                if (res && res.ok) {
-                    const parsed = await res.json();
-                    if (parsed && (parsed.tournament || Array.isArray(parsed))) {
-                        return { data: parsed, keyUsed: cleanKey };
+
+                let parsed = null;
+                if (proxyItem.isWrapper) {
+                    const wrapper = await res.json();
+                    if (wrapper && wrapper.contents) {
+                        try {
+                            parsed = JSON.parse(wrapper.contents);
+                        } catch (e) {
+                            parsed = null;
+                        }
                     }
+                } else {
+                    parsed = await res.json();
+                }
+
+                if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                    return { data: parsed, keyUsed: cleanKey };
                 }
             } catch (e) {
-                // Timeout o CORS error en este proxy -> intentar el siguiente sin congelar
+                // Timeout o error en este proxy -> intentar el siguiente sin interrumpir
             }
         }
     }
