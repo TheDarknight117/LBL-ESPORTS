@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v127';
+const CACHE_NAME = 'lbl-cache-v128';
 const ASSETS = [
   '/',
   '/torneos',
@@ -48,30 +48,40 @@ const ASSETS = [
   '/assets/teams/nox_reign.webp'
 ];
 
-// Install Event - cache assets
+// Install Event - pre-cache critical assets
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('SW: Caching static assets');
+      console.log('SW: Pre-caching assets:', CACHE_NAME);
       return cache.addAll(ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activate Event - clean old caches
+// Activate Event - purge old caches immediately and claim clients
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME && key !== 'lbl-team-logos-cache').map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch Event - Stale-while-revalidate strategy for local assets
+// Listen for skip waiting command
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// Fetch Event - Network-First for JS/HTML code, Cache-First for static images
 self.addEventListener('fetch', (e) => {
-  // Cache external team logos (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.)
+  // Ignore non-GET requests
+  if (e.request.method !== 'GET') return;
+
+  // External images (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.)
   if (!e.request.url.startsWith(self.location.origin)) {
     const isImage = e.request.destination === 'image' || 
                     e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
@@ -84,12 +94,11 @@ self.addEventListener('fetch', (e) => {
                     e.request.url.includes('firebasestorage') ||
                     e.request.url.includes('googleusercontent.com');
 
-    if (isImage && e.request.method === 'GET') {
+    if (isImage) {
       e.respondWith(
         caches.open('lbl-team-logos-cache').then((cache) => {
           return cache.match(e.request).then((cachedResponse) => {
             if (cachedResponse) {
-              // Background update
               fetch(e.request).then((netRes) => {
                 if (netRes && netRes.ok) cache.put(e.request, netRes);
               }).catch(() => {});
@@ -106,11 +115,12 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Ignore Firebase SDK/API calls
+  // Ignore Firebase SDK & API endpoints
   if (
     e.request.url.includes('firestore.googleapis.com') || 
     e.request.url.includes('identitytoolkit.googleapis.com') ||
-    e.request.url.includes('firebasejs')
+    e.request.url.includes('firebasejs') ||
+    e.request.url.includes('workers.dev')
   ) {
     return;
   }
@@ -127,32 +137,51 @@ self.addEventListener('fetch', (e) => {
     matchKey = cleanPath;
   }
 
-  e.respondWith(
-    caches.match(matchKey).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch updated version in the background and update cache
-        fetch(e.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, networkResponse));
-          }
-        }).catch(() => {/* Ignore network errors */});
-        
-        return cachedResponse;
-      }
+  const isCodeOrDocument = e.request.mode === 'navigate' || 
+                           url.pathname.endsWith('.js') || 
+                           url.pathname.endsWith('.css') || 
+                           url.pathname.endsWith('.html') ||
+                           url.pathname.startsWith('/torneos') ||
+                           url.pathname === '/';
 
-      return fetch(e.request).then((networkResponse) => {
+  if (isCodeOrDocument) {
+    // Network-First strategy: Siempre busca el código fresco primero
+    e.respondWith(
+      fetch(e.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(matchKey, responseToCache);
-          });
+          caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, responseToCache));
         }
         return networkResponse;
       }).catch(() => {
-        if (e.request.mode === 'navigate') {
-          return caches.match('/');
+        // Si no hay red, usar el cache de respaldo
+        return caches.match(matchKey).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          if (e.request.mode === 'navigate') return caches.match('/');
+        });
+      })
+    );
+  } else {
+    // Stale-While-Revalidate for local images & assets
+    e.respondWith(
+      caches.match(matchKey).then((cachedResponse) => {
+        if (cachedResponse) {
+          fetch(e.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, networkResponse));
+            }
+          }).catch(() => {});
+          return cachedResponse;
         }
-      });
-    })
-  );
+
+        return fetch(e.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, responseToCache));
+          }
+          return networkResponse;
+        });
+      })
+    );
+  }
 });
