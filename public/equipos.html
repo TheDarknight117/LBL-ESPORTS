@@ -20,15 +20,26 @@
     <meta name="twitter:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
 
     <!-- Favicon & Touch Icon -->
-    <link rel="icon" type="image/png" href="assets/LBL Circular.png">
-    <link rel="shortcut icon" type="image/png" href="assets/LBL Circular.png">
-    <link rel="apple-touch-icon" href="assets/LBL Circular.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3b82f6">
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#020202">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
+
+    <!-- Early PWA Prompt Capture -->
+    <script>
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.deferredPrompt = e;
+            console.log('[LBL PWA] ⚡ beforeinstallprompt capturado tempranamente en <head>');
+            if (typeof window.lblActualizarUI === 'function') window.lblActualizarUI();
+        });
+    </script>
 
     <link rel="stylesheet" href="dist/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -679,104 +690,7 @@
         });
     </script>
     
-    <!-- PWA Install & Service Worker Logic -->
-    <script>
-        let deferredPrompt = null;
-
-        function mostrarSugerenciaMovil() {
-            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            const dismissed = sessionStorage.getItem('lbl_pwa_banner_dismissed');
-
-            if (isMobile && !isStandalone && !dismissed) {
-                const banner = document.getElementById('mobile-pwa-banner');
-                if (banner) {
-                    banner.classList.remove('hidden');
-                    banner.classList.add('flex');
-                    setTimeout(() => {
-                        banner.classList.remove('translate-y-20', 'opacity-0');
-                        banner.classList.add('translate-y-0', 'opacity-100');
-                    }, 100);
-                }
-            }
-        }
-
-        window.cerrarMobilePwaBanner = () => {
-            sessionStorage.setItem('lbl_pwa_banner_dismissed', 'true');
-            const banner = document.getElementById('mobile-pwa-banner');
-            if (banner) {
-                banner.classList.remove('translate-y-0', 'opacity-100');
-                banner.classList.add('translate-y-20', 'opacity-0');
-                setTimeout(() => {
-                    banner.classList.add('hidden');
-                    banner.classList.remove('flex');
-                }, 400);
-            }
-        };
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            mostrarSugerenciaMovil();
-        });
-
-        window.addEventListener('appinstalled', () => {
-            deferredPrompt = null;
-            cerrarMobilePwaBanner();
-        });
-
-        window.installPWA = async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    cerrarMobilePwaBanner();
-                }
-                deferredPrompt = null;
-            } else {
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS) {
-                    alert('📱 Para instalar en tu iPhone/iPad:\n\n1. Toca el botón Compartir ⎋ (abajo en Safari)\n2. Selecciona "Agregar a inicio ⊞"');
-                } else if (window.matchMedia('(display-mode: standalone)').matches) {
-                    alert('✅ ¡Ya tienes instalada la aplicación LBL Esports!');
-                } else {
-                    alert('📲 Para instalar la app:\nHaz clic en el ícono de instalación (⊕ o 📲) en la barra de direcciones de tu navegador.');
-                }
-            }
-        };
-
-        window.addEventListener('load', () => {
-            setTimeout(mostrarSugerenciaMovil, 1200);
-        });
-
-        if ('serviceWorker' in navigator) {
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
-                    refreshing = true;
-                    window.location.reload();
-                }
-            });
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => {
-                        console.log('Service Worker registrado con éxito:', reg.scope);
-                        reg.update();
-                        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        reg.addEventListener('updatefound', () => {
-                            const newWorker = reg.installing;
-                            if (newWorker) {
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                    }
-                                });
-                            }
-                        });
-                    })
-                    .catch(err => console.error('Error al registrar Service Worker:', err));
-            });
-        }
-    </script>
+    <!-- PWA Universal Manager & Service Worker -->
+    <script src="/pwa-manager.js" defer></script>
 </body>
 </html>

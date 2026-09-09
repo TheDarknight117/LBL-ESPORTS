@@ -1,22 +1,40 @@
 {
+  "id": "/",
   "name": "LBL Esports",
   "short_name": "LBL",
-  "description": "Liga Boliviana de League of Legends",
+  "description": "Liga Boliviana de League of Legends - Circuito Competitivo Oficial",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#020202",
-  "theme_color": "#3b82f6",
-  "orientation": "portrait-primary",
+  "theme_color": "#020202",
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "categories": ["games", "sports", "entertainment"],
   "icons": [
     {
-      "src": "assets/LBL Circular.png",
+      "src": "/assets/pwa-icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "assets/LBL Circular.png",
+      "src": "/assets/pwa-icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa-icon-maskable-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/pwa-icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ]
 }

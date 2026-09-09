@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v129';
+const CACHE_NAME = 'lbl-cache-v134';
 const ASSETS = [
   '/',
   '/torneos',
@@ -12,6 +12,9 @@ const ASSETS = [
   '/challonge-core.js',
   '/image-optimizer.js',
   '/app-version.js',
+  '/pwa-manager.js',
+  '/assets/pwa-icon-192.png',
+  '/assets/pwa-icon-512.png',
   '/dist/output.css',
   '/assets/logo.webp',
   '/assets/logo2.webp',

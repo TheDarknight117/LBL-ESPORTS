@@ -22,8 +22,13 @@
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
     <link rel="stylesheet" href="/dist/output.css">
-    <link rel="icon" type="image/png" href="/assets/LBL%20Circular.png">
-    <link rel="shortcut icon" type="image/png" href="/assets/LBL%20Circular.png">
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#020202">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
         body {
@@ -2471,32 +2476,9 @@
                 staffBadge.classList.add('inline-flex');
             }
         });
-
-        if ('serviceWorker' in navigator) {
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
-                    refreshing = true;
-                    window.location.reload();
-                }
-            });
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(reg => {
-                    reg.update();
-                    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-                    reg.addEventListener('updatefound', () => {
-                        const newWorker = reg.installing;
-                        if (newWorker) {
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                }
-                            });
-                        }
-                    });
-                }).catch(() => {});
-            });
-        }
     </script>
+
+    <!-- PWA Universal Manager & Service Worker -->
+    <script src="/pwa-manager.js" defer></script>
 </body>
 </html>
