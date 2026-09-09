@@ -1219,59 +1219,90 @@
             }
 
             let podioHTML = '';
-            // Helper para tarjeta de podio individual
+            // Helper para tarjeta de podio individual (disposición en fila horizontal)
             const podioCard = (rank, label, sublabel, accentColor, bgFrom, borderColor, equipo, isAvailable) => {
                 const nombre = equipo?.nombre || equipo?.name || '';
                 const tag = resolverTag(equipo || {}) || nombre.substring(0, 3).toUpperCase();
+                const logo = (isAvailable && esLigaLBL) ? obtenerLogoEquipo(equipo, nombre) : '';
                 const rankShieldStyle = {
                     '1': 'background:linear-gradient(135deg,#b8860b,#f5c518,#b8860b);color:#0a0a1a;',
                     '2': 'background:linear-gradient(135deg,#4a5568,#a0aec0,#4a5568);color:#0a0a1a;',
                     '3': 'background:linear-gradient(135deg,#7b4f1a,#cd7f32,#7b4f1a);color:#0a0a1a;'
                 }[rank] || 'background:#1a1f2e;color:#94a3b8;';
 
+                let avatarHTML = '';
+                if (isAvailable && logo) {
+                    avatarHTML = `
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#070c14] flex items-center justify-center p-1.5 shrink-0 shadow-inner group-hover:bg-black transition-colors">
+                            <img src="${logo}" onerror="this.onerror=null; this.src='${getFallbackImage(nombre)}';" class="w-full h-full object-contain rounded-lg">
+                        </div>`;
+                } else {
+                    avatarHTML = `
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#030712] border border-gray-800 flex items-center justify-center shrink-0 shadow-inner group-hover:border-cyan-500/40 transition-colors">
+                            <span class="font-black text-xs text-cyan-400 font-mono">${isAvailable ? tag : '???'}</span>
+                        </div>`;
+                }
+
                 return `
-                    <div class="flex-1 flex flex-col justify-center px-6 py-5 relative" style="border-left: 2px solid ${borderColor};">
-                        <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#030712] hover:bg-[#070c14] transition-all shadow-md group border-l-4 relative" style="border-left-color: ${borderColor};">
+                        <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                             <!-- Shield rank -->
-                            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-lg" style="${rankShieldStyle}">
+                            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black text-sm sm:text-base shrink-0 shadow-lg" style="${rankShieldStyle}">
                                 ${rank}<span style="font-size:0.55em;vertical-align:super;">°</span>
                             </div>
-                            <!-- Tag + Name -->
-                            <div class="flex flex-col gap-1 min-w-0">
-                                <span class="px-2 py-0.5 rounded font-black text-[10px] uppercase tracking-widest self-start" style="background:rgba(20,148,224,0.15);color:#1494E0;border:1px solid rgba(20,148,224,0.3)">${isAvailable ? tag : '???'}</span>
-                                <span class="font-black text-white uppercase tracking-wide text-sm md:text-base truncate">${isAvailable ? (nombre || 'Por Definir') : 'Por Definir'}</span>
-                                <span class="text-[11px] font-semibold" style="color:${accentColor}">${sublabel}</span>
+                            <!-- Logo / Avatar -->
+                            ${avatarHTML}
+                            <!-- Team info -->
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-black text-white uppercase tracking-wider text-sm sm:text-base truncate group-hover:text-cyan-300 transition-colors">
+                                    ${isAvailable ? (nombre || 'Por Definir') : 'Por Definir'}
+                                </span>
+                                <span class="text-[11px] sm:text-xs font-semibold" style="color:${accentColor}">
+                                    ${sublabel}
+                                </span>
                             </div>
                         </div>
+                        <span class="hidden sm:inline-block px-2.5 py-1 rounded-lg font-black text-[10px] uppercase tracking-widest shrink-0" style="background:rgba(20,148,224,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.25)">
+                            ${isAvailable ? tag : '???'}
+                        </span>
                     </div>`;
             };
 
             if (isCompleted && p1) {
                 podioHTML = `
-                    <div class="flex flex-col sm:flex-row w-full rounded-2xl overflow-hidden shadow-2xl" style="background:#07090f;border:1px solid #1a2035;">
+                    <div class="flex flex-col gap-3 w-full">
                         ${podioCard('1','Campeón','1.er lugar — Campeón 🏆','#f5c518','#b8860b','#f5c518',p1,true)}
-                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
                         ${podioCard('2','Subcampeón','2.° lugar — Subcampeón 🥈','#a0aec0','#4a5568','#a0aec0',p2,!!p2)}
-                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
                         ${podioCard('3','Bronce','3.er lugar — Medalla de Bronce 🥉','#cd7f32','#7b4f1a','#cd7f32',p3,!!p3)}
                     </div>`;
             } else {
                 podioHTML = `
-                    <div class="flex flex-col sm:flex-row w-full rounded-2xl overflow-hidden shadow-xl" style="background:#07090f;border:1px solid #1a2035;">
+                    <div class="flex flex-col gap-3 w-full">
                         ${podioCard('1','Campeón','1.er lugar — En disputa','#f5c518','#b8860b','#f5c51840',null,false)}
-                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
                         ${podioCard('2','Subcampeón','2.° lugar — En disputa','#a0aec0','#4a5568','#a0aec040',null,false)}
-                        <div class="w-px sm:h-auto h-px" style="background:linear-gradient(to bottom,transparent,#1a2035,transparent);flex-shrink:0;"></div>
                         ${podioCard('3','Bronce','3.er lugar — En disputa','#cd7f32','#7b4f1a','#cd7f3240',null,false)}
                     </div>`;
             }
 
-
             container.innerHTML = `
                 <div class="space-y-8">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        <!-- COLUMNA IZQUIERDA: RESUMEN DEL SPLIT & PODIO -->
-                        <div class="lg:col-span-7 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
+                        <!-- COLUMNA IZQUIERDA: EQUIPOS PARTICIPANTES -->
+                        <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl order-2 lg:order-1">
+                            <div class="border-b border-gray-800/80 pb-3">
+                                <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight">
+                                    Equipos participantes
+                                </h3>
+                                <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                    Todos los equipos de la región participan en este evento.
+                                </span>
+                            </div>
+
+                            ${equiposGridHTML}
+                        </div>
+
+                        <!-- COLUMNA DERECHA: RESUMEN DEL SPLIT & PODIO -->
+                        <div class="lg:col-span-7 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl order-1 lg:order-2">
                             <div class="space-y-2 border-b border-gray-800/80 pb-4">
                                 <h3 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight">
                                     Resumen de ${torneo.nombre || `Torneo LBL`}
@@ -1281,7 +1312,7 @@
                                 </p>
                             </div>
 
-                            <!-- CUADRO DE POSICIONES PRINCIPALES -->
+                            <!-- CUADRO DE POSICIONES PRINCIPALES (PODIO EN VERTICAL CON FILAS HORIZONTALES) -->
                             <div class="space-y-3">
                                 <h4 class="text-xs font-black text-cyan-400 uppercase tracking-widest italic flex items-center gap-2">
                                     <i class="fas fa-trophy text-yellow-400"></i> Puestos del Torneo
@@ -1297,20 +1328,6 @@
                                     • <strong class="text-gray-300">Eliminatorias / Play-offs:</strong> Cuadrante directo de eliminación con Upper y Lower Bracket al mejor de 3 y 5 partidas (BO3 / BO5).
                                 </p>
                             </div>
-                        </div>
-
-                        <!-- COLUMNA DERECHA: EQUIPOS PARTICIPANTES -->
-                        <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl">
-                            <div class="border-b border-gray-800/80 pb-3">
-                                <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight">
-                                    Equipos participantes
-                                </h3>
-                                <span class="text-xs text-gray-400 font-medium block mt-0.5">
-                                    Todos los equipos de la región participan en este evento.
-                                </span>
-                            </div>
-
-                            ${equiposGridHTML}
                         </div>
                     </div>
                 </div>`;
