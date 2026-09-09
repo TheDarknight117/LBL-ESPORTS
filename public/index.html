@@ -146,6 +146,7 @@
                 height: 280px !important;
                 gap: 0.35rem !important;
                 padding: 0 4px;
+                touch-action: manipulation;
             }
         }
 
@@ -166,7 +167,30 @@
             .trapezoid-card {
                 clip-path: none !important;
                 border-radius: 0.875rem !important;
-                transform: translateZ(0); /* Aceleración GPU en móvil */
+                /* Eliminar transiciones de geometría pesadas en móvil para evitar freeze */
+                transition: opacity 0.15s ease-out, border-color 0.15s ease-out !important;
+                will-change: auto !important;
+                transform: none !important;
+                box-shadow: none !important;
+                touch-action: manipulation;
+            }
+            .trapezoid-card img {
+                /* Desactivar filtros y zoom dinámico en móvil para no saturar la GPU */
+                filter: none !important;
+                transform: none !important;
+                transition: opacity 0.15s ease-out !important;
+                will-change: auto !important;
+            }
+            .trapezoid-card i {
+                /* Quitar animaciones y sombras pesadas de iconos en móvil */
+                transition: none !important;
+                filter: none !important;
+                transform: none !important;
+            }
+            .trapezoid-card h4 {
+                /* Aparición rápida de texto sin reflow */
+                transition: opacity 0.15s ease-out !important;
+                transform: none !important;
             }
         }
 

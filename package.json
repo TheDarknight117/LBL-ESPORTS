@@ -4,6 +4,7 @@
   "description": "LBL esports landing and staff dashboard",
   "main": "index.js",
   "scripts": {
+    "dev": "node dev-server.js",
     "build:css": "tailwindcss -i ./src/input.css -o ./public/dist/output.css --minify",
     "watch:css": "tailwindcss -i ./src/input.css -o ./public/dist/output.css --watch"
   },
