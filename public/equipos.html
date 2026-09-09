@@ -201,6 +201,7 @@
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mapearLogoAWebp } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
+        import "/app-version.js";
 
         let todosLosEquipos = [];
         let tierActual = 'Tier 1';
@@ -761,6 +762,17 @@
                     .then(reg => {
                         console.log('Service Worker registrado con éxito:', reg.scope);
                         reg.update();
+                        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    }
+                                });
+                            }
+                        });
                     })
                     .catch(err => console.error('Error al registrar Service Worker:', err));
             });

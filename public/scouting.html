@@ -31,6 +31,7 @@
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
     <link rel="stylesheet" href="dist/output.css">
+    <script type="module" src="/app-version.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -546,6 +547,17 @@
                     .then(reg => {
                         console.log('Service Worker registrado con éxito:', reg.scope);
                         reg.update();
+                        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    }
+                                });
+                            }
+                        });
                     })
                     .catch(err => console.error('Error al registrar Service Worker:', err));
             });

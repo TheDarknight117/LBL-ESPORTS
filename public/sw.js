@@ -11,6 +11,7 @@ const ASSETS = [
   '/staff-config.js',
   '/challonge-core.js',
   '/image-optimizer.js',
+  '/app-version.js',
   '/dist/output.css',
   '/assets/logo.webp',
   '/assets/logo2.webp',
