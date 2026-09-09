@@ -45,8 +45,8 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'anti kaox':          { nombre: 'ANTI KAOX', tag: 'AKX', logo: '/assets/teams/anti_kaox.webp', logoFallback: 'https://i.ibb.co/wNQj4xH8/antikaox3.png', tier: 'Tier 1' },
     'kaox esports':       { nombre: 'Kaox Esports', tag: 'KX', logo: '/assets/teams/kaox_esports.webp', logoFallback: 'https://i.ibb.co/ymKntgG2/Kaox-Esports-OF.png', tier: 'Tier 1' },
     'katz e-sports':      { nombre: 'Katz E-sports', tag: 'KAT', logo: '/assets/teams/katz_esports.webp', logoFallback: 'https://i.ibb.co/WNSTqLW3/KATZ.png', tier: 'Tier 1' },
-    'ruined king':        { nombre: 'RUINED KING', tag: 'RNK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/d05K5q18/Ruined-Kings.png', tier: 'Tier 2' },
-    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RNK', logo: '/assets/teams/ruined_king.webp', logoFallback: 'https://i.ibb.co/d05K5q18/Ruined-Kings.png', tier: 'Tier 2' },
+    'ruined king':        { nombre: 'RUINED KINGS', tag: 'RNK', logo: '/assets/teams/ruined_kings.webp', logoFallback: 'https://i.ibb.co/d05K5q18/Ruined-Kings.png', tier: 'Tier 2' },
+    'ruined kings':       { nombre: 'RUINED KINGS', tag: 'RNK', logo: '/assets/teams/ruined_kings.webp', logoFallback: 'https://i.ibb.co/d05K5q18/Ruined-Kings.png', tier: 'Tier 2' },
     // Equipos de Torneos Pasados (Históricos)
     'kaox blue':          { nombre: 'Kaox Blue', tag: 'KXB', logo: '/assets/teams/kaox_blue.webp', logoFallback: 'https://i.ibb.co/FbYdnqM5/KAOX-BLUE.png', tier: 'Torneos Pasados' },
     'kaox purple':        { nombre: 'Kaox Purple', tag: 'KXP', logo: '/assets/teams/kaox_purple.webp', logoFallback: 'https://i.ibb.co/zWZwFbRh/Kao-X-purple.png', tier: 'Torneos Pasados' },
@@ -112,12 +112,12 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
         return '/assets/teams/katz_esports.webp';
     }
 
-    // 7. Ruined King (RK)
-    if (cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined') || cleanUrl.includes('prrd4nkh')) {
-        if (cleanUrl.startsWith('http') && !cleanUrl.includes('ruined') && !cleanUrl.includes('prrd4nkh')) {
+    // 7. Ruined King / Ruined Kings (RNK / RK)
+    if (cleanTag === 'RNK' || cleanTag === 'RK' || cleanName.includes('ruined') || cleanUrl.includes('ruined') || cleanUrl.includes('d05k5q18') || cleanUrl.includes('prrd4nkh')) {
+        if (cleanUrl.startsWith('http') && !cleanUrl.includes('ruined') && !cleanUrl.includes('d05k5q18') && !cleanUrl.includes('prrd4nkh')) {
             return rawUrl;
         }
-        return '/assets/teams/ruined_king.webp';
+        return '/assets/teams/ruined_kings.webp';
     }
 
     // 8. Equipos de Torneos Pasados

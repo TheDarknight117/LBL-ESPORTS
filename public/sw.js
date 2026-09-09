@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v128';
+const CACHE_NAME = 'lbl-cache-v129';
 const ASSETS = [
   '/',
   '/torneos',
@@ -41,6 +41,7 @@ const ASSETS = [
   '/assets/teams/kaox_esports.webp',
   '/assets/teams/katz_esports.webp',
   '/assets/teams/ruined_king.webp',
+  '/assets/teams/ruined_kings.webp',
   '/assets/teams/kaox_blue.webp',
   '/assets/teams/kaox_purple.webp',
   '/assets/teams/viktus.webp',
@@ -63,7 +64,7 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME && key !== 'lbl-team-logos-cache').map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
