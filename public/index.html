@@ -31,16 +31,25 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <!-- Early PWA Prompt Capture -->
+    <!-- Early PWA Detection & Prompt Capture -->
     <script>
         window.deferredPrompt = null;
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.includes('android-app://')) {
+            document.documentElement.classList.add('pwa-standalone-active');
+        }
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             window.deferredPrompt = e;
             console.log('[LBL PWA] ⚡ beforeinstallprompt capturado tempranamente en <head>');
-            if (typeof window.lblActualizarUI === 'function') window.lblActualizarUI();
         });
     </script>
+    <style>
+        .pwa-standalone-active #pwa-install-container,
+        .pwa-standalone-active #pwa-install-btn,
+        .pwa-standalone-active #mobile-pwa-banner {
+            display: none !important;
+        }
+    </style>
 
     <link rel="stylesheet" href="dist/output.css">
     <script type="module" src="/app-version.js"></script>
@@ -256,9 +265,9 @@
         <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-48 md:h-64 w-auto object-contain mb-8 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
 
         <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) -->
-        <div class="mb-8 fade-in-up flex justify-center" style="animation-delay: 0.25s;">
+        <div id="pwa-install-container" class="mb-8 fade-in-up flex justify-center" style="animation-delay: 0.25s;">
             <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
-                <i class="fas fa-download"></i> INSTALAR LBL APP
+                <i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN
             </button>
         </div>
 

@@ -30,16 +30,24 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <!-- Early PWA Prompt Capture -->
+    <!-- Early PWA Detection & Prompt Capture -->
     <script>
         window.deferredPrompt = null;
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.includes('android-app://')) {
+            document.documentElement.classList.add('pwa-standalone-active');
+        }
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             window.deferredPrompt = e;
             console.log('[LBL PWA] ⚡ beforeinstallprompt capturado tempranamente en <head>');
-            if (typeof window.lblActualizarUI === 'function') window.lblActualizarUI();
         });
     </script>
+    <style>
+        .pwa-standalone-active #mobile-pwa-banner,
+        .pwa-standalone-active #pwa-install-btn {
+            display: none !important;
+        }
+    </style>
 
     <link rel="stylesheet" href="dist/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

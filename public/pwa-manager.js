@@ -1,7 +1,11 @@
 /**
- * pwa-manager.js - Gestor Universal de Instalación PWA para LBL Esports
- * Detecta si la app ya está instalada, cambia el botón a "ABRIR APP LBL"
- * y gestiona la instalación nativa directa con protección try/catch.
+ * pwa-manager.js - Gestor Universal de Estados PWA para LBL Esports
+ * 
+ * Cumple los 4 estados exactos:
+ * 1. Web sin app instalada: Botón "Instalar aplicación" y banner móvil activo.
+ * 2. Web con app ya instalada: Botón cambia a "Abrir en la app" y al pulsarlo lanza la app instalada en el móvil.
+ * 3. Dentro de la app instalada (Standalone): Se ocultan totalmente el botón y las notificaciones/banners.
+ * 4. Detección automática al abrir la web en móvil si ya se tiene instalada.
  */
 
 (function () {
@@ -11,42 +15,42 @@
         window.deferredPrompt = null;
     }
 
-    // 1. Verificación completa y asíncrona de si la app ya está instalada
-    async function verificarSiEstaInstalada() {
+    // Estado 3: Detectar si se está ejecutando DENTRO de la app instalada (Standalone / WebAPK)
+    function isRunningInsideApp() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true || 
+               document.referrer.includes('android-app://');
+    }
+
+    // Estados 2 y 4: Detectar si la app está instalada en el celular/dispositivo
+    async function isAppInstalledOnDevice() {
         try {
-            // A. Modo Standalone / WebApp activa
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.navigator.standalone === true || 
-                document.referrer.includes('android-app://')) {
-                return true;
-            }
+            // A. Si está dentro de la app, evidentemente está instalada
+            if (isRunningInsideApp()) return true;
 
-            // B. Bandera persistente en el dispositivo
-            if (localStorage.getItem('lbl_pwa_installed') === 'true') {
-                return true;
-            }
+            // B. Bandera persistente guardada previamente
+            if (localStorage.getItem('lbl_pwa_installed') === 'true') return true;
 
-            // C. API nativa oficial de Chromium en Android / PC
+            // C. API nativa oficial de Chromium/Android
             if ('getInstalledRelatedApps' in navigator) {
-                const relatedApps = await navigator.getInstalledRelatedApps();
-                if (relatedApps && relatedApps.length > 0) {
+                const apps = await navigator.getInstalledRelatedApps();
+                if (apps && apps.length > 0) {
                     localStorage.setItem('lbl_pwa_installed', 'true');
                     return true;
                 }
             }
-        } catch (err) {
-            console.warn('[LBL PWA] Error al verificar instalación:', err);
+        } catch (e) {
+            console.warn('[LBL PWA] Error en detección de app:', e);
         }
         return false;
     }
 
-    // 2. Notificación flotante elegante
-    function mostrarNotificacion(msg, esExito = true) {
+    // Notificación toast flotante
+    function mostrarNotificacion(msg) {
         try {
             const toast = document.createElement('div');
-            const borde = esExito ? 'border-emerald-500/80 text-emerald-300' : 'border-cyan-500/80 text-cyan-300';
-            toast.className = `fixed top-5 left-1/2 -translate-x-1/2 z-[10000] bg-black/95 border ${borde} px-6 py-3 rounded-2xl text-xs sm:text-sm font-black shadow-2xl backdrop-blur-md transition-all duration-300 opacity-0 -translate-y-4 flex items-center gap-2.5`;
-            toast.innerHTML = `<i class="fas ${esExito ? 'fa-check-circle text-emerald-400' : 'fa-info-circle text-cyan-400'} text-base"></i> <span>${msg}</span>`;
+            toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[10000] bg-black/95 border border-cyan-500/80 text-cyan-300 px-6 py-3 rounded-2xl text-xs sm:text-sm font-black shadow-2xl backdrop-blur-md transition-all duration-300 opacity-0 -translate-y-4 flex items-center gap-2.5';
+            toast.innerHTML = `<i class="fas fa-check-circle text-emerald-400 text-base"></i> <span>${msg}</span>`;
             document.body.appendChild(toast);
             requestAnimationFrame(() => {
                 toast.classList.remove('opacity-0', '-translate-y-4');
@@ -54,53 +58,74 @@
             setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-4');
                 setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            }, 3500);
         } catch (e) {}
     }
 
-    // 3. Acción al pulsar cuando la app ya está instalada: Abrir la App
-    function abrirAppOIndicar() {
-        mostrarNotificacion('✅ ¡La aplicación ya está instalada en tu dispositivo!', true);
+    // Acción para abrir la app instalada directamente en el celular
+    function abrirEnLaApp() {
+        mostrarNotificacion('🚀 Abriendo en la aplicación LBL...');
         try {
-            // Intenta abrir el acceso directo de la PWA
-            window.open('/', '_blank');
-        } catch (e) {}
-    }
-
-    // 4. Actualizar botones de la interfaz
-    function actualizarBotonesUI(instalada) {
-        try {
-            const btn = document.getElementById('pwa-install-btn');
-            if (btn) {
-                if (instalada) {
-                    btn.innerHTML = '<i class="fas fa-external-link-alt text-cyan-400 mr-2"></i> ABRIR APP LBL';
-                    btn.className = 'px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-950/80 via-cyan-950/70 to-blue-950/80 text-cyan-300 border border-cyan-400/50 shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center justify-center gap-2';
-                    btn.onclick = () => abrirAppOIndicar();
-                } else {
-                    btn.classList.remove('hidden');
-                }
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            if (isAndroid) {
+                // Intent oficial de Android: abre la WebAPK/PWA instalada en el sistema
+                window.location.href = 'intent://lbl-esports.web.app/#Intent;scheme=https;action=android.intent.action.VIEW;end;';
+                return;
             }
+            window.open('/', '_blank');
+        } catch (e) {
+            window.open('/', '_blank');
+        }
+    }
 
-            // Si está instalada, ocultar el banner flotante móvil para no molestar
-            if (instalada) {
-                const banner = document.getElementById('mobile-pwa-banner');
+    // Actualización de la interfaz según el estado
+    function actualizarUI(dentroDeLaApp, instaladaEnDispositivo) {
+        try {
+            const btnContainer = document.getElementById('pwa-install-container');
+            const btn = document.getElementById('pwa-install-btn');
+            const banner = document.getElementById('mobile-pwa-banner');
+
+            // ESTADO 3: Si está corriendo DENTRO de la app instalada -> OCULTAR TODO
+            if (dentroDeLaApp) {
+                if (btnContainer) btnContainer.style.display = 'none';
+                if (btn) btn.style.display = 'none';
                 if (banner) {
                     banner.classList.add('hidden');
                     banner.classList.remove('flex');
                 }
+                return;
+            }
+
+            // ESTADOS 2 y 4: Si está en la web y la app YA ESTÁ INSTALADA en el dispositivo
+            if (instaladaEnDispositivo) {
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-external-link-alt text-cyan-400 mr-2"></i> ABRIR EN LA APLICACIÓN';
+                    btn.className = 'px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-950/80 via-cyan-950/70 to-blue-950/80 text-cyan-300 hover:text-white border border-cyan-400/50 hover:border-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center justify-center gap-2';
+                    btn.onclick = () => abrirEnLaApp();
+                }
+                // Ocultar banner flotante de instalación (ya la tiene instalada)
+                if (banner) {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex');
+                }
+                return;
+            }
+
+            // ESTADO 1: Si está en la web y NO tiene la app instalada
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN';
+                btn.className = 'px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center justify-center gap-2';
+                btn.onclick = () => window.installPWA();
             }
         } catch (err) {
-            console.warn('[LBL PWA] Error actualizando botones:', err);
+            console.warn('[LBL PWA] Error al actualizar UI:', err);
         }
     }
-    window.lblActualizarUI = async () => {
-        const inst = await verificarSiEstaInstalada();
-        actualizarBotonesUI(inst);
-    };
 
-    // 5. Banner flotante para móviles (solo si NO está instalada)
-    function mostrarBanner() {
-        verificarSiEstaInstalada().then(instalada => {
+    // Banner flotante para móviles (solo para usuarios SIN la app instalada)
+    function mostrarBannerMovil() {
+        if (isRunningInsideApp()) return;
+        isAppInstalledOnDevice().then(instalada => {
             if (instalada) return;
             const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
             const dismissed = sessionStorage.getItem('lbl_pwa_banner_dismissed');
@@ -131,106 +156,100 @@
         }
     };
 
-    // 6. Función para disparar la ventana nativa de instalación de Android / PC
+    // Disparar prompt nativo del sistema
     async function dispararPromptNativo() {
         if (!window.deferredPrompt) return false;
         try {
-            console.log('[LBL PWA] 🚀 Abriendo instalador nativo...');
+            console.log('[LBL PWA] 🚀 Abriendo diálogo nativo de instalación...');
             const promptEvent = window.deferredPrompt;
             window.deferredPrompt = null;
             promptEvent.prompt();
             const choice = await promptEvent.userChoice;
             if (choice && choice.outcome === 'accepted') {
-                console.log('[LBL PWA] Usuario aceptó la instalación.');
                 localStorage.setItem('lbl_pwa_installed', 'true');
-                actualizarBotonesUI(true);
+                actualizarUI(false, true);
                 window.cerrarMobilePwaBanner();
             }
             return true;
         } catch (e) {
-            console.warn('[LBL PWA] Error al disparar prompt nativo:', e);
+            console.warn('[LBL PWA] Error en prompt nativo:', e);
             return false;
         }
     }
 
-    // 7. Evento oficial beforeinstallprompt
+    // Eventos nativos del navegador
     window.addEventListener('beforeinstallprompt', (e) => {
         try {
             e.preventDefault();
             window.deferredPrompt = e;
-            console.log('[LBL PWA] ✅ Instalador nativo listo.');
-            actualizarBotonesUI(false);
-            mostrarBanner();
-        } catch (err) {
-            console.warn('[LBL PWA] Error en beforeinstallprompt:', err);
-        }
+            console.log('[LBL PWA] ✅ Instalador nativo preparado.');
+            if (!isRunningInsideApp()) {
+                isAppInstalledOnDevice().then(instalada => {
+                    actualizarUI(false, instalada);
+                    if (!instalada) mostrarBannerMovil();
+                });
+            }
+        } catch (err) {}
     });
 
     window.addEventListener('appinstalled', () => {
         try {
             window.deferredPrompt = null;
             localStorage.setItem('lbl_pwa_installed', 'true');
-            console.log('[LBL PWA] 🎉 App instalada.');
-            actualizarBotonesUI(true);
+            console.log('[LBL PWA] 🎉 App instalada con éxito.');
+            actualizarUI(false, true);
             window.cerrarMobilePwaBanner();
             mostrarNotificacion('🎉 ¡LBL Esports se ha instalado con éxito!');
         } catch (err) {}
     });
 
-    // 8. FUNCIÓN PRINCIPAL DE INSTALACIÓN / APERTURA
+    // FUNCIÓN PRINCIPAL DE INSTALACIÓN (ESTADO 1)
     window.installPWA = async function () {
         try {
-            // A. Si ya está instalada, abrir o notificar directamente
-            const yaInstalada = await verificarSiEstaInstalada();
+            const yaInstalada = await isAppInstalledOnDevice();
             if (yaInstalada) {
-                actualizarBotonesUI(true);
-                abrirAppOIndicar();
+                actualizarUI(false, true);
+                abrirEnLaApp();
                 return;
             }
 
-            // B. Si el instalador nativo está listo en memoria, abrirlo de inmediato
             if (window.deferredPrompt) {
                 await dispararPromptNativo();
                 return;
             }
 
-            // C. Si aún no está listo (clic en el primer segundo tras cargar), dar margen de espera
+            // Si aún no está listo el prompt nativo, esperar un breve instante
             const btn = document.getElementById('pwa-install-btn');
             const originalText = btn ? btn.innerHTML : '';
-            if (btn) {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> COMPROBANDO...';
-            }
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> PREPARANDO...';
 
             let waited = 0;
             while (!window.deferredPrompt && waited < 2500) {
                 await new Promise(r => setTimeout(r, 100));
                 waited += 100;
             }
-
-            if (btn && originalText) {
-                btn.innerHTML = originalText;
-            }
+            if (btn && originalText) btn.innerHTML = originalText;
 
             if (window.deferredPrompt) {
                 await dispararPromptNativo();
                 return;
             }
 
-            // D. Si tras esperar no hay prompt: en Android/Chrome esto sucede porque
-            // la app ya está instalada en el dispositivo móvil. Actualizamos el botón.
+            // Si tras esperar no hubo prompt nativo en Android/PC, es porque la app ya está instalada
             localStorage.setItem('lbl_pwa_installed', 'true');
-            actualizarBotonesUI(true);
-            abrirAppOIndicar();
+            actualizarUI(false, true);
+            abrirEnLaApp();
         } catch (err) {
             console.warn('[LBL PWA] Error en installPWA:', err);
         }
     };
 
-    // 9. Inicialización inmediata
+    // Inicialización al cargar la página
     async function init() {
         try {
-            const instalada = await verificarSiEstaInstalada();
-            actualizarBotonesUI(instalada);
+            const inside = isRunningInsideApp();
+            const installed = await isAppInstalledOnDevice();
+            actualizarUI(inside, installed);
         } catch (e) {}
     }
 
@@ -240,7 +259,7 @@
         init();
     }
 
-    // 10. Service Worker
+    // Service Worker
     if ('serviceWorker' in navigator) {
         try {
             navigator.serviceWorker.register('/sw.js')
