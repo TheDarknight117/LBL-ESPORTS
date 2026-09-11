@@ -1779,10 +1779,10 @@
                         <!-- SELECTOR DE FILTRO: PRÓXIMOS vs ANTERIORES vs TODOS -->
                         <div class="flex items-center gap-2 bg-[#030712] p-1.5 rounded-xl shrink-0">
                             <button onclick="cambiarFiltroCronograma('proximos')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'proximos' ? 'bg-cyan-500/20 text-cyan-300 shadow' : 'text-gray-400 hover:text-white'}">
-                                ⏳ Próximos (${partidosPendientes.length})
+                                Próximos (${partidosPendientes.length})
                             </button>
                             <button onclick="cambiarFiltroCronograma('anteriores')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'anteriores' ? 'bg-cyan-500/20 text-cyan-300 shadow' : 'text-gray-400 hover:text-white'}">
-                                🏁 Anteriores (${partidosAnteriores.length})
+                                Anteriores (${partidosAnteriores.length})
                             </button>
                             <button onclick="cambiarFiltroCronograma('todos')" class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${filtroCronogramaTab === 'todos' ? 'bg-cyan-500/20 text-cyan-300 shadow' : 'text-gray-400 hover:text-white'}">
                                 Todos (${matches.length})
