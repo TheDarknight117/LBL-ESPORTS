@@ -332,18 +332,37 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
         const encodedTarget = encodeURIComponent(targetUrl);
 
-        // Lista de proxies de alto rendimiento: Worker dedicado LBL + proxies comunitarios resilientes
-        const proxyList = [
-            { url: `https://lbl-cors-proxy.vagabond-cerise.workers.dev/?url=${encodedTarget}`, isWrapper: false },
-            { url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
+        // Detectar si se está ejecutando en entorno local (localhost, 127.0.0.1, o IP de red local 192.168.x.x en laptop o PC)
+        const isLocal = typeof window !== 'undefined' && (
+            ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname) ||
+            window.location.hostname.startsWith('192.168.') ||
+            window.location.hostname.startsWith('10.') ||
+            window.location.hostname.endsWith('.local')
+        );
+
+        const proxyList = [];
+
+        // 1. PRIORIDAD MÁXIMA EN DESARROLLO LOCAL: Proxy nativo de dev-server.js (0 CORS, 0 caídas, respuesta en ms)
+        if (isLocal && typeof window !== 'undefined') {
+            proxyList.push({
+                url: `${window.location.origin}/api/challonge-proxy?url=${encodedTarget}`,
+                isWrapper: false
+            });
+        }
+
+        // 2. Cloudflare Worker Dedicado de LBL (100% CORS & Alta Disponibilidad)
+        proxyList.push(
+            { url: `https://lbl-cors-proxy.hill-donkey.workers.dev/?url=${encodedTarget}`, isWrapper: false },
             { url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false },
+            { url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
             { url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false },
             { url: `https://cors.eu.org/${targetUrl}`, isWrapper: false }
-        ];
+        );
 
         for (const proxyItem of proxyList) {
             try {
-                const res = await fetchWithTimeout(proxyItem.url, {}, 3500);
+                const timeoutMs = proxyItem.url.startsWith(window?.location?.origin || '') ? 6000 : 2500;
+                const res = await fetchWithTimeout(proxyItem.url, {}, timeoutMs);
 
                 if (!res || !res.ok) {
                     // Si un proxy devuelve 429/500/502/403, es problema del proxy -> continuar con el siguiente proxy de la lista

@@ -1611,11 +1611,14 @@
                 const tieneModificacion = eq.updatedAt && eq.updatedAt !== eq.timestamp;
                 const fechaRaw = eq.updatedAt || eq.timestamp;
                 const fecha = fechaRaw ? new Date(fechaRaw).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha';
-                const rep1 = (eq.representantes && eq.representantes.length > 0) ? eq.representantes[0] : {nombre: 'Sin datos', tel: '-'};
-                const badgeClass = `badge-${estado.toLowerCase()}`;
-                const logoSrc = eq.equipo.logo || getFallbackImage(eq.equipo.nombre);
-                const fallbackSrc = getFallbackImage(eq.equipo.nombre);
-                const teamTag = eq.equipo.tag ? `[${eq.equipo.tag}]` : '';
+                function esUrlValida(url) {
+                    if (!url || typeof url !== 'string') return false;
+                    const u = url.trim().toLowerCase();
+                    return u.startsWith('http://') || u.startsWith('https://') || u.startsWith('/') || u.startsWith('data:');
+                }
+                const fallbackSrc = getFallbackImage(eq.equipo?.nombre);
+                const logoSrc = esUrlValida(eq.equipo?.logo) ? eq.equipo.logo.trim() : fallbackSrc;
+                const teamTag = eq.equipo?.tag ? `[${eq.equipo.tag}]` : '';
 
                 const badgeModificado = tieneModificacion ? `
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-cyan-950/60 text-cyan-300 border border-cyan-500/30 ml-2 shadow-[0_0_10px_rgba(6,182,212,0.2)]" title="Modificado recientemente">
@@ -2303,9 +2306,14 @@
 
             switchTab('general');
 
-            const fallbackSrc = getFallbackImage(eq.equipo.nombre);
+            const fallbackSrc = getFallbackImage(eq.equipo?.nombre);
             const logoImg = document.getElementById('m-logo');
-            logoImg.src = eq.equipo.logo || fallbackSrc;
+            function esUrlValida(url) {
+                if (!url || typeof url !== 'string') return false;
+                const u = url.trim().toLowerCase();
+                return u.startsWith('http://') || u.startsWith('https://') || u.startsWith('/') || u.startsWith('data:');
+            }
+            logoImg.src = esUrlValida(eq.equipo?.logo) ? eq.equipo.logo.trim() : fallbackSrc;
             logoImg.onerror = () => { logoImg.src = fallbackSrc; };
 
             document.getElementById('m-nombre').innerText = eq.equipo.nombre;

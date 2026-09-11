@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -40,8 +41,73 @@ function serveFile(res, filePath) {
 }
 
 const server = http.createServer((req, res) => {
+    // Manejo de Preflight OPTIONS para CORS
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '86400'
+        });
+        return res.end();
+    }
+
     const urlObj = new URL(req.url, `http://${req.headers.host}`);
     let pathname = decodeURIComponent(urlObj.pathname);
+
+    // 0. CORS PROXY NATIVO PARA CHALLONGE (100% Sin Fallas en Desarrollo Local)
+    if (pathname === '/api/challonge-proxy') {
+        const targetUrl = urlObj.searchParams.get('url');
+        if (!targetUrl) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+            return res.end(JSON.stringify({ error: 'Falta el parámetro url' }));
+        }
+
+        try {
+            const parsedTarget = new URL(targetUrl);
+            if (!parsedTarget.hostname.endsWith('challonge.com')) {
+                res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                return res.end(JSON.stringify({ error: 'Solo se permiten consultas a Challonge' }));
+            }
+
+            const proxyReq = https.get(targetUrl, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) LBLEsports/1.0',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                timeout: 8000
+            }, (challongeRes) => {
+                let data = '';
+                challongeRes.on('data', chunk => { data += chunk; });
+                challongeRes.on('end', () => {
+                    res.writeHead(challongeRes.statusCode, {
+                        'Content-Type': challongeRes.headers['content-type'] || 'application/json; charset=utf-8',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate'
+                    });
+                    res.end(data);
+                });
+            });
+
+            proxyReq.on('error', (err) => {
+                res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: 'Error al conectar con Challonge: ' + err.message }));
+            });
+
+            proxyReq.on('timeout', () => {
+                proxyReq.destroy();
+                res.writeHead(504, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: 'Timeout al conectar con Challonge' }));
+            });
+
+            return;
+        } catch (e) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+            return res.end(JSON.stringify({ error: 'URL inválida: ' + e.message }));
+        }
+    }
 
     // 1. REWRITE: /torneos/* -> torneos.html (igual que Firebase)
     if (pathname.startsWith('/torneos/') || pathname === '/torneos') {
@@ -91,7 +157,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(PORT, () => {
-    console.log(`\n🚀 Servidor LBL corriendo con soporte total de Clean URLs y Rewrites:`);
-    console.log(`👉 http://localhost:${PORT}/\n`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n🚀 Servidor LBL corriendo con soporte total de Clean URLs, Rewrites y Proxy Challonge:`);
+    console.log(`👉 Local:    http://localhost:${PORT}/`);
+    console.log(`👉 En red:   http://0.0.0.0:${PORT}/\n`);
 });

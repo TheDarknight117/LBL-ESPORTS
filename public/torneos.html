@@ -1027,7 +1027,8 @@
             const cooldownRequerido = isStaff ? (60 * 1000) : (180 * 1000);
             const ultimaConsultaPestana = parseInt(sessionStorage.getItem('lbl_last_challonge_check') || '0', 10);
 
-            const puedeConsultarChallonge = esTorneoActivo && 
+            const puedeConsultarChallonge = isStaff && 
+                esTorneoActivo && 
                 !docTorneo._syncingLive && 
                 (ahora - ultimaSyncFirestore >= cooldownRequerido) &&
                 (ahora - ultimaConsultaPestana >= 60000);
