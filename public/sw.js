@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v143';
+const CACHE_NAME = 'lbl-cache-v144';
 const ASSETS = [
   '/',
   '/torneos',
@@ -24,6 +24,8 @@ const ASSETS = [
   '/assets/legion_store.webp',
   '/assets/ICONIC.webp',
   '/assets/ICONIC3.webp',
+  '/assets/AQM.webp',
+  '/assets/AQM.png',
   '/assets/teams/kaox_pink.webp',
   '/assets/teams/marines_del_altiplano.webp',
   '/assets/teams/uka_kitties.webp',
