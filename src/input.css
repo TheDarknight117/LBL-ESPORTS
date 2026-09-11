@@ -16,6 +16,7 @@
 
 .font-square-one {
     font-family: 'Square One Bold', sans-serif !important;
+    font-style: normal !important;
 }
 
 @font-face {
