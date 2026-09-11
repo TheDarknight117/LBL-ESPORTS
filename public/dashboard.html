@@ -1611,6 +1611,8 @@
                 const tieneModificacion = eq.updatedAt && eq.updatedAt !== eq.timestamp;
                 const fechaRaw = eq.updatedAt || eq.timestamp;
                 const fecha = fechaRaw ? new Date(fechaRaw).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha';
+                const rep1 = (eq.representantes && eq.representantes.length > 0) ? eq.representantes[0] : {nombre: 'Sin datos', tel: '-'};
+                const badgeClass = `badge-${estado.toLowerCase()}`;
                 function esUrlValida(url) {
                     if (!url || typeof url !== 'string') return false;
                     const u = url.trim().toLowerCase();
