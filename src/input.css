@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   Fuentes Personalizadas Locales (Self-Hosted Fonts)
+   ========================================================================== */
+@font-face {
+    font-family: 'Square One Bold';
+    src: url('/assets/fonts/Square-One-Bold.ttf') format('truetype'),
+         url('/assets/fonts/Square%20One%20Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+.font-square-one {
+    font-family: 'Square One Bold', sans-serif !important;
+}
+
+@font-face {
+    font-family: 'CustomFont';
+    src: url('/assets/fonts/mi-fuente.woff2') format('woff2'),
+         url('/assets/fonts/mi-fuente.woff') format('woff'),
+         url('/assets/fonts/mi-fuente.ttf') format('truetype'),
+         url('/assets/fonts/mi-fuente.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.font-custom {
+    font-family: 'CustomFont', sans-serif !important;
+}
+
+
+
 /* Estilos de Trapecio e Interactividad de la Directiva */
 .staff-section-layout {
     display: flex;

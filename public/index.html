@@ -58,11 +58,24 @@
     <script type="module" src="/app-version.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @font-face {
+            font-family: 'Square One Bold';
+            src: url('/assets/fonts/Square-One-Bold.ttf') format('truetype'),
+                 url('/assets/fonts/Square%20One%20Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
         .font-squada-one {
             font-family: 'Squada One', sans-serif !important;
             letter-spacing: 0.05em;
         }
+        .font-square-one {
+            font-family: 'Square One Bold', sans-serif !important;
+        }
         .neon-text-iconic {
+            font-family: 'Square One Bold', sans-serif !important;
+            text-transform: uppercase;
             color: #000000 !important;
             -webkit-text-stroke: 1.5px #ffffff;
             paint-order: stroke fill;
@@ -627,7 +640,7 @@
                 image: "assets/ICONIC3.webp",
                 imageFallback: "assets/ICONIC3.png",
                 sub: "",
-                title: 'PARA SER CAMPEON TIENES QUE SER <span class="font-squada-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
+                title: 'PARA SER CAMPEON TIENES QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
                 desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL"
             }
         ];

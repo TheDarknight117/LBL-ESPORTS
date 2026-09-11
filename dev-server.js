@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 8000;
-const PUBLIC_DIR = 'z:/LBL/public';
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',

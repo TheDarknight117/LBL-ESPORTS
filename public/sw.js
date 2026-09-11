@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v141';
+const CACHE_NAME = 'lbl-cache-v142';
 const ASSETS = [
   '/',
   '/torneos',
@@ -13,6 +13,7 @@ const ASSETS = [
   '/image-optimizer.js',
   '/app-version.js',
   '/pwa-manager.js',
+  '/assets/fonts/Square-One-Bold.ttf',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',
   '/dist/output.css',
