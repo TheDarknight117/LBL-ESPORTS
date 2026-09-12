@@ -2,8 +2,7 @@ backups/
 node_modules/
 .firebase/
 
-# Exclude sensitive data files from git repository
+# Exclude raw spreadsheet files from git repository
 *.xlsx
 public/assets/*.xlsx
-public/assets/scouting1.json
-public/assets/qualifier.json
+

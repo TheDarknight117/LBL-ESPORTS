@@ -204,41 +204,61 @@
 
         // 1. CARGAR Y MAPEAR DATOS
         async function fetchScoutingData() {
+            // Cargar Scouting 2 (desde Google Sheets)
             try {
-                // Cargar Scouting 2 (desde Google Sheets)
                 const res2 = await fetch(GOOGLE_SCRIPT_URL);
-                const dataRows2 = await res2.json();
-                if(dataRows2 && dataRows2.length >= 2) {
-                    scouting2Teams = dataRows2.slice(1).map((row, index) => {
-                        const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
-                        let subsArray = [];
-                        if(v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
-                        if(v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
-                        if(v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
-                        
-                        return {
-                            id: index + 1, 
-                            name: v(7) || 'Equipo Sin Nombre', 
-                            tag: v(8),
-                            top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
-                            jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
-                            mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
-                            adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
-                            supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
-                            subs: subsArray
-                        };
-                    }).filter(t => t.name.length > 1);
+                if (res2.ok) {
+                    const dataRows2 = await res2.json();
+                    if (dataRows2 && dataRows2.length >= 2) {
+                        scouting2Teams = dataRows2.slice(1).map((row, index) => {
+                            const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
+                            let subsArray = [];
+                            if (v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
+                            if (v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
+                            if (v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
+                            
+                            return {
+                                id: index + 1, 
+                                name: v(7) || 'Equipo Sin Nombre', 
+                                tag: v(8),
+                                top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
+                                jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
+                                mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
+                                adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
+                                supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
+                                subs: subsArray
+                            };
+                        }).filter(t => t.name.length > 1);
+                    }
                 }
+            } catch (err) {
+                console.warn("Aviso al cargar Scouting 2:", err);
+            }
 
-                // Cargar Scouting 1 (desde JSON estático local)
+            // Cargar Scouting 1 (desde JSON estático local)
+            try {
                 const res1 = await fetch('assets/scouting1.json');
-                scouting1Teams = await res1.json();
+                if (res1.ok) {
+                    scouting1Teams = await res1.json();
+                }
+            } catch (err) {
+                console.warn("Aviso al cargar Scouting 1:", err);
+            }
 
-                // Cargar Qualifier (desde JSON estático local)
+            // Cargar Qualifier (desde JSON estático local)
+            try {
                 const resQual = await fetch('assets/qualifier.json');
-                qualifierTeams = await resQual.json();
+                if (resQual.ok) {
+                    qualifierTeams = await resQual.json();
+                }
+            } catch (err) {
+                console.warn("Aviso al cargar Qualifier:", err);
+            }
 
-                document.getElementById('loading-spinner').classList.add('hidden');
+            // Si al menos un torneo cargó con éxito, ocultamos el spinner y mostramos la interfaz
+            if (scouting2Teams.length > 0 || scouting1Teams.length > 0 || qualifierTeams.length > 0) {
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) spinner.classList.add('hidden');
                 
                 // Parsear parámetro de URL para seleccionar torneo activo
                 const urlParams = new URLSearchParams(window.location.search);
@@ -250,9 +270,7 @@
                 } else {
                     cambiarTorneo(2); // Por defecto mostrar Scouting 2
                 }
-
-            } catch (err) {
-                console.error(err);
+            } else {
                 document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Error al cargar datos.</p>`;
             }
         }
@@ -392,15 +410,71 @@
             renderizarGrilla(filtered);
         });
 
+        // Helper universal para normalizar números de teléfono bolivianos e internacionales hacia WhatsApp
+        function formatearWhatsAppUrl(raw) {
+            if (!raw) return null;
+            let str = String(raw).trim();
+            if (!str || str === '-' || str.toLowerCase() === 'no' || str.toLowerCase() === 'ninguno' || str.length < 5) return null;
+
+            const tieneMas = str.startsWith('+');
+            let digits = str.replace(/[^0-9]/g, '');
+            if (digits.length < 7) return null;
+
+            // 1. Número con código boliviano 591 explícito
+            if (digits.startsWith('591') && digits.length >= 11) {
+                return `https://wa.me/${digits}`;
+            }
+
+            // 2. Número boliviano estándar (8 dígitos: celulares 6 o 7, o fijos 2, 3, 4)
+            if (digits.length === 8 && /^[67234]/.test(digits)) {
+                return `https://wa.me/591${digits}`;
+            }
+
+            // 3. Internacional con '+' explícito
+            if (tieneMas) {
+                // Argentina: +54 sin el 9 para celulares (+54 11...) -> WhatsApp internacional requiere 549...
+                if (digits.startsWith('54') && !digits.startsWith('549') && digits.length >= 12) {
+                    return `https://wa.me/549${digits.slice(2)}`;
+                }
+                return `https://wa.me/${digits}`;
+            }
+
+            // 4. Argentina: formato 10 dígitos (ej: 11 25144345)
+            if (digits.length === 10 && digits.startsWith('11')) {
+                return `https://wa.me/549${digits}`;
+            }
+
+            // 5. Chile: móvil de 9 dígitos empezado en 9 (ej: 9 8435 1297)
+            if (digits.length === 9 && digits.startsWith('9')) {
+                return `https://wa.me/56${digits}`;
+            }
+
+            // 6. Prefijos internacionales comunes (54, 56, 51, 52, 57, 58, 55) con 10 o más dígitos
+            if (digits.length >= 10 && /^(54|56|51|52|57|58|55)/.test(digits)) {
+                if (digits.startsWith('54') && !digits.startsWith('549')) {
+                    let clean54 = digits.slice(2);
+                    if (clean54.startsWith('0')) clean54 = clean54.slice(1);
+                    return `https://wa.me/549${clean54}`;
+                }
+                return `https://wa.me/${digits}`;
+            }
+
+            // 7. Por defecto, si tiene 8 dígitos asumir Bolivia
+            if (digits.length === 8) {
+                return `https://wa.me/591${digits}`;
+            }
+
+            return `https://wa.me/${digits}`;
+        }
+
         // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS
         function crearFilaScouting(rolNombre, iconKey, j) {
             if (!j || !j.name || j.name.trim() === '') return '';
 
-            // SOLUCIÓN: Usamos un icono de banca de FontAwesome distintivo para Suplentes, no un logo de posición.
+            // Icono de posición o suplente
             let iconHTML = `<img src="${iconKey}" class="w-8 h-8 object-contain opacity-80 drop-shadow-md" alt="${rolNombre}">`;
             
             if (rolNombre.toUpperCase() === 'SUPLENTE' || iconKey === roleIcons['SUB']) {
-                // Un icono de persona esperando/banca con destello neón
                 iconHTML = `<div class="w-8 h-8 flex items-center justify-center text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]"><i class="fas fa-users-cog text-3xl"></i></div>`;
             }
 
@@ -408,13 +482,33 @@
             const secRoleDisplay = j.sec_role ? `<span class="text-[10px] text-gray-500 font-bold ml-2 hidden sm:inline-block">2do: ${j.sec_role}</span>` : '';
             
             const jPhone = String(j.phone || '');
-            const jDiscord = String(j.discord || '');
-            const jOpgg = String(j.opgg || '');
+            const jDiscord = String(j.discord || '').trim();
+            const jOpgg = String(j.opgg || '').trim();
 
-            const btnWapp = (jPhone.length > 5) ? `<a href="https://wa.me/${jPhone.replace(/[^0-9]/g, '')}" target="_blank" class="bg-green-900/20 text-green-400 hover:bg-green-600 hover:text-white px-2 py-1 rounded border border-green-800 transition-colors text-[10px] font-bold"><i class="fab fa-whatsapp"></i> Chat</a>` : '';
-            const btnDisc = (jDiscord) ? `<span class="bg-indigo-900/20 text-indigo-400 px-2 py-1 rounded border border-indigo-900/50 text-[10px] font-bold cursor-help" title="${jDiscord}"><i class="fab fa-discord"></i> ${jDiscord.split('#')[0]}</span>` : '';
-            const btnOpgg = (jOpgg.length > 5) ? `<a href="${jOpgg}" target="_blank" class="bg-blue-900/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2 py-1 rounded border border-blue-800 transition-colors text-[10px] font-bold"><i class="fas fa-external-link-alt"></i> OP.GG</a>` : '';
+            // WhatsApp con soporte para números bolivianos e internacionales
+            const waUrl = formatearWhatsAppUrl(jPhone);
+            const btnWapp = waUrl 
+                ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-green-900/20 text-green-400 hover:bg-green-600 hover:text-white px-2 py-1 rounded border border-green-800 transition-colors text-[10px] font-bold inline-flex items-center gap-1.5"><i class="fab fa-whatsapp text-xs"></i> Chat</a>` 
+                : '';
 
+            // Discord interactivo: botón con clic para copiar y feedback
+            const isDiscordValid = jDiscord.length > 2 && jDiscord !== '-' && jDiscord.toLowerCase() !== 'no' && jDiscord.toLowerCase() !== 'ninguno';
+            const cleanDiscord = jDiscord.replace(/'/g, "\\'");
+            const btnDisc = isDiscordValid 
+                ? `<button type="button" onclick="copiarDiscord(this, '${cleanDiscord}')" class="bg-indigo-900/20 text-indigo-400 hover:bg-indigo-700/50 hover:text-white px-2 py-1 rounded border border-indigo-900/50 text-[10px] font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5" title="Clic para copiar Discord: ${cleanDiscord}"><i class="fab fa-discord text-xs"></i> <span class="discord-tag">${cleanDiscord.split('#')[0]}</span></button>` 
+                : '';
+
+            // OP.GG interactivo
+            let opggUrl = jOpgg;
+            if (opggUrl && !opggUrl.startsWith('http://') && !opggUrl.startsWith('https://')) {
+                opggUrl = 'https://' + opggUrl;
+            }
+            const isOpggValid = opggUrl.length > 10 && (opggUrl.includes('op.gg') || opggUrl.includes('leagueofgraphs'));
+            const btnOpgg = isOpggValid 
+                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-900/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2 py-1 rounded border border-blue-800 transition-colors text-[10px] font-bold inline-flex items-center gap-1.5"><i class="fas fa-external-link-alt text-xs"></i> OP.GG</a>` 
+                : '';
+
+            // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
             const nameDisplayHTML = isStaff
                 ? `<span class="cursor-pointer select-none bg-gray-900/60 hover:bg-gray-800 text-[10px] text-gray-400 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</span>`
@@ -516,6 +610,31 @@
                 element.innerHTML = `<i class="fas fa-eye mr-1"></i> Mostrar Nombre`;
                 element.className = "cursor-pointer select-none bg-gray-900/60 hover:bg-gray-800 text-[10px] text-gray-500 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black";
                 element.setAttribute('data-visible', 'false');
+            }
+        };
+
+        // Copiar Discord al Portapapeles con confirmación visual
+        window.copiarDiscord = (btn, tag) => {
+            if (!tag) return;
+            const feedbackFallback = () => {
+                prompt('Discord del jugador (copia con Ctrl+C):', tag);
+            };
+
+            if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(tag).then(() => {
+                    const tagSpan = btn.querySelector('.discord-tag');
+                    if (tagSpan) {
+                        const originalText = tagSpan.innerText;
+                        tagSpan.innerText = '¡Copiado!';
+                        btn.classList.add('!bg-indigo-600', '!text-white', '!border-indigo-400');
+                        setTimeout(() => {
+                            tagSpan.innerText = originalText;
+                            btn.classList.remove('!bg-indigo-600', '!text-white', '!border-indigo-400');
+                        }, 1800);
+                    }
+                }).catch(feedbackFallback);
+            } else {
+                feedbackFallback();
             }
         };
 
