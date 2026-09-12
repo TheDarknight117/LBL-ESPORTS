@@ -114,6 +114,33 @@
             outline: none !important;
             box-shadow: none !important;
         }
+
+        /* Estilos de Sanciones y Baneos LBL (Color Rojo Oficial) */
+        .tag-shield-banned {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.35) 0%, rgba(0,0,0,0.9) 100%) !important;
+            border: 1px solid rgba(239, 68, 68, 0.7) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3) !important;
+            color: #ef4444 !important;
+        }
+
+        .banned-card-glow {
+            border-color: rgba(239, 68, 68, 0.6) !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15) !important;
+        }
+        .banned-card-glow:hover {
+            border-color: rgba(239, 68, 68, 0.9) !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .banned-player-row {
+            background: linear-gradient(90deg, rgba(153, 27, 27, 0.28) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+            border: 1px solid rgba(239, 68, 68, 0.65) !important;
+            box-shadow: 0 0 18px rgba(239, 68, 68, 0.18) !important;
+        }
+        .banned-player-row:hover {
+            border-color: rgba(239, 68, 68, 0.9) !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.3) !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
@@ -182,7 +209,7 @@
 
         <div class="max-w-2xl mx-auto mb-12 relative">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-            <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Nombre, TAG, Rango...">
+            <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Nombre, TAG, Rango, Sancionados...">
         </div>
 
         <div id="loading-spinner" class="text-center py-20 text-cyan-500">
@@ -255,6 +282,63 @@
             'SUPP': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-utility.svg',
             'SUB': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/svg/position-fill.svg'
         };
+
+        // ==============================================================================
+        // REGISTRO OFICIAL DE SANCIONES Y BANEOS (LBL ESPORTS)
+        // ==============================================================================
+        const BANNED_TEAMS = [
+            'kows',
+            'kws',
+            'bulevar de los sueños rotos',
+            'bulevar de los suenos rotos',
+            'bsr'
+        ];
+
+        const BANNED_PLAYERS = [
+            'levius cromwell #k1ng',
+            'levius cromwell',
+            'aldo luciano heredia arancibia',
+            'aldo luciano heredia',
+            'kapriely',
+            'primo123'
+        ];
+
+        function esEquipoBaneado(nombre, tag) {
+            if (!nombre && !tag) return false;
+            const n = nombre ? String(nombre).toLowerCase().trim() : '';
+            const t = tag ? String(tag).toLowerCase().trim() : '';
+            return BANNED_TEAMS.some(b => {
+                const bl = b.toLowerCase().trim();
+                return n === bl || n.includes(bl) || t === bl || (bl.length >= 3 && t === bl);
+            });
+        }
+
+        function esJugadorBaneado(jugador) {
+            if (!jugador) return false;
+            const targets = [
+                jugador.lol_id,
+                jugador.name,
+                jugador.discord
+            ].filter(Boolean).map(s => String(s).toLowerCase().trim());
+
+            if (targets.length === 0) return false;
+
+            return BANNED_PLAYERS.some(b => {
+                const bl = b.toLowerCase().trim();
+                const blClean = bl.replace(/#[^]+$/, '').trim();
+                return targets.some(t => {
+                    const tClean = t.replace(/#[^]+$/, '').trim();
+                    return t === bl || t.includes(bl) || tClean === blClean || (blClean.length >= 4 && tClean.includes(blClean));
+                });
+            });
+        }
+
+        function equipoTieneSancion(equipo) {
+            if (!equipo) return false;
+            if (esEquipoBaneado(equipo.name, equipo.tag)) return true;
+            const allPlayers = [equipo.top, equipo.jg, equipo.mid, equipo.adc, equipo.supp, ...(equipo.subs || [])];
+            return allPlayers.some(p => esJugadorBaneado(p));
+        }
 
         // 1. CARGAR Y MAPEAR DATOS
         async function fetchScoutingData() {
@@ -401,7 +485,7 @@
             }
         };
 
-        // 2. RENDERIZAR TARJETAS (Escudo TAG y Click Seguro)
+        // 2. RENDERIZAR TARJETAS (Escudo TAG, Sanciones en Rojo y Click Seguro)
         function renderizarGrilla(data) {
             const grid = document.getElementById('teams-grid');
             const emptyState = document.getElementById('empty-state');
@@ -418,46 +502,97 @@
 
             data.forEach(eq => {
                 const displayTag = eq.tag ? eq.tag.substring(0,4).toUpperCase() : (eq.name ? eq.name.substring(0,3).toUpperCase() : 'TBD');
+                const esBaneado = esEquipoBaneado(eq.name, eq.tag);
+                const allPlayers = [eq.top, eq.jg, eq.mid, eq.adc, eq.supp, ...(eq.subs || [])];
+                const tieneJugadorBaneado = !esBaneado && allPlayers.some(p => esJugadorBaneado(p));
 
                 const card = document.createElement('div');
-                card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden fade-in";
+                
+                if (esBaneado) {
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden fade-in banned-card-glow border border-red-600/70 bg-gradient-to-b from-red-950/20 to-black/90";
+                } else if (tieneJugadorBaneado) {
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden fade-in border border-amber-600/60 hover:border-red-500/70 shadow-[0_0_15px_rgba(239,68,68,0.12)]";
+                } else {
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden fade-in";
+                }
                 
                 card.onclick = () => abrirModalSeguro(eq);
 
+                const shieldHTML = esBaneado
+                    ? `<div class="tag-shield-banned w-14 h-14 rounded-xl flex items-center justify-center font-black text-lg italic shrink-0 group-hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all duration-300">
+                            ${displayTag}
+                       </div>`
+                    : (tieneJugadorBaneado 
+                        ? `<div class="tag-shield w-14 h-14 rounded-xl flex items-center justify-center text-amber-400 border border-amber-500/50 font-black text-lg italic shrink-0 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all duration-300">
+                                ${displayTag}
+                           </div>`
+                        : `<div class="tag-shield w-14 h-14 rounded-xl flex items-center justify-center text-cyan-400 font-black text-lg italic shrink-0 group-hover:bg-cyan-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300">
+                                ${displayTag}
+                           </div>`);
+
+                const badgeStatusHTML = esBaneado
+                    ? `<span class="text-[9px] text-red-400 font-black bg-red-950/90 px-2 py-0.5 rounded border border-red-600/90 uppercase tracking-widest inline-flex items-center gap-1 animate-pulse"><i class="fas fa-ban text-[8px]"></i> Sancionado</span>`
+                    : (tieneJugadorBaneado
+                        ? `<span class="text-[9px] text-amber-400 font-black bg-amber-950/80 px-2 py-0.5 rounded border border-amber-600/80 uppercase tracking-wider inline-flex items-center gap-1"><i class="fas fa-exclamation-triangle text-[8px]"></i> Jugador Sancionado</span>`
+                        : `<span class="text-[10px] text-gray-500 font-bold bg-gray-900 px-2 py-0.5 rounded border border-gray-700">${eq.tag ? '['+eq.tag+']' : 'Sin Tag'}</span>`);
+
+                const btnActionHTML = esBaneado
+                    ? `<button class="text-red-400 text-[10px] font-black uppercase tracking-widest group-hover:bg-red-900/30 px-3 py-1.5 rounded transition-colors border border-red-800/60 inline-flex items-center gap-1">
+                            <i class="fas fa-ban"></i> Sancionado <i class="fas fa-chevron-right ml-0.5"></i>
+                       </button>`
+                    : (tieneJugadorBaneado
+                        ? `<button class="text-amber-400 text-[10px] font-black uppercase tracking-widest group-hover:bg-amber-900/30 px-3 py-1.5 rounded transition-colors border border-amber-800/60 inline-flex items-center gap-1">
+                                Ver Alerta <i class="fas fa-chevron-right ml-0.5"></i>
+                           </button>`
+                        : `<button class="text-cyan-400 text-[10px] font-black uppercase tracking-widest group-hover:bg-cyan-900/30 px-3 py-1.5 rounded transition-colors border border-transparent group-hover:border-cyan-800">
+                                Ver Talentos <i class="fas fa-chevron-right ml-1"></i>
+                           </button>`);
+
                 card.innerHTML = `
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="tag-shield w-14 h-14 rounded-xl flex items-center justify-center text-cyan-400 font-black text-lg italic shrink-0 group-hover:bg-cyan-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300">
-                            ${displayTag}
-                        </div>
+                        ${shieldHTML}
                         <div class="overflow-hidden">
-                            <h3 class="text-lg font-black uppercase tracking-tight text-white truncate">${eq.name}</h3>
-                            <span class="text-[10px] text-gray-500 font-bold bg-gray-900 px-2 py-0.5 rounded border border-gray-700">${eq.tag ? '['+eq.tag+']' : 'Sin Tag'}</span>
+                            <h3 class="text-lg font-black uppercase tracking-tight text-white truncate ${esBaneado ? 'text-red-400' : ''}">${eq.name}</h3>
+                            ${badgeStatusHTML}
                         </div>
                     </div>
                     <div class="flex justify-between items-center border-t border-gray-800 pt-3">
-                        <span class="text-xs text-gray-400 font-bold"><i class="fas fa-users mr-1"></i> ${5 + eq.subs.length} Jugadores</span>
-                        <button class="text-cyan-400 text-[10px] font-black uppercase tracking-widest group-hover:bg-cyan-900/30 px-3 py-1.5 rounded transition-colors border border-transparent group-hover:border-cyan-800">
-                            Ver Talentos <i class="fas fa-chevron-right ml-1"></i>
-                        </button>
+                        <span class="text-xs ${esBaneado ? 'text-red-400/80' : (tieneJugadorBaneado ? 'text-amber-400/80' : 'text-gray-400')} font-bold"><i class="fas fa-users mr-1"></i> ${5 + (eq.subs ? eq.subs.length : 0)} Jugadores</span>
+                        ${btnActionHTML}
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // 3. BUSCADOR EN TIEMPO REAL
+        // 3. BUSCADOR EN TIEMPO REAL (Con filtro para Sanciones y Baneos)
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
+            const rawTerm = e.target.value.toLowerCase().trim();
+            if (!rawTerm) {
+                renderizarGrilla(scoutingTeams);
+                return;
+            }
+
+            const isBanFilter = ['ban', 'baneado', 'baneados', 'sancion', 'sancionado', 'sancionados', 'blacklist', 'vetado', 'vetados'].includes(rawTerm);
+
             const filtered = scoutingTeams.filter(t => {
-                if (t.name && t.name.toLowerCase().includes(term)) return true;
-                if (t.tag && t.tag.toLowerCase().includes(term)) return true;
+                const esB = esEquipoBaneado(t.name, t.tag);
+                const allPlayers = [t.top, t.jg, t.mid, t.adc, t.supp, ...(t.subs || [])];
+                const tieneB = allPlayers.some(p => esJugadorBaneado(p));
+
+                if (isBanFilter) {
+                    return esB || tieneB;
+                }
+
+                if (t.name && t.name.toLowerCase().includes(rawTerm)) return true;
+                if (t.tag && t.tag.toLowerCase().includes(rawTerm)) return true;
                 
-                const allPlayers = [t.top, t.jg, t.mid, t.adc, t.supp, ...t.subs];
                 return allPlayers.some(p => {
                     if (!p) return false;
-                    if (p.name && p.name.toLowerCase().includes(term)) return true;
-                    if (p.lol_id && p.lol_id.toLowerCase().includes(term)) return true;
-                    if (p.rank && p.rank.toLowerCase().includes(term)) return true;
+                    if (p.name && p.name.toLowerCase().includes(rawTerm)) return true;
+                    if (p.lol_id && p.lol_id.toLowerCase().includes(rawTerm)) return true;
+                    if (p.rank && p.rank.toLowerCase().includes(rawTerm)) return true;
+                    if (p.discord && p.discord.toLowerCase().includes(rawTerm)) return true;
                     return false;
                 });
             });
@@ -521,15 +656,17 @@
             return `https://wa.me/${digits}`;
         }
 
-        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS Y ALINEACIÓN PERFECTA
+        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS, ALINEACIÓN Y SANCIONES EN COLOR ROJO
         function crearFilaScouting(rolNombre, iconKey, j) {
             if (!j || !j.name || j.name.trim() === '') return '';
 
+            const esBaneado = esJugadorBaneado(j);
+
             // Icono de posición o suplente
-            let iconHTML = `<img src="${iconKey}" class="w-7 h-7 object-contain opacity-85 drop-shadow-md" alt="${rolNombre}">`;
+            let iconHTML = `<img src="${iconKey}" class="w-7 h-7 object-contain ${esBaneado ? 'opacity-100 filter drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]' : 'opacity-85 drop-shadow-md'}" alt="${rolNombre}">`;
             
             if (rolNombre.toUpperCase() === 'SUPLENTE' || iconKey === roleIcons['SUB']) {
-                iconHTML = `<div class="w-7 h-7 flex items-center justify-center text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]"><i class="fas fa-users-cog text-2xl"></i></div>`;
+                iconHTML = `<div class="w-7 h-7 flex items-center justify-center ${esBaneado ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]' : 'text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]'}"><i class="fas fa-users-cog text-2xl"></i></div>`;
             }
 
             // Normalización y refinamiento del Rango para evitar desbordes visuales
@@ -588,30 +725,50 @@
             // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real (sin quebrar layout)
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
             const nameDisplayHTML = isStaff
-                ? `<button type="button" class="cursor-pointer select-none bg-gray-900/80 hover:bg-gray-800 text-[10px] text-gray-400 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</button>`
-                : `<span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest select-none whitespace-nowrap inline-flex items-center shrink-0" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
+                ? `<button type="button" class="cursor-pointer select-none ${esBaneado ? 'bg-red-950/50 hover:bg-red-900/60 text-red-300 border-red-800' : 'bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-cyan-400 border-gray-800'} text-[10px] px-2 py-0.5 rounded border transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</button>`
+                : `<span class="text-[10px] ${esBaneado ? 'text-red-400/80' : 'text-gray-600'} font-bold uppercase tracking-widest select-none whitespace-nowrap inline-flex items-center shrink-0" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
+
+            // Badge de Baneo / Rol
+            const banBadgeHTML = esBaneado
+                ? `<span class="bg-red-950/90 text-red-400 border border-red-600/90 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-1 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.4)]"><i class="fas fa-ban text-[8px]"></i> JUGADOR BANEADO</span>`
+                : '';
+
+            const noRecruitBadge = esBaneado
+                ? `<span class="text-[10px] font-black uppercase tracking-wider text-red-400 bg-red-950/80 border border-red-700/80 px-2.5 py-1 rounded-lg inline-flex items-center gap-1 shrink-0 whitespace-nowrap"><i class="fas fa-user-times"></i> No Reclutar</span>`
+                : '';
+
+            const rowClass = esBaneado
+                ? "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 rounded-xl transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px] banned-player-row"
+                : "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]";
+
+            const titleColor = esBaneado ? "text-red-400" : "text-white";
 
             return `
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]">
+                <div class="${rowClass}">
                     <div class="flex items-center gap-3.5 min-w-0 flex-grow">
-                        <div class="role-icon-box p-2 rounded-xl shrink-0 w-11 h-11 flex items-center justify-center">
+                        <div class="role-icon-box p-2 rounded-xl shrink-0 w-11 h-11 flex items-center justify-center ${esBaneado ? 'bg-red-950/50 border border-red-600/50' : ''}">
                             ${iconHTML}
                         </div>
                         <div class="min-w-0 flex-grow">
                             <div class="flex items-center gap-2 mb-0.5 flex-wrap">
-                                <span class="text-[10px] text-cyan-400 font-black tracking-widest uppercase shrink-0">${rolNombre}</span>
+                                <span class="text-[10px] ${esBaneado ? 'text-red-400' : 'text-cyan-400'} font-black tracking-widest uppercase shrink-0">${rolNombre}</span>
+                                ${banBadgeHTML}
                                 ${rankDisplay}
                             </div>
-                            <h4 class="text-white font-black text-base sm:text-lg leading-tight truncate max-w-[210px] sm:max-w-[280px] md:max-w-[340px]" title="${displayName}">${displayName}</h4>
+                            <h4 class="${titleColor} font-black text-base sm:text-lg leading-tight truncate max-w-[210px] sm:max-w-[280px] md:max-w-[340px]" title="${displayName}">
+                                ${esBaneado ? '<i class="fas fa-ban mr-1.5 text-red-500"></i>' : ''}${displayName}
+                            </h4>
                             <div class="text-xs text-gray-500 flex items-center gap-1.5 mt-1">
-                                <i class="fas fa-user text-gray-700 shrink-0 text-[10px]"></i>
+                                <i class="fas fa-user ${esBaneado ? 'text-red-700' : 'text-gray-700'} shrink-0 text-[10px]"></i>
                                 ${nameDisplayHTML}
                                 ${secRoleDisplay}
+                                ${esBaneado ? '<span class="text-[10px] text-red-400 font-bold ml-2 inline-flex items-center gap-1"><i class="fas fa-shield-alt"></i> Sancionado LBL</span>' : ''}
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex items-center justify-start sm:justify-end gap-1.5 sm:gap-2 shrink-0 sm:ml-4 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-800/50 w-full sm:w-auto">
+                        ${noRecruitBadge}
                         ${btnDisc}
                         ${btnWapp}
                         ${btnOpgg}
@@ -620,23 +777,61 @@
             `;
         }
 
-        // 5. ABRIR MODAL SEGURO (Recibe el objeto directamente)
+        // 5. ABRIR MODAL SEGURO (Recibe el objeto directamente y aplica avisos de sanción)
         window.abrirModalSeguro = (equipo) => {
             try {
                 if(!equipo) return;
 
                 const modal = document.getElementById('team-modal');
+                const esBaneado = esEquipoBaneado(equipo.name, equipo.tag);
+                const allTeamPlayers = [equipo.top, equipo.jg, equipo.mid, equipo.adc, equipo.supp, ...(equipo.subs || [])];
+                const tieneJugadorBaneado = !esBaneado && allTeamPlayers.some(p => esJugadorBaneado(p));
                 
                 // Asignar el Escudo TAG
                 const displayTag = equipo.tag ? equipo.tag.substring(0,4).toUpperCase() : (equipo.name ? equipo.name.substring(0,3).toUpperCase() : 'TBD');
-                document.getElementById('modal-initial').innerText = displayTag;
+                const modalInitial = document.getElementById('modal-initial');
+                if (modalInitial) {
+                    modalInitial.innerText = displayTag;
+                    if (esBaneado) {
+                        modalInitial.className = "tag-shield-banned w-20 h-20 rounded-xl flex items-center justify-center font-black text-2xl italic shrink-0";
+                    } else if (tieneJugadorBaneado) {
+                        modalInitial.className = "tag-shield w-20 h-20 rounded-xl flex items-center justify-center text-amber-400 border border-amber-500/50 font-black text-2xl italic shrink-0";
+                    } else {
+                        modalInitial.className = "tag-shield w-20 h-20 rounded-xl flex items-center justify-center text-cyan-400 font-black text-2xl italic shrink-0";
+                    }
+                }
                 
-                document.getElementById('modal-name').innerText = equipo.name;
+                const modalName = document.getElementById('modal-name');
+                if (modalName) {
+                    modalName.innerText = equipo.name;
+                    modalName.className = `text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-none ${esBaneado ? 'text-red-400' : 'text-white'}`;
+                }
                 document.getElementById('modal-tag').innerText = equipo.tag ? `[${equipo.tag}]` : '';
+
+                // Ajustar borde y sombra del diálogo modal si el equipo está sancionado
+                const modalBox = modal.querySelector('.max-w-4xl');
+                if (modalBox) {
+                    if (esBaneado) {
+                        modalBox.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+                        modalBox.style.boxShadow = '0 0 50px rgba(239, 68, 68, 0.25)';
+                    } else if (tieneJugadorBaneado) {
+                        modalBox.style.borderColor = 'rgba(245, 158, 11, 0.6)';
+                        modalBox.style.boxShadow = '0 0 40px rgba(245, 158, 11, 0.15)';
+                    } else {
+                        modalBox.style.borderColor = '';
+                        modalBox.style.boxShadow = '';
+                    }
+                }
 
                 const modalBadge = document.getElementById('modal-badge');
                 if (modalBadge) {
-                    if (activeTournament === 3) {
+                    if (esBaneado) {
+                        modalBadge.innerHTML = '<i class="fas fa-ban mr-1"></i> EQUIPO SANCIONADO / NO APTO PARA RECLUTAR';
+                        modalBadge.className = "text-[10px] font-black tracking-widest px-2.5 py-1 rounded bg-red-600/30 text-red-400 border border-red-500/70 uppercase mb-1 inline-flex items-center animate-pulse";
+                    } else if (tieneJugadorBaneado) {
+                        modalBadge.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> ALINEACIÓN CON JUGADOR SANCIONADO';
+                        modalBadge.className = "text-[10px] font-black tracking-widest px-2.5 py-1 rounded bg-amber-600/30 text-amber-400 border border-amber-500/70 uppercase mb-1 inline-flex items-center";
+                    } else if (activeTournament === 3) {
                         modalBadge.innerText = "Open Qualifier";
                         modalBadge.className = "text-[10px] font-black tracking-widest px-2 py-1 rounded bg-rose-600/20 text-rose-400 border border-rose-500/30 uppercase mb-1 inline-block";
                     } else {
@@ -646,6 +841,41 @@
                 }
 
                 let rosterHTML = '';
+
+                // Banner de Advertencia de Baneo en Modal
+                if (esBaneado) {
+                    rosterHTML += `
+                        <div class="mb-4 p-4 rounded-2xl bg-red-950/40 border border-red-600/80 flex items-start gap-3.5 shadow-[0_0_25px_rgba(239,68,68,0.25)]">
+                            <div class="w-9 h-9 rounded-xl bg-red-600/30 border border-red-500/50 flex items-center justify-center text-red-400 shrink-0 mt-0.5 shadow-[0_0_10px_rgba(239,68,68,0.4)]">
+                                <i class="fas fa-ban text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black uppercase text-red-400 tracking-wider flex items-center gap-1.5">
+                                    <span>Aviso Oficial de Sanción (LBL Esports)</span>
+                                    <span class="text-[9px] bg-red-900/60 border border-red-600 px-1.5 py-0.2 rounded font-black">BANEADO</span>
+                                </h4>
+                                <p class="text-[11px] text-red-200/90 leading-relaxed mt-1">
+                                    Este equipo se encuentra en el <strong class="text-red-400 font-black">registro oficial de sanciones disciplinarias</strong> de la Liga Boliviana de League of Legends. Se encuentra inhabilitado para reclutamiento oficial y competencias avaladas por la LBL.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                } else if (tieneJugadorBaneado) {
+                    rosterHTML += `
+                        <div class="mb-4 p-3.5 rounded-2xl bg-amber-950/40 border border-amber-600/70 flex items-start gap-3.5 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                            <div class="w-9 h-9 rounded-xl bg-amber-600/30 border border-amber-500/50 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                                <i class="fas fa-user-slash text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider">Alineación con Jugador Sancionado</h4>
+                                <p class="text-[11px] text-amber-200/90 leading-relaxed mt-1">
+                                    Este equipo registra jugadores con <strong class="text-amber-400 font-bold">sanción o baneo activo</strong> (destacados en color rojo abajo). Esos jugadores no deben ser considerados para convocatorias oficiales.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 rosterHTML += crearFilaScouting('Top', roleIcons['TOP'], equipo.top);
                 rosterHTML += crearFilaScouting('Jungla', roleIcons['JG'], equipo.jg);
                 rosterHTML += crearFilaScouting('Mid', roleIcons['MID'], equipo.mid);
@@ -678,6 +908,11 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.style.overflow = 'auto';
+            const modalBox = modal.querySelector('.max-w-4xl');
+            if (modalBox) {
+                modalBox.style.borderColor = '';
+                modalBox.style.boxShadow = '';
+            }
         };
 
         // Mostrar / Ocultar Nombre Real (Privacidad)
