@@ -160,7 +160,7 @@
     </main>
 
     <div id="team-modal" class="fixed inset-0 bg-black/95 z-[100] hidden items-center justify-center p-2 md:p-4 backdrop-blur-md">
-        <div class="bg-[#050505] border border-cyan-900/50 rounded-3xl max-w-3xl w-full max-h-[95vh] flex flex-col relative shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+        <div class="bg-[#050505] border border-cyan-900/50 rounded-3xl max-w-4xl w-full max-h-[95vh] flex flex-col relative shadow-[0_0_50px_rgba(6,182,212,0.15)]">
             
             <button onclick="cerrarModal()" class="absolute top-4 right-4 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500 transition-colors z-10 border border-gray-700">
                 <i class="fas fa-times"></i>
@@ -467,35 +467,58 @@
             return `https://wa.me/${digits}`;
         }
 
-        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS
+        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS Y ALINEACIÓN PERFECTA
         function crearFilaScouting(rolNombre, iconKey, j) {
             if (!j || !j.name || j.name.trim() === '') return '';
 
             // Icono de posición o suplente
-            let iconHTML = `<img src="${iconKey}" class="w-8 h-8 object-contain opacity-80 drop-shadow-md" alt="${rolNombre}">`;
+            let iconHTML = `<img src="${iconKey}" class="w-7 h-7 object-contain opacity-85 drop-shadow-md" alt="${rolNombre}">`;
             
             if (rolNombre.toUpperCase() === 'SUPLENTE' || iconKey === roleIcons['SUB']) {
-                iconHTML = `<div class="w-8 h-8 flex items-center justify-center text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]"><i class="fas fa-users-cog text-3xl"></i></div>`;
+                iconHTML = `<div class="w-7 h-7 flex items-center justify-center text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]"><i class="fas fa-users-cog text-2xl"></i></div>`;
             }
 
-            const rankDisplay = j.rank ? `<span class="rank-badge">${j.rank}</span>` : '<span class="rank-badge text-gray-500 border-gray-700">Sin Rango</span>';
-            const secRoleDisplay = j.sec_role ? `<span class="text-[10px] text-gray-500 font-bold ml-2 hidden sm:inline-block">2do: ${j.sec_role}</span>` : '';
+            // Normalización y refinamiento del Rango para evitar desbordes visuales
+            const rawRank = String(j.rank || '').trim();
+            let rankText = rawRank || 'Sin Rango';
+            if (/no\s*juega\s*ranked/i.test(rankText) || /no\s*clasificad/i.test(rankText) || /unranked/i.test(rankText)) {
+                rankText = 'UNRANKED';
+            } else if (rankText.length > 18) {
+                rankText = rankText.substring(0, 16) + '...';
+            }
+            const rankDisplay = rawRank 
+                ? `<span class="rank-badge whitespace-nowrap shrink-0" title="${rawRank}">${rankText}</span>` 
+                : `<span class="rank-badge text-gray-500 border-gray-700 whitespace-nowrap shrink-0">Sin Rango</span>`;
+
+            // Normalización del Segundo Rol para evitar textos largos (ej: comodín explicativo)
+            const rawSecRole = String(j.sec_role || '').trim();
+            let cleanSecRole = rawSecRole;
+            if (cleanSecRole.toLowerCase().includes('comodín') || cleanSecRole.toLowerCase().includes('comodin')) {
+                cleanSecRole = 'Comodín';
+            } else if (cleanSecRole.length > 18) {
+                cleanSecRole = cleanSecRole.substring(0, 16) + '...';
+            }
+            const secRoleDisplay = rawSecRole 
+                ? `<span class="text-[10px] text-gray-500 font-bold ml-1.5 whitespace-nowrap shrink-0 hidden sm:inline-block" title="2do Rol: ${rawSecRole}">2do: ${cleanSecRole}</span>` 
+                : '';
             
             const jPhone = String(j.phone || '');
             const jDiscord = String(j.discord || '').trim();
             const jOpgg = String(j.opgg || '').trim();
+            const displayName = j.lol_id || j.name || 'Invocador';
 
             // WhatsApp con soporte para números bolivianos e internacionales
             const waUrl = formatearWhatsAppUrl(jPhone);
             const btnWapp = waUrl 
-                ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-green-900/20 text-green-400 hover:bg-green-600 hover:text-white px-2 py-1 rounded border border-green-800 transition-colors text-[10px] font-bold inline-flex items-center gap-1.5"><i class="fab fa-whatsapp text-xs"></i> Chat</a>` 
+                ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-green-900/25 text-green-400 hover:bg-green-600 hover:text-white px-2.5 py-1 rounded-lg border border-green-800/80 transition-all text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Contactar por WhatsApp"><i class="fab fa-whatsapp text-xs"></i> <span>Chat</span></a>` 
                 : '';
 
             // Discord interactivo: botón con clic para copiar y feedback
             const isDiscordValid = jDiscord.length > 2 && jDiscord !== '-' && jDiscord.toLowerCase() !== 'no' && jDiscord.toLowerCase() !== 'ninguno';
             const cleanDiscord = jDiscord.replace(/'/g, "\\'");
+            const shortDiscord = cleanDiscord.split('#')[0];
             const btnDisc = isDiscordValid 
-                ? `<button type="button" onclick="copiarDiscord(this, '${cleanDiscord}')" class="bg-indigo-900/20 text-indigo-400 hover:bg-indigo-700/50 hover:text-white px-2 py-1 rounded border border-indigo-900/50 text-[10px] font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5" title="Clic para copiar Discord: ${cleanDiscord}"><i class="fab fa-discord text-xs"></i> <span class="discord-tag">${cleanDiscord.split('#')[0]}</span></button>` 
+                ? `<button type="button" onclick="copiarDiscord(this, '${cleanDiscord}')" class="bg-indigo-900/25 text-indigo-400 hover:bg-indigo-700/60 hover:text-white px-2.5 py-1 rounded-lg border border-indigo-900/60 text-[11px] font-bold cursor-pointer transition-all inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Discord: ${cleanDiscord} (Clic para copiar)"><i class="fab fa-discord text-xs"></i> <span class="discord-tag max-w-[75px] sm:max-w-[95px] md:max-w-[115px] truncate text-left">${shortDiscord}</span></button>` 
                 : '';
 
             // OP.GG interactivo
@@ -505,32 +528,36 @@
             }
             const isOpggValid = opggUrl.length > 10 && (opggUrl.includes('op.gg') || opggUrl.includes('leagueofgraphs'));
             const btnOpgg = isOpggValid 
-                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-900/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2 py-1 rounded border border-blue-800 transition-colors text-[10px] font-bold inline-flex items-center gap-1.5"><i class="fas fa-external-link-alt text-xs"></i> OP.GG</a>` 
+                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-900/25 text-blue-400 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg border border-blue-800/80 transition-all text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Ver perfil en OP.GG"><i class="fas fa-external-link-alt text-xs"></i> <span>OP.GG</span></a>` 
                 : '';
 
-            // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real
+            // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real (sin quebrar layout)
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
             const nameDisplayHTML = isStaff
-                ? `<span class="cursor-pointer select-none bg-gray-900/60 hover:bg-gray-800 text-[10px] text-gray-400 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</span>`
-                : `<span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest select-none" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
+                ? `<button type="button" class="cursor-pointer select-none bg-gray-900/80 hover:bg-gray-800 text-[10px] text-gray-400 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</button>`
+                : `<span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest select-none whitespace-nowrap inline-flex items-center shrink-0" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
 
             return `
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#0a0a0a] rounded-xl border border-gray-800 hover:border-cyan-900 transition-colors gap-4 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-[#050505] p-2 rounded-lg border border-gray-800 shrink-0">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]">
+                    <div class="flex items-center gap-3.5 min-w-0 flex-grow">
+                        <div class="bg-[#050505] p-2 rounded-xl border border-gray-800/90 shrink-0 w-11 h-11 flex items-center justify-center">
                             ${iconHTML}
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <p class="text-[10px] text-cyan-500 font-black tracking-widest uppercase">${rolNombre}</p>
+                        <div class="min-w-0 flex-grow">
+                            <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                                <span class="text-[10px] text-cyan-400 font-black tracking-widest uppercase shrink-0">${rolNombre}</span>
                                 ${rankDisplay}
                             </div>
-                            <p class="text-white font-black text-lg leading-none mb-1">${j.lol_id || j.name}</p>
-                            <p class="text-xs text-gray-500 flex items-center gap-1.5 mt-1"><i class="fas fa-user text-gray-700"></i> ${nameDisplayHTML} ${secRoleDisplay}</p>
+                            <h4 class="text-white font-black text-base sm:text-lg leading-tight truncate max-w-[210px] sm:max-w-[280px] md:max-w-[340px]" title="${displayName}">${displayName}</h4>
+                            <div class="text-xs text-gray-500 flex items-center gap-1.5 mt-1">
+                                <i class="fas fa-user text-gray-700 shrink-0 text-[10px]"></i>
+                                ${nameDisplayHTML}
+                                ${secRoleDisplay}
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="flex flex-wrap items-center gap-2 sm:ml-auto">
+                    <div class="flex items-center justify-start sm:justify-end gap-1.5 sm:gap-2 shrink-0 sm:ml-4 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-800/50 w-full sm:w-auto">
                         ${btnDisc}
                         ${btnWapp}
                         ${btnOpgg}
@@ -604,11 +631,11 @@
             const isVisible = element.getAttribute('data-visible') === 'true';
             if (!isVisible) {
                 element.innerHTML = `<i class="fas fa-eye-slash mr-1"></i> ${realName}`;
-                element.className = "cursor-pointer select-none bg-cyan-950/20 text-[10px] text-cyan-400 px-2 py-0.5 rounded border border-cyan-900/50 transition-colors tracking-wide font-medium";
+                element.className = "cursor-pointer select-none bg-cyan-950/40 text-[10px] text-cyan-400 px-2 py-0.5 rounded border border-cyan-900/60 transition-colors tracking-wide font-medium whitespace-nowrap inline-flex items-center shrink-0";
                 element.setAttribute('data-visible', 'true');
             } else {
                 element.innerHTML = `<i class="fas fa-eye mr-1"></i> Mostrar Nombre`;
-                element.className = "cursor-pointer select-none bg-gray-900/60 hover:bg-gray-800 text-[10px] text-gray-500 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black";
+                element.className = "cursor-pointer select-none bg-gray-900/80 hover:bg-gray-800 text-[10px] text-gray-500 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0";
                 element.setAttribute('data-visible', 'false');
             }
         };
