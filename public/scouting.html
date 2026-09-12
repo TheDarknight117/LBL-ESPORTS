@@ -60,6 +60,60 @@
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             letter-spacing: -1px;
         }
+
+        /* Botones de Aplicaciones con Colores Oficiales de Marca */
+        .btn-app-discord {
+            background: rgba(88, 101, 242, 0.12);
+            border: 1px solid #5865F2 !important;
+            color: #8591fc !important;
+            transition: all 0.2s ease;
+        }
+        .btn-app-discord:hover {
+            background: #5865F2 !important;
+            border-color: #5865F2 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px rgba(88, 101, 242, 0.45);
+        }
+        .btn-app-discord.copied {
+            background: #5865F2 !important;
+            border-color: #5865F2 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
+        }
+
+        .btn-app-whatsapp {
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid #25D366 !important;
+            color: #25D366 !important;
+            transition: all 0.2s ease;
+        }
+        .btn-app-whatsapp:hover {
+            background: #25D366 !important;
+            border-color: #25D366 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px rgba(37, 211, 102, 0.45);
+        }
+
+        .btn-app-opgg {
+            background: rgba(83, 131, 236, 0.12);
+            border: 1px solid #5383EC !important;
+            color: #5383EC !important;
+            transition: all 0.2s ease;
+        }
+        .btn-app-opgg:hover {
+            background: #5383EC !important;
+            border-color: #5383EC !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px rgba(83, 131, 236, 0.45);
+        }
+
+        /* Contenedor del Icono de Rol: 100% Cero bordes blancos */
+        .role-icon-box {
+            background: #080808 !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
@@ -507,28 +561,28 @@
             const jOpgg = String(j.opgg || '').trim();
             const displayName = j.lol_id || j.name || 'Invocador';
 
-            // WhatsApp con soporte para números bolivianos e internacionales
+            // WhatsApp con soporte para números bolivianos e internacionales (Borde y color oficial WhatsApp)
             const waUrl = formatearWhatsAppUrl(jPhone);
             const btnWapp = waUrl 
-                ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-green-900/25 text-green-400 hover:bg-green-600 hover:text-white px-2.5 py-1 rounded-lg border border-green-800/80 transition-all text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Contactar por WhatsApp"><i class="fab fa-whatsapp text-xs"></i> <span>Chat</span></a>` 
+                ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-app-whatsapp px-2.5 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Contactar por WhatsApp"><i class="fab fa-whatsapp text-xs"></i> <span>Chat</span></a>` 
                 : '';
 
-            // Discord interactivo: botón con clic para copiar y feedback
+            // Discord interactivo: botón con clic para copiar y feedback (Borde y color oficial Discord)
             const isDiscordValid = jDiscord.length > 2 && jDiscord !== '-' && jDiscord.toLowerCase() !== 'no' && jDiscord.toLowerCase() !== 'ninguno';
             const cleanDiscord = jDiscord.replace(/'/g, "\\'");
             const shortDiscord = cleanDiscord.split('#')[0];
             const btnDisc = isDiscordValid 
-                ? `<button type="button" onclick="copiarDiscord(this, '${cleanDiscord}')" class="bg-indigo-900/25 text-indigo-400 hover:bg-indigo-700/60 hover:text-white px-2.5 py-1 rounded-lg border border-indigo-900/60 text-[11px] font-bold cursor-pointer transition-all inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Discord: ${cleanDiscord} (Clic para copiar)"><i class="fab fa-discord text-xs"></i> <span class="discord-tag max-w-[75px] sm:max-w-[95px] md:max-w-[115px] truncate text-left">${shortDiscord}</span></button>` 
+                ? `<button type="button" onclick="copiarDiscord(this, '${cleanDiscord}')" class="btn-app-discord px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Discord: ${cleanDiscord} (Clic para copiar)"><i class="fab fa-discord text-xs"></i> <span class="discord-tag max-w-[75px] sm:max-w-[95px] md:max-w-[115px] truncate text-left">${shortDiscord}</span></button>` 
                 : '';
 
-            // OP.GG interactivo
+            // OP.GG interactivo (Borde y color oficial OP.GG)
             let opggUrl = jOpgg;
             if (opggUrl && !opggUrl.startsWith('http://') && !opggUrl.startsWith('https://')) {
                 opggUrl = 'https://' + opggUrl;
             }
             const isOpggValid = opggUrl.length > 10 && (opggUrl.includes('op.gg') || opggUrl.includes('leagueofgraphs'));
             const btnOpgg = isOpggValid 
-                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-900/25 text-blue-400 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg border border-blue-800/80 transition-all text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Ver perfil en OP.GG"><i class="fas fa-external-link-alt text-xs"></i> <span>OP.GG</span></a>` 
+                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="btn-app-opgg px-2.5 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap h-7" title="Ver perfil en OP.GG"><i class="fas fa-external-link-alt text-xs"></i> <span>OP.GG</span></a>` 
                 : '';
 
             // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real (sin quebrar layout)
@@ -540,7 +594,7 @@
             return `
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]">
                     <div class="flex items-center gap-3.5 min-w-0 flex-grow">
-                        <div class="bg-[#050505] p-2 rounded-xl border border-gray-800/90 shrink-0 w-11 h-11 flex items-center justify-center">
+                        <div class="role-icon-box p-2 rounded-xl shrink-0 w-11 h-11 flex items-center justify-center">
                             ${iconHTML}
                         </div>
                         <div class="min-w-0 flex-grow">
