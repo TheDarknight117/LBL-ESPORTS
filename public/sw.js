@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v151';
+const CACHE_NAME = 'lbl-cache-v152';
 const ASSETS = [
   '/',
   '/torneos',
@@ -8,6 +8,7 @@ const ASSETS = [
   '/equipos',
   '/scouting',
   '/assets/scouting1.json',
+  '/assets/scouting2.json',
   '/assets/qualifier.json',
   '/auditoria-core.js',
   '/staff-config.js',

@@ -254,6 +254,171 @@
             color: #ffffff !important;
             box-shadow: 0 0 16px rgba(244, 63, 94, 0.55) !important;
         }
+
+        /* 5. HIGH ELO - MAESTRO EN ADELANTE (Púrpura Neón Oficial Master+ #c084fc / #a855f7) */
+        .badge-highelo {
+            background: rgba(168, 85, 247, 0.2) !important;
+            border: 1px solid #c084fc !important;
+            color: #c084fc !important;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) !important;
+        }
+        .tag-shield-highelo {
+            background: linear-gradient(135deg, rgba(126, 34, 206, 0.45) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+            border: 1px solid #c084fc !important;
+            box-shadow: 0 0 18px rgba(168, 85, 247, 0.35) !important;
+            color: #c084fc !important;
+        }
+        .highelo-card-glow {
+            border: 1px solid rgba(168, 85, 247, 0.45) !important;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.15) !important;
+        }
+        .highelo-card-glow:hover {
+            border-color: #c084fc !important;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4) !important;
+        }
+        .btn-highelo-lbl {
+            background: rgba(168, 85, 247, 0.15) !important;
+            border: 1px solid #c084fc !important;
+            color: #c084fc !important;
+            transition: all 0.2s ease;
+        }
+        .btn-highelo-lbl:hover {
+            background: #a855f7 !important;
+            border-color: #a855f7 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.55) !important;
+        }
+        .highelo-player-row {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.25) 0%, rgba(10, 10, 10, 0.96) 100%) !important;
+            border: 1px solid rgba(192, 132, 252, 0.45) !important;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.18) !important;
+        }
+        .highelo-player-row:hover {
+            border-color: #c084fc !important;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.32) !important;
+        }
+        .rank-badge-highelo {
+            background: rgba(126, 34, 206, 0.35) !important;
+            border: 1px solid #c084fc !important;
+            color: #f3e8ff !important;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.35) !important;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .banner-highelo-lbl {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.35) 0%, rgba(15, 10, 25, 0.98) 100%) !important;
+            border: 1px solid #c084fc !important;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.2) !important;
+        }
+
+        /* ==========================================================================
+           ESPORTS SKELETON UI & SHIMMER ANIMATION
+           ========================================================================== */
+        @keyframes shimmerWave {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-box {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 20%, rgba(6, 182, 212, 0.12) 50%, rgba(255, 255, 255, 0.03) 80%);
+            background-size: 200% 100%;
+            animation: shimmerWave 1.6s ease-in-out infinite;
+        }
+        .skeleton-card {
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+        }
+
+        /* ==========================================================================
+           CHIPS DE FILTRADO RÁPIDO PARA RECLUTADORES (Texto = Borde)
+           ========================================================================== */
+        .chip-filter {
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #9ca3af;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .chip-filter:hover {
+            border-color: #06b6d4;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+            transform: translateY(-1px);
+        }
+        .chip-filter.active {
+            background: rgba(6, 182, 212, 0.15) !important;
+            border-color: #06b6d4 !important;
+            color: #06b6d4 !important;
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.35) !important;
+        }
+        .chip-filter.filter-banned:hover {
+            border-color: #ef4444;
+            color: #f87171;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+        }
+        .chip-filter.filter-banned.active {
+            background: rgba(127, 29, 29, 0.35) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.4) !important;
+        }
+        .chip-filter.filter-toprank:hover {
+            border-color: #c084fc;
+            color: #f3e8ff;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+        }
+        .chip-filter.filter-toprank.active {
+            background: rgba(88, 28, 135, 0.4) !important;
+            border-color: #c084fc !important;
+            color: #c084fc !important;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.45) !important;
+        }
+        .chip-count {
+            margin-left: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: inherit;
+        }
+        .chip-filter.active .chip-count {
+            border-color: currentColor;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* ==========================================================================
+           ANIMACIONES FLUIDAS Y RENDIMIENTO DE TARJETAS (120 FPS)
+           ========================================================================== */
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .team-card-anim {
+            animation: cardEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+            content-visibility: auto;
+            contain-intrinsic-size: 0 150px;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-grid min-h-screen flex flex-col relative">
@@ -283,26 +448,32 @@
                 Accede a la información de nuestros anteriores torneos
             </p>
             
-            <!-- Selector de Torneo (Botones con Logos) -->
+            <!-- Selector de Torneo (Botones con Logos Normalizados) -->
             <div class="flex flex-row overflow-x-auto md:overflow-x-visible justify-center items-center gap-3 md:gap-6 max-w-3xl mx-auto mb-8 no-scrollbar pb-2 px-4 w-full">
-                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2">
+                    <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="max-h-7 md:max-h-9 max-w-[85%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2">
+                    <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="max-h-6 md:max-h-8 max-w-[90%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0">
-                    <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-5 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2">
+                    <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="max-h-7 md:max-h-9 max-w-[85%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
             </div>
         </div>
 
-        <!-- Sección de Descripción del Torneo Activo -->
+        <!-- Sección de Descripción del Torneo Activo (Con Marco de Logo Normalizado e Indexador de Equipos) -->
         <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-7xl mx-auto mb-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/5 shadow-lg w-full">
-            <div class="flex justify-center shrink-0 w-full md:w-auto">
-                <img id="td-logo" src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Torneo Logo" class="h-20 md:h-28 w-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+            <div id="td-logo-container" class="flex items-center justify-center shrink-0 w-full md:w-72 lg:w-80 h-20 md:h-24">
+                <img id="td-logo" src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Torneo Logo" class="max-h-14 md:max-h-[68px] max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.25)] transition-all duration-300">
             </div>
-            <div class="text-left w-full">
+            <div class="text-left w-full space-y-2">
+                <div class="flex flex-wrap items-center gap-3">
+                    <h2 id="td-title" class="text-xl md:text-2xl font-black uppercase italic tracking-tight text-white leading-none">Scouting Tournament 2</h2>
+                    <span id="td-badge" class="px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
+                        <i class="fas fa-users text-[11px]"></i> <span id="td-count-text">87 Equipos Registrados</span>
+                    </span>
+                </div>
                 <p id="td-text" class="text-gray-300 text-sm md:text-base leading-relaxed font-medium">
                     <!-- Cargado dinámicamente -->
                 </p>
@@ -320,14 +491,146 @@
             </div>
         </div>
 
-        <div class="max-w-2xl mx-auto mb-12 relative">
+        <!-- Buscador con icono centrado -->
+        <div id="search-bar-container" class="max-w-2xl mx-auto mb-4 relative">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
             <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Nombre, TAG, Rango, Sancionados...">
         </div>
 
-        <div id="loading-spinner" class="text-center py-20 text-cyan-500">
-            <i class="fas fa-satellite-dish fa-spin text-5xl mb-4"></i>
-            <p class="font-bold tracking-widest uppercase text-sm">Conectando con Google Servers...</p>
+        <!-- Indicadores Esenciales: High Elo y Jugadores Baneados -->
+        <div id="filter-chips-container" class="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-4 px-2">
+            <button type="button" id="chip-high-elo" class="chip-filter filter-toprank" onclick="toggleFiltro('high_elo')" title="Filtrar por equipos con talentos de alto elo">
+                <i class="fas fa-crown mr-1.5 text-[10px]"></i> High Elo <span class="chip-count" id="count-chip-top">0</span>
+            </button>
+            <button type="button" id="chip-banned" class="chip-filter filter-banned" onclick="toggleFiltro('banned')" title="Ver equipos con jugadores o sanciones oficiales">
+                <i class="fas fa-ban mr-1.5 text-[10px]"></i> Jugadores Baneados <span class="chip-count" id="count-chip-banned">0</span>
+            </button>
+        </div>
+
+        <!-- Barra de Resultados (Alineada a la Izquierda y 30% más grande) -->
+        <div id="results-bar" class="flex items-center justify-start max-w-7xl mx-auto mb-6 px-4 text-[15px] md:text-base font-bold text-gray-300">
+            <div id="results-counter" class="flex items-center gap-2.5">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.9)]"></span>
+                <span>Mostrando <b class="text-white font-black" id="visible-count">0</b> de <b class="text-white font-black" id="total-count">0</b> equipos</span>
+            </div>
+        </div>
+
+        <!-- Grid Skeleton Shimmer de Alta Fidelidad Esports (Reemplazo del spinner estático) -->
+        <div id="skeleton-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-8">
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-3/4 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-2/3 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/4 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-4/5 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-3/4 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/4 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-2/3 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="skeleton-box w-14 h-14 rounded-xl shrink-0"></div>
+                    <div class="flex-grow space-y-2">
+                        <div class="skeleton-box h-5 w-3/5 rounded"></div>
+                        <div class="skeleton-box h-3.5 w-1/4 rounded"></div>
+                    </div>
+                </div>
+                <div class="space-y-2 mb-4 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between">
+                        <div class="skeleton-box h-4 w-1/4 rounded"></div>
+                        <div class="skeleton-box h-4 w-1/3 rounded"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div class="skeleton-box h-4 w-20 rounded"></div>
+                    <div class="skeleton-box h-7 w-24 rounded"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Placeholder para Open Qualifier -->
@@ -400,8 +703,6 @@
         // REGISTRO OFICIAL DE SANCIONES Y BANEOS (LBL ESPORTS)
         // ==============================================================================
         const BANNED_TEAMS = [
-            'kows',
-            'kws',
             'bulevar de los sueños rotos',
             'bulevar de los suenos rotos',
             'bsr'
@@ -453,77 +754,214 @@
             return allPlayers.some(p => esJugadorBaneado(p));
         }
 
-        // 1. CARGAR Y MAPEAR DATOS
-        async function fetchScoutingData() {
-            // Cargar Scouting 2 (desde Google Sheets)
+        // ==============================================================================
+        // CACHÉ, INDICADORES Y ESTADO DE FILTRADO
+        // ==============================================================================
+        const S2_STORAGE_KEY = 'lbl_scouting2_data_v151';
+        let activeFiltro = null; // null | 'high_elo' | 'banned'
+
+        // Extractor y normalizador de Peak Elo (Elimina palabras 'Peak', 'Elo Actual' y deja solo el rango)
+        function limpiarPeakElo(raw) {
+            if (!raw) return 'UNRANKED';
+            let s = String(raw).trim();
+            if (/no\s*juega\s*ranked/i.test(s) || /no\s*clasificad/i.test(s) || /unranked/i.test(s)) return 'UNRANKED';
+
+            let cleaned = '';
+            // Caso: 'Peak y actual: esmeralda'
+            if (/peak\s+y\s+actual[:\s]+([^\n\r]+)/i.test(s)) {
+                cleaned = s.match(/peak\s+y\s+actual[:\s]+([^\n\r]+)/i)[1];
+            } else if (/^[A-Z0-9]+\s+peak\s+([^\n\r;,]+)/i.test(s)) { // 'D4 peak D1', 'E2 PEAK D4', 'oro peak platino 4'
+                cleaned = s.match(/^[A-Z0-9]+\s+peak\s+([^\n\r;,]+)/i)[1];
+            } else if (/^([^,]+?)\s+peak\b/i.test(s)) { // 'Esmeralda 2 Peak, ...'
+                cleaned = s.match(/^([^,]+?)\s+peak\b/i)[1];
+            } else {
+                let m1 = s.match(/peak(?:\s+elo)?(?:\s+en\s+[^:]+)?[:\s]+([^,\/\n\r;]+?)(?=(?:\s*(?:,|y|\/|;|-)?\s*(?:elo\s+)?actual)|$)/i);
+                if (m1 && m1[1].trim()) {
+                    cleaned = m1[1].trim();
+                } else {
+                    let m2 = s.match(/peak\s+([^,\/\n\r;]+)/i);
+                    if (m2 && m2[1].trim()) {
+                        cleaned = m2[1].trim();
+                    }
+                }
+            }
+
+            if (!cleaned) cleaned = s;
+
+            // Limpieza de palabras y caracteres residuales
+            cleaned = cleaned
+                .replace(/^(?:elo|es|de|en|:)\s+/i, '')
+                .replace(/\s+(?:elo|actual|y|peak).*$/i, '')
+                .replace(/[()\-;,\/]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            if (cleaned.length >= 2) {
+                return cleaned.toUpperCase();
+            }
+            return s.toUpperCase();
+        }
+
+        // Identificador oficial de High Elo: De Maestro en adelante (Master, Grandmaster, Challenger)
+        function esJugadorHighElo(jugador) {
+            if (!jugador || !jugador.rank) return false;
+            const r = limpiarPeakElo(jugador.rank).toLowerCase();
+            return r.includes('master') || r.includes('maestro') || 
+                   r.includes('grandmaster') || r.includes('gran maestro') || r.includes('gran-maestro') ||
+                   r.includes('challenger') || r.includes('retador') || 
+                   /\bgm\b/i.test(r);
+        }
+
+        function esJugadorTopElo(jugador) {
+            return esJugadorHighElo(jugador);
+        }
+
+        function equipoTieneTopElo(equipo) {
+            if (!equipo) return false;
+            const allPlayers = [equipo.top, equipo.jg, equipo.mid, equipo.adc, equipo.supp, ...(equipo.subs || [])];
+            return allPlayers.some(p => esJugadorHighElo(p));
+        }
+
+        function parsearGoogleSheetsData(dataRows2) {
+            if (!dataRows2 || dataRows2.length < 2) return [];
+            return dataRows2.slice(1).map((row, index) => {
+                const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
+                let subsArray = [];
+                if (v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
+                if (v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
+                if (v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
+                
+                return {
+                    id: index + 1, 
+                    name: v(7) || 'Equipo Sin Nombre', 
+                    tag: v(8),
+                    top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
+                    jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
+                    mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
+                    adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
+                    supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
+                    subs: subsArray
+                };
+            }).filter(t => t.name.length > 1);
+        }
+
+        function ocultarSkeletonYMostrarGrilla() {
+            const skeleton = document.getElementById('skeleton-grid');
+            if (skeleton) skeleton.classList.add('hidden');
+        }
+
+        // Ordenamiento Alfabético de Equipos (A-Z, insensible a mayúsculas/minúsculas y tolerante a emojis/símbolos iniciales)
+        function ordenarEquiposAlfabeticamente(lista) {
+            if (!Array.isArray(lista)) return [];
+            return [...lista].sort((a, b) => {
+                const clean = (s) => (s || '').replace(/^[^\p{L}\p{N}]+/u, '').trim() || (s || '').trim();
+                const nombreA = clean(a.name);
+                const nombreB = clean(b.name);
+                return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base', numeric: true });
+            });
+        }
+
+        // Indexador de Equipos en la Cabecera de la Sección Activa
+        function actualizarIndexadorTorneo() {
+            const tdTitle = document.getElementById('td-title');
+            const tdCount = document.getElementById('td-count-text');
+            const tdBadge = document.getElementById('td-badge');
+            
+            if (activeTournament === 1) {
+                if (tdTitle) tdTitle.textContent = "Scouting Tournament 1";
+                if (tdCount) tdCount.textContent = `${scouting1Teams.length} Equipos Registrados`;
+                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)]";
+            } else if (activeTournament === 2) {
+                if (tdTitle) tdTitle.textContent = "Scouting Tournament 2";
+                if (tdCount) tdCount.textContent = `${scouting2Teams.length} Equipos Registrados`;
+                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)]";
+            } else if (activeTournament === 3) {
+                if (tdTitle) tdTitle.textContent = "Open Qualifier LBL";
+                if (tdCount) tdCount.textContent = `${qualifierTeams.length} Equipos Registrados`;
+                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-rose-950/70 border border-rose-500/40 text-rose-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(244,63,94,0.25)]";
+            }
+        }
+
+        // Revalidación silenciosa en background sin trabar la interfaz del usuario
+        async function revalidarScouting2EnSegundoPlano() {
             try {
-                const res2 = await fetch(GOOGLE_SCRIPT_URL);
-                if (res2.ok) {
-                    const dataRows2 = await res2.json();
-                    if (dataRows2 && dataRows2.length >= 2) {
-                        scouting2Teams = dataRows2.slice(1).map((row, index) => {
-                            const v = (idx) => (row[idx] !== undefined && row[idx] !== null) ? String(row[idx]).trim() : "";
-                            let subsArray = [];
-                            if (v(103).length > 2) subsArray.push({role: "SUB", name: v(103), phone: v(106), discord: v(107), sec_role: v(109), rank: v(110), lol_id: v(111), opgg: v(112)});
-                            if (v(116).length > 2) subsArray.push({role: "SUB", name: v(116), phone: v(119), discord: v(120), sec_role: v(122), rank: v(123), lol_id: v(124), opgg: v(125)});
-                            if (v(129).length > 2) subsArray.push({role: "SUB", name: v(129), phone: v(132), discord: v(133), sec_role: v(135), rank: v(136), lol_id: v(137), opgg: v(138)});
-                            
-                            return {
-                                id: index + 1, 
-                                name: v(7) || 'Equipo Sin Nombre', 
-                                tag: v(8),
-                                top: { name: v(42), phone: v(45), discord: v(46), sec_role: v(47), rank: v(48), lol_id: v(49), opgg: v(50) },
-                                jg: { name: v(54), phone: v(57), discord: v(58), sec_role: v(59), rank: v(60), lol_id: v(61), opgg: v(62) },
-                                mid: { name: v(66), phone: v(69), discord: v(70), sec_role: v(71), rank: v(72), lol_id: v(73), opgg: v(74) },
-                                adc: { name: v(78), phone: v(81), discord: v(82), sec_role: v(83), rank: v(84), lol_id: v(85), opgg: v(86) },
-                                supp: { name: v(90), phone: v(93), discord: v(94), sec_role: v(95), rank: v(96), lol_id: v(97), opgg: v(98) },
-                                subs: subsArray
-                            };
-                        }).filter(t => t.name.length > 1);
+                const res = await fetch(GOOGLE_SCRIPT_URL);
+                if (res.ok) {
+                    const dataRows = await res.json();
+                    const freshTeams = parsearGoogleSheetsData(dataRows);
+                    if (freshTeams.length > 0) {
+                        const sortedFresh = ordenarEquiposAlfabeticamente(freshTeams);
+                        try {
+                            localStorage.setItem(S2_STORAGE_KEY, JSON.stringify(sortedFresh));
+                        } catch (e) {
+                            console.warn("Storage quota:", e);
+                        }
+                        scouting2Teams = sortedFresh;
+                        actualizarIndexadorTorneo();
+                        if (activeTournament === 2) {
+                            scoutingTeams = scouting2Teams;
+                            actualizarContadoresIndicadores(scoutingTeams);
+                            ejecutarFiltro();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Revalidación background no disponible:", e);
+            }
+        }
+
+        // 1. CARGA INSTANTÁNEA PARALELA + SWR (0ms a 30ms)
+        async function fetchScoutingData() {
+            // Paso 1: Intentar leer del caché de localStorage inmediatamente (0ms)
+            try {
+                const cachedS2 = localStorage.getItem(S2_STORAGE_KEY);
+                if (cachedS2) {
+                    const parsed = JSON.parse(cachedS2);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        scouting2Teams = ordenarEquiposAlfabeticamente(parsed);
                     }
                 }
             } catch (err) {
-                console.warn("Aviso al cargar Scouting 2:", err);
+                console.warn("Caché local no disponible:", err);
             }
 
-            // Cargar Scouting 1 (desde JSON estático local)
+            // Paso 2: Petición paralela ultra rápida de recursos locales (<30ms)
             try {
-                const res1 = await fetch('assets/scouting1.json');
-                if (res1.ok) {
-                    scouting1Teams = await res1.json();
+                const results = await Promise.allSettled([
+                    fetch('assets/scouting1.json').then(r => r.ok ? r.json() : []),
+                    fetch('assets/qualifier.json').then(r => r.ok ? r.json() : []),
+                    fetch('assets/scouting2.json').then(r => r.ok ? r.json() : [])
+                ]);
+
+                if (results[0].status === 'fulfilled' && Array.isArray(results[0].value)) {
+                    scouting1Teams = ordenarEquiposAlfabeticamente(results[0].value);
+                }
+                if (results[1].status === 'fulfilled' && Array.isArray(results[1].value)) {
+                    qualifierTeams = ordenarEquiposAlfabeticamente(results[1].value);
+                }
+                if ((!scouting2Teams || scouting2Teams.length === 0) && results[2].status === 'fulfilled' && Array.isArray(results[2].value)) {
+                    scouting2Teams = ordenarEquiposAlfabeticamente(results[2].value);
                 }
             } catch (err) {
-                console.warn("Aviso al cargar Scouting 1:", err);
+                console.warn("Error cargando snapshots locales:", err);
             }
 
-            // Cargar Qualifier (desde JSON estático local)
-            try {
-                const resQual = await fetch('assets/qualifier.json');
-                if (resQual.ok) {
-                    qualifierTeams = await resQual.json();
-                }
-            } catch (err) {
-                console.warn("Aviso al cargar Qualifier:", err);
-            }
+            // Ocultar Skeleton y habilitar grilla
+            ocultarSkeletonYMostrarGrilla();
 
-            // Si al menos un torneo cargó con éxito, ocultamos el spinner y mostramos la interfaz
-            if (scouting2Teams.length > 0 || scouting1Teams.length > 0 || qualifierTeams.length > 0) {
-                const spinner = document.getElementById('loading-spinner');
-                if (spinner) spinner.classList.add('hidden');
-                
-                // Parsear parámetro de URL para seleccionar torneo activo
-                const urlParams = new URLSearchParams(window.location.search);
-                const torneoParam = urlParams.get('torneo');
-                if (torneoParam === 'scouting1') {
-                    cambiarTorneo(1);
-                } else if (torneoParam === 'qualifier') {
-                    cambiarTorneo(3);
-                } else {
-                    cambiarTorneo(2); // Por defecto mostrar Scouting 2
-                }
+            // Determinar torneo inicial
+            const urlParams = new URLSearchParams(window.location.search);
+            const torneoParam = urlParams.get('torneo');
+            if (torneoParam === 'scouting1') {
+                cambiarTorneo(1);
+            } else if (torneoParam === 'qualifier') {
+                cambiarTorneo(3);
             } else {
-                document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Error al cargar datos.</p>`;
+                cambiarTorneo(2); // Por defecto mostrar Scouting 2
             }
+
+            // Paso 3: Disparar revalidación silenciosa en background con Google Apps Script
+            revalidarScouting2EnSegundoPlano();
         }
 
         window.cambiarTorneo = (torneoId) => {
@@ -531,12 +969,19 @@
             const btn1 = document.getElementById('btn-scouting1');
             const btn2 = document.getElementById('btn-scouting2');
             const btnQual = document.getElementById('btn-qualifier');
-            const searchContainer = document.getElementById('searchInput').parentElement;
-            const teamsGrid = document.getElementById('teams-grid');
-            const emptyState = document.getElementById('empty-state');
+            const searchContainer = document.getElementById('search-bar-container') || document.getElementById('searchInput').parentElement;
+            const chipsContainer = document.getElementById('filter-chips-container');
+            const resultsBar = document.getElementById('results-bar');
             const qualifierPlaceholder = document.getElementById('qualifier-placeholder');
             
             document.getElementById('searchInput').value = '';
+            
+            // Reiniciar filtro activo
+            activeFiltro = null;
+            const btnHigh = document.getElementById('chip-high-elo');
+            const btnBanned = document.getElementById('chip-banned');
+            if (btnHigh) btnHigh.classList.remove('active');
+            if (btnBanned) btnBanned.classList.remove('active');
 
             const normalClass = "group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shadow-md shrink-0";
             const activeClass = "group relative flex items-center justify-center rounded-xl border border-cyan-500 bg-[#070707]/80 shadow-[0_0_16px_rgba(6,182,212,0.35)] scale-[1.03] transition-all duration-300 w-24 md:w-44 h-10 md:h-18 shrink-0";
@@ -546,22 +991,25 @@
             btn2.className = normalClass;
             btnQual.className = normalClass;
 
-            // Datos de descripción por Torneo (Optimizados WebP)
+            // Datos de descripción por Torneo (Optimizados WebP y Tamaños Normalizados)
             const descripciones = {
                 1: {
                     logo: "assets/scouting1.webp",
-                    text: "Fue el primer paso de la Liga Boliviana, esto propuso la antesala para reclutar a los primeros equipos que conformarian nuestra liga, se realizo en Septiembre de 2025, con +50 equipos inscritos y +300 jugadores registrados, de los cuales solo unos pocos fueron invitados por su gran desempeño en la competencia.",
-                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+                    imgClass: "max-h-16 md:max-h-20 max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
+                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]",
+                    text: "Fue el primer paso de la Liga Boliviana, esto propuso la antesala para reclutar a los primeros equipos que conformarian nuestra liga, se realizo en Septiembre de 2025, con +50 equipos inscritos y +300 jugadores registrados, de los cuales solo unos pocos fueron invitados por su gran desempeño en la competencia."
                 },
                 2: {
                     logo: "assets/logo2.webp",
-                    text: "El Scouting Tournament 2 tuvo la maxima cantidad de equipos registrados de entre todos los torneos de clasificacion que tuvimos hasta la fecha, con la gran suma de 87 equipos en competencia con +500 jugadores inscritos... Fue sin duda uno de los Torneos de Scouting mas grandes que hicimos...",
-                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+                    imgClass: "max-h-14 md:max-h-[68px] max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain",
+                    shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]",
+                    text: "El Scouting Tournament 2 tuvo la maxima cantidad de equipos registrados de entre todos los torneos de clasificacion que tuvimos hasta la fecha, con la gran suma de 87 equipos en competencia con +500 jugadores inscritos... Fue sin duda uno de los Torneos de Scouting mas grandes que hicimos..."
                 },
                 3: {
                     logo: "assets/open_qualifier.webp",
-                    text: "El Open Qualifier fue el torneo clasificatorio definitivo donde se definieron los cupos finales para el Tier 1 y Tier 2 de la Liga Boliviana de League of Legends. Equipos de todo el país compitieron intensamente en llaves eliminatorias por el acceso al circuito oficial.",
-                    shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.25)]"
+                    imgClass: "max-h-16 md:max-h-20 max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
+                    shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.25)]",
+                    text: "El Open Qualifier fue el torneo clasificatorio definitivo donde se definieron los cupos finales para el Tier 1 y Tier 2 de la Liga Boliviana de League of Legends. Equipos de todo el país compitieron intensamente en llaves eliminatorias por el acceso al circuito oficial."
                 }
             };
 
@@ -570,42 +1018,125 @@
             if (tdLogo && tdText) {
                 const desc = descripciones[torneoId];
                 tdLogo.src = desc.logo;
-                tdLogo.className = `h-20 md:h-28 w-auto object-contain ${desc.shadow}`;
+                tdLogo.className = `${desc.imgClass} ${desc.shadow} transition-all duration-300`;
                 tdText.innerText = desc.text;
             }
 
             if (qualifierPlaceholder) {
                 qualifierPlaceholder.classList.add('hidden');
             }
+            if (searchContainer) searchContainer.classList.remove('hidden');
+            if (chipsContainer) chipsContainer.classList.remove('hidden');
+            if (resultsBar) resultsBar.classList.remove('hidden');
 
             if (torneoId === 1) {
                 btn1.className = activeClass;
-                scoutingTeams = scouting1Teams;
-                searchContainer.classList.remove('hidden');
-                renderizarGrilla(scoutingTeams);
+                scoutingTeams = ordenarEquiposAlfabeticamente(scouting1Teams);
                 window.history.replaceState(null, '', '?torneo=scouting1');
             } else if (torneoId === 2) {
                 btn2.className = activeClass;
-                scoutingTeams = scouting2Teams;
-                searchContainer.classList.remove('hidden');
-                renderizarGrilla(scoutingTeams);
+                scoutingTeams = ordenarEquiposAlfabeticamente(scouting2Teams);
                 window.history.replaceState(null, '', '?torneo=scouting2');
             } else if (torneoId === 3) {
                 btnQual.className = activeQualClass;
-                scoutingTeams = qualifierTeams;
-                searchContainer.classList.remove('hidden');
-                renderizarGrilla(scoutingTeams);
+                scoutingTeams = ordenarEquiposAlfabeticamente(qualifierTeams);
                 window.history.replaceState(null, '', '?torneo=qualifier');
             }
+
+            actualizarIndexadorTorneo();
+            actualizarContadoresIndicadores(scoutingTeams);
+            ejecutarFiltro();
         };
 
-        // 2. RENDERIZAR TARJETAS (Escudo TAG, Sanciones en Rojo y Click Seguro)
+        // 2. ACTUALIZACIÓN DE CONTADORES PARA INDICADORES (High Elo y Sancionados)
+        function actualizarContadoresIndicadores(listaEquipos) {
+            let bannedCount = 0;
+            let topCount = 0;
+
+            listaEquipos.forEach(eq => {
+                if (equipoTieneSancion(eq)) bannedCount++;
+                if (equipoTieneTopElo(eq)) topCount++;
+            });
+
+            const elTop = document.getElementById('count-chip-top');
+            const elBanned = document.getElementById('count-chip-banned');
+            if (elTop) elTop.textContent = topCount;
+            if (elBanned) elBanned.textContent = bannedCount;
+        }
+
+        // Toggle interactivo para High Elo y Sancionados
+        window.toggleFiltro = (tipo) => {
+            if (activeFiltro === tipo) {
+                activeFiltro = null;
+            } else {
+                activeFiltro = tipo;
+            }
+
+            const btnHigh = document.getElementById('chip-high-elo');
+            const btnBanned = document.getElementById('chip-banned');
+            if (btnHigh) btnHigh.classList.toggle('active', activeFiltro === 'high_elo');
+            if (btnBanned) btnBanned.classList.toggle('active', activeFiltro === 'banned');
+
+            ejecutarFiltro();
+        };
+
+        // 3. MOTOR DE FILTRADO (Buscador + Indicadores)
+        function ejecutarFiltro() {
+            const rawTerm = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            let base = scoutingTeams;
+
+            // Filtro por Indicador activo
+            if (activeFiltro === 'high_elo') {
+                base = base.filter(eq => equipoTieneTopElo(eq));
+            } else if (activeFiltro === 'banned') {
+                base = base.filter(eq => equipoTieneSancion(eq));
+            }
+
+            // Filtro por término de búsqueda
+            if (rawTerm) {
+                const isBanFilter = ['ban', 'baneado', 'baneados', 'sancion', 'sancionado', 'sancionados', 'blacklist', 'vetado', 'vetados'].includes(rawTerm);
+                const isHighEloTerm = ['high elo', 'highelo', 'top elo', 'topelo', 'elite', 'maestro', 'master', 'grandmaster', 'gran maestro', 'challenger', 'retador'].includes(rawTerm);
+
+                base = base.filter(t => {
+                    const esB = esEquipoBaneado(t.name, t.tag);
+                    const allPlayers = [t.top, t.jg, t.mid, t.adc, t.supp, ...(t.subs || [])];
+                    const tieneB = allPlayers.some(p => esJugadorBaneado(p));
+                    const tieneHigh = allPlayers.some(p => esJugadorHighElo(p));
+
+                    if (isBanFilter) return esB || tieneB;
+                    if (isHighEloTerm) return tieneHigh;
+
+                    if (t.name && t.name.toLowerCase().includes(rawTerm)) return true;
+                    if (t.tag && t.tag.toLowerCase().includes(rawTerm)) return true;
+                    
+                    return allPlayers.some(p => {
+                        if (!p) return false;
+                        if (p.name && p.name.toLowerCase().includes(rawTerm)) return true;
+                        if (p.lol_id && p.lol_id.toLowerCase().includes(rawTerm)) return true;
+                        if (p.rank && (p.rank.toLowerCase().includes(rawTerm) || limpiarPeakElo(p.rank).toLowerCase().includes(rawTerm))) return true;
+                        if (p.discord && p.discord.toLowerCase().includes(rawTerm)) return true;
+                        return false;
+                    });
+                });
+            }
+
+            renderizarGrilla(base);
+        }
+
+        // 4. RENDERIZAR TARJETAS (Escudo TAG, Sanciones en Rojo, Animación 120 FPS, Orden Alfabético A-Z)
         function renderizarGrilla(data) {
+            const sortedData = ordenarEquiposAlfabeticamente(data);
             const grid = document.getElementById('teams-grid');
             const emptyState = document.getElementById('empty-state');
+            const visibleCountEl = document.getElementById('visible-count');
+            const totalCountEl = document.getElementById('total-count');
+
+            if (visibleCountEl) visibleCountEl.textContent = sortedData.length;
+            if (totalCountEl) totalCountEl.textContent = scoutingTeams.length;
+
             grid.innerHTML = '';
 
-            if (data.length === 0) {
+            if (sortedData.length === 0) {
                 grid.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 return;
@@ -614,7 +1145,7 @@
             grid.classList.remove('hidden');
             emptyState.classList.add('hidden');
 
-            data.forEach(eq => {
+            sortedData.forEach(eq => {
                 const displayTag = eq.tag ? eq.tag.substring(0,4).toUpperCase() : (eq.name ? eq.name.substring(0,3).toUpperCase() : 'TBD');
                 const esBaneado = esEquipoBaneado(eq.name, eq.tag);
                 const allPlayers = [eq.top, eq.jg, eq.mid, eq.adc, eq.supp, ...(eq.subs || [])];
@@ -623,11 +1154,11 @@
                 const card = document.createElement('div');
                 
                 if (esBaneado) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden fade-in banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
                 } else if (tieneJugadorBaneado) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden fade-in warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
                 } else {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden fade-in";
+                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
                 }
                 
                 card.onclick = () => abrirModalSeguro(eq);
@@ -679,39 +1210,8 @@
             });
         }
 
-        // 3. BUSCADOR EN TIEMPO REAL (Con filtro para Sanciones y Baneos)
-        document.getElementById('searchInput').addEventListener('keyup', (e) => {
-            const rawTerm = e.target.value.toLowerCase().trim();
-            if (!rawTerm) {
-                renderizarGrilla(scoutingTeams);
-                return;
-            }
-
-            const isBanFilter = ['ban', 'baneado', 'baneados', 'sancion', 'sancionado', 'sancionados', 'blacklist', 'vetado', 'vetados'].includes(rawTerm);
-
-            const filtered = scoutingTeams.filter(t => {
-                const esB = esEquipoBaneado(t.name, t.tag);
-                const allPlayers = [t.top, t.jg, t.mid, t.adc, t.supp, ...(t.subs || [])];
-                const tieneB = allPlayers.some(p => esJugadorBaneado(p));
-
-                if (isBanFilter) {
-                    return esB || tieneB;
-                }
-
-                if (t.name && t.name.toLowerCase().includes(rawTerm)) return true;
-                if (t.tag && t.tag.toLowerCase().includes(rawTerm)) return true;
-                
-                return allPlayers.some(p => {
-                    if (!p) return false;
-                    if (p.name && p.name.toLowerCase().includes(rawTerm)) return true;
-                    if (p.lol_id && p.lol_id.toLowerCase().includes(rawTerm)) return true;
-                    if (p.rank && p.rank.toLowerCase().includes(rawTerm)) return true;
-                    if (p.discord && p.discord.toLowerCase().includes(rawTerm)) return true;
-                    return false;
-                });
-            });
-            renderizarGrilla(filtered);
-        });
+        // Listener de búsqueda reactiva instantánea
+        document.getElementById('searchInput').addEventListener('input', ejecutarFiltro);
 
         // Helper universal para normalizar números de teléfono bolivianos e internacionales hacia WhatsApp
         function formatearWhatsAppUrl(raw) {
@@ -770,30 +1270,39 @@
             return `https://wa.me/${digits}`;
         }
 
-        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS, ALINEACIÓN Y SANCIONES EN COLOR ROJO
+        // 4. GENERADOR DE JUGADORES A PRUEBA DE FALLOS, ALINEACIÓN, SANCIONES EN ROJO Y HIGH ELO EN PÚRPURA
         function crearFilaScouting(rolNombre, iconKey, j) {
             if (!j || !j.name || j.name.trim() === '') return '';
 
             const esBaneado = esJugadorBaneado(j);
+            const esHighElo = !esBaneado && esJugadorHighElo(j);
 
             // Icono de posición o suplente
-            let iconHTML = `<img src="${iconKey}" class="w-7 h-7 object-contain ${esBaneado ? 'opacity-100 filter drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]' : 'opacity-85 drop-shadow-md'}" alt="${rolNombre}">`;
+            let iconHTML = `<img src="${iconKey}" class="w-7 h-7 object-contain ${esBaneado ? 'opacity-100 filter drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]' : (esHighElo ? 'opacity-100 filter drop-shadow-[0_0_8px_rgba(192,132,252,0.95)]' : 'opacity-85 drop-shadow-md')}" alt="${rolNombre}">`;
             
             if (rolNombre.toUpperCase() === 'SUPLENTE' || iconKey === roleIcons['SUB']) {
-                iconHTML = `<div class="w-7 h-7 flex items-center justify-center ${esBaneado ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]' : 'text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]'}"><i class="fas fa-users-cog text-2xl"></i></div>`;
+                iconHTML = `<div class="w-7 h-7 flex items-center justify-center ${esBaneado ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]' : (esHighElo ? 'text-purple-300 drop-shadow-[0_0_8px_rgba(192,132,252,0.95)]' : 'text-cyan-400 opacity-90 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]')}"><i class="fas fa-users-cog text-2xl"></i></div>`;
             }
 
-            // Normalización y refinamiento del Rango para evitar desbordes visuales
-            const rawRank = String(j.rank || '').trim();
-            let rankText = rawRank || 'Sin Rango';
-            if (/no\s*juega\s*ranked/i.test(rankText) || /no\s*clasificad/i.test(rankText) || /unranked/i.test(rankText)) {
-                rankText = 'UNRANKED';
-            } else if (rankText.length > 18) {
-                rankText = rankText.substring(0, 16) + '...';
+            // Normalización y extracción de Peak Elo (Elimina 'Peak', 'Elo Actual' y muestra solo el Elo)
+            const cleanRank = limpiarPeakElo(j.rank);
+            const isUnranked = cleanRank === 'UNRANKED' || cleanRank === 'SIN RANGO' || !cleanRank;
+            let rankDisplay;
+            if (isUnranked) {
+                rankDisplay = `<span class="rank-badge text-gray-500 border-gray-700 whitespace-nowrap shrink-0">UNRANKED</span>`;
+            } else if (esHighElo) {
+                let rankTrunc = cleanRank;
+                if (rankTrunc.length > 18) {
+                    rankTrunc = rankTrunc.substring(0, 16) + '...';
+                }
+                rankDisplay = `<span class="rank-badge-highelo whitespace-nowrap shrink-0" title="Talento High Elo: ${cleanRank}"><i class="fas fa-crown text-[9px] mr-1"></i>${rankTrunc}</span>`;
+            } else {
+                let rankTrunc = cleanRank;
+                if (rankTrunc.length > 18) {
+                    rankTrunc = rankTrunc.substring(0, 16) + '...';
+                }
+                rankDisplay = `<span class="rank-badge whitespace-nowrap shrink-0" title="${cleanRank}">${rankTrunc}</span>`;
             }
-            const rankDisplay = rawRank 
-                ? `<span class="rank-badge whitespace-nowrap shrink-0" title="${rawRank}">${rankText}</span>` 
-                : `<span class="rank-badge text-gray-500 border-gray-700 whitespace-nowrap shrink-0">Sin Rango</span>`;
 
             // Normalización del Segundo Rol para evitar textos largos (ej: comodín explicativo)
             const rawSecRole = String(j.sec_role || '').trim();
@@ -839,13 +1348,15 @@
             // Privacidad de Nombres: Solo Staff logueado puede revelar el nombre real (sin quebrar layout)
             const isStaff = localStorage.getItem('lbl_staff_logged_in') === 'true';
             const nameDisplayHTML = isStaff
-                ? `<button type="button" class="cursor-pointer select-none ${esBaneado ? 'bg-red-950/60 hover:bg-red-900/70 text-red-300 border border-red-500' : 'bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-800'} text-[10px] px-2 py-0.5 rounded transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</button>`
-                : `<span class="text-[10px] ${esBaneado ? 'text-red-400 font-bold' : 'text-gray-600 font-bold'} uppercase tracking-widest select-none whitespace-nowrap inline-flex items-center shrink-0" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
+                ? `<button type="button" class="cursor-pointer select-none ${esBaneado ? 'bg-red-950/60 hover:bg-red-900/70 text-red-300 border border-red-500' : (esHighElo ? 'bg-purple-950/60 hover:bg-purple-900/70 text-purple-300 border border-purple-500' : 'bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-800')} text-[10px] px-2 py-0.5 rounded transition-colors uppercase tracking-widest font-black whitespace-nowrap inline-flex items-center shrink-0" onclick="toggleNombre(this, '${j.name.replace(/'/g, "\\'")}')" data-visible="false"><i class="fas fa-eye mr-1"></i> Mostrar Nombre</button>`
+                : `<span class="text-[10px] ${esBaneado ? 'text-red-400 font-bold' : (esHighElo ? 'text-purple-400 font-bold' : 'text-gray-600 font-bold')} uppercase tracking-widest select-none whitespace-nowrap inline-flex items-center shrink-0" title="Oculto por privacidad"><i class="fas fa-user-slash mr-1"></i> Nombre Privado</span>`;
 
-            // Badge de Baneo / Rol (Texto = Borde)
+            // Badge de Baneo o High Elo
             const banBadgeHTML = esBaneado
                 ? `<span class="badge-banned px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-1 animate-pulse"><i class="fas fa-ban text-[8px]"></i> JUGADOR BANEADO</span>`
-                : '';
+                : (esHighElo
+                    ? `<span class="badge-highelo px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1 shadow-[0_0_8px_rgba(168,85,247,0.35)]"><i class="fas fa-crown text-[8px]"></i> HIGH ELO</span>`
+                    : '');
 
             const noRecruitBadge = esBaneado
                 ? `<span class="badge-banned text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg inline-flex items-center gap-1 shrink-0 whitespace-nowrap"><i class="fas fa-user-times"></i> No Reclutar</span>`
@@ -853,30 +1364,32 @@
 
             const rowClass = esBaneado
                 ? "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 rounded-xl transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px] banned-player-row"
-                : "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]";
+                : (esHighElo
+                    ? "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 rounded-xl transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px] highelo-player-row"
+                    : "flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-[#0a0a0a] rounded-xl border border-gray-800/80 hover:border-cyan-800/70 transition-all gap-3 sm:gap-4 shadow-sm min-h-[76px]");
 
-            const titleColor = esBaneado ? "text-red-400" : "text-white";
+            const titleColor = esBaneado ? "text-red-400" : (esHighElo ? "text-purple-200" : "text-white");
 
             return `
                 <div class="${rowClass}">
                     <div class="flex items-center gap-3.5 min-w-0 flex-grow">
-                        <div class="role-icon-box p-2 rounded-xl shrink-0 w-11 h-11 flex items-center justify-center" style="${esBaneado ? 'background: rgba(127, 29, 29, 0.3) !important; border: 1px solid #ef4444 !important;' : ''}">
+                        <div class="role-icon-box p-2 rounded-xl shrink-0 w-11 h-11 flex items-center justify-center" style="${esBaneado ? 'background: rgba(127, 29, 29, 0.3) !important; border: 1px solid #ef4444 !important;' : (esHighElo ? 'background: rgba(88, 28, 135, 0.35) !important; border: 1px solid #c084fc !important; box-shadow: 0 0 12px rgba(168, 85, 247, 0.35) !important;' : '')}">
                             ${iconHTML}
                         </div>
                         <div class="min-w-0 flex-grow">
                             <div class="flex items-center gap-2 mb-0.5 flex-wrap">
-                                <span class="text-[10px] ${esBaneado ? 'text-red-400' : 'text-cyan-400'} font-black tracking-widest uppercase shrink-0">${rolNombre}</span>
+                                <span class="text-[10px] ${esBaneado ? 'text-red-400' : (esHighElo ? 'text-purple-300' : 'text-cyan-400')} font-black tracking-widest uppercase shrink-0">${rolNombre}</span>
                                 ${banBadgeHTML}
                                 ${rankDisplay}
                             </div>
                             <h4 class="${titleColor} font-black text-base sm:text-lg leading-tight truncate max-w-[210px] sm:max-w-[280px] md:max-w-[340px]" title="${displayName}">
-                                ${esBaneado ? '<i class="fas fa-ban mr-1.5 text-red-500"></i>' : ''}${displayName}
+                                ${esBaneado ? '<i class="fas fa-ban mr-1.5 text-red-500"></i>' : (esHighElo ? '<i class="fas fa-crown mr-1.5 text-purple-400 text-xs"></i>' : '')}${displayName}
                             </h4>
                             <div class="text-xs text-gray-500 flex items-center gap-1.5 mt-1">
-                                <i class="fas fa-user ${esBaneado ? 'text-red-700' : 'text-gray-700'} shrink-0 text-[10px]"></i>
+                                <i class="fas fa-user ${esBaneado ? 'text-red-700' : (esHighElo ? 'text-purple-700' : 'text-gray-700')} shrink-0 text-[10px]"></i>
                                 ${nameDisplayHTML}
                                 ${secRoleDisplay}
-                                ${esBaneado ? '<span class="text-[10px] text-red-400 font-bold ml-2 inline-flex items-center gap-1"><i class="fas fa-shield-alt"></i> Sancionado LBL</span>' : ''}
+                                ${esBaneado ? '<span class="text-[10px] text-red-400 font-bold ml-2 inline-flex items-center gap-1"><i class="fas fa-shield-alt"></i> Sancionado LBL</span>' : (esHighElo ? '<span class="text-[10px] text-purple-400 font-bold ml-2 inline-flex items-center gap-1"><i class="fas fa-award"></i> Talento Elite (Master+)</span>' : '')}
                             </div>
                         </div>
                     </div>
