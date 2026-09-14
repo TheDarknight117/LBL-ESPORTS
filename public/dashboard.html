@@ -96,8 +96,8 @@
         .notif-drawer-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
             z-index: 998;
             opacity: 0;
             pointer-events: none;
@@ -113,18 +113,51 @@
             right: 0;
             height: 100vh;
             width: 100%;
-            max-width: 440px;
-            background: #080808;
-            border-left: 1px solid #222;
+            max-width: 480px;
+            background: #06090e;
+            border-left: 1px solid #1e293b;
             z-index: 999;
             transform: translateX(100%);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            box-shadow: -15px 0 40px rgba(0, 0, 0, 0.9);
         }
         .notif-drawer-panel.active {
             transform: translateX(0);
+        }
+
+        /* Pestañas de filtrado dentro del Drawer */
+        .notif-filter-tab {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .notif-filter-tab.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+        }
+        .notif-filter-tab:not(.active) {
+            background: #0b111a;
+            color: #94a3b8;
+            border-color: #1e293b;
+        }
+        .notif-filter-tab:not(.active):hover {
+            color: #ffffff;
+            border-color: #334155;
+            background: #0f172a;
         }
 
         /* Animación de respiración azul para el botón de MODIFICACIONES */
@@ -142,26 +175,26 @@
             animation: blueBreathe 2.4s infinite ease-in-out;
         }
 
-        /* Estilos limpios y oscuros para las tarjetas de notificación (sin bordes blancos) */
+        /* Estilos limpios y oscuros para las tarjetas de notificación */
         .notif-card-active {
-            background: #0d131c !important;
-            border: 1px solid rgba(56, 189, 248, 0.25) !important;
+            background: #09111c !important;
+            border: 1px solid rgba(56, 189, 248, 0.35) !important;
             border-radius: 1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(56, 189, 248, 0.03);
         }
         .notif-card-muted {
-            background: #090909 !important;
-            border: 1px solid #1c1c1c !important;
+            background: #070a0f !important;
+            border: 1px solid #161f2e !important;
             border-radius: 1rem;
-            opacity: 0.8;
+            opacity: 0.88;
         }
         .notif-sub-box {
-            background: #05070a !important;
-            border: 1px solid #1a202c !important;
+            background: #04060a !important;
+            border: 1px solid #161f2e !important;
             border-radius: 0.75rem;
         }
         .notif-footer-divider {
-            border-top: 1px solid #181c24 !important;
+            border-top: 1px solid #141c28 !important;
         }
         .badge-staff-pill {
             background: rgba(127, 29, 29, 0.5) !important;
@@ -357,29 +390,65 @@
         <!-- DRAWER / MINI-LAYER LATERAL DE NOTIFICACIONES Y AUDITORÍA (SOLO ACCESIBLE CON SESIÓN INICIADA) -->
         <div id="notif-drawer-backdrop" onclick="toggleNotificationDrawer()" class="notif-drawer-backdrop"></div>
         <aside id="notif-drawer" class="notif-drawer-panel">
-            <div class="p-5 border-b border-gray-800 bg-[#0c0c0c] flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-red-600/20 border border-red-500/30 flex items-center justify-center text-red-400">
-                        <i class="fas fa-bell"></i>
+            <!-- CABECERA DEL CENTRO DE NOTIFICACIONES -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 bg-[#090e17] flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-sky-950/60 border border-sky-500/40 flex items-center justify-center text-sky-400 shrink-0 shadow-md">
+                        <i class="fas fa-bell text-base"></i>
                     </div>
-                    <div>
-                        <h3 class="font-black text-sm uppercase tracking-wider text-white">Notificaciones & Cambios</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest" id="notif-staff-label">Staff</p>
+                    <div class="min-w-0">
+                        <h3 class="font-black text-sm uppercase tracking-wider text-white truncate">Centro de Modificaciones</h3>
+                        <p class="text-[10px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-0.5 truncate" id="notif-staff-label">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span> Staff
+                        </p>
                     </div>
                 </div>
-                <button onclick="toggleNotificationDrawer()" class="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer">
-                    <i class="fas fa-times"></i>
+                <button onclick="toggleNotificationDrawer()" class="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer shrink-0 border border-gray-800" title="Cerrar panel">
+                    <i class="fas fa-times text-xs"></i>
                 </button>
             </div>
 
-            <div class="p-3 bg-[#0a0a0a] border-b border-gray-800 flex items-center justify-between text-xs shrink-0">
-                <span id="notif-count-text" class="text-gray-400 font-bold">0 novedades</span>
-                <button onclick="marcarTodasNotificacionesLeidas()" class="text-blue-400 hover:text-blue-300 font-black text-[11px] uppercase tracking-wider transition-colors cursor-pointer">
-                    <i class="fas fa-check-double mr-1"></i> Marcar todas leídas
+            <!-- BARRA DE ACCIÓN: TOTAL Y MARCAR LEÍDAS -->
+            <div class="px-4 py-2.5 bg-[#060a10] border-b border-gray-800/80 flex items-center justify-between text-xs shrink-0">
+                <span id="notif-count-text" class="text-gray-400 font-bold text-[11px]">0 novedades</span>
+                <button onclick="marcarTodasNotificacionesLeidas()" class="text-sky-400 hover:text-sky-300 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 hover:underline" title="Marcar todas las notificaciones como leídas">
+                    <i class="fas fa-check-double text-[10px]"></i> Marcar todas leídas
                 </button>
             </div>
 
-            <div id="notif-list-container" class="flex-grow overflow-y-auto p-4 space-y-3">
+            <!-- BARRA DE PESTAÑAS / FILTROS -->
+            <div class="px-3 pt-3 pb-2 bg-[#080d14] border-b border-gray-800/60 flex items-center gap-1.5 overflow-x-auto modal-custom-scrollbar shrink-0">
+                <button onclick="cambiarFiltroNotificaciones('all')" id="notif-tab-all" class="notif-filter-tab active">
+                    <span>Todas</span>
+                    <span id="tab-count-all" class="px-1.5 py-0.2 rounded-full text-[9px] bg-sky-950/60 text-sky-300 border border-sky-500/30 font-mono">0</span>
+                </button>
+                <button onclick="cambiarFiltroNotificaciones('unread')" id="notif-tab-unread" class="notif-filter-tab">
+                    <span>No Leídas</span>
+                    <span id="tab-count-unread" class="px-1.5 py-0.2 rounded-full text-[9px] bg-rose-950/60 text-rose-300 border border-rose-500/30 font-mono">0</span>
+                </button>
+                <button onclick="cambiarFiltroNotificaciones('team')" id="notif-tab-team" class="notif-filter-tab">
+                    <span>Equipos</span>
+                    <span id="tab-count-team" class="px-1.5 py-0.2 rounded-full text-[9px] bg-amber-950/60 text-amber-300 border border-amber-500/30 font-mono">0</span>
+                </button>
+                <button onclick="cambiarFiltroNotificaciones('staff')" id="notif-tab-staff" class="notif-filter-tab">
+                    <span>Staff</span>
+                    <span id="tab-count-staff" class="px-1.5 py-0.2 rounded-full text-[9px] bg-red-950/60 text-red-300 border border-red-500/30 font-mono">0</span>
+                </button>
+            </div>
+
+            <!-- BUSCADOR RÁPIDO DENTRO DEL DRAWER -->
+            <div class="p-3 bg-[#070b12] border-b border-gray-800/60 shrink-0">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                    <input type="text" id="notif-search-input" oninput="filtrarNotificacionesPorBusqueda(this.value)" placeholder="Buscar equipo, tag o jugador..." class="w-full bg-[#03060a] hover:bg-[#050910] focus:bg-[#080d17] border border-gray-800 focus:border-sky-400 text-white pl-8 pr-8 py-2 rounded-xl text-xs placeholder-gray-500 outline-none transition-all">
+                    <button id="btn-clear-notif-search" onclick="limpiarBusquedaNotificaciones()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs cursor-pointer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DE TARJETAS DE NOTIFICACIÓN -->
+            <div id="notif-list-container" class="flex-grow overflow-y-auto p-3 sm:p-4 space-y-3 modal-custom-scrollbar">
                 <!-- Tarjetas de eventos generadas dinámicamente -->
             </div>
         </aside>
@@ -690,7 +759,7 @@
 
     <script type="module">
         import { db, auth } from "/firebase-config.js"; 
-        import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
@@ -1376,6 +1445,10 @@
                 document.getElementById('user-display').innerText = `Sesión: ${getStaffNick(user.email)}`;
                 localStorage.setItem('lbl_staff_logged_in', 'true');
                 
+                if (typeof cargarEstadoNotificacionesCloud === 'function') {
+                    cargarEstadoNotificacionesCloud(user.uid);
+                }
+
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 iniciarSuscripcionEnTiempoReal();
             } else {
@@ -1820,7 +1893,189 @@
         }
         window.cargarDatos = cargarDatos;
 
-        // --- SISTEMA DE NOTIFICACIONES MULTI-STAFF ---
+        // --- SISTEMA DE NOTIFICACIONES MULTI-STAFF AVANZADO ---
+        let currentNotifFilter = 'all'; // 'all' | 'unread' | 'team' | 'staff'
+        let currentNotifSearch = '';
+        const notifExpandedIds = new Set();
+        let isSyncingStaffNotif = false;
+
+        // Clave de almacenamiento por UID de cuenta Staff
+        function getStaffNotifStorageKey(uid) {
+            return `lbl_staff_notif_v2_${uid || 'anonymous'}`;
+        }
+
+        // Estado inicial para cuentas nuevas: corta en las últimas 48h para no saturar con historial antiguo
+        function getInitialStaffNotifState(uid) {
+            const cutoff48h = new Date(Date.now() - (48 * 60 * 60 * 1000)).toISOString();
+            return {
+                uid: uid || 'anonymous',
+                readAllBefore: cutoff48h,
+                readEventIds: new Set(),
+                unreadEventIds: new Set(),
+                lastSync: Date.now()
+            };
+        }
+
+        // Obtener estado actual del Staff activo desde LocalStorage
+        function getStaffNotifState() {
+            const uid = auth.currentUser?.uid || 'anonymous';
+            const key = getStaffNotifStorageKey(uid);
+            try {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    return {
+                        uid: parsed.uid || uid,
+                        readAllBefore: parsed.readAllBefore || null,
+                        readEventIds: new Set(Array.isArray(parsed.readEventIds) ? parsed.readEventIds : []),
+                        unreadEventIds: new Set(Array.isArray(parsed.unreadEventIds) ? parsed.unreadEventIds : []),
+                        lastSync: parsed.lastSync || 0
+                    };
+                }
+            } catch (e) {
+                console.warn("Error leyendo estado local de notificaciones:", e);
+            }
+            return getInitialStaffNotifState(uid);
+        }
+
+        // Guardar estado con persistencia Dual: LocalStorage (0ms) + Cloud Sync (Firestore)
+        async function saveStaffNotifState(state) {
+            const uid = auth.currentUser?.uid || 'anonymous';
+            const key = getStaffNotifStorageKey(uid);
+            const payload = {
+                uid: uid,
+                email: auth.currentUser?.email || '',
+                nick: getStaffNick(auth.currentUser?.email),
+                readAllBefore: state.readAllBefore || null,
+                readEventIds: Array.from(state.readEventIds || []),
+                unreadEventIds: Array.from(state.unreadEventIds || []),
+                lastSync: Date.now()
+            };
+
+            // 1. Guardado inmediato en LocalStorage
+            try {
+                localStorage.setItem(key, JSON.stringify(payload));
+            } catch (e) {
+                console.warn("Error en localStorage:", e);
+            }
+
+            // 2. Sincronización en la nube (Firestore)
+            if (auth.currentUser && auth.currentUser.uid && !isSyncingStaffNotif) {
+                isSyncingStaffNotif = true;
+                try {
+                    await setDoc(doc(db, "staff_notificaciones", uid), payload, { merge: true });
+                } catch (fsErr) {
+                    console.warn("Sincronización Cloud staff_notificaciones no disponible:", fsErr.message);
+                } finally {
+                    isSyncingStaffNotif = false;
+                }
+            }
+        }
+
+        // Descargar y sincronizar preferencias desde Firestore al iniciar sesión
+        async function cargarEstadoNotificacionesCloud(uid) {
+            if (!uid) return;
+            try {
+                const docSnap = await getDoc(doc(db, "staff_notificaciones", uid));
+                if (docSnap && docSnap.exists()) {
+                    const cloudData = docSnap.data();
+                    const localState = getStaffNotifState();
+
+                    // Fusionar si Cloud es más reciente o si Local era inicial
+                    if (!localState.lastSync || (cloudData.lastSync && cloudData.lastSync > localState.lastSync)) {
+                        if (cloudData.readAllBefore) localState.readAllBefore = cloudData.readAllBefore;
+                        if (Array.isArray(cloudData.readEventIds)) {
+                            cloudData.readEventIds.forEach(id => localState.readEventIds.add(id));
+                        }
+                        if (Array.isArray(cloudData.unreadEventIds)) {
+                            cloudData.unreadEventIds.forEach(id => localState.unreadEventIds.add(id));
+                        }
+                        localState.lastSync = cloudData.lastSync || Date.now();
+
+                        localStorage.setItem(getStaffNotifStorageKey(uid), JSON.stringify({
+                            uid: uid,
+                            readAllBefore: localState.readAllBefore,
+                            readEventIds: Array.from(localState.readEventIds),
+                            unreadEventIds: Array.from(localState.unreadEventIds),
+                            lastSync: localState.lastSync
+                        }));
+
+                        actualizarBadgeNotificaciones();
+                        const drawer = document.getElementById('notif-drawer');
+                        if (drawer && drawer.classList.contains('active')) {
+                            renderNotificationList();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Aviso: usando modo local de notificaciones:", err.message);
+            }
+        }
+        window.cargarEstadoNotificacionesCloud = cargarEstadoNotificacionesCloud;
+
+        // Comprueba si un evento fue realizado por la misma cuenta activa del Staff
+        function esAccionPropia(ev, currentNick, userEmail) {
+            if (!ev || !ev.autor) return false;
+            const autor = ev.autor.toString().toLowerCase();
+            if (currentNick && autor.includes(currentNick.toLowerCase())) return true;
+            if (userEmail && autor.includes(userEmail.toLowerCase())) return true;
+            return false;
+        }
+
+        // Evalúa si un evento debe considerarse leído para el Staff actual
+        function esEventoLeido(ev, state, currentNick, userEmail) {
+            if (!ev || !ev.id) return true;
+
+            // 1. Excepción explícita de No Leído
+            if (state.unreadEventIds && state.unreadEventIds.has(ev.id)) {
+                return false;
+            }
+
+            // 2. Si es acción realizada por uno mismo, no genera notificación pendiente
+            if (esAccionPropia(ev, currentNick, userEmail)) {
+                return true;
+            }
+
+            // 3. Excepción explícita de Leído
+            if (state.readEventIds && state.readEventIds.has(ev.id)) {
+                return true;
+            }
+
+            // 4. Corte de "Marcar todas leídas" por fecha
+            if (state.readAllBefore && ev.fecha) {
+                const fEv = new Date(ev.fecha).getTime();
+                const fCutoff = new Date(state.readAllBefore).getTime();
+                if (!isNaN(fEv) && !isNaN(fCutoff) && fEv <= fCutoff) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Recopila y normaliza todos los eventos de auditoría de todos los equipos
+        function obtenerTodosLosEventosNotif() {
+            const eventos = [];
+            equiposLocales.forEach(eq => {
+                if (Array.isArray(eq.historial_ediciones)) {
+                    eq.historial_ediciones.forEach((ev, idx) => {
+                        eventos.push({
+                            ...ev,
+                            id: ev.id || `audit_${eq.id}_${ev.fecha || idx}`,
+                            equipoId: eq.id,
+                            equipoNombre: eq.equipo?.nombre || 'Equipo LBL',
+                            equipoLogo: eq.equipo?.logo || getFallbackImage(eq.equipo?.nombre || 'LBL'),
+                            equipoTag: eq.equipo?.tag || '',
+                            equipoTier: eq.equipo?.tier || ''
+                        });
+                    });
+                }
+            });
+            eventos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            return eventos;
+        }
+
+        // Abrir / Cerrar Drawer de Notificaciones con bloqueo de scroll
         window.toggleNotificationDrawer = () => {
             const drawer = document.getElementById('notif-drawer');
             const backdrop = document.getElementById('notif-drawer-backdrop');
@@ -1829,51 +2084,147 @@
             if (drawer.classList.contains('active')) {
                 drawer.classList.remove('active');
                 backdrop.classList.remove('active');
+                document.body.style.overflow = '';
             } else {
                 renderNotificationList();
                 drawer.classList.add('active');
                 backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
         };
 
-        function getReadNotifsSet() {
-            const uid = auth.currentUser?.uid || 'anonymous';
-            try {
-                const stored = localStorage.getItem(`lbl_read_notifs_${uid}`);
-                return stored ? new Set(JSON.parse(stored)) : new Set();
-            } catch(e) {
-                return new Set();
-            }
-        }
-
-        function saveReadNotifsSet(readSet) {
-            const uid = auth.currentUser?.uid || 'anonymous';
-            try {
-                localStorage.setItem(`lbl_read_notifs_${uid}`, JSON.stringify(Array.from(readSet)));
-            } catch(e) {}
-        }
-
-        function actualizarBadgeNotificaciones() {
-            const readSet = getReadNotifsSet();
-            let unreadCount = 0;
-            
-            equiposLocales.forEach(eq => {
-                if (Array.isArray(eq.historial_ediciones)) {
-                    eq.historial_ediciones.forEach(ev => {
-                        if (!readSet.has(ev.id)) {
-                            unreadCount++;
-                        }
-                    });
+        // Control de Pestañas de Filtrado
+        window.cambiarFiltroNotificaciones = (filtro) => {
+            currentNotifFilter = filtro;
+            const tabs = ['all', 'unread', 'team', 'staff'];
+            tabs.forEach(t => {
+                const tabEl = document.getElementById(`notif-tab-${t}`);
+                if (tabEl) {
+                    if (t === filtro) {
+                        tabEl.className = 'notif-filter-tab active';
+                    } else {
+                        tabEl.className = 'notif-filter-tab';
+                    }
                 }
             });
+            renderNotificationList();
+        };
 
+        // Búsqueda en tiempo real dentro del Drawer
+        window.filtrarNotificacionesPorBusqueda = (valor) => {
+            currentNotifSearch = (valor || '').trim().toLowerCase();
+            const btnClear = document.getElementById('btn-clear-notif-search');
+            if (btnClear) {
+                if (currentNotifSearch.length > 0) btnClear.classList.remove('hidden');
+                else btnClear.classList.add('hidden');
+            }
+            renderNotificationList();
+        };
+
+        window.limpiarBusquedaNotificaciones = () => {
+            currentNotifSearch = '';
+            const input = document.getElementById('notif-search-input');
+            if (input) input.value = '';
+            const btnClear = document.getElementById('btn-clear-notif-search');
+            if (btnClear) btnClear.classList.add('hidden');
+            renderNotificationList();
+        };
+
+        // Expandir o contraer acordeón de diff inline
+        window.toggleExpandirNotifDiff = (eventId) => {
+            if (notifExpandedIds.has(eventId)) {
+                notifExpandedIds.delete(eventId);
+            } else {
+                notifExpandedIds.add(eventId);
+            }
+            renderNotificationList();
+        };
+
+        // Marcar todas como leídas para esta cuenta de Staff
+        window.marcarTodasNotificacionesLeidas = async () => {
+            const state = getStaffNotifState();
+            state.readAllBefore = new Date().toISOString();
+            state.readEventIds.clear();
+            state.unreadEventIds.clear();
+            await saveStaffNotifState(state);
+            actualizarBadgeNotificaciones();
+            renderNotificationList();
+        };
+
+        // Alternar leída/no leída para una sola notificación
+        window.toggleMarcarNotificacionLeida = async (eventId) => {
+            const state = getStaffNotifState();
+            const currentNick = getStaffNick(auth.currentUser?.email);
+            const userEmail = auth.currentUser?.email || '';
+            const todosEventos = obtenerTodosLosEventosNotif();
+            const ev = todosEventos.find(e => e.id === eventId);
+            if (!ev) return;
+
+            const actualmenteLeido = esEventoLeido(ev, state, currentNick, userEmail);
+            if (actualmenteLeido) {
+                state.unreadEventIds.add(eventId);
+                state.readEventIds.delete(eventId);
+            } else {
+                state.readEventIds.add(eventId);
+                state.unreadEventIds.delete(eventId);
+            }
+            await saveStaffNotifState(state);
+            actualizarBadgeNotificaciones();
+            renderNotificationList();
+        };
+
+        // Abrir expediente de equipo desde notificación
+        window.abrirAuditoriaDesdeNotif = async (equipoId, eventId) => {
+            const state = getStaffNotifState();
+            if (eventId) {
+                state.readEventIds.add(eventId);
+                state.unreadEventIds.delete(eventId);
+                await saveStaffNotifState(state);
+            }
+            actualizarBadgeNotificaciones();
+            toggleNotificationDrawer();
+            verEquipo(equipoId);
+            switchTab('audit');
+        };
+
+        // Actualizar badges del Navbar y pestañas
+        function actualizarBadgeNotificaciones() {
+            const state = getStaffNotifState();
+            const currentNick = getStaffNick(auth.currentUser?.email);
+            const userEmail = auth.currentUser?.email || '';
+
+            const todosEventos = obtenerTodosLosEventosNotif();
+            let unreadCount = 0;
+            let teamCount = 0;
+            let staffCount = 0;
+
+            todosEventos.forEach(ev => {
+                const esLeido = esEventoLeido(ev, state, currentNick, userEmail);
+                if (!esLeido) unreadCount++;
+
+                const autorTipo = ev.autorTipo || (ev.autor && ev.autor.toLowerCase().includes('staff') ? 'STAFF' : 'TEAM');
+                if (autorTipo === 'STAFF') staffCount++;
+                else teamCount++;
+            });
+
+            // Actualizar contadores de las pestañas
+            const tabAll = document.getElementById('tab-count-all');
+            const tabUnread = document.getElementById('tab-count-unread');
+            const tabTeam = document.getElementById('tab-count-team');
+            const tabStaff = document.getElementById('tab-count-staff');
+            if (tabAll) tabAll.innerText = todosEventos.length;
+            if (tabUnread) tabUnread.innerText = unreadCount;
+            if (tabTeam) tabTeam.innerText = teamCount;
+            if (tabStaff) tabStaff.innerText = staffCount;
+
+            // Actualizar botón de la barra de navegación superior
             const btn = document.getElementById('btn-toggle-notifs');
             const badge = document.getElementById('notif-badge');
             
             if (unreadCount > 0) {
                 if (btn) {
                     btn.classList.add('btn-modificaciones-glow');
-                    btn.className = 'relative px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-[#031b33] border border-sky-400 text-sky-300 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-3 transition-all shadow-lg active:scale-95 cursor-pointer whitespace-nowrap btn-modificaciones-glow';
+                    btn.className = 'relative px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-xl bg-[#031b33] border border-sky-400 text-sky-300 font-black text-[10px] sm:text-sm uppercase tracking-wider flex items-center gap-1.5 sm:gap-3 transition-all shadow-lg active:scale-95 cursor-pointer whitespace-nowrap btn-modificaciones-glow';
                 }
                 if (badge) {
                     badge.innerText = unreadCount > 99 ? '99+' : unreadCount;
@@ -1882,7 +2233,7 @@
             } else {
                 if (btn) {
                     btn.classList.remove('btn-modificaciones-glow');
-                    btn.className = 'relative px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-[#080c12] hover:bg-[#0c1420] border border-[#1f2937] hover:border-sky-500/40 text-gray-300 hover:text-sky-400 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-3 transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap';
+                    btn.className = 'relative px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-xl bg-[#080c12] hover:bg-[#0c1420] border border-[#1f2937] hover:border-sky-500/40 text-gray-300 hover:text-sky-400 font-black text-[10px] sm:text-sm uppercase tracking-wider flex items-center gap-1.5 sm:gap-3 transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap';
                 }
                 if (badge) {
                     badge.innerText = '0';
@@ -1891,111 +2242,178 @@
             }
         }
 
-        window.marcarTodasNotificacionesLeidas = () => {
-            const readSet = getReadNotifsSet();
-            equiposLocales.forEach(eq => {
-                if (Array.isArray(eq.historial_ediciones)) {
-                    eq.historial_ediciones.forEach(ev => readSet.add(ev.id));
-                }
-            });
-            saveReadNotifsSet(readSet);
-            actualizarBadgeNotificaciones();
-            renderNotificationList();
-        };
-
-        window.abrirAuditoriaDesdeNotif = (equipoId, eventId) => {
-            const readSet = getReadNotifsSet();
-            if (eventId) readSet.add(eventId);
-            saveReadNotifsSet(readSet);
-            actualizarBadgeNotificaciones();
-            toggleNotificationDrawer();
-            verEquipo(equipoId);
-            switchTab('audit');
-        };
-
+        // Renderizado del Centro de Notificaciones
         function renderNotificationList() {
             const container = document.getElementById('notif-list-container');
             const staffLabel = document.getElementById('notif-staff-label');
             const countText = document.getElementById('notif-count-text');
-            if (staffLabel) staffLabel.innerText = `Staff: ${getStaffNick(auth.currentUser?.email)}`;
+            const currentStaffNick = getStaffNick(auth.currentUser?.email);
+            const userEmail = auth.currentUser?.email || '';
 
-            const readSet = getReadNotifsSet();
-            
-            // Recopilar todos los eventos de auditoría de todos los equipos
-            const todosEventos = [];
-            equiposLocales.forEach(eq => {
-                if (Array.isArray(eq.historial_ediciones)) {
-                    eq.historial_ediciones.forEach(ev => {
-                        todosEventos.push({
-                            ...ev,
-                            equipoId: eq.id,
-                            equipoNombre: eq.equipo?.nombre || 'Equipo LBL',
-                            equipoLogo: eq.equipo?.logo || getFallbackImage(eq.equipo?.nombre || 'LBL'),
-                            equipoTag: eq.equipo?.tag || ''
-                        });
-                    });
-                }
+            if (staffLabel) {
+                staffLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span> Staff: <span class="text-white">${currentStaffNick}</span>`;
+            }
+
+            const state = getStaffNotifState();
+            const todosEventos = obtenerTodosLosEventosNotif();
+
+            // Filtrar por pestaña activa
+            let eventosFiltrados = todosEventos.filter(ev => {
+                const esLeido = esEventoLeido(ev, state, currentStaffNick, userEmail);
+                const autorTipo = ev.autorTipo || (ev.autor && ev.autor.toLowerCase().includes('staff') ? 'STAFF' : 'TEAM');
+
+                if (currentNotifFilter === 'unread' && esLeido) return false;
+                if (currentNotifFilter === 'team' && autorTipo === 'STAFF') return false;
+                if (currentNotifFilter === 'staff' && autorTipo !== 'STAFF') return false;
+                return true;
             });
 
-            todosEventos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            // Filtrar por término de búsqueda si existe
+            if (currentNotifSearch) {
+                eventosFiltrados = eventosFiltrados.filter(ev => {
+                    if (ev.equipoNombre?.toLowerCase().includes(currentNotifSearch)) return true;
+                    if (ev.equipoTag?.toLowerCase().includes(currentNotifSearch)) return true;
+                    if (ev.autor?.toLowerCase().includes(currentNotifSearch)) return true;
+                    if (Array.isArray(ev.cambios)) {
+                        for (const c of ev.cambios) {
+                            if (c.campo?.toLowerCase().includes(currentNotifSearch)) return true;
+                            if (c.nuevo?.toLowerCase().includes(currentNotifSearch)) return true;
+                            if (c.anterior?.toLowerCase().includes(currentNotifSearch)) return true;
+                            if (c.detalle?.toLowerCase().includes(currentNotifSearch)) return true;
+                        }
+                    }
+                    return false;
+                });
+            }
 
-            if (countText) countText.innerText = `${todosEventos.length} modificaciones registradas`;
+            if (countText) {
+                const pendientes = todosEventos.filter(ev => !esEventoLeido(ev, state, currentStaffNick, userEmail)).length;
+                countText.innerHTML = `<span class="text-sky-400 font-bold">${pendientes}</span> novedades pendientes · <span class="text-gray-500">${eventosFiltrados.length} en vista</span>`;
+            }
 
-            if (todosEventos.length === 0) {
+            // Estado Vacío
+            if (eventosFiltrados.length === 0) {
+                let mensajeVacio = 'No hay modificaciones registradas en la liga.';
+                let iconoVacio = 'fa-bell-slash';
+
+                if (currentNotifFilter === 'unread') {
+                    mensajeVacio = '¡Estás al día! No tienes modificaciones pendientes por revisar.';
+                    iconoVacio = 'fa-check-circle text-emerald-400';
+                } else if (currentNotifFilter === 'team') {
+                    mensajeVacio = 'No se registran cambios realizados por capitanes o equipos.';
+                    iconoVacio = 'fa-users-slash';
+                } else if (currentNotifFilter === 'staff') {
+                    mensajeVacio = 'No se registran intervenciones del Staff.';
+                    iconoVacio = 'fa-user-shield';
+                } else if (currentNotifSearch) {
+                    mensajeVacio = `No se encontraron cambios para "${currentNotifSearch}".`;
+                    iconoVacio = 'fa-search';
+                }
+
                 container.innerHTML = `
-                    <div class="p-8 rounded-2xl border border-dashed border-gray-800 text-center text-gray-600 text-xs font-bold uppercase">
-                        <i class="fas fa-bell-slash text-2xl mb-2"></i><br>
-                        No hay modificaciones registradas en la liga.
+                    <div class="p-8 rounded-2xl border border-dashed border-gray-800 text-center text-gray-500 text-xs font-bold uppercase space-y-2.5">
+                        <i class="fas ${iconoVacio} text-3xl mb-1 text-gray-600 block"></i>
+                        <p class="text-gray-300 font-black">${mensajeVacio}</p>
+                        ${currentNotifFilter !== 'all' || currentNotifSearch ? `<button onclick="cambiarFiltroNotificaciones('all'); limpiarBusquedaNotificaciones();" class="text-sky-400 hover:text-sky-300 text-[11px] underline font-bold mt-2 cursor-pointer">Ver todas las notificaciones</button>` : ''}
                     </div>`;
                 return;
             }
 
+            // Renderizar Tarjetas
             let html = '';
-            todosEventos.forEach(ev => {
-                const esLeido = readSet.has(ev.id);
-                const fechaFormat = new Date(ev.fecha).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-                
+            eventosFiltrados.forEach(ev => {
+                const esLeido = esEventoLeido(ev, state, currentStaffNick, userEmail);
+                const esPropio = esAccionPropia(ev, currentStaffNick, userEmail);
+                const isExpanded = notifExpandedIds.has(ev.id);
+
+                const fechaObj = new Date(ev.fecha);
+                const fechaFormat = !isNaN(fechaObj)
+                    ? fechaObj.toLocaleDateString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+                    : 'Reciente';
+
                 const autorTipo = ev.autorTipo || (ev.autor && ev.autor.toLowerCase().includes('staff') ? 'STAFF' : 'TEAM');
                 const badgeTipo = autorTipo === 'STAFF'
                     ? `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-staff-pill flex items-center gap-1 shrink-0"><i class="fas fa-shield-alt text-[7px]"></i> STAFF</span>`
                     : `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase badge-team-pill flex items-center gap-1 shrink-0"><i class="fas fa-crown text-[7px]"></i> TEAM</span>`;
 
-                const autorMostrado = autorTipo === 'STAFF' ? formatStaffAuthor(ev.autor) : ev.autor;
+                const autorMostrado = autorTipo === 'STAFF' ? formatStaffAuthor(ev.autor) : (ev.autor || 'Capitán');
 
-                let resumenCambios = '';
-                if (Array.isArray(ev.cambios)) {
-                    ev.cambios.slice(0, 3).forEach(c => {
-                        resumenCambios += `<li class="truncate"><span class="text-sky-400 font-bold">${c.campo}:</span> <span class="text-gray-200">${c.nuevo}</span></li>`;
+                // Resumen / Diff de cambios
+                let cambiosHTML = '';
+                if (Array.isArray(ev.cambios) && ev.cambios.length > 0) {
+                    const cambiosAMostrar = isExpanded ? ev.cambios : ev.cambios.slice(0, 2);
+                    
+                    cambiosHTML += `<div class="space-y-1.5">`;
+                    cambiosAMostrar.forEach(c => {
+                        const ant = c.anterior || 'Vacío';
+                        const nvo = c.nuevo || 'Vacío';
+                        cambiosHTML += `
+                            <div class="bg-black/40 p-2 rounded-lg border border-gray-800/80 text-[11px] space-y-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-sky-400 font-bold">${c.campo}:</span>
+                                    <span class="line-through text-rose-400 bg-rose-950/30 px-1.5 py-0.5 rounded text-[10px] border border-rose-500/20 truncate max-w-[130px]" title="${ant}">${ant}</span>
+                                    <i class="fas fa-arrow-right text-[8px] text-gray-500"></i>
+                                    <span class="text-emerald-400 font-bold bg-emerald-950/30 px-1.5 py-0.5 rounded text-[10px] border border-emerald-500/20 truncate max-w-[140px]" title="${nvo}">${nvo}</span>
+                                </div>
+                                ${c.detalle ? `<p class="text-[11px] text-gray-400 font-bold leading-snug pt-0.5">${c.detalle}</p>` : ''}
+                            </div>`;
                     });
-                    if (ev.cambios.length > 3) {
-                        resumenCambios += `<li class="text-[9px] text-gray-500 font-bold">+ ${ev.cambios.length - 3} cambio(s) más</li>`;
+
+                    if (ev.cambios.length > 2) {
+                        cambiosHTML += `
+                            <button onclick="toggleExpandirNotifDiff('${ev.id}')" class="text-[10px] text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 pt-0.5 cursor-pointer">
+                                <i class="fas ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px]"></i>
+                                ${isExpanded ? 'Ocultar cambios adicionales' : `Ver ${ev.cambios.length - 2} cambio(s) más...`}
+                            </button>`;
                     }
+                    cambiosHTML += `</div>`;
+                } else {
+                    cambiosHTML = `<p class="text-gray-400 text-xs italic">Modificación general de datos.</p>`;
                 }
 
                 html += `
-                    <div class="p-4 ${esLeido ? 'notif-card-muted' : 'notif-card-active'} flex flex-col gap-2.5 transition-all">
-                        <div class="flex items-center justify-between">
+                    <div class="p-3.5 sm:p-4 ${esLeido ? 'notif-card-muted' : 'notif-card-active'} flex flex-col gap-2.5 transition-all">
+                        <!-- Cabecera de la Tarjeta -->
+                        <div class="flex items-start justify-between gap-2">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <img src="${ev.equipoLogo}" decoding="async" loading="lazy" onerror="this.onerror=null; this.src='${getFallbackImage(ev.equipoNombre)}';" class="w-8 h-8 rounded-lg bg-black object-contain border border-[#1e293b] shrink-0">
+                                <img src="${ev.equipoLogo}" decoding="async" loading="lazy" onerror="this.onerror=null; this.src='${getFallbackImage(ev.equipoNombre)}';" class="w-9 h-9 rounded-xl bg-black object-contain border border-[#1e293b] shrink-0">
                                 <div class="min-w-0">
-                                    <h4 class="text-xs font-black text-white truncate tracking-wide">${ev.equipoNombre}</h4>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                    <div class="flex items-center gap-1.5">
+                                        <h4 class="text-xs sm:text-sm font-black text-white truncate tracking-wide">${ev.equipoNombre}</h4>
+                                        ${ev.equipoTag ? `<span class="text-[10px] text-sky-400 font-bold">[${ev.equipoTag}]</span>` : ''}
+                                    </div>
+                                    <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                         ${badgeTipo}
                                         <span class="text-[9px] text-gray-400 font-medium truncate">${autorMostrado}</span>
+                                        ${esPropio ? '<span class="text-[8px] text-cyan-300 font-bold bg-cyan-950/60 border border-cyan-500/40 px-1 rounded">Tú</span>' : ''}
                                     </div>
                                 </div>
                             </div>
-                            ${!esLeido ? '<span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase bg-rose-600/25 text-rose-400 border border-rose-500/30">NUEVO</span>' : '<span class="text-[9px] text-gray-600"><i class="fas fa-check"></i></span>'}
+                            
+                            <!-- Badges de Estado y Acción de Marcar -->
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                ${!esLeido
+                                    ? `<span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase bg-sky-950/70 text-sky-300 border border-sky-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span> NUEVO</span>`
+                                    : `<span class="px-2 py-0.5 rounded-full text-[8px] font-bold text-gray-500 border border-gray-800 flex items-center gap-1"><i class="fas fa-check text-[7px]"></i> LEÍDO</span>`
+                                }
+                                <button onclick="toggleMarcarNotificacionLeida('${ev.id}')" title="${esLeido ? 'Marcar como no leída' : 'Marcar como leída'}" class="w-7 h-7 rounded-lg bg-[#0e1726] hover:bg-[#1e293b] border ${esLeido ? 'border-gray-800 text-gray-500 hover:text-gray-300' : 'border-sky-500/40 text-sky-400 hover:text-sky-300'} flex items-center justify-center text-xs transition-colors cursor-pointer">
+                                    <i class="fas ${esLeido ? 'fa-envelope' : 'fa-check'}"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <ul class="text-[11px] space-y-1 notif-sub-box p-2.5">
-                            ${resumenCambios || '<li class="text-gray-400">Datos actualizados</li>'}
-                        </ul>
+                        <!-- Diff Box de Cambios -->
+                        <div class="notif-sub-box p-2.5">
+                            ${cambiosHTML}
+                        </div>
 
-                        <div class="flex items-center justify-between pt-2 notif-footer-divider text-[10px]">
-                            <span class="text-gray-500 font-bold"><i class="fas fa-clock mr-1 text-gray-600"></i> ${fechaFormat}</span>
-                            <button onclick="abrirAuditoriaDesdeNotif('${ev.equipoId}', '${ev.id}')" class="text-sky-400 hover:text-sky-300 font-black flex items-center gap-1 uppercase tracking-wider cursor-pointer transition-colors">
-                                Revisar Diff <i class="fas fa-arrow-right text-[9px]"></i>
+                        <!-- Pie de Tarjeta con Fecha y Enlace a Expediente -->
+                        <div class="flex items-center justify-between pt-1.5 notif-footer-divider text-[10px]">
+                            <span class="text-gray-500 font-medium flex items-center gap-1">
+                                <i class="fas fa-clock text-gray-600"></i> ${fechaFormat}
+                            </span>
+                            <button onclick="abrirAuditoriaDesdeNotif('${ev.equipoId}', '${ev.id}')" class="text-sky-400 hover:text-sky-300 font-black flex items-center gap-1 uppercase tracking-wider cursor-pointer transition-colors hover:underline">
+                                Ver Modificación <i class="fas fa-external-link-alt text-[8px]"></i>
                             </button>
                         </div>
                     </div>`;
@@ -2504,7 +2922,7 @@
                                         <div><span class="text-gray-500 font-bold uppercase text-[9px]">Anterior:</span> <span class="text-rose-400/90 font-medium">${c.anterior}</span></div>
                                         <div><span class="text-gray-500 font-bold uppercase text-[9px]">Nuevo:</span> <span class="text-emerald-400 font-bold">${c.nuevo}</span></div>
                                     </div>
-                                    ${c.detalle ? `<p class="text-[10px] text-gray-400 italic pt-1">${c.detalle}</p>` : ''}
+                                    ${c.detalle ? `<p class="text-[11px] text-gray-400 font-bold pt-1 leading-snug">${c.detalle}</p>` : ''}
                                 </div>`;
                         });
                     }
