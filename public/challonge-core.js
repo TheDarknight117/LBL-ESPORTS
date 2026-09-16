@@ -292,13 +292,26 @@ export function calcularTablaRoundRobin(participantsMap, matches) {
  * Parsea y calcula las tablas oficiales de grupos con desglose fiel de Sets Ganados, Diferencia y Series G-P
  */
 export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], listaParticipantes = [], tData = {}) {
+    const matches = rawMatches.map(m => m.match || m);
+
+    // Asegurar que pMap contenga los IDs base y todos los group_player_ids
+    const pMap = { ...participantsMap };
+    (listaParticipantes || []).forEach(p => {
+        if (!p) return;
+        if (p.id !== undefined && p.id !== null) pMap[p.id] = p;
+        if (Array.isArray(p.group_player_ids)) {
+            p.group_player_ids.forEach(gPid => {
+                pMap[gPid] = p;
+            });
+        }
+    });
+
     const groupIdsSet = new Set();
-    rawMatches.forEach(item => {
-        const m = item.match || item;
+    matches.forEach(m => {
         if (m.group_id !== null && m.group_id !== undefined) groupIdsSet.add(m.group_id);
     });
-    listaParticipantes.forEach(p => {
-        if (p.group_id !== null && p.group_id !== undefined) groupIdsSet.add(p.group_id);
+    (listaParticipantes || []).forEach(p => {
+        if (p && p.group_id !== null && p.group_id !== undefined) groupIdsSet.add(p.group_id);
     });
 
     if (groupIdsSet.size === 0) {
@@ -313,13 +326,56 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
 
     sortedGroupIds.forEach((gid, idx) => {
         const nombreGrupo = esMultiGrupo ? `Grupo ${letrasGrupos[idx] || (idx + 1)}` : 'Fase de Grupos';
-        const groupMatches = rawMatches.map(m => m.match || m).filter(m => m.group_id === gid);
-        const groupTeams = listaParticipantes.filter(p => p.group_id === gid);
+        const groupMatches = matches.filter(m => m.group_id === gid);
+
+        // Extraer todos los equipos pertenecientes a este grupo:
+        // 1. Por group_id del participante si está asignado
+        // 2. Por presencia en las partidas de este grupo (100% infalible ante cualquier estado o caché)
+        const teamsInGroupMap = new Map();
+
+        (listaParticipantes || []).forEach(p => {
+            if (p && p.group_id === gid) {
+                teamsInGroupMap.set(String(p.id), p);
+            }
+        });
+
+        groupMatches.forEach(m => {
+            const p1 = pMap[m.player1_id];
+            const p2 = pMap[m.player2_id];
+
+            if (p1 && !teamsInGroupMap.has(String(p1.id))) {
+                teamsInGroupMap.set(String(p1.id), p1);
+            } else if (!p1 && m.player1 && (m.player1.nombre || m.player1.name)) {
+                const p1Name = m.player1.nombre || m.player1.name;
+                if (p1Name !== 'TBD' && !teamsInGroupMap.has(String(m.player1_id))) {
+                    teamsInGroupMap.set(String(m.player1_id), {
+                        id: m.player1_id,
+                        name: p1Name,
+                        lblInfo: m.player1
+                    });
+                }
+            }
+
+            if (p2 && !teamsInGroupMap.has(String(p2.id))) {
+                teamsInGroupMap.set(String(p2.id), p2);
+            } else if (!p2 && m.player2 && (m.player2.nombre || m.player2.name)) {
+                const p2Name = m.player2.nombre || m.player2.name;
+                if (p2Name !== 'TBD' && !teamsInGroupMap.has(String(m.player2_id))) {
+                    teamsInGroupMap.set(String(m.player2_id), {
+                        id: m.player2_id,
+                        name: p2Name,
+                        lblInfo: m.player2
+                    });
+                }
+            }
+        });
+
+        const groupTeams = Array.from(teamsInGroupMap.values());
 
         const tabla = {};
         groupTeams.forEach(team => {
             const eqInfo = team.lblInfo || { nombre: team.name, tag: team.name, logo: '' };
-            tabla[team.id] = {
+            tabla[String(team.id)] = {
                 id: team.id,
                 equipo: eqInfo,
                 nombre: eqInfo.nombre || team.name,
@@ -341,19 +397,21 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
             const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
             if (!isCompleted) return;
 
-            const p1 = participantsMap[m.player1_id];
-            const p2 = participantsMap[m.player2_id];
-            if (!p1 || !p2) return;
+            const p1 = pMap[m.player1_id];
+            const p2 = pMap[m.player2_id];
+            const p1Key = p1 ? String(p1.id) : String(m.player1_id);
+            const p2Key = p2 ? String(p2.id) : String(m.player2_id);
 
-            const t1 = tabla[p1.id];
-            const t2 = tabla[p2.id];
+            const t1 = tabla[p1Key];
+            const t2 = tabla[p2Key];
             if (!t1 || !t2) return;
 
             t1.pj++;
             t2.pj++;
 
-            const winner = participantsMap[m.winner_id];
-            const p1WonSeries = (winner && winner.id === p1.id);
+            const winner = pMap[m.winner_id];
+            const winnerKey = winner ? String(winner.id) : String(m.winner_id);
+            const p1WonSeries = (winnerKey === p1Key);
 
             // Historial de la serie (W / L)
             if (p1WonSeries) {
@@ -629,6 +687,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
                 id: p.id,
                 name: pName,
                 seed: p.seed,
+                group_id: p.group_id ?? null,
                 final_rank: (p.final_rank !== null && p.final_rank !== undefined) ? parseInt(p.final_rank) : null,
                 group_player_ids: Array.isArray(p.group_player_ids) ? p.group_player_ids : [],
                 lblInfo: buscarEquipoLBL(pName, equiposLBL)

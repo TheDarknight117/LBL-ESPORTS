@@ -1069,9 +1069,11 @@
             };
 
             // Asegurar que grupos esté calculado si hay matches y participantes
-            if ((!torneo.grupos || torneo.grupos.length === 0) && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
+            const tieneGruposValidos = Array.isArray(torneo.grupos) && torneo.grupos.length > 0 && torneo.grupos.every(g => Array.isArray(g.posiciones) && g.posiciones.length > 0);
+            if (!tieneGruposValidos && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
                 const pMap = {};
                 (torneo.participantes || []).forEach(p => {
+                    if (!p) return;
                     pMap[p.id] = p;
                     if (Array.isArray(p.group_player_ids)) {
                         p.group_player_ids.forEach(gid => pMap[gid] = p);
@@ -2046,15 +2048,19 @@
 
             // 1. Obtener o calcular grupos
             let grupos = Array.isArray(torneo.grupos) ? torneo.grupos : [];
-            if (grupos.length === 0 && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
+            const tieneGruposValidos = grupos.length > 0 && grupos.every(g => Array.isArray(g.posiciones) && g.posiciones.length > 0);
+
+            if (!tieneGruposValidos && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
                 const pMap = {};
                 (torneo.participantes || []).forEach(p => {
+                    if (!p) return;
                     pMap[p.id] = p;
                     if (Array.isArray(p.group_player_ids)) {
                         p.group_player_ids.forEach(gid => pMap[gid] = p);
                     }
                 });
                 grupos = calcularGruposTorneo(pMap, torneo.matches, torneo.participantes || [], torneo);
+                torneo.grupos = grupos;
             }
 
             // 2. FASE PRELIMINAR / EN CURSO CON GRUPOS: Mostrar detalle de grupos con sets, series y puntos
