@@ -1155,13 +1155,13 @@
             if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
                 const s1 = challongeStandings.find(s => s.rank === 1);
                 const s2 = challongeStandings.find(s => s.rank === 2);
-                const s3 = challongeStandings.find(s => s.rank === 3);
                 if (s1) p1 = s1.equipo;
                 if (s2) p2 = s2.equipo;
                 if (s3) p3 = s3.equipo;
             }
 
-            const isCompleted = torneo.estado === 'complete' || torneo.estado === 'ended' || !!p1;
+            const isTournamentEnded = torneo.estado === 'complete' || torneo.estado === 'ended';
+            const isCompleted = isTournamentEnded && !!p1;
 
             // Extraer participantes únicos para la tarjeta derecha "Equipos participantes"
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
@@ -2014,15 +2014,9 @@
                 return;
             }
 
-            // Determinar qué partidas usar para el historial de posiciones
-            // En torneos de 2 fases (grupos + eliminatorias), si hay partidas de playoffs/llave, el historial de las posiciones oficiales refleja los playoffs
-            const hasGroupMatches = matches.some(m => m.group_id);
-            const hasPlayoffMatches = matches.some(m => !m.group_id && (m.state === 'complete' || m.state === 'completed' || !!m.winner_id));
-            const matchesForHistory = (hasGroupMatches && hasPlayoffMatches)
-                ? matches.filter(m => !m.group_id)
-                : matches;
-
+            // Contabilizar historial y estadísticas globales (Fase de Grupos + Playoffs/Eliminatorias)
             const historialPorEquipo = new Map();
+            const statsPorEquipo = new Map();
 
             standings.forEach(st => {
                 const eq = st.equipo || {};
@@ -2030,7 +2024,8 @@
                 const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
                 const pGroupIds = Array.isArray(st.group_player_ids) ? st.group_player_ids.map(String) : [];
 
-                const teamMatches = matchesForHistory.filter(m => {
+                // Se consideran TODAS las partidas disputadas en el torneo para reflejar el desempeño total
+                const teamMatches = matches.filter(m => {
                     const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
                     if (!isCompleted) return false;
 
@@ -2054,6 +2049,9 @@
 
                 teamMatches.sort((a, b) => (a.round - b.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
 
+                let totalPG = 0;
+                let totalPP = 0;
+
                 const badgedHistory = teamMatches.map(m => {
                     const parsed = parseMatchScores(m);
                     const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
@@ -2065,6 +2063,9 @@
                                  (eqName && p1Valid && eqName === p1Name);
 
                     const isWinner = isP1 ? parsed.p1Winner : parsed.p2Winner;
+
+                    if (isWinner) totalPG++;
+                    else totalPP++;
 
                     if (parsed.isWalkover) {
                         if (isWinner) {
@@ -2081,8 +2082,21 @@
                     }
                 });
 
-                if (eqName) historialPorEquipo.set(eqName, badgedHistory);
-                if (eqIdStr) historialPorEquipo.set(eqIdStr, badgedHistory);
+                const stats = {
+                    pj: totalPG + totalPP,
+                    pg: totalPG,
+                    pp: totalPP,
+                    pts: totalPG * 3
+                };
+
+                if (eqName) {
+                    historialPorEquipo.set(eqName, badgedHistory);
+                    statsPorEquipo.set(eqName, stats);
+                }
+                if (eqIdStr) {
+                    historialPorEquipo.set(eqIdStr, badgedHistory);
+                    statsPorEquipo.set(eqIdStr, stats);
+                }
             });
 
             // Detectar si hay al menos 1 partida disputada en el torneo
@@ -2103,6 +2117,8 @@
                 const eqName = (eq.nombre || eq.name || '').trim().toLowerCase();
                 const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
                 const historyBadges = (eqName && historialPorEquipo.get(eqName)) || (eqIdStr && historialPorEquipo.get(eqIdStr)) || [];
+                const teamStats = (eqName && statsPorEquipo.get(eqName)) || (eqIdStr && statsPorEquipo.get(eqIdStr)) || { pj: st.pj || 0, pg: st.pg || 0, pp: st.pp || 0, pts: st.pts || 0 };
+
                 const historyHTML = historyBadges.length > 0
                     ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
                     : `<span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Sin partidas disputadas</span>`;
@@ -2134,6 +2150,10 @@
                                 <span class="font-bold text-white tracking-wide uppercase text-xs md:text-sm">${eq.nombre || 'Equipo'}</span>
                             </div>
                         </td>
+                        <td class="p-4 text-center font-bold text-gray-300">${teamStats.pj}</td>
+                        <td class="p-4 text-center font-black text-emerald-400">${teamStats.pg}</td>
+                        <td class="p-4 text-center font-black text-rose-400">${teamStats.pp}</td>
+                        <td class="p-4 text-center font-black text-cyan-300 bg-cyan-950/20">${teamStats.pts}</td>
                         <td class="p-4">
                             ${historyHTML}
                         </td>
@@ -2149,7 +2169,7 @@
                                 <i class="fas fa-list-ol text-cyan-400"></i> Posiciones
                             </h3>
                             <p class="text-base text-gray-400 font-medium mt-0.5">
-                                ${hayPartidasDisputadas ? 'Clasificación oficial y desglose detallado del historial del partido.' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
+                                ${hayPartidasDisputadas ? 'Clasificación oficial, estadísticas acumuladas (Grupos + Playoffs) y desglose del historial.' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
                             </p>
                         </div>
 
@@ -2170,13 +2190,17 @@
                         </div>
                     </div>
 
-                    <!-- TABLA FIEL A CAPTURA DE PANTALLA -->
+                    <!-- TABLA FIEL CON MÉTRICAS COMPLETAS -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-gray-800 bg-[#030712] text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">
                                     <th class="p-4 text-center w-16">Rango</th>
                                     <th class="p-4">Nombre del equipo</th>
+                                    <th class="p-4 text-center" title="Partidos Jugados">PJ</th>
+                                    <th class="p-4 text-center text-emerald-400" title="Victorias">V</th>
+                                    <th class="p-4 text-center text-rose-400" title="Derrotas">D</th>
+                                    <th class="p-4 text-center text-cyan-300" title="Puntos">Pts</th>
                                     <th class="p-4">Historial del partido</th>
                                 </tr>
                             </thead>

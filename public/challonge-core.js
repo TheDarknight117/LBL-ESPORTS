@@ -671,10 +671,63 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
 
 /**
  * Calcula los primeros 3 lugares oficiales del torneo (1º, 2º y 3º lugar sin duplicados).
+ * Solo entrega podio definitivo si el torneo está finalizado en Challonge o si la Gran Final concluyó.
  */
-export function calcularPodio(tData, matches, standings = [], participantsMap = {}, listaParticipantes = []) {
-    // 1. PRIORIDAD MÁXIMA: Ranking oficial de Challonge (final_rank)
-    if (Array.isArray(listaParticipantes) && listaParticipantes.length > 0) {
+export function calcularPodio(tData, matches = [], standings = [], participantsMap = {}, listaParticipantes = []) {
+    const estado = (tData?.state || '').toLowerCase();
+    const isTournamentEnded = estado === 'complete' || estado === 'ended';
+
+    // 1. Torneos con Brackets / Eliminatorias (Doble o Simple Eliminación o Playoffs)
+    const positiveMatches = matches.filter(m => m.round > 0).sort((a, b) => b.round - a.round);
+    const granFinal = positiveMatches[0] || null;
+
+    let primerLugar = null;
+    let segundoLugar = null;
+    let tercerLugar = null;
+
+    const granFinalJugada = granFinal && granFinal.winner_id && (granFinal.state === 'completed' || granFinal.state === 'complete');
+
+    if (granFinalJugada) {
+        if (String(granFinal.winner_id) === String(granFinal.player1_id)) {
+            primerLugar = granFinal.player1;
+            segundoLugar = granFinal.player2;
+        } else {
+            primerLugar = granFinal.player2;
+            segundoLugar = granFinal.player1;
+        }
+
+        // Buscar 3er lugar (Perdedor de la Final de Perdedores en Doble Eliminatoria)
+        const negativeMatches = matches.filter(m => m.round < 0).sort((a, b) => a.round - b.round);
+        const losersFinal = negativeMatches[0] || null;
+
+        if (losersFinal && losersFinal.winner_id && (losersFinal.state === 'completed' || losersFinal.state === 'complete')) {
+            if (String(losersFinal.winner_id) === String(losersFinal.player1_id)) {
+                tercerLugar = losersFinal.player2;
+            } else {
+                tercerLugar = losersFinal.player1;
+            }
+        } else {
+            // En eliminación simple, buscar semifinalistas perdedores que NO sean el 1° ni el 2°
+            const semifinalMatches = positiveMatches.filter(m => m.round === (granFinal ? granFinal.round - 1 : 1));
+            for (const semi of semifinalMatches) {
+                if (semi && semi.winner_id) {
+                    const loser = String(semi.winner_id) === String(semi.player1_id) ? semi.player2 : semi.player1;
+                    const loserName = loser?.nombre || loser?.name;
+                    const p1Name = primerLugar?.nombre || primerLugar?.name;
+                    const p2Name = segundoLugar?.nombre || segundoLugar?.name;
+                    if (loserName && loserName !== p1Name && loserName !== p2Name) {
+                        tercerLugar = loser;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return { primerLugar, segundoLugar, tercerLugar };
+    }
+
+    // 2. Ranking oficial de Challonge (final_rank) SOLO si el torneo ya terminó por completo en Challonge
+    if (isTournamentEnded && Array.isArray(listaParticipantes) && listaParticipantes.length > 0) {
         const r1 = listaParticipantes.find(p => p.final_rank === 1);
         const r2 = listaParticipantes.find(p => p.final_rank === 2);
         const r3 = listaParticipantes.find(p => p.final_rank === 3);
@@ -688,8 +741,11 @@ export function calcularPodio(tData, matches, standings = [], participantsMap = 
         }
     }
 
-    // 2. Standings de Fase de Grupos / Round Robin
-    if (standings && standings.length >= 3) {
+    // 3. Torneos PUROS de Round Robin / Grupos (sin playoffs) SOLO si el torneo ya concluyó
+    const tournamentType = (tData?.tournament_type || '').toLowerCase();
+    const esPuroRoundRobin = (tournamentType.includes('round') || tournamentType.includes('group')) && positiveMatches.length === 0;
+
+    if (isTournamentEnded && esPuroRoundRobin && standings && standings.length >= 3) {
         return {
             primerLugar: standings[0]?.equipo || null,
             segundoLugar: standings[1]?.equipo || null,
@@ -697,54 +753,6 @@ export function calcularPodio(tData, matches, standings = [], participantsMap = 
         };
     }
 
-    if (!matches || matches.length === 0) {
-        return { primerLugar: null, segundoLugar: null, tercerLugar: null };
-    }
-
-    // 3. Bracket / Eliminatorias (Doble o Simple)
-    const positiveMatches = matches.filter(m => m.round > 0).sort((a, b) => b.round - a.round);
-    const granFinal = positiveMatches[0] || null;
-
-    let primerLugar = null;
-    let segundoLugar = null;
-    let tercerLugar = null;
-
-    if (granFinal && granFinal.winner_id && (granFinal.state === 'completed' || granFinal.state === 'complete')) {
-        if (String(granFinal.winner_id) === String(granFinal.player1_id)) {
-            primerLugar = granFinal.player1;
-            segundoLugar = granFinal.player2;
-        } else {
-            primerLugar = granFinal.player2;
-            segundoLugar = granFinal.player1;
-        }
-    }
-
-    // Buscar 3er lugar (Perdedor de la Final de Perdedores en Doble Eliminatoria)
-    const negativeMatches = matches.filter(m => m.round < 0).sort((a, b) => a.round - b.round);
-    const losersFinal = negativeMatches[0] || null;
-
-    if (losersFinal && losersFinal.winner_id && (losersFinal.state === 'completed' || losersFinal.state === 'complete')) {
-        if (String(losersFinal.winner_id) === String(losersFinal.player1_id)) {
-            tercerLugar = losersFinal.player2;
-        } else {
-            tercerLugar = losersFinal.player1;
-        }
-    } else {
-        // En eliminación simple, buscar semifinalistas perdedores que NO sean el 1° ni el 2°
-        const semifinalMatches = positiveMatches.filter(m => m.round === (granFinal ? granFinal.round - 1 : 1));
-        for (const semi of semifinalMatches) {
-            if (semi && semi.winner_id) {
-                const loser = String(semi.winner_id) === String(semi.player1_id) ? semi.player2 : semi.player1;
-                const loserName = loser?.nombre || loser?.name;
-                const p1Name = primerLugar?.nombre || primerLugar?.name;
-                const p2Name = segundoLugar?.nombre || segundoLugar?.name;
-                if (loserName && loserName !== p1Name && loserName !== p2Name) {
-                    tercerLugar = loser;
-                    break;
-                }
-            }
-        }
-    }
-
-    return { primerLugar, segundoLugar, tercerLugar };
+    // Mientras el torneo esté en disputa o en fase de grupos previa a playoffs
+    return { primerLugar: null, segundoLugar: null, tercerLugar: null };
 }
