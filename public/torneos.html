@@ -1967,7 +1967,7 @@
                 const historyBadges = (row.historial || []).map(h => {
                     const res = typeof h === 'object' ? h.resultado : h;
                     const isW = res === 'W';
-                    const isWalkover = typeof h === 'object' ? !!h.walkover : false;
+                    const isWalkover = typeof h === 'object' ? (!!h.walkover || (h.tooltip && h.tooltip.includes('(W.O.)'))) : false;
 
                     let tooltip = '';
                     if (typeof h === 'object' && h.tooltip) {
@@ -1981,7 +1981,9 @@
                         tooltip = isW ? 'Victoria' : 'Derrota';
                     }
 
-                    if (isW) {
+                    if (isWalkover && isW) {
+                        return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)" title="${tooltip}">W</span>`;
+                    } else if (isW) {
                         return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="${tooltip}">W</span>`;
                     } else {
                         return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="${tooltip}">L</span>`;
@@ -2123,6 +2125,10 @@
                                     <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
                                         <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
                                         <span class="text-gray-300">Derrota</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
+                                        <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)">W</span>
+                                        <span class="text-gray-300">Walkover</span>
                                     </div>
                                 </div>
                             </div>
@@ -2324,7 +2330,7 @@
 
                     if (parsed.isWalkover) {
                         if (isWinner) {
-                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)" title="${tooltip}">W</span>`;
+                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)" title="${tooltip}">W</span>`;
                         } else {
                             return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="${tooltip}">L</span>`;
                         }
@@ -2408,17 +2414,17 @@
                         </div>
 
                         <!-- GUÍA DE INDICATIVOS -->
-                        <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold">
+                        <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold shrink-0">
                             <div class="flex items-center gap-1.5">
-                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
+                                <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
                                 <span class="text-gray-300">Victoria</span>
                             </div>
                             <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
-                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
+                                <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
                                 <span class="text-gray-300">Derrota</span>
                             </div>
                             <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
-                                <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)">W</span>
+                                <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)">W</span>
                                 <span class="text-gray-300">Walkover</span>
                             </div>
                         </div>
