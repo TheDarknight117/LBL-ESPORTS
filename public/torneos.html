@@ -391,6 +391,8 @@
             'antikaox':             'AKX',
             'kaox blue':            'KXB',
             'kaox purple':          'KXP',
+            'kaox esports':         'KXE',
+            'kaox':                 'KXE',
             'viktus':               'VKT',
             'solo kill pro':        'SKP',
             'solo kill':            'SKP',
@@ -1971,15 +1973,17 @@
 
                     let tooltip = '';
                     if (typeof h === 'object' && h.tooltip) {
-                        tooltip = h.tooltip;
+                        tooltip = h.tooltip.replace(/\bKOX\b/g, 'KXE');
                     } else if (typeof h === 'object' && h.rivalTag) {
-                        const miTag = h.miTag || tagDisplay;
+                        const miTag = (h.miTag || tagDisplay).replace(/\bKOX\b/g, 'KXE');
+                        const rivalTag = (h.rivalTag || 'RIV').replace(/\bKOX\b/g, 'KXE');
                         const mSets = h.misSets ?? (isW ? 2 : 0);
                         const rSets = h.rivalSets ?? (isW ? 0 : 2);
-                        tooltip = `${isW ? 'Victoria' : 'Derrota'}: ${miTag} ${mSets} - ${rSets} ${h.rivalTag}${isWalkover ? ' (W.O.)' : ''}`;
+                        tooltip = `${isW ? 'Victoria' : 'Derrota'}: ${miTag} ${mSets} - ${rSets} ${rivalTag}${isWalkover ? ' (W.O.)' : ''}`;
                     } else {
                         tooltip = isW ? 'Victoria' : 'Derrota';
                     }
+                    if (tooltip) tooltip = tooltip.replace(/\bKOX\b/g, 'KXE');
 
                     if (isWalkover && isW) {
                         return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)" title="${tooltip}">W</span>`;
@@ -2326,7 +2330,7 @@
                     const miSets = isP1 ? parsed.p1Score : parsed.p2Score;
                     const rivalSets = isP1 ? parsed.p2Score : parsed.p1Score;
 
-                    const tooltip = `${isWinner ? 'Victoria' : 'Derrota'}: ${miTag} ${miSets} - ${rivalSets} ${rivalTag}${parsed.isWalkover ? ' (W.O.)' : ''}`;
+                    const tooltip = `${isWinner ? 'Victoria' : 'Derrota'}: ${miTag} ${miSets} - ${rivalSets} ${rivalTag}${parsed.isWalkover ? ' (W.O.)' : ''}`.replace(/\bKOX\b/g, 'KXE');
 
                     if (parsed.isWalkover) {
                         if (isWinner) {
