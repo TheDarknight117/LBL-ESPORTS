@@ -289,6 +289,138 @@ export function calcularTablaRoundRobin(participantsMap, matches) {
 }
 
 /**
+ * Parsea y calcula las tablas oficiales de grupos con desglose fiel de Sets Ganados, Diferencia y Series G-P
+ */
+export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], listaParticipantes = [], tData = {}) {
+    const groupIdsSet = new Set();
+    rawMatches.forEach(item => {
+        const m = item.match || item;
+        if (m.group_id !== null && m.group_id !== undefined) groupIdsSet.add(m.group_id);
+    });
+    listaParticipantes.forEach(p => {
+        if (p.group_id !== null && p.group_id !== undefined) groupIdsSet.add(p.group_id);
+    });
+
+    if (groupIdsSet.size === 0) {
+        return [];
+    }
+
+    const sortedGroupIds = Array.from(groupIdsSet).sort((a, b) => a - b);
+    const letrasGrupos = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    const esMultiGrupo = sortedGroupIds.length > 1;
+
+    const gruposResultado = [];
+
+    sortedGroupIds.forEach((gid, idx) => {
+        const nombreGrupo = esMultiGrupo ? `Grupo ${letrasGrupos[idx] || (idx + 1)}` : 'Fase de Grupos';
+        const groupMatches = rawMatches.map(m => m.match || m).filter(m => m.group_id === gid);
+        const groupTeams = listaParticipantes.filter(p => p.group_id === gid);
+
+        const tabla = {};
+        groupTeams.forEach(team => {
+            const eqInfo = team.lblInfo || { nombre: team.name, tag: team.name, logo: '' };
+            tabla[team.id] = {
+                id: team.id,
+                equipo: eqInfo,
+                nombre: eqInfo.nombre || team.name,
+                pj: 0,
+                seriesGanadas: 0,
+                seriesPerdidas: 0,
+                setsGanados: 0,
+                setsPerdidos: 0,
+                difSets: 0,
+                pts: 0,
+                historial: []
+            };
+        });
+
+        // Ordenar partidas por ronda
+        groupMatches.sort((a, b) => (a.round - b.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
+
+        groupMatches.forEach(m => {
+            const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
+            if (!isCompleted) return;
+
+            const p1 = participantsMap[m.player1_id];
+            const p2 = participantsMap[m.player2_id];
+            if (!p1 || !p2) return;
+
+            const t1 = tabla[p1.id];
+            const t2 = tabla[p2.id];
+            if (!t1 || !t2) return;
+
+            t1.pj++;
+            t2.pj++;
+
+            const winner = participantsMap[m.winner_id];
+            const p1WonSeries = (winner && winner.id === p1.id);
+
+            // Historial de la serie (W / L)
+            if (p1WonSeries) {
+                t1.seriesGanadas++;
+                t2.seriesPerdidas++;
+                t1.historial.push({ resultado: 'W', walkover: (m.scores_csv || '') === '' });
+                t2.historial.push({ resultado: 'L', walkover: (m.scores_csv || '') === '' });
+            } else {
+                t2.seriesGanadas++;
+                t1.seriesPerdidas++;
+                t2.historial.push({ resultado: 'W', walkover: (m.scores_csv || '') === '' });
+                t1.historial.push({ resultado: 'L', walkover: (m.scores_csv || '') === '' });
+            }
+
+            // Desglose de Sets / Mapas individuales
+            let p1Sets = 0;
+            let p2Sets = 0;
+            const rawScores = (m.scores_csv || '').trim();
+            if (rawScores) {
+                if (rawScores.includes(',')) {
+                    rawScores.split(',').forEach(s => {
+                        const parts = s.split('-').map(x => parseInt(x.trim()) || 0);
+                        if (parts[0] > parts[1]) p1Sets++;
+                        else if (parts[1] > parts[0]) p2Sets++;
+                    });
+                } else if (rawScores.includes('-')) {
+                    const parts = rawScores.split('-').map(x => parseInt(x.trim()) || 0);
+                    p1Sets = parts[0] || 0;
+                    p2Sets = parts[1] || 0;
+                }
+            } else {
+                if (p1WonSeries) p1Sets = 2;
+                else p2Sets = 2;
+            }
+
+            t1.setsGanados += p1Sets;
+            t1.setsPerdidos += p2Sets;
+            t2.setsGanados += p2Sets;
+            t2.setsPerdidos += p1Sets;
+        });
+
+        Object.values(tabla).forEach(t => {
+            t.difSets = t.setsGanados - t.setsPerdidos;
+            t.pts = t.setsGanados; // Pts = sets ganados en Challonge
+        });
+
+        // Orden de clasificación Challonge: 1. Sets Ganados, 2. Dif Sets, 3. Series Ganadas
+        const sortedPosiciones = Object.values(tabla).sort((a, b) => {
+            if (b.setsGanados !== a.setsGanados) return b.setsGanados - a.setsGanados;
+            if (b.difSets !== a.difSets) return b.difSets - a.difSets;
+            if (b.seriesGanadas !== a.seriesGanadas) return b.seriesGanadas - a.seriesGanadas;
+            return a.seriesPerdidas - b.seriesPerdidas;
+        });
+
+        gruposResultado.push({
+            group_id: gid,
+            nombre: nombreGrupo,
+            equiposCount: groupTeams.length,
+            partidasCount: groupMatches.length,
+            posiciones: sortedPosiciones
+        });
+    });
+
+    return gruposResultado;
+}
+
+/**
  * Limpia y extrae el identificador/slug de Challonge
  */
 export function extraerChallongeSlug(urlOrSlug) {
@@ -563,7 +695,10 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
             group_player_ids: p.group_player_ids
         }));
 
-    // 5. Calcular Podio oficial
+    // 5. Calcular Grupos oficiales con desglose de sets y series
+    const grupos = calcularGruposTorneo(participantsMap, rawMatches, listaParticipantesUnicos, tData);
+
+    // 6. Calcular Podio oficial
     const podio = calcularPodio(tData, matchesProcesadas, tablaStandings, participantsMap, listaParticipantesUnicos);
 
     return {
@@ -579,6 +714,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         matches: matchesProcesadas,
         standings: tablaStandings,
         challongeStandings: challongeStandings,
+        grupos: grupos,
         podio: podio,
         keyUsed: keyUsada
     };
@@ -651,6 +787,7 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
                 matches: resultado.matches || [],
                 standings: resultado.standings || [],
                 challongeStandings: resultado.challongeStandings || [],
+                grupos: resultado.grupos || [],
                 podio: resultado.podio || torneoDoc.podio,
                 ultimaSincronizacionTimestamp: ahora,
                 actualizadoEn: new Date().toISOString()

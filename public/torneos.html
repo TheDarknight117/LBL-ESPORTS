@@ -346,7 +346,7 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs } from "/challonge-core.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
         import "/app-version.js";
 
@@ -1064,8 +1064,21 @@
                 participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
                 standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
                 challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
+                grupos: docTorneo.datosChallonge?.grupos || docTorneo.grupos || [],
                 podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
             };
+
+            // Asegurar que grupos esté calculado si hay matches y participantes
+            if ((!torneo.grupos || torneo.grupos.length === 0) && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
+                const pMap = {};
+                (torneo.participantes || []).forEach(p => {
+                    pMap[p.id] = p;
+                    if (Array.isArray(p.group_player_ids)) {
+                        p.group_player_ids.forEach(gid => pMap[gid] = p);
+                    }
+                });
+                torneo.grupos = calcularGruposTorneo(pMap, torneo.matches, torneo.participantes || [], torneo);
+            }
 
             const titleEl = document.getElementById('detail-tournament-title');
             const formatBadge = document.getElementById('detail-format-badge');
@@ -1898,15 +1911,219 @@
             feedContainer.innerHTML = html;
         }
 
-        // --- RENDERIZADOR DE POSICIONES Y HISTORIAL DEL PARTIDO (W, L, W.O.) ---
+        // --- RENDERIZADOR DE POSICIONES Y HISTORIAL DEL PARTIDO (GRUPOS CON SETS VS CONSOLIDADO FINAL) ---
+        let filtroGrupoActivo = 'todos';
+        window.cambiarFiltroGrupo = (gid) => {
+            filtroGrupoActivo = gid;
+            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            const torneo = {
+                ...docTorneo,
+                ...(docTorneo.datosChallonge || {}),
+                matches: docTorneo.datosChallonge?.matches || docTorneo.matches || docTorneo.partidas || [],
+                participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
+                standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
+                challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
+                grupos: docTorneo.datosChallonge?.grupos || docTorneo.grupos || [],
+                podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
+            };
+            const mainContainer = document.getElementById('dynamic-tournament-container');
+            if (mainContainer) renderizarTablaPosiciones(torneo, mainContainer);
+        };
+
+        function generarTablaGrupoHTML(g) {
+            let rowsHTML = '';
+            g.posiciones.forEach((row, idx) => {
+                const eq = row.equipo || {};
+                const officialRank = idx + 1;
+                let rankHTML = '';
+                if (row.pj === 0) {
+                    rankHTML = `<span class="font-bold text-gray-600 text-sm md:text-base">—</span>`;
+                } else if (officialRank === 1) {
+                    rankHTML = `<span class="text-base md:text-lg font-black text-amber-400">1°</span>`;
+                } else if (officialRank === 2) {
+                    rankHTML = `<span class="text-base md:text-lg font-black text-slate-300">2°</span>`;
+                } else if (officialRank === 3) {
+                    rankHTML = `<span class="text-base md:text-lg font-black text-amber-600">3°</span>`;
+                } else {
+                    rankHTML = `<span class="text-sm md:text-base font-black text-gray-500">${officialRank}°</span>`;
+                }
+
+                const tagDisplay = resolverTag(eq) || (eq.nombre || '').substring(0, 3).toUpperCase();
+                const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
+                const logo = obtenerLogoEquipo(eq, eq.nombre);
+
+                let avatarHTML = '';
+                if (logo) {
+                    avatarHTML = `<img src="${logo}" onerror="this.onerror=null; this.src='${getFallbackImage(eq.nombre)}';" class="w-8 h-8 md:w-9 md:h-9 object-contain rounded-xl shrink-0 p-0.5 bg-black/40 border border-gray-800">`;
+                } else {
+                    avatarHTML = `<div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-[#030712] border border-gray-800 flex items-center justify-center shrink-0 text-[11px] font-mono font-black text-cyan-400 shadow-inner">${tagDisplay}</div>`;
+                }
+
+                const difColor = row.difSets > 0 ? 'text-emerald-400 font-bold' : (row.difSets < 0 ? 'text-rose-400 font-bold' : 'text-gray-400');
+                const difSign = row.difSets > 0 ? '+' : '';
+
+                const historyBadges = (row.historial || []).map(h => {
+                    const res = typeof h === 'object' ? h.resultado : h;
+                    const isW = res === 'W';
+                    if (isW) {
+                        return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="Victoria de Serie (W)">W</span>`;
+                    } else {
+                        return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota de Serie (L)">L</span>`;
+                    }
+                });
+
+                const historyHTML = historyBadges.length > 0
+                    ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
+                    : `<span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Sin partidas disputadas</span>`;
+
+                rowsHTML += `
+                    <tr class="border-b border-gray-800/60 hover:bg-[#0c1424] transition-colors text-xs md:text-sm">
+                        <td class="p-4 text-center w-16">${rankHTML}</td>
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                ${avatarHTML}
+                                <span class="px-2.5 py-1 rounded-lg border font-black text-xs uppercase tracking-widest ${TAG_BADGE_CLASS}">${tagDisplay}</span>
+                                <span class="font-bold text-white tracking-wide uppercase text-xs md:text-sm truncate max-w-[160px] sm:max-w-none">${eq.nombre || 'Equipo'}</span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-center font-bold text-gray-200 whitespace-nowrap">${row.seriesGanadas} - ${row.seriesPerdidas}</td>
+                        <td class="p-4 text-center font-black text-white text-sm md:text-base">${row.setsGanados}</td>
+                        <td class="p-4 text-center ${difColor}">${difSign}${row.difSets}</td>
+                        <td class="p-4 text-center font-black text-cyan-300 bg-cyan-950/20 text-sm md:text-base">${row.pts}</td>
+                        <td class="p-4">
+                            ${historyHTML}
+                        </td>
+                    </tr>`;
+            });
+
+            return `
+                <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-2xl section-anim-enter">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-4">
+                        <div>
+                            <h4 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
+                                <i class="fas fa-layer-group text-cyan-400"></i> ${g.nombre}
+                            </h4>
+                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                ${g.equiposCount} Equipos • Clasificación basada en Sets Ganados y Enfrentamientos Directos
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 self-start sm:self-auto">
+                            <span class="text-[10px] uppercase tracking-widest font-black px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                                Formato BO3
+                            </span>
+                            <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-gray-900 text-gray-400 border border-gray-800">
+                                ${g.partidasCount} Partidas
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-800 bg-[#030712] text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">
+                                    <th class="p-4 text-center w-16">Rango</th>
+                                    <th class="p-4">Participante</th>
+                                    <th class="p-4 text-center" title="Partidos / Series Ganadas - Perdidas">Series (G-P)</th>
+                                    <th class="p-4 text-center text-white" title="Total de Sets / Mapas Ganados en las series">Sets Ganados</th>
+                                    <th class="p-4 text-center" title="Diferencia de Sets: Ganados menos Perdidos">Dif. Sets</th>
+                                    <th class="p-4 text-center text-cyan-300" title="Puntos oficiales acumulados en Challonge">Pts</th>
+                                    <th class="p-4">Historial de Serie</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800/40">
+                                ${rowsHTML}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
         function renderizarTablaPosiciones(torneo, container) {
             if (!torneo) return;
 
+            const estadoStr = (torneo.estado || '').toLowerCase();
+            const isCompleted = estadoStr === 'complete' || estadoStr === 'ended' || estadoStr === 'finalizado';
+
+            // 1. Obtener o calcular grupos
+            let grupos = Array.isArray(torneo.grupos) ? torneo.grupos : [];
+            if (grupos.length === 0 && Array.isArray(torneo.matches) && torneo.matches.length > 0) {
+                const pMap = {};
+                (torneo.participantes || []).forEach(p => {
+                    pMap[p.id] = p;
+                    if (Array.isArray(p.group_player_ids)) {
+                        p.group_player_ids.forEach(gid => pMap[gid] = p);
+                    }
+                });
+                grupos = calcularGruposTorneo(pMap, torneo.matches, torneo.participantes || [], torneo);
+            }
+
+            // 2. FASE PRELIMINAR / EN CURSO CON GRUPOS: Mostrar detalle de grupos con sets, series y puntos
+            if (!isCompleted && grupos.length > 0) {
+                const gruposAMostrar = (filtroGrupoActivo === 'todos')
+                    ? grupos
+                    : grupos.filter(g => String(g.group_id) === String(filtroGrupoActivo));
+
+                let tabsGruposHTML = '';
+                if (grupos.length > 1) {
+                    tabsGruposHTML = `
+                        <div class="flex items-center gap-2 flex-wrap pb-1">
+                            <button onclick="cambiarFiltroGrupo('todos')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${filtroGrupoActivo === 'todos' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg' : 'bg-gray-900/60 text-gray-400 hover:text-white border border-gray-800'}">
+                                <i class="fas fa-border-all mr-1.5"></i> Todos los Grupos
+                            </button>
+                            ${grupos.map(g => `
+                                <button onclick="cambiarFiltroGrupo('${g.group_id}')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${filtroGrupoActivo === String(g.group_id) ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg' : 'bg-gray-900/60 text-gray-400 hover:text-white border border-gray-800'}">
+                                    <i class="fas fa-layer-group mr-1.5"></i> ${g.nombre}
+                                </button>
+                            `).join('')}
+                        </div>`;
+                }
+
+                const gruposCardsHTML = gruposAMostrar.map(g => generarTablaGrupoHTML(g)).join('');
+
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <!-- ENCABEZADO Y GUÍA DE INDICATIVOS -->
+                        <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-2xl">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                                <div>
+                                    <h3 class="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
+                                        <i class="fas fa-list-ol text-cyan-400"></i> Puntuaciones y Grupos
+                                    </h3>
+                                    <p class="text-sm text-gray-400 font-medium mt-0.5">
+                                        Clasificación oficial de la Fase de Grupos con desglose de sets ganados, diferencia y series disputadas.
+                                    </p>
+                                </div>
+
+                                <!-- GUÍA DE INDICATIVOS -->
+                                <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold shrink-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
+                                        <span class="text-gray-300">Victoria Serie</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
+                                        <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
+                                        <span class="text-gray-300">Derrota Serie</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            ${tabsGruposHTML}
+                        </div>
+
+                        <!-- TABLAS DE GRUPO -->
+                        <div class="space-y-6">
+                            ${gruposCardsHTML}
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            // 3. TORNEO CULMINADO / FINALIZADO O FORMATO SIN GRUPOS:
+            // Layout limpio con únicamente [ Rango | Nombre del equipo | Historial del partido (W y L) ]
             const matches = torneo.matches || [];
 
-            // 1. PRIORIDAD: Standings oficiales de Challonge (final_rank por participante)
+            // Standings oficiales de Challonge
             let standings = [];
-
             if (Array.isArray(torneo.challongeStandings) && torneo.challongeStandings.length > 0) {
                 const seenStandings = new Set();
                 standings = torneo.challongeStandings.filter(st => {
@@ -1925,7 +2142,6 @@
                 });
             }
 
-            // 2. Si no hay standings de Challonge, calcular manualmente desde partidas
             if (standings.length === 0) {
                 const mapById = new Map();
                 const mapByName = new Map();
@@ -1988,8 +2204,8 @@
                     const eqNameLower = (eqObj.nombre || '').trim().toLowerCase();
 
                     matches.forEach(m => {
-                        const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
-                        if (!isCompleted) return;
+                        const isComp = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
+                        if (!isComp) return;
 
                         const p1Name = (m.player1?.nombre || m.player1?.name || '').trim().toLowerCase();
                         const p2Name = (m.player2?.nombre || m.player2?.name || '').trim().toLowerCase();
@@ -2035,9 +2251,8 @@
                 return;
             }
 
-            // Contabilizar historial y estadísticas globales (Fase de Grupos + Playoffs/Eliminatorias)
+            // Contabilizar historial global (Fase de Grupos + Playoffs/Eliminatorias)
             const historialPorEquipo = new Map();
-            const statsPorEquipo = new Map();
 
             standings.forEach(st => {
                 const eq = st.equipo || {};
@@ -2045,10 +2260,9 @@
                 const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
                 const pGroupIds = Array.isArray(st.group_player_ids) ? st.group_player_ids.map(String) : [];
 
-                // Se consideran TODAS las partidas disputadas en el torneo para reflejar el desempeño total
                 const teamMatches = matches.filter(m => {
-                    const isCompleted = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
-                    if (!isCompleted) return false;
+                    const isComp = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
+                    if (!isComp) return false;
 
                     const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
                     const p2IdStr = (m.player2_id !== undefined && m.player2_id !== null) ? String(m.player2_id) : (m.player2?.id ? String(m.player2.id) : '');
@@ -2070,9 +2284,6 @@
 
                 teamMatches.sort((a, b) => (a.round - b.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
 
-                let totalPG = 0;
-                let totalPP = 0;
-
                 const badgedHistory = teamMatches.map(m => {
                     const parsed = parseMatchScores(m);
                     const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
@@ -2084,9 +2295,6 @@
                                  (eqName && p1Valid && eqName === p1Name);
 
                     const isWinner = isP1 ? parsed.p1Winner : parsed.p2Winner;
-
-                    if (isWinner) totalPG++;
-                    else totalPP++;
 
                     if (parsed.isWalkover) {
                         if (isWinner) {
@@ -2103,27 +2311,12 @@
                     }
                 });
 
-                const stats = {
-                    pj: totalPG + totalPP,
-                    pg: totalPG,
-                    pp: totalPP,
-                    pts: totalPG * 3
-                };
-
-                if (eqName) {
-                    historialPorEquipo.set(eqName, badgedHistory);
-                    statsPorEquipo.set(eqName, stats);
-                }
-                if (eqIdStr) {
-                    historialPorEquipo.set(eqIdStr, badgedHistory);
-                    statsPorEquipo.set(eqIdStr, stats);
-                }
+                if (eqName) historialPorEquipo.set(eqName, badgedHistory);
+                if (eqIdStr) historialPorEquipo.set(eqIdStr, badgedHistory);
             });
 
-            // Detectar si hay al menos 1 partida disputada en el torneo
             const hayPartidasDisputadas = matches.some(m => m.state === 'complete' || m.state === 'completed' || !!m.winner_id);
 
-            // Si aún no hay partidas disputadas, ordenar alfabéticamente por nombre de equipo
             if (!hayPartidasDisputadas) {
                 standings.sort((a, b) => {
                     const nameA = (a.equipo?.nombre || a.equipo?.name || '').toLowerCase();
@@ -2138,7 +2331,6 @@
                 const eqName = (eq.nombre || eq.name || '').trim().toLowerCase();
                 const eqIdStr = (st.participant_id || st.equipo_id || (eq.id !== undefined && eq.id !== null)) ? String(st.participant_id || st.equipo_id || eq.id) : '';
                 const historyBadges = (eqName && historialPorEquipo.get(eqName)) || (eqIdStr && historialPorEquipo.get(eqIdStr)) || [];
-                const teamStats = (eqName && statsPorEquipo.get(eqName)) || (eqIdStr && statsPorEquipo.get(eqIdStr)) || { pj: st.pj || 0, pg: st.pg || 0, pp: st.pp || 0, pts: st.pts || 0 };
 
                 const historyHTML = historyBadges.length > 0
                     ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
@@ -2147,7 +2339,6 @@
                 const tagDisplay = resolverTag(eq);
                 const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
 
-                // Si el torneo tiene rangos oficiales (st.rank), usar el rango oficial
                 const officialRank = st.rank || (idx + 1);
                 let rankHTML = '';
                 if (!hayPartidasDisputadas) {
@@ -2183,10 +2374,10 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4">
                         <div>
                             <h3 class="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
-                                <i class="fas fa-list-ol text-cyan-400"></i> Posiciones
+                                <i class="fas fa-list-ol text-cyan-400"></i> Clasificación Oficial Final
                             </h3>
                             <p class="text-base text-gray-400 font-medium mt-0.5">
-                                ${hayPartidasDisputadas ? 'Clasificación oficial y desglose del historial de partidas (Fase de Grupos + Eliminatorias).' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
+                                ${hayPartidasDisputadas ? 'Clasificación oficial definitiva del torneo e historial total acumulado de partidas.' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
                             </p>
                         </div>
 
