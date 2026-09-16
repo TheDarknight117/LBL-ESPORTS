@@ -1057,7 +1057,15 @@
                     .finally(() => { docTorneo._syncingLive = false; });
             }
 
-            const torneo = docTorneo.datosChallonge || docTorneo;
+            const torneo = {
+                ...docTorneo,
+                ...(docTorneo.datosChallonge || {}),
+                matches: docTorneo.datosChallonge?.matches || docTorneo.matches || docTorneo.partidas || [],
+                participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
+                standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
+                challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
+                podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
+            };
 
             const titleEl = document.getElementById('detail-tournament-title');
             const formatBadge = document.getElementById('detail-format-badge');
@@ -1098,7 +1106,7 @@
                     <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
                         <i class="fas fa-diagram-project text-4xl text-cyan-400 block mb-2"></i>
                         <p>Este torneo aún no ha sido sincronizado con Challonge desde el Dashboard de Staff.</p>
-                        <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug}</strong></span>
+                        <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug || docTorneo.id}</strong></span>
                     </div>`;
                 return;
             }
@@ -1143,7 +1151,15 @@
 
         // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
         function renderizarEtapaResumen(docTorneo, container) {
-            const torneo = docTorneo.datosChallonge || docTorneo;
+            const torneo = {
+                ...docTorneo,
+                ...(docTorneo.datosChallonge || {}),
+                matches: docTorneo.datosChallonge?.matches || docTorneo.matches || docTorneo.partidas || [],
+                participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
+                standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
+                challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
+                podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
+            };
             const podio = torneo.podio || {};
             const challongeStandings = Array.isArray(torneo.challongeStandings) ? torneo.challongeStandings : [];
 
@@ -1151,35 +1167,40 @@
             let p2 = podio.segundoLugar;
             let p3 = podio.tercerLugar;
 
-            // Si el podio está incompleto o tiene duplicados (ej. p2 == p3), resolver desde challongeStandings oficiales
-            if (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name))) {
+            const estadoStr = (torneo.estado || docTorneo.estado || '').toLowerCase();
+            const isTournamentEnded = estadoStr === 'complete' || estadoStr === 'ended' || estadoStr === 'finalizado';
+
+            // Si el torneo ya concluyó y el podio está incompleto o duplicado, resolver desde challongeStandings oficiales
+            if (isTournamentEnded && (!p1 || !p2 || (p2 && p3 && (p2.nombre || p2.name) === (p3.nombre || p3.name)))) {
                 const s1 = challongeStandings.find(s => s.rank === 1);
                 const s2 = challongeStandings.find(s => s.rank === 2);
+                const s3 = challongeStandings.find(s => s.rank === 3);
                 if (s1) p1 = s1.equipo;
                 if (s2) p2 = s2.equipo;
                 if (s3) p3 = s3.equipo;
             }
 
-            const isTournamentEnded = torneo.estado === 'complete' || torneo.estado === 'ended';
             const isCompleted = isTournamentEnded && !!p1;
 
-            // Extraer participantes únicos para la tarjeta derecha "Equipos participantes"
+            // Extraer participantes únicos para la tarjeta izquierda "Equipos participantes"
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
             const participantesMap = new Map();
             rawParticipantes.forEach(p => {
                 const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || '';
-                if (name && name !== 'TBD' && !participantesMap.has(name.toLowerCase().trim())) {
+                if (name && name !== 'TBD' && name !== 'Por Definir' && !participantesMap.has(name.toLowerCase().trim())) {
                     participantesMap.set(name.toLowerCase().trim(), p);
                 }
             });
 
-            if (participantesMap.size === 0 && torneo.matches) {
+            if (participantesMap.size === 0 && Array.isArray(torneo.matches)) {
                 torneo.matches.forEach(m => {
-                    if (m.player1 && m.player1.nombre && m.player1.nombre !== 'TBD') {
-                        participantesMap.set(m.player1.nombre.toLowerCase().trim(), m.player1);
+                    const n1 = m.player1?.nombre || m.player1?.name || m.player1?.display_name || '';
+                    const n2 = m.player2?.nombre || m.player2?.name || m.player2?.display_name || '';
+                    if (n1 && n1 !== 'TBD' && n1 !== 'Por Definir' && !participantesMap.has(n1.toLowerCase().trim())) {
+                        participantesMap.set(n1.toLowerCase().trim(), m.player1);
                     }
-                    if (m.player2 && m.player2.nombre && m.player2.nombre !== 'TBD') {
-                        participantesMap.set(m.player2.nombre.toLowerCase().trim(), m.player2);
+                    if (n2 && n2 !== 'TBD' && n2 !== 'Por Definir' && !participantesMap.has(n2.toLowerCase().trim())) {
+                        participantesMap.set(n2.toLowerCase().trim(), m.player2);
                     }
                 });
             }
@@ -2147,13 +2168,9 @@
                         <td class="p-4">
                             <div class="flex items-center gap-3">
                                 <span class="px-2.5 py-1 rounded-lg border font-black text-xs uppercase tracking-widest ${TAG_BADGE_CLASS}">${tagDisplay}</span>
-                                <span class="font-bold text-white tracking-wide uppercase text-xs md:text-sm">${eq.nombre || 'Equipo'}</span>
+                                <span class="font-bold text-white tracking-wide uppercase text-xs md:text-sm">${eq.nombre || eq.name || 'Equipo'}</span>
                             </div>
                         </td>
-                        <td class="p-4 text-center font-bold text-gray-300">${teamStats.pj}</td>
-                        <td class="p-4 text-center font-black text-emerald-400">${teamStats.pg}</td>
-                        <td class="p-4 text-center font-black text-rose-400">${teamStats.pp}</td>
-                        <td class="p-4 text-center font-black text-cyan-300 bg-cyan-950/20">${teamStats.pts}</td>
                         <td class="p-4">
                             ${historyHTML}
                         </td>
@@ -2169,7 +2186,7 @@
                                 <i class="fas fa-list-ol text-cyan-400"></i> Posiciones
                             </h3>
                             <p class="text-base text-gray-400 font-medium mt-0.5">
-                                ${hayPartidasDisputadas ? 'Clasificación oficial, estadísticas acumuladas (Grupos + Playoffs) y desglose del historial.' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
+                                ${hayPartidasDisputadas ? 'Clasificación oficial y desglose del historial de partidas (Fase de Grupos + Eliminatorias).' : 'Clasificación pendiente • Las posiciones se calcularán automáticamente conforme se disputen los partidos.'}
                             </p>
                         </div>
 
@@ -2190,17 +2207,13 @@
                         </div>
                     </div>
 
-                    <!-- TABLA FIEL CON MÉTRICAS COMPLETAS -->
+                    <!-- TABLA DE POSICIONES -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-gray-800 bg-[#030712] text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">
                                     <th class="p-4 text-center w-16">Rango</th>
                                     <th class="p-4">Nombre del equipo</th>
-                                    <th class="p-4 text-center" title="Partidos Jugados">PJ</th>
-                                    <th class="p-4 text-center text-emerald-400" title="Victorias">V</th>
-                                    <th class="p-4 text-center text-rose-400" title="Derrotas">D</th>
-                                    <th class="p-4 text-center text-cyan-300" title="Puntos">Pts</th>
                                     <th class="p-4">Historial del partido</th>
                                 </tr>
                             </thead>
