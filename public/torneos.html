@@ -1967,15 +1967,29 @@
                 const historyBadges = (row.historial || []).map(h => {
                     const res = typeof h === 'object' ? h.resultado : h;
                     const isW = res === 'W';
-                    if (isW) {
-                        return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="Victoria de Serie (W)">W</span>`;
+                    const isWalkover = typeof h === 'object' ? !!h.walkover : false;
+
+                    let tooltip = '';
+                    if (typeof h === 'object' && h.tooltip) {
+                        tooltip = h.tooltip;
+                    } else if (typeof h === 'object' && h.rivalTag) {
+                        const miTag = h.miTag || tagDisplay;
+                        const mSets = h.misSets ?? (isW ? 2 : 0);
+                        const rSets = h.rivalSets ?? (isW ? 0 : 2);
+                        tooltip = `${isW ? 'Victoria' : 'Derrota'}: ${miTag} ${mSets} - ${rSets} ${h.rivalTag}${isWalkover ? ' (W.O.)' : ''}`;
                     } else {
-                        return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota de Serie (L)">L</span>`;
+                        tooltip = isW ? 'Victoria' : 'Derrota';
+                    }
+
+                    if (isW) {
+                        return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="${tooltip}">W</span>`;
+                    } else {
+                        return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="${tooltip}">L</span>`;
                     }
                 });
 
                 const historyHTML = historyBadges.length > 0
-                    ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
+                    ? `<div class="flex items-center gap-1.5 flex-nowrap">${historyBadges.join('')}</div>`
                     : `<span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Sin partidas disputadas</span>`;
 
                 rowsHTML += `
@@ -2103,12 +2117,12 @@
                                 <!-- GUÍA DE INDICATIVOS -->
                                 <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold shrink-0">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
-                                        <span class="text-gray-300">Victoria Serie</span>
+                                        <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
+                                        <span class="text-gray-300">Victoria</span>
                                     </div>
                                     <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
-                                        <span class="px-2 py-0.5 rounded font-black text-[10px]" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
-                                        <span class="text-gray-300">Derrota Serie</span>
+                                        <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)">L</span>
+                                        <span class="text-gray-300">Derrota</span>
                                     </div>
                                 </div>
                             </div>
@@ -2301,18 +2315,24 @@
                                  (eqName && p1Valid && eqName === p1Name);
 
                     const isWinner = isP1 ? parsed.p1Winner : parsed.p2Winner;
+                    const miTag = resolverTag(isP1 ? m.player1 : m.player2) || tagDisplay;
+                    const rivalTag = resolverTag(isP1 ? m.player2 : m.player1) || 'RIV';
+                    const miSets = isP1 ? parsed.p1Score : parsed.p2Score;
+                    const rivalSets = isP1 ? parsed.p2Score : parsed.p1Score;
+
+                    const tooltip = `${isWinner ? 'Victoria' : 'Derrota'}: ${miTag} ${miSets} - ${rivalSets} ${rivalTag}${parsed.isWalkover ? ' (W.O.)' : ''}`;
 
                     if (parsed.isWalkover) {
                         if (isWinner) {
-                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)" title="Victoria por Walkover (W.O.)">W</span>`;
+                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(255,255,255,0.08);color:#ffffff;border:1px solid rgba(255,255,255,0.25)" title="${tooltip}">W</span>`;
                         } else {
-                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota por Incomparecencia (L)">L</span>`;
+                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="${tooltip}">L</span>`;
                         }
                     } else {
                         if (isWinner) {
-                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="Victoria (W)">W</span>`;
+                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)" title="${tooltip}">W</span>`;
                         } else {
-                            return `<span class="px-2.5 py-1 rounded-md font-black text-xs shadow-sm hover:scale-105 transition-transform cursor-help" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="Derrota (L)">L</span>`;
+                            return `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-black text-xs shadow-sm hover:scale-110 transition-all cursor-help shrink-0 select-none" style="background:rgba(220,38,38,0.25);color:#f87171;border:1px solid rgba(220,38,38,0.45)" title="${tooltip}">L</span>`;
                         }
                     }
                 });
@@ -2339,7 +2359,7 @@
                 const historyBadges = (eqName && historialPorEquipo.get(eqName)) || (eqIdStr && historialPorEquipo.get(eqIdStr)) || [];
 
                 const historyHTML = historyBadges.length > 0
-                    ? `<div class="flex items-center gap-1.5 flex-wrap">${historyBadges.join('')}</div>`
+                    ? `<div class="flex items-center gap-1.5 flex-nowrap">${historyBadges.join('')}</div>`
                     : `<span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Sin partidas disputadas</span>`;
 
                 const tagDisplay = resolverTag(eq);

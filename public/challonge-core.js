@@ -56,6 +56,59 @@ export const OFFICIAL_LBL_TEAM_LOGOS = {
     'nox reign':          { nombre: 'NOX REIGN ESPORTS', tag: 'NRE', logo: '/assets/teams/nox_reign.webp', logoFallback: 'https://i.ibb.co/nMPB9pMw/nox-reign-nuevo.png', tier: 'Torneos Pasados' }
 };
 
+export const TAG_OVERRIDES = {
+    'kaox pink':          'KPK',
+    'condor nexus':       'CRN',
+    'crimson weasels':    'CRW',
+    'aether core academy':'ATA',
+    'snake dynasty':      'SKD',
+    'mapaches apaches':   'MAP',
+    'altitude gaming':    'ATG',
+    'quinteto gaming':    'QTT',
+    'quinteto de nos':    'QDN',
+    'lyons':              'LYN',
+    'iron academy':       'IHA',
+    'tfx':                'TFX',
+    'lotus reborn':       'LTR',
+    'marines del altiplano': 'MDA',
+    'marines':            'MDA',
+    't1nacotas':          'T1N',
+    'anti kaox':          'AKX',
+    'antikaox':           'AKX',
+    'ruined kings':       'RNK',
+    'ruined king':        'RNK',
+    'rise of kings order':'RKO',
+    'team first kill':    'TFK',
+    'katz e-sports':      'KAT',
+    'katz':               'KAT',
+    'grieta cumbiera':    'GRC',
+    'team dark':          'TDK',
+    'kaox esports':       'KOX',
+    'kaox red':           'KXR',
+    'kaox yellow':        'KXY',
+    'kaox green':         'KXG',
+    'uka kitties':        'UKT',
+    'riot pls game':      'RPG',
+    'aether core':        'ATC',
+    'strugglers e-sports':'SGE',
+    'strugglers':         'SGE'
+};
+
+export function resolverTag(equipoObj) {
+    if (!equipoObj) return '';
+    const nombre = (equipoObj.nombre || equipoObj.name || '').trim();
+    const clean = nombre.toLowerCase();
+    if (clean.includes('academy') || clean.includes('ata')) return 'ATA';
+    if (TAG_OVERRIDES[clean]) return TAG_OVERRIDES[clean];
+    for (const [key, tag] of Object.entries(TAG_OVERRIDES)) {
+        if (clean.includes(key)) return tag;
+    }
+    if (equipoObj.tag && equipoObj.tag.length <= 4) {
+        return equipoObj.tag.toUpperCase();
+    }
+    return nombre.substring(0, 3).toUpperCase();
+}
+
 /**
  * Mapea URLs de logos e identidades conocidas de equipos LBL a WebP local ultra-rápido.
  */
@@ -413,19 +466,6 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
             const winnerKey = winner ? String(winner.id) : String(m.winner_id);
             const p1WonSeries = (winnerKey === p1Key);
 
-            // Historial de la serie (W / L)
-            if (p1WonSeries) {
-                t1.seriesGanadas++;
-                t2.seriesPerdidas++;
-                t1.historial.push({ resultado: 'W', walkover: (m.scores_csv || '') === '' });
-                t2.historial.push({ resultado: 'L', walkover: (m.scores_csv || '') === '' });
-            } else {
-                t2.seriesGanadas++;
-                t1.seriesPerdidas++;
-                t2.historial.push({ resultado: 'W', walkover: (m.scores_csv || '') === '' });
-                t1.historial.push({ resultado: 'L', walkover: (m.scores_csv || '') === '' });
-            }
-
             // Desglose de Sets / Mapas individuales
             let p1Sets = 0;
             let p2Sets = 0;
@@ -451,6 +491,62 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
             t1.setsPerdidos += p2Sets;
             t2.setsGanados += p2Sets;
             t2.setsPerdidos += p1Sets;
+
+            const isWalkover = !rawScores || rawScores === '' || rawScores === '0-0';
+            const t1Tag = resolverTag(t1.equipo || t1);
+            const t2Tag = resolverTag(t2.equipo || t2);
+
+            const tooltipT1 = `${p1WonSeries ? 'Victoria' : 'Derrota'}: ${t1Tag} ${p1Sets} - ${p2Sets} ${t2Tag}${isWalkover ? ' (W.O.)' : ''}`;
+            const tooltipT2 = `${!p1WonSeries ? 'Victoria' : 'Derrota'}: ${t2Tag} ${p2Sets} - ${p1Sets} ${t1Tag}${isWalkover ? ' (W.O.)' : ''}`;
+
+            // Historial de la serie (W / L) con tags, sets y tooltip para cursor hover
+            if (p1WonSeries) {
+                t1.seriesGanadas++;
+                t2.seriesPerdidas++;
+                t1.historial.push({
+                    resultado: 'W',
+                    walkover: isWalkover,
+                    miTag: t1Tag,
+                    rivalTag: t2Tag,
+                    misSets: p1Sets,
+                    rivalSets: p2Sets,
+                    marcador: `${p1Sets} - ${p2Sets}`,
+                    tooltip: tooltipT1
+                });
+                t2.historial.push({
+                    resultado: 'L',
+                    walkover: isWalkover,
+                    miTag: t2Tag,
+                    rivalTag: t1Tag,
+                    misSets: p2Sets,
+                    rivalSets: p1Sets,
+                    marcador: `${p2Sets} - ${p1Sets}`,
+                    tooltip: tooltipT2
+                });
+            } else {
+                t2.seriesGanadas++;
+                t1.seriesPerdidas++;
+                t2.historial.push({
+                    resultado: 'W',
+                    walkover: isWalkover,
+                    miTag: t2Tag,
+                    rivalTag: t1Tag,
+                    misSets: p2Sets,
+                    rivalSets: p1Sets,
+                    marcador: `${p2Sets} - ${p1Sets}`,
+                    tooltip: tooltipT2
+                });
+                t1.historial.push({
+                    resultado: 'L',
+                    walkover: isWalkover,
+                    miTag: t1Tag,
+                    rivalTag: t2Tag,
+                    misSets: p1Sets,
+                    rivalSets: p2Sets,
+                    marcador: `${p1Sets} - ${p2Sets}`,
+                    tooltip: tooltipT1
+                });
+            }
         });
 
         Object.values(tabla).forEach(t => {
