@@ -518,7 +518,9 @@
             return lista.map(t => {
                 const matches = t.datosChallonge?.matches || t.matches || [];
                 const mFp = matches.map(m => `${m.id || ''}:${m.state || ''}:${m.scores_csv || ''}`).join('|');
-                return `${t.id}:${t.nombre}:${t.estado}:${t.actualizadoEn || ''}:${matches.length}:${mFp}`;
+                const gList = t.grupos || t.datosChallonge?.grupos || [];
+                const gFp = gList.map(g => (g.posiciones || []).map(p => `${p.id || p.nombre || ''}:${p.pts || 0}:${p.setsGanados || 0}:${p.difSets || 0}:${p.seriesGanadas || 0}`).join(',')).join('|');
+                return `${t.id}:${t.nombre}:${t.estado}:${t.actualizadoEn || ''}:${matches.length}:${mFp}:${gFp}`;
             }).join(';;');
         }
 
@@ -775,8 +777,9 @@
                             const currentFp = calcularFingerprintTorneos(listaTorneosRegistrados);
                             const newFp = calcularFingerprintTorneos(nuevaDeduplicada);
                             
-                            // Solo re-renderizar si realmente cambiaron los datos
-                            if (currentFp !== newFp) {
+                            // En el primer snapshot de Firestore o si cambiaron los datos, actualizar memoria y cache
+                            if (!window._firstFirestoreSnapshotLoaded || currentFp !== newFp) {
+                                window._firstFirestoreSnapshotLoaded = true;
                                 listaTorneosRegistrados = nuevaDeduplicada;
                                 localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(nuevaDeduplicada));
                                 renderizarVista(false);
@@ -1066,7 +1069,7 @@
                 participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
                 standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
                 challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
-                grupos: docTorneo.datosChallonge?.grupos || docTorneo.grupos || [],
+                grupos: (Array.isArray(docTorneo.grupos) && docTorneo.grupos.length > 0) ? docTorneo.grupos : (docTorneo.datosChallonge?.grupos || []),
                 podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
             };
 
@@ -1927,7 +1930,7 @@
                 participantes: docTorneo.datosChallonge?.participantes || docTorneo.participantes || [],
                 standings: docTorneo.datosChallonge?.standings || docTorneo.standings || [],
                 challongeStandings: docTorneo.datosChallonge?.challongeStandings || docTorneo.challongeStandings || [],
-                grupos: docTorneo.datosChallonge?.grupos || docTorneo.grupos || [],
+                grupos: (Array.isArray(docTorneo.grupos) && docTorneo.grupos.length > 0) ? docTorneo.grupos : (docTorneo.datosChallonge?.grupos || []),
                 podio: docTorneo.datosChallonge?.podio || docTorneo.podio || {}
             };
             const mainContainer = document.getElementById('dynamic-tournament-container');
