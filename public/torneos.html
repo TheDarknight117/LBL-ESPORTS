@@ -2009,9 +2009,9 @@
                             </div>
                         </td>
                         <td class="p-4 text-center font-bold text-gray-200 whitespace-nowrap">${row.seriesGanadas} - ${row.seriesPerdidas}</td>
-                        <td class="p-4 text-center font-black text-white text-sm md:text-base">${row.setsGanados}</td>
-                        <td class="p-4 text-center ${difColor}">${difSign}${row.difSets}</td>
                         <td class="p-4 text-center font-black text-cyan-300 bg-cyan-950/20 text-sm md:text-base">${row.pts}</td>
+                        <td class="p-4 text-center ${difColor}">${difSign}${row.difSets}</td>
+                        <td class="p-4 text-center font-black text-white text-sm md:text-base">${row.setsGanados}</td>
                         <td class="p-4">
                             ${historyHTML}
                         </td>
@@ -2019,7 +2019,7 @@
             });
 
             return `
-                <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-2xl section-anim-enter">
+                <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-2xl">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-4">
                         <div>
                             <h4 class="text-xl md:text-2xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
@@ -2046,9 +2046,9 @@
                                     <th class="p-4 text-center w-16">Rango</th>
                                     <th class="p-4">Participante</th>
                                     <th class="p-4 text-center" title="Partidos / Series Ganadas - Perdidas">Series (G-P)</th>
-                                    <th class="p-4 text-center text-white" title="Total de Sets / Mapas Ganados en las series">Sets Ganados</th>
-                                    <th class="p-4 text-center" title="Diferencia de Sets: Ganados menos Perdidos">Dif. Sets</th>
                                     <th class="p-4 text-center text-cyan-300" title="Puntos oficiales acumulados en Challonge">Pts</th>
+                                    <th class="p-4 text-center" title="Diferencia de Sets: Ganados menos Perdidos">Dif. Sets</th>
+                                    <th class="p-4 text-center text-white" title="Total de Sets / Mapas Ganados en las series">Sets Ganados</th>
                                     <th class="p-4">Historial de Serie</th>
                                 </tr>
                             </thead>
@@ -2745,7 +2745,7 @@
                 const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId);
                 const est = (docTorneo?.estado || '').toLowerCase();
                 if (est !== 'finalizado' && est !== 'complete') {
-                    renderizarTorneoDetalle();
+                    renderizarTorneoDetalle(false);
                 }
             }
         }, 60000);

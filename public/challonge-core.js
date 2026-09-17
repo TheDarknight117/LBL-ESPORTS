@@ -469,11 +469,25 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
             const winnerKey = winner ? String(winner.id) : String(m.winner_id);
             const p1WonSeries = (winnerKey === p1Key);
 
+            const rawScores = (m.scores_csv || '').trim();
+            const isWalkover = !rawScores || rawScores === '' || rawScores === '0-0';
+
             // Desglose de Sets / Mapas individuales
             let p1Sets = 0;
             let p2Sets = 0;
-            const rawScores = (m.scores_csv || '').trim();
-            if (rawScores) {
+
+            if (isWalkover) {
+                // En Walkover (W.O.) no se jugaron partidas: 0 puntos de juego (pts = 0)
+                // y se muestra marcador 0 - 0 sin inventar sets tipo 2-0.
+                // Challonge asigna 1 set ganado al vencedor de la serie y 1 set perdido al no presentado.
+                if (p1WonSeries) {
+                    t1.setsGanados += 1;
+                    t2.setsPerdidos += 1;
+                } else {
+                    t2.setsGanados += 1;
+                    t1.setsPerdidos += 1;
+                }
+            } else {
                 if (rawScores.includes(',')) {
                     rawScores.split(',').forEach(s => {
                         const parts = s.split('-').map(x => parseInt(x.trim()) || 0);
@@ -485,17 +499,16 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
                     p1Sets = parts[0] || 0;
                     p2Sets = parts[1] || 0;
                 }
-            } else {
-                if (p1WonSeries) p1Sets = 2;
-                else p2Sets = 2;
+
+                t1.setsGanados += p1Sets;
+                t1.setsPerdidos += p2Sets;
+                t1.pts += p1Sets;
+
+                t2.setsGanados += p2Sets;
+                t2.setsPerdidos += p1Sets;
+                t2.pts += p2Sets;
             }
 
-            t1.setsGanados += p1Sets;
-            t1.setsPerdidos += p2Sets;
-            t2.setsGanados += p2Sets;
-            t2.setsPerdidos += p1Sets;
-
-            const isWalkover = !rawScores || rawScores === '' || rawScores === '0-0';
             const t1Tag = resolverTag(t1.equipo || t1);
             const t2Tag = resolverTag(t2.equipo || t2);
 
@@ -554,15 +567,23 @@ export function calcularGruposTorneo(participantsMap = {}, rawMatches = [], list
 
         Object.values(tabla).forEach(t => {
             t.difSets = t.setsGanados - t.setsPerdidos;
-            t.pts = t.setsGanados; // Pts = sets ganados en Challonge
         });
 
-        // Orden de clasificación Challonge: 1. Sets Ganados, 2. Dif Sets, 3. Series Ganadas
+        // Orden de clasificación oficial de Challonge:
+        // 1. Porcentaje de victorias de series (Match Win %)
+        // 2. Series ganadas absolutas
+        // 3. Puntos de juego (Pts = sets ganados en partidas jugadas)
+        // 4. Diferencia de sets (Set W/L Diff)
+        // 5. Sets ganados
         const sortedPosiciones = Object.values(tabla).sort((a, b) => {
-            if (b.setsGanados !== a.setsGanados) return b.setsGanados - a.setsGanados;
-            if (b.difSets !== a.difSets) return b.difSets - a.difSets;
+            const winRateA = a.pj > 0 ? (a.seriesGanadas / a.pj) : 0;
+            const winRateB = b.pj > 0 ? (b.seriesGanadas / b.pj) : 0;
+            if (Math.abs(winRateB - winRateA) > 0.0001) return winRateB - winRateA;
             if (b.seriesGanadas !== a.seriesGanadas) return b.seriesGanadas - a.seriesGanadas;
-            return a.seriesPerdidas - b.seriesPerdidas;
+            if (b.pts !== a.pts) return b.pts - a.pts;
+            if (b.difSets !== a.difSets) return b.difSets - a.difSets;
+            if (b.setsGanados !== a.setsGanados) return b.setsGanados - a.setsGanados;
+            return a.nombre.localeCompare(b.nombre);
         });
 
         gruposResultado.push({
