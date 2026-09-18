@@ -248,3 +248,21 @@
     }
 }
 
+/* --- ANIMACIÓN FLUIDA DE PANELES DESPLEGABLES (ACCORDION) --- */
+.accordion-collapse-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.accordion-collapse-panel.is-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.accordion-collapse-panel > .accordion-collapse-inner {
+    overflow: hidden;
+    min-height: 0;
+}
+
