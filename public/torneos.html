@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css">
+    <link rel="stylesheet" href="/dist/output.css?v=164">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -2011,20 +2011,12 @@
                 if (headerBtn) headerBtn.setAttribute('aria-expanded', 'true');
                 gruposDesplegados.add(String(safeId));
 
-                // Si es playoffs, trazar y sincronizar conectores SVG conforme se despliega
+                // Si es playoffs, trazar y sincronizar conectores SVG de forma responsiva conforme se despliega
                 if (safeId === 'playoffs') {
-                    setTimeout(() => {
-                        const canvas = document.getElementById('bracket-canvas');
-                        if (canvas && window._currentPlayoffMatches) {
-                            trazarConectoresSVG(canvas, window._currentPlayoffMatches);
-                        }
-                    }, 80);
-                    setTimeout(() => {
-                        const canvas = document.getElementById('bracket-canvas');
-                        if (canvas && window._currentPlayoffMatches) {
-                            trazarConectoresSVG(canvas, window._currentPlayoffMatches);
-                        }
-                    }, 400);
+                    const canvas = document.getElementById('bracket-canvas');
+                    if (canvas && window._currentPlayoffMatches) {
+                        conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
+                    }
                 }
 
                 // Deslizamiento suave de la pantalla hacia abajo para enfocar todo el contenido desplegado (evita cortes y da excelente UX)
@@ -2630,12 +2622,10 @@
                     </div>`;
 
                 if (ciclo.playoffsDisponibles && gruposDesplegados.has('playoffs')) {
-                    setTimeout(() => {
-                        const canvas = document.getElementById('bracket-canvas');
-                        if (canvas && window._currentPlayoffMatches) {
-                            trazarConectoresSVG(canvas, window._currentPlayoffMatches);
-                        }
-                    }, 80);
+                    const canvas = document.getElementById('bracket-canvas');
+                    if (canvas && window._currentPlayoffMatches) {
+                        conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
+                    }
                 }
                 return;
             }
@@ -3303,7 +3293,8 @@
 
         function trazarConectoresSVG(canvas, allMatches) {
             const svg = document.getElementById('bracket-svg-layer');
-            if (!svg || !canvas || !Array.isArray(allMatches)) return;
+            if (!svg || !canvas || !Array.isArray(allMatches) || allMatches.length === 0) return;
+            if (canvas.offsetHeight <= 10 || canvas.offsetWidth <= 10) return;
 
             let svgContent = '';
 
@@ -3374,6 +3365,56 @@
             svg.innerHTML = svgContent;
         }
 
+        let _playoffResizeHandler = null;
+
+        // --- CONECTOR RESPONSIVO MULTI-DISPOSITIVO Y SINCRONIZADOR DE BRACKET ---
+        function conectarBracketResponsivo(canvas, matches) {
+            if (!canvas || !matches || !Array.isArray(matches) || matches.length === 0) return;
+
+            const redraw = () => {
+                if (canvas && canvas.offsetHeight > 10 && canvas.offsetWidth > 10) {
+                    trazarConectoresSVG(canvas, matches);
+                }
+            };
+
+            // Redibujos inmediatos y escalonados
+            requestAnimationFrame(redraw);
+            setTimeout(redraw, 60);
+            setTimeout(redraw, 200);
+            setTimeout(redraw, 480);
+
+            // Observador de redimensionamiento responsivo sobre el canvas
+            if (_playoffsResizeObserver) {
+                _playoffsResizeObserver.disconnect();
+            }
+            if (window.ResizeObserver) {
+                _playoffsResizeObserver = new ResizeObserver(() => {
+                    redraw();
+                });
+                _playoffsResizeObserver.observe(canvas);
+            }
+
+            // Escuchar fin de animación del acordeón (transitionend)
+            const parentAccordion = canvas.closest('.accordion-collapse-panel') || document.getElementById('grupo-collapse-playoffs');
+            if (parentAccordion) {
+                parentAccordion.addEventListener('transitionend', (e) => {
+                    if (e.target === parentAccordion) redraw();
+                });
+            }
+
+            // Esperar que las fuentes web carguen sin desfasar el DOM
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(redraw).catch(() => {});
+            }
+
+            if (_playoffResizeHandler) {
+                window.removeEventListener('resize', _playoffResizeHandler);
+            }
+            _playoffResizeHandler = () => redraw();
+            window.addEventListener('resize', _playoffResizeHandler);
+        }
+        window.conectarBracketResponsivo = conectarBracketResponsivo;
+
         // --- HOVER DE EQUIPO Y RESALTADO DE TRAYECTORIA (SIN GLOW) ---
         window.hoverBracketTeam = (teamName) => {
             if (!teamName) return;
@@ -3402,7 +3443,7 @@
         window.actualizarConectoresPlayoffs = () => {
             const canvas = document.getElementById('bracket-canvas');
             if (canvas && window._currentPlayoffMatches) {
-                trazarConectoresSVG(canvas, window._currentPlayoffMatches);
+                conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
             }
         };
 
@@ -3474,29 +3515,9 @@
 
             container.innerHTML = html;
 
-            // Trazar líneas SVG directamente sobre el canvas libre
+            // Conectar trazador SVG y observadores responsivos
             const canvas = document.getElementById('bracket-canvas');
-
-            setTimeout(() => {
-                trazarConectoresSVG(canvas, playoffMatches);
-            }, 60);
-
-            // Observador de redimensionamiento responsivo
-            if (_playoffsResizeObserver) {
-                _playoffsResizeObserver.disconnect();
-            }
-            if (window.ResizeObserver && canvas) {
-                _playoffsResizeObserver = new ResizeObserver(() => {
-                    trazarConectoresSVG(canvas, playoffMatches);
-                });
-                _playoffsResizeObserver.observe(canvas);
-            }
-
-            if (window._playoffResizeHandler) {
-                window.removeEventListener('resize', window._playoffResizeHandler);
-            }
-            window._playoffResizeHandler = () => trazarConectoresSVG(canvas, playoffMatches);
-            window.addEventListener('resize', window._playoffResizeHandler);
+            conectarBracketResponsivo(canvas, playoffMatches);
         }
 
         window.renderizarPlayoffs = renderizarEtapaPlayoffs;
