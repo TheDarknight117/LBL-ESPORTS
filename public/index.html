@@ -54,8 +54,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=164">
-    <script type="module" src="/app-version.js?v=164"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=165">
+    <script type="module" src="/app-version.js?v=165"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -138,6 +138,64 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        /* Halo focal del escudo */
+        .hero-halo-light {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(37, 99, 235, 0.14) 40%, rgba(2, 6, 23, 0) 70%);
+            border-radius: 9999px;
+            filter: blur(45px);
+            pointer-events: none;
+            z-index: -1;
+        }
+        @media (max-width: 640px) {
+            .hero-halo-light { width: 220px; height: 220px; filter: blur(35px); }
+        }
+
+        /* Drawer Móvil Desplegable */
+        #mobile-menu-drawer {
+            transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+        }
+        #mobile-menu-drawer.menu-open {
+            max-height: 480px !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        /* Estilos de Tarjetas de Tiers */
+        .tier-card-gold {
+            border-top: 3px solid #eab308;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .tier-card-gold:hover {
+            transform: translateY(-4px);
+            border-color: #fde047;
+            box-shadow: 0 15px 40px -10px rgba(234, 179, 8, 0.3);
+        }
+        .tier-card-blue {
+            border-top: 3px solid #3b82f6;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .tier-card-blue:hover {
+            transform: translateY(-4px);
+            border-color: #60a5fa;
+            box-shadow: 0 15px 40px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Estilos del Módulo de Sponsors Oficiales */
+        .sponsor-brand-tab {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .sponsor-brand-tab:hover {
+            transform: translateY(-2px);
+        }
+        .sponsor-brand-tab.active-tab {
+            border-color: rgba(6, 182, 212, 0.7) !important;
+            background: rgba(6, 182, 212, 0.15) !important;
+            box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.4);
         }
 
         /* Estilos de Trapecio e Interactividad de la Directiva */
@@ -261,30 +319,92 @@
     <div class="absolute top-0 left-[50%] translate-x-[-50%] w-[800px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
     <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
 
-    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-3 md:py-4 flex justify-between items-center transition-all duration-300 shadow-lg">
-        <div class="flex items-center gap-3">
-            <img src="assets/logo.webp" decoding="async" onerror="this.src='assets/logo.png'" alt="LBL" class="h-8 md:h-10 w-auto object-contain">
-            <span class="text-lg md:text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-blue-500">LEAGUE OF LEGENDS</span></span>
-            <span id="staff-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                <i class="fas fa-shield-alt"></i> Staff View
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-3 flex justify-between items-center transition-all duration-300 border-b border-white/5 backdrop-blur-xl bg-[#030712]/90 shadow-xl">
+        <!-- Marca / Logo -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <img src="assets/logo.webp" decoding="async" onerror="this.src='assets/logo.png'" alt="LBL" class="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <div class="flex flex-col text-left">
+                    <span class="text-base sm:text-lg md:text-xl font-black tracking-wider uppercase italic leading-none text-white">
+                        LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">ESPORTS</span>
+                    </span>
+                    <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
+                        Liga Boliviana de LoL
+                    </span>
+                </div>
+            </a>
+            <!-- Badge Staff View para Escritorio / Tablets -->
+            <span id="staff-badge" class="hidden items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.25)] ml-1">
+                <i class="fas fa-shield-alt text-[9px]"></i> <span class="hidden md:inline">Staff View</span>
             </span>
         </div>
-        <div class="flex items-center gap-3 md:gap-5">
-            <a href="torneos" class="text-cyan-400 hover:text-cyan-300 font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2">
-                <i class="fas fa-diagram-project"></i> <span class="hidden md:inline">Torneos en Curso</span>
+
+        <!-- Enlaces en Escritorio (md en adelante) -->
+        <div class="hidden md:flex items-center gap-1.5 lg:gap-3">
+            <a href="torneos" class="text-slate-300 hover:text-cyan-300 font-bold text-xs lg:text-sm px-3.5 py-2 rounded-xl hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/25 transition-all flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span>Torneos</span>
             </a>
 
-            <a href="equipos" class="text-gray-400 hover:text-white font-bold text-xs md:text-sm transition-colors py-2 flex items-center gap-2">
-                <i class="fas fa-list-ul"></i> <span class="hidden md:inline">Equipos</span>
+            <a href="equipos" class="text-slate-300 hover:text-white font-bold text-xs lg:text-sm px-3.5 py-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-users text-slate-400 text-xs"></i> <span>Equipos</span>
             </a>
             
-            <a href="editar" class="text-yellow-500 hover:text-yellow-400 font-bold text-xs md:text-sm transition-colors py-1.5 px-3 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-2">
-                <i class="fas fa-key"></i> <span class="hidden md:inline">Editar Mi Equipo</span>
+            <a href="editar" class="text-amber-400/90 hover:text-amber-300 font-bold text-xs lg:text-sm px-3.5 py-2 rounded-xl hover:bg-amber-500/10 border border-transparent hover:border-amber-500/25 transition-all flex items-center gap-2">
+                <i class="fas fa-key text-xs"></i> <span>Editar Equipo</span>
             </a>
 
-            <button onclick="abrirAdvertencia()" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-black text-xs md:text-sm transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] hover:scale-105">INSCRIBIRSE</button>
+            <a href="scouting" class="text-slate-300 hover:text-white font-bold text-xs lg:text-sm px-3.5 py-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all flex items-center gap-2">
+                <i class="fas fa-binoculars text-purple-400 text-xs"></i> <span>Scouting</span>
+            </a>
+
+            <button onclick="abrirAdvertencia()" class="ml-2 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white px-5 py-2 rounded-xl font-black text-xs lg:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.35)] hover:shadow-[0_0_25px_rgba(6,182,212,0.55)] hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2 border border-blue-400/40">
+                <i class="fas fa-ticket-alt text-xs"></i> INSCRIBIRSE
+            </button>
+        </div>
+
+        <!-- Acciones en Móvil (< md) -->
+        <div class="flex md:hidden items-center gap-2">
+            <button onclick="abrirAdvertencia()" class="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white px-3.5 py-1.5 rounded-xl font-black text-xs uppercase tracking-wide shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5 border border-blue-400/40">
+                <i class="fas fa-ticket-alt text-[10px]"></i> <span>Inscribirse</span>
+            </button>
+            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer" aria-label="Abrir Menú">
+                <i id="mobile-menu-icon" class="fas fa-bars text-sm"></i>
+            </button>
         </div>
     </nav>
+
+    <!-- Menú Desplegable Drawer para Móviles -->
+    <div id="mobile-menu-drawer" class="md:hidden fixed top-[56px] left-0 w-full bg-[#030712]/98 backdrop-blur-2xl border-b border-cyan-500/20 shadow-2xl z-30 transition-all duration-300 max-h-0 opacity-0 overflow-hidden pointer-events-none">
+        <div class="px-5 py-5 space-y-2.5">
+            <!-- Indicador Staff Móvil (si la sesión está iniciada) -->
+            <div id="mobile-staff-badge-wrap" class="hidden pb-2 mb-2 border-b border-gray-800">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-xs font-black uppercase tracking-wider">
+                    <i class="fas fa-shield-alt text-xs"></i> Sesión Staff Activa
+                </span>
+            </div>
+
+            <a href="torneos" class="flex items-center justify-between p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 text-cyan-300 font-bold text-sm">
+                <span class="flex items-center gap-3"><i class="fas fa-diagram-project text-cyan-400"></i> Torneos en Curso</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 uppercase font-black">En Vivo</span>
+            </a>
+            <a href="equipos" class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 text-slate-200 font-bold text-sm hover:border-white/20">
+                <i class="fas fa-users text-slate-400"></i> Rosters y Equipos
+            </a>
+            <a href="editar" class="flex items-center gap-3 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 font-bold text-sm">
+                <i class="fas fa-key text-amber-400"></i> Editar Mi Equipo (Token)
+            </a>
+            <a href="scouting" class="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 text-slate-200 font-bold text-sm hover:border-white/20">
+                <i class="fas fa-binoculars text-purple-400"></i> Scouting & Agencia Libre
+            </a>
+            <a href="dashboard" id="mobile-staff-link" class="hidden items-center gap-3 p-3.5 rounded-2xl bg-red-950/20 border border-red-500/20 text-red-300 font-bold text-sm">
+                <i class="fas fa-shield-alt text-red-400"></i> Panel Staff LBL
+            </a>
+        </div>
+    </div>
 
     <main class="flex-grow flex flex-col items-center justify-center text-center px-4 pt-10 md:pt-20 pb-20 z-10 relative">
         
@@ -296,15 +416,12 @@
             Temporada Oficial 2026
         </div>
 
-        <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-48 md:h-64 w-auto object-contain mb-8 float-anim fade-in-up" style="animation-delay: 0.2s;" alt="Logo LBL Central">
-
-        <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) -->
-        <div id="pwa-install-container" class="mb-8 fade-in-up flex justify-center" style="animation-delay: 0.25s;">
-            <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
-                <i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN
-            </button>
+        <div class="relative mb-8 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
+            <div class="hero-halo-light"></div>
+            <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-48 md:h-64 w-auto object-contain" alt="Logo LBL Central">
         </div>
 
+        <!-- TÍTULO ORIGINAL CON GLOW-TEXT INTACTO -->
         <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
             LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
         </h1>
@@ -316,7 +433,7 @@
         <div class="max-w-4xl mx-auto w-full px-4 mb-10 z-10 relative">
             
             <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6 flex-wrap" style="animation-delay: 0.5s;">
-                <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group">
+                <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer">
                     <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12"></div>
                     <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
                 </button>
@@ -328,6 +445,13 @@
                     <i class="fas fa-trophy" style="color: #000000 !important;"></i> 
                     <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
                 </a>
+            </div>
+
+            <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) - Debajo de los CTAs -->
+            <div id="pwa-install-container" class="fade-in-up flex justify-center mt-2 mb-4" style="animation-delay: 0.55s;">
+                <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
+                    <i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN
+                </button>
             </div>
 
             <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito e Interactivo) -->
@@ -371,58 +495,88 @@
 
     <section class="max-w-5xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.7s;">
         <div class="text-center mb-10">
-            <h2 class="text-2xl md:text-3xl font-black uppercase tracking-widest text-gray-300">NUESTROS <span class="text-blue-500">TIERS</span></h2>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/40 border border-blue-500/30 text-blue-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                <i class="fas fa-layer-group text-[9px]"></i> DIVISIONES OFICIALES
+            </div>
+            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">CIRCUITO <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">COMPETITIVO</span></h2>
+            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+                Estructura por divisiones: desde la máxima gloria nacional hasta la lucha por el ascenso.
+            </p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="equipos?tier=Tier 1" class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-yellow-500 relative overflow-hidden group hover:bg-[#0a0a0a] transition-all hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(234,179,8,0.2)] block cursor-pointer">
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-[40px] group-hover:bg-yellow-500/20 transition-colors"></div>
-                <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-yellow-500/20 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-trophy text-3xl text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"></i>
+            <!-- Card Tier 1: Premier League -->
+            <a href="equipos?tier=Tier 1" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-gold relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
+                <div class="absolute -top-12 -right-12 w-44 h-44 bg-yellow-500/10 rounded-full blur-[50px] group-hover:bg-yellow-500/20 transition-colors"></div>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-yellow-500/25 group-hover:scale-110 group-hover:border-yellow-400/50 transition-all duration-300">
+                        <i class="fas fa-trophy text-3xl text-yellow-400 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[10px] font-black uppercase tracking-wider">
+                        PRIMERA DIVISIÓN
+                    </span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
                     <span><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</span>
                     <i class="fas fa-arrow-right text-base text-yellow-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
                 </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La elite del circuito competitivo de la LBL, aca se encuentran los mejores equipos de la liga.</p>
+                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+                    La élite del circuito competitivo de la LBL. Aquí convergen los mejores equipos del país por el campeonato oficial y la gloria nacional.
+                </p>
             </a>
             
-            <a href="equipos?tier=Tier 2" class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-blue-500 relative overflow-hidden group hover:bg-[#0a0a0a] transition-all hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(59,130,246,0.2)] block cursor-pointer">
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-[40px] group-hover:bg-blue-500/20 transition-colors"></div>
-                <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-level-up-alt text-3xl text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"></i>
+            <!-- Card Tier 2: Circuito Ascenso -->
+            <a href="equipos?tier=Tier 2" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-blue relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
+                <div class="absolute -top-12 -right-12 w-44 h-44 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-colors"></div>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-blue-500/25 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+                        <i class="fas fa-level-up-alt text-3xl text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider">
+                        CIRCUITO ASCENSO
+                    </span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
-                    <span><span class="text-gradient-blue">TIER 2</span> (Circuito Ascenso)</span>
-                    <i class="fas fa-arrow-right text-base text-blue-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    <span><span class="text-gradient-blue">TIER 2</span> (Ascenso Oficial)</span>
+                    <i class="fas fa-arrow-right text-base text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
                 </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">La segunda division del circuito competitivo de la LBL, aca los equipos compiten entre si por su cupo de ascenso a TIER 1.</p>
+                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+                    La segunda división oficial de la LBL. Escuadras emergentes batallan ronda a ronda para conseguir su cupo directo a la máxima categoría.
+                </p>
             </a>
         </div>
     </section>
 
     <!-- SECCIÓN DE SPONSORS OFICIALES -->
     <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-20 z-10 fade-in-up" style="animation-delay: 0.75s;">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-2">NUESTROS SPONSORS...</h2>
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                <i class="fas fa-handshake text-[9px]"></i> PARTNERS & ACTIVACIONES
+            </div>
+            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">
+                NUESTROS <span class="text-gradient-cyan">SPONSORS</span>
+            </h2>
             <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
-                Las primeras marcas que confiaron en este proyecto, <br> e impulsan la competencia en el país.
+                Las primeras marcas que confiaron en este proyecto, <br class="hidden sm:block"> e impulsan la competencia en el país.
             </p>
         </div>
+
+        <!-- Selector de Marcas / Tabs Interactivas (Marcas siempre visibles) -->
+        <div class="flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar pb-3 mb-6 px-1">
+            <div id="sponsor-tabs-container" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="flex items-center gap-2 md:gap-3 shrink-0">
+                <!-- Se inyectan las tabs dinámicamente -->
+            </div>
+        </div>
         
-        <!-- Contenedor del Slideshow de Sponsors -->
-        <div class="glass-panel p-6 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group min-h-[300px] flex flex-col justify-between">
-            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-all duration-500 opacity-100 w-full">
+        <!-- Contenedor del Slideshow de Sponsors (Spotlight Card con Glassmorphism) -->
+        <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="glass-panel p-5 md:p-8 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/85 via-[#030712]/95 to-[#020617]/98">
+            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-10 transition-all duration-500 opacity-100 w-full py-1">
                 <!-- Se inyecta dinámicamente con JavaScript -->
             </div>
-            
-            <!-- Indicadores (Dots) -->
-            <div class="flex justify-center gap-3 mt-8">
-                <button onclick="setSponsorSlide(0)" class="sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 1"></button>
-                <button onclick="setSponsorSlide(1)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 2"></button>
-                <button onclick="setSponsorSlide(2)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 3"></button>
-                <button onclick="setSponsorSlide(3)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 4"></button>
-                <button onclick="setSponsorSlide(4)" class="sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300 cursor-pointer" aria-label="Sponsor 5"></button>
+
+            <!-- Barra de Progreso Delgada en la Base Inferior (3px) -->
+            <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-white/5 overflow-hidden pointer-events-none">
+                <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8); box-shadow: 0 0 14px rgba(6, 182, 212, 0.75);"></div>
             </div>
         </div>
     </section>
@@ -540,6 +694,49 @@
             modal.classList.remove('flex');
         }
 
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (!drawer) return;
+            const isOpen = drawer.classList.contains('menu-open');
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                drawer.classList.add('menu-open');
+                drawer.style.maxHeight = '480px';
+                drawer.style.opacity = '1';
+                drawer.style.pointerEvents = 'auto';
+                if (icon) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            }
+        }
+
+        function closeMobileMenu() {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (!drawer) return;
+            drawer.classList.remove('menu-open');
+            drawer.style.maxHeight = '0px';
+            drawer.style.opacity = '0';
+            drawer.style.pointerEvents = 'none';
+            if (icon) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Cerrar menú móvil al hacer clic en cualquier enlace interno
+        document.addEventListener('click', (e) => {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            const btn = document.getElementById('mobile-menu-btn');
+            if (!drawer || !drawer.classList.contains('menu-open')) return;
+            if (e.target.closest('#mobile-menu-drawer a') || (!e.target.closest('#mobile-menu-drawer') && !e.target.closest('#mobile-menu-btn'))) {
+                closeMobileMenu();
+            }
+        });
+
         // Script del Carrusel Interactivo e Infinito
         window.addEventListener('DOMContentLoaded', () => {
             const marquee = document.getElementById('marquee-track');
@@ -608,56 +805,182 @@
                 marquee.scrollLeft = scrollLeft - walk;
             }, { passive: true });
 
-            // Pausar en Hover
+            // Pausar ligeramente en Hover (1 segundo) y luego reanudar automáticamente
+            let marqueeHoverTimeout;
             marquee.addEventListener('mouseenter', () => {
                 isHovered = true;
+                clearTimeout(marqueeHoverTimeout);
+                marqueeHoverTimeout = setTimeout(() => {
+                    isHovered = false;
+                }, 1000);
             });
             marquee.addEventListener('mouseleave', () => {
+                clearTimeout(marqueeHoverTimeout);
                 isHovered = false;
             });
         });
 
-        // Script del Carrusel de Sponsors
+        // Script del Carrusel y Módulo Interactivo de Sponsors LBL
         const sponsorsData = [
             {
+                brand: "VOLT",
+                tag: "Barón Nashor",
+                logo: "", // Espacio preparado para el logo que enviarás
                 image: "assets/BARON.webp",
                 imageFallback: "assets/BARON.png",
-                sub: "Baròn Nashor traido a ustedes gracias a VOLT...",
-                title: 'DESTAPA LA <span class="text-yellow-400">ENERGIA</span> QUE DEFINE CAMPEONES...',
-                desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends..."
+                sub: "Barón Nashor traído a ustedes gracias a VOLT...",
+                title: 'DESTAPA LA <span class="text-yellow-400">ENERGÍA</span> QUE DEFINE CAMPEONES...',
+                desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends...",
+                barGradient: "linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8)",
+                barGlow: "0 0 14px rgba(6, 182, 212, 0.75)",
+                tabActiveClasses: "border-cyan-400/80 bg-cyan-500/15 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)]"
             },
             {
+                brand: "LEGION STORE",
+                tag: "Pentakill",
+                logo: "", // Espacio preparado para el logo que enviarás
                 image: "assets/pentakill.webp",
                 imageFallback: "assets/pentakill.png",
-                sub: "Legion Store presenta el Pentakill en la Grieta....",
-                title: 'DESATA EL <span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
-                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL"
+                sub: "Legion Store presenta el Pentakill en la Grieta...",
+                title: '<span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
+                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
+                barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
+                barGlow: "0 0 14px rgba(239, 68, 68, 0.75)",
+                tabActiveClasses: "border-red-500/80 bg-red-600/15 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)]"
             },
             {
+                brand: "LEGION STORE",
+                tag: "Exterminio",
+                logo: "", // Espacio preparado para el logo que enviarás
                 image: "assets/legion_store.webp",
                 imageFallback: "assets/legion_store.png",
-                sub: "Legion Store presenta el Exterminio definitivo....",
-                title: 'ASEGURA EL <span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
-                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL"
+                sub: "Legion Store presenta el Exterminio definitivo...",
+                title: '<span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
+                desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
+                barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
+                barGlow: "0 0 14px rgba(239, 68, 68, 0.75)",
+                tabActiveClasses: "border-red-500/80 bg-red-600/15 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)]"
             },
             {
+                brand: "ICONIC",
+                tag: "Streetwear",
+                logo: "", // Espacio preparado para el logo que enviarás
                 image: "assets/ICONIC3.webp",
                 imageFallback: "assets/ICONIC3.png",
                 sub: "",
                 title: 'PARA SER CAMPEÓN TIENES QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
-                desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL"
+                desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL",
+                barGradient: "linear-gradient(90deg, #94a3b8, #ffffff, #e2e8f0)",
+                barGlow: "0 0 14px rgba(255, 255, 255, 0.85)",
+                tabActiveClasses: "border-white/80 bg-white/15 text-white shadow-[0_0_20px_rgba(255,255,255,0.35)]"
             },
             {
+                brand: "AQUÍ ME QUEDO",
+                tag: "LAN Center",
+                logo: "", // Espacio preparado para el logo que enviarás
                 image: "assets/AQM.webp",
                 imageFallback: "assets/AQM.png",
                 sub: "Aquí me Quedo 📍 presenta...",
                 title: 'BIENVENIDOS A LA <span class="text-red-500">GRIETA DEL INVOCADOR</span>',
-                desc: "Aquí me Quedo LAN CENTER - Patrocinador Oficial de la LBL"
+                desc: "Aquí me Quedo LAN CENTER - Patrocinador Oficial de la LBL",
+                barGradient: "linear-gradient(90deg, #be123c, #fb7185, #f43f5e)",
+                barGlow: "0 0 14px rgba(251, 113, 133, 0.75)",
+                tabActiveClasses: "border-rose-400/80 bg-rose-500/15 text-white shadow-[0_0_20px_rgba(251,113,133,0.35)]"
             }
         ];
 
         let currentSponsorSlide = 0;
-        let sponsorInterval;
+        let sponsorTimeout = null;
+        let slideStartTime = 0;
+        let slideRemainingTime = 6000;
+        let isSponsorPaused = false;
+        let sponsorHoverResumeTimeout = null;
+        const SPONSOR_DURATION = 6000;
+
+        function renderSponsorTabs() {
+            const container = document.getElementById('sponsor-tabs-container');
+            if (!container) return;
+
+            // Si los botones ya existen en el DOM, solo actualizamos estados y auto-scroll
+            const existingButtons = container.querySelectorAll('.sponsor-brand-tab');
+            if (existingButtons.length === sponsorsData.length) {
+                existingButtons.forEach((btn, idx) => {
+                    const isActive = idx === currentSponsorSlide;
+                    const itemData = sponsorsData[idx];
+                    if (isActive) {
+                        btn.className = `sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer active-tab ${itemData.tabActiveClasses}`;
+                        // Desplazamiento horizontal EXCLUSIVO dentro de la barra de tabs (sin afectar el scroll vertical de la ventana)
+                        const scrollParent = container.parentElement;
+                        if (scrollParent && scrollParent.scrollWidth > scrollParent.clientWidth) {
+                            const btnLeft = btn.offsetLeft;
+                            const btnRight = btnLeft + btn.offsetWidth;
+                            const parentScroll = scrollParent.scrollLeft;
+                            const parentWidth = scrollParent.clientWidth;
+                            if (btnLeft < parentScroll) {
+                                scrollParent.scrollTo({ left: Math.max(0, btnLeft - 16), behavior: 'smooth' });
+                            } else if (btnRight > parentScroll + parentWidth) {
+                                scrollParent.scrollTo({ left: btnRight - parentWidth + 16, behavior: 'smooth' });
+                            }
+                        }
+                    } else {
+                        btn.className = 'sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer border-white/10 bg-slate-900/60 text-slate-400 hover:text-white hover:border-white/25 hover:bg-slate-800/60';
+                    }
+                });
+                return;
+            }
+
+            container.innerHTML = sponsorsData.map((s, idx) => {
+                const isActive = idx === currentSponsorSlide;
+                const activeClasses = isActive 
+                    ? `active-tab ${s.tabActiveClasses}` 
+                    : 'border-white/10 bg-slate-900/60 text-slate-400 hover:text-white hover:border-white/25 hover:bg-slate-800/60';
+                
+                const contentHTML = s.logo 
+                    ? `<img src="${s.logo}" alt="${s.brand}" class="max-h-7 md:max-h-8 max-w-[85%] object-contain transition-all duration-300 ${isActive ? 'filter brightness-110 drop-shadow-[0_0_12px_rgba(6,182,212,0.5)]' : 'filter brightness-75 opacity-60 group-hover:opacity-100 group-hover:brightness-100'}">`
+                    : `<div class="flex flex-col items-center justify-center">
+                         <span class="text-xs md:text-sm font-black uppercase tracking-widest ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}">${s.brand}</span>
+                         <span class="text-[9px] font-semibold tracking-wider text-slate-500 uppercase mt-0.5">${s.tag}</span>
+                       </div>`;
+
+                return `
+                    <button onclick="setSponsorSlide(${idx})" class="sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer ${activeClasses}" title="${s.brand} - ${s.tag}">
+                        ${contentHTML}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function startSponsorProgressBar(duration, resume = false) {
+            const bar = document.getElementById('sponsor-progress-bar');
+            if (!bar) return;
+            const currentData = sponsorsData[currentSponsorSlide];
+            if (currentData) {
+                bar.style.background = currentData.barGradient;
+                bar.style.boxShadow = currentData.barGlow;
+            }
+            if (!resume) {
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
+                void bar.offsetWidth; // Forzar reflow para reiniciar la animación desde cero
+            } else {
+                void bar.offsetWidth; // Mantener la anchura actual pausada
+            }
+            bar.style.transition = `width ${duration}ms linear`;
+            bar.style.width = '100%';
+        }
+
+        function runSponsorTimer(duration = SPONSOR_DURATION, resume = false) {
+            clearTimeout(sponsorTimeout);
+            slideStartTime = Date.now();
+            slideRemainingTime = duration;
+            isSponsorPaused = false;
+
+            startSponsorProgressBar(duration, resume);
+
+            sponsorTimeout = setTimeout(() => {
+                nextSponsorSlide(false);
+            }, duration);
+        }
 
         function renderSponsorSlide(index) {
             const container = document.getElementById('sponsor-slide-container');
@@ -665,8 +988,8 @@
 
             const data = sponsorsData[index];
             
-            const imgHTML = `<div class="w-full md:w-[500px] shrink-0 aspect-[2.2/1] relative group overflow-hidden">
-                     <img src="${data.image}" loading="lazy" decoding="async" alt="Sponsor Banner" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-102" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
+            const imgHTML = `<div class="w-full md:w-[480px] shrink-0 aspect-[2.2/1] relative group overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2 shadow-2xl flex items-center justify-center">
+                     <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
                    </div>`;
 
             const subHTML = data.sub ? `<p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>` : '';
@@ -677,7 +1000,7 @@
             setTimeout(() => {
                 container.innerHTML = `
                     ${imgHTML}
-                    <div class="text-left w-full">
+                    <div class="text-left w-full min-h-[110px] flex flex-col justify-center">
                         ${subHTML}
                         <h3 class="text-2xl md:text-5xl font-black italic uppercase leading-none tracking-tighter text-white mb-4">${data.title}</h3>
                         <p class="text-[10px] md:text-xs text-gray-500 font-bold tracking-widest uppercase">${data.desc}</p>
@@ -686,15 +1009,8 @@
                 container.style.opacity = '1';
             }, 150);
 
-            // Actualizar dots
-            const dots = document.querySelectorAll('.sponsor-dot');
-            dots.forEach((dot, idx) => {
-                if (idx === index) {
-                    dot.className = "sponsor-dot w-3 h-3 rounded-full bg-cyan-500 transition-all duration-300";
-                } else {
-                    dot.className = "sponsor-dot w-3 h-3 rounded-full bg-gray-700 hover:bg-cyan-500 transition-all duration-300";
-                }
-            });
+            // Actualizar tabs
+            renderSponsorTabs();
         }
 
         window.setSponsorSlide = (index) => {
@@ -703,14 +1019,55 @@
             resetSponsorTimer();
         };
 
-        function nextSponsorSlide() {
+        function nextSponsorSlide(fromUser = false) {
             currentSponsorSlide = (currentSponsorSlide + 1) % sponsorsData.length;
             renderSponsorSlide(currentSponsorSlide);
+            resetSponsorTimer();
+        }
+
+        function prevSponsorSlide() {
+            currentSponsorSlide = (currentSponsorSlide - 1 + sponsorsData.length) % sponsorsData.length;
+            renderSponsorSlide(currentSponsorSlide);
+            resetSponsorTimer();
         }
 
         function resetSponsorTimer() {
-            clearInterval(sponsorInterval);
-            sponsorInterval = setInterval(nextSponsorSlide, 6000);
+            clearTimeout(sponsorTimeout);
+            clearTimeout(sponsorHoverResumeTimeout);
+            isSponsorPaused = false;
+            runSponsorTimer(SPONSOR_DURATION, false);
+        }
+
+        function pauseSponsor() {
+            if (isSponsorPaused) return;
+            isSponsorPaused = true;
+            clearTimeout(sponsorTimeout);
+            clearTimeout(sponsorHoverResumeTimeout);
+
+            // Calcular tiempo restante exacto de la diapositiva en curso
+            const elapsed = Date.now() - slideStartTime;
+            slideRemainingTime = Math.max(300, slideRemainingTime - elapsed);
+
+            // Congelar la barra de progreso en su ancho actual exacto
+            const bar = document.getElementById('sponsor-progress-bar');
+            if (bar) {
+                const computedWidth = window.getComputedStyle(bar).width;
+                bar.style.transition = 'none';
+                bar.style.width = computedWidth;
+            }
+
+            // Pausa ligera de 1 segundo y luego reanudar exactamente desde donde se pausó
+            sponsorHoverResumeTimeout = setTimeout(() => {
+                resumeSponsor();
+            }, 1000);
+        }
+
+        function resumeSponsor() {
+            clearTimeout(sponsorHoverResumeTimeout);
+            if (!isSponsorPaused) return;
+
+            // Reanudar barra y temporizador exactamente con el tiempo y ancho restantes
+            runSponsorTimer(slideRemainingTime, true);
         }
 
         // DATOS DE LA DIRECTIVA Y STAFF EJECUTIVO (OPTIMIZADO WEBP)
@@ -954,6 +1311,16 @@
             if (isStaff && staffBadge) {
                 staffBadge.classList.remove('hidden');
                 staffBadge.classList.add('inline-flex');
+            }
+            const mobileStaffWrap = document.getElementById('mobile-staff-badge-wrap');
+            if (isStaff && mobileStaffWrap) {
+                mobileStaffWrap.classList.remove('hidden');
+                mobileStaffWrap.classList.add('block');
+            }
+            const mobileStaffLink = document.getElementById('mobile-staff-link');
+            if (isStaff && mobileStaffLink) {
+                mobileStaffLink.classList.remove('hidden');
+                mobileStaffLink.classList.add('flex');
             }
         });
     </script>
