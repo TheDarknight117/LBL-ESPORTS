@@ -54,8 +54,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=165">
-    <script type="module" src="/app-version.js?v=165"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=166">
+    <script type="module" src="/app-version.js?v=166"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -185,18 +185,6 @@
             box-shadow: 0 15px 40px -10px rgba(59, 130, 246, 0.3);
         }
 
-        /* Estilos del Módulo de Sponsors Oficiales */
-        .sponsor-brand-tab {
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .sponsor-brand-tab:hover {
-            transform: translateY(-2px);
-        }
-        .sponsor-brand-tab.active-tab {
-            border-color: rgba(6, 182, 212, 0.7) !important;
-            background: rgba(6, 182, 212, 0.15) !important;
-            box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.4);
-        }
 
         /* Estilos de Trapecio e Interactividad de la Directiva */
         .staff-section-layout {
@@ -561,22 +549,16 @@
             </p>
         </div>
 
-        <!-- Selector de Marcas / Tabs Interactivas (Marcas siempre visibles) -->
-        <div class="flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar pb-3 mb-6 px-1">
-            <div id="sponsor-tabs-container" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="flex items-center gap-2 md:gap-3 shrink-0">
-                <!-- Se inyectan las tabs dinámicamente -->
-            </div>
-        </div>
-        
-        <!-- Contenedor del Slideshow de Sponsors (Spotlight Card con Glassmorphism) -->
-        <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="glass-panel p-5 md:p-8 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/85 via-[#030712]/95 to-[#020617]/98">
-            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-10 transition-all duration-500 opacity-100 w-full py-1">
+
+        <!-- Contenedor del Slideshow de Sponsors (Diseño Abierto y Sin Bounding Boxes) -->
+        <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-4 md:py-8 px-2 md:px-4">
+            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[340px] md:min-h-[220px]">
                 <!-- Se inyecta dinámicamente con JavaScript -->
             </div>
 
-            <!-- Barra de Progreso Delgada en la Base Inferior (3px) -->
-            <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-white/5 overflow-hidden pointer-events-none">
-                <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8); box-shadow: 0 0 14px rgba(6, 182, 212, 0.75);"></div>
+            <!-- Barra de Progreso Delgada Minimalista (2px) -->
+            <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-8 pointer-events-none max-w-3xl mx-auto">
+                <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
             </div>
         </div>
     </section>
@@ -825,67 +807,77 @@
             {
                 brand: "VOLT",
                 tag: "Barón Nashor",
-                logo: "", // Espacio preparado para el logo que enviarás
+                logo: "assets/Logos Sponsor/LOGO_VOLT_NEW.png",
                 image: "assets/BARON.webp",
                 imageFallback: "assets/BARON.png",
                 sub: "Barón Nashor traído a ustedes gracias a VOLT...",
                 title: 'DESTAPA LA <span class="text-yellow-400">ENERGÍA</span> QUE DEFINE CAMPEONES...',
                 desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends...",
                 barGradient: "linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8)",
-                barGlow: "0 0 14px rgba(6, 182, 212, 0.75)",
-                tabActiveClasses: "border-cyan-400/80 bg-cyan-500/15 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)]"
+                tabActiveClasses: "border-cyan-400 bg-cyan-500/15 text-white",
+                ctaText: "Destapa la Energía",
+                ctaClasses: "bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40",
+                url: "https://www.instagram.com/voltbolivia"
             },
             {
                 brand: "LEGION STORE",
                 tag: "Pentakill",
-                logo: "", // Espacio preparado para el logo que enviarás
+                logo: "assets/Logos Sponsor/logoLegion.png",
                 image: "assets/pentakill.webp",
                 imageFallback: "assets/pentakill.png",
                 sub: "Legion Store presenta el Pentakill en la Grieta...",
                 title: '<span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
-                barGlow: "0 0 14px rgba(239, 68, 68, 0.75)",
-                tabActiveClasses: "border-red-500/80 bg-red-600/15 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)]"
+                tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
+                ctaText: "Equipamiento Gamer",
+                ctaClasses: "bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/40",
+                url: "https://www.tiktok.com/@legiongamerstore"
             },
             {
                 brand: "LEGION STORE",
                 tag: "Exterminio",
-                logo: "", // Espacio preparado para el logo que enviarás
+                logo: "assets/Logos Sponsor/logoLegion.png",
                 image: "assets/legion_store.webp",
                 imageFallback: "assets/legion_store.png",
                 sub: "Legion Store presenta el Exterminio definitivo...",
                 title: '<span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
-                barGlow: "0 0 14px rgba(239, 68, 68, 0.75)",
-                tabActiveClasses: "border-red-500/80 bg-red-600/15 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)]"
+                tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
+                ctaText: "Hardware Oficial",
+                ctaClasses: "bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40",
+                url: "https://www.tiktok.com/@legiongamerstore"
             },
             {
                 brand: "ICONIC",
                 tag: "Streetwear",
-                logo: "", // Espacio preparado para el logo que enviarás
+                logo: "", // Espacio mantenido como botón de momento
                 image: "assets/ICONIC3.webp",
                 imageFallback: "assets/ICONIC3.png",
-                sub: "",
+                sub: "Moda Urbana Oficial de la LBL...",
                 title: 'PARA SER CAMPEÓN TIENES QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
                 desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL",
                 barGradient: "linear-gradient(90deg, #94a3b8, #ffffff, #e2e8f0)",
-                barGlow: "0 0 14px rgba(255, 255, 255, 0.85)",
-                tabActiveClasses: "border-white/80 bg-white/15 text-white shadow-[0_0_20px_rgba(255,255,255,0.35)]"
+                tabActiveClasses: "border-white/80 bg-white/15 text-white",
+                ctaText: "Colección Streetwear",
+                ctaClasses: "bg-white/15 hover:bg-white text-white hover:text-black border border-white/30",
+                url: "https://www.instagram.com/be_iconicbrand"
             },
             {
                 brand: "AQUÍ ME QUEDO",
                 tag: "LAN Center",
-                logo: "", // Espacio preparado para el logo que enviarás
+                logo: "assets/Logos Sponsor/AQMlogo.png",
                 image: "assets/AQM.webp",
                 imageFallback: "assets/AQM.png",
                 sub: "Aquí me Quedo 📍 presenta...",
                 title: 'BIENVENIDOS A LA <span class="text-red-500">GRIETA DEL INVOCADOR</span>',
                 desc: "Aquí me Quedo LAN CENTER - Patrocinador Oficial de la LBL",
                 barGradient: "linear-gradient(90deg, #be123c, #fb7185, #f43f5e)",
-                barGlow: "0 0 14px rgba(251, 113, 133, 0.75)",
-                tabActiveClasses: "border-rose-400/80 bg-rose-500/15 text-white shadow-[0_0_20px_rgba(251,113,133,0.35)]"
+                tabActiveClasses: "border-rose-400 bg-rose-500/15 text-white",
+                ctaText: "Conoce el LAN Center",
+                ctaClasses: "bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40",
+                url: "https://www.tiktok.com/@aquimequedointernet"
             }
         ];
 
@@ -894,61 +886,11 @@
         let slideStartTime = 0;
         let slideRemainingTime = 6000;
         let isSponsorPaused = false;
+        let isSlideTransitioning = false; // Cerrojo anti-spam para evitar recargas ante clics repetidos
         let sponsorHoverResumeTimeout = null;
+        let hasPausedCurrentSlide = false; // Permite únicamente una pausa por ciclo de diapositiva
         const SPONSOR_DURATION = 6000;
 
-        function renderSponsorTabs() {
-            const container = document.getElementById('sponsor-tabs-container');
-            if (!container) return;
-
-            // Si los botones ya existen en el DOM, solo actualizamos estados y auto-scroll
-            const existingButtons = container.querySelectorAll('.sponsor-brand-tab');
-            if (existingButtons.length === sponsorsData.length) {
-                existingButtons.forEach((btn, idx) => {
-                    const isActive = idx === currentSponsorSlide;
-                    const itemData = sponsorsData[idx];
-                    if (isActive) {
-                        btn.className = `sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer active-tab ${itemData.tabActiveClasses}`;
-                        // Desplazamiento horizontal EXCLUSIVO dentro de la barra de tabs (sin afectar el scroll vertical de la ventana)
-                        const scrollParent = container.parentElement;
-                        if (scrollParent && scrollParent.scrollWidth > scrollParent.clientWidth) {
-                            const btnLeft = btn.offsetLeft;
-                            const btnRight = btnLeft + btn.offsetWidth;
-                            const parentScroll = scrollParent.scrollLeft;
-                            const parentWidth = scrollParent.clientWidth;
-                            if (btnLeft < parentScroll) {
-                                scrollParent.scrollTo({ left: Math.max(0, btnLeft - 16), behavior: 'smooth' });
-                            } else if (btnRight > parentScroll + parentWidth) {
-                                scrollParent.scrollTo({ left: btnRight - parentWidth + 16, behavior: 'smooth' });
-                            }
-                        }
-                    } else {
-                        btn.className = 'sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer border-white/10 bg-slate-900/60 text-slate-400 hover:text-white hover:border-white/25 hover:bg-slate-800/60';
-                    }
-                });
-                return;
-            }
-
-            container.innerHTML = sponsorsData.map((s, idx) => {
-                const isActive = idx === currentSponsorSlide;
-                const activeClasses = isActive 
-                    ? `active-tab ${s.tabActiveClasses}` 
-                    : 'border-white/10 bg-slate-900/60 text-slate-400 hover:text-white hover:border-white/25 hover:bg-slate-800/60';
-                
-                const contentHTML = s.logo 
-                    ? `<img src="${s.logo}" alt="${s.brand}" class="max-h-7 md:max-h-8 max-w-[85%] object-contain transition-all duration-300 ${isActive ? 'filter brightness-110 drop-shadow-[0_0_12px_rgba(6,182,212,0.5)]' : 'filter brightness-75 opacity-60 group-hover:opacity-100 group-hover:brightness-100'}">`
-                    : `<div class="flex flex-col items-center justify-center">
-                         <span class="text-xs md:text-sm font-black uppercase tracking-widest ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}">${s.brand}</span>
-                         <span class="text-[9px] font-semibold tracking-wider text-slate-500 uppercase mt-0.5">${s.tag}</span>
-                       </div>`;
-
-                return `
-                    <button onclick="setSponsorSlide(${idx})" class="sponsor-brand-tab group h-12 md:h-14 min-w-[110px] md:min-w-[140px] px-4 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer ${activeClasses}" title="${s.brand} - ${s.tag}">
-                        ${contentHTML}
-                    </button>
-                `;
-            }).join('');
-        }
 
         function startSponsorProgressBar(duration, resume = false) {
             const bar = document.getElementById('sponsor-progress-bar');
@@ -956,14 +898,13 @@
             const currentData = sponsorsData[currentSponsorSlide];
             if (currentData) {
                 bar.style.background = currentData.barGradient;
-                bar.style.boxShadow = currentData.barGlow;
             }
             if (!resume) {
                 bar.style.transition = 'none';
                 bar.style.width = '0%';
-                void bar.offsetWidth; // Forzar reflow para reiniciar la animación desde cero
+                void bar.offsetWidth; // Forzar reflow para reiniciar la animación
             } else {
-                void bar.offsetWidth; // Mantener la anchura actual pausada
+                void bar.offsetWidth;
             }
             bar.style.transition = `width ${duration}ms linear`;
             bar.style.width = '100%';
@@ -974,6 +915,9 @@
             slideStartTime = Date.now();
             slideRemainingTime = duration;
             isSponsorPaused = false;
+            if (!resume) {
+                hasPausedCurrentSlide = false;
+            }
 
             startSponsorProgressBar(duration, resume);
 
@@ -987,14 +931,17 @@
             if (!container) return;
 
             const data = sponsorsData[index];
+            if (!data) return;
             
-            const imgHTML = `<div class="w-full md:w-[480px] shrink-0 aspect-[2.2/1] relative group overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2 shadow-2xl flex items-center justify-center">
-                     <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
-                   </div>`;
+            // Imagen limpia sin resplandor difuso agresivo, con animación hover de zoom suave en el banner y enlace oficial
+            const imgHTML = `
+                <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="w-full md:w-[480px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar ${data.brand}">
+                    <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_12px_28px_rgba(0,0,0,0.8)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
+                </a>`;
 
             const subHTML = data.sub ? `<p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>` : '';
 
-            // Transición suave por CSS
+            // Fade suave sin mover layout
             container.style.opacity = '0';
             
             setTimeout(() => {
@@ -1002,72 +949,130 @@
                     ${imgHTML}
                     <div class="text-left w-full min-h-[110px] flex flex-col justify-center">
                         ${subHTML}
-                        <h3 class="text-2xl md:text-5xl font-black italic uppercase leading-none tracking-tighter text-white mb-4">${data.title}</h3>
-                        <p class="text-[10px] md:text-xs text-gray-500 font-bold tracking-widest uppercase">${data.desc}</p>
+                        <h3 class="text-2xl md:text-5xl font-black italic uppercase leading-none tracking-tighter text-white mb-3">${data.title}</h3>
+                        <p class="text-[10px] md:text-xs text-gray-400 font-bold tracking-widest uppercase mb-4">${data.desc}</p>
+                        <div>
+                            <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none ${data.ctaClasses}">
+                                <span>${data.ctaText}</span>
+                                <i class="fas fa-arrow-right text-[10px] transition-transform group-hover/btn:translate-x-1"></i>
+                            </a>
+                        </div>
                     </div>
                 `;
                 container.style.opacity = '1';
-            }, 150);
-
-            // Actualizar tabs
-            renderSponsorTabs();
+            }, 120);
         }
 
-        window.setSponsorSlide = (index) => {
-            currentSponsorSlide = index;
-            renderSponsorSlide(currentSponsorSlide);
-            resetSponsorTimer();
+        // Función robusta con try/catch y bloqueo de clics repetidos (usabilidad garantizada)
+        window.setSponsorSlide = function(index) {
+            try {
+                const targetIndex = Number(index);
+                if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= sponsorsData.length) {
+                    console.warn('[LBL Sponsors] Índice de diapositiva no válido:', index);
+                    return;
+                }
+
+                // Si ya está activo ese botón/slide, no recargar
+                if (targetIndex === currentSponsorSlide) {
+                    return;
+                }
+
+                // Si ya hay una transición en curso, descartar spam de clics
+                if (isSlideTransitioning) {
+                    return;
+                }
+
+                isSlideTransitioning = true;
+                currentSponsorSlide = targetIndex;
+
+                renderSponsorSlide(currentSponsorSlide);
+                resetSponsorTimer();
+
+                // Liberar cerrojo después de la animación
+                setTimeout(() => {
+                    isSlideTransitioning = false;
+                }, 350);
+            } catch (error) {
+                console.error('[LBL Sponsors] Error al seleccionar sponsor:', error);
+                isSlideTransitioning = false;
+            }
         };
 
         function nextSponsorSlide(fromUser = false) {
-            currentSponsorSlide = (currentSponsorSlide + 1) % sponsorsData.length;
-            renderSponsorSlide(currentSponsorSlide);
-            resetSponsorTimer();
+            try {
+                if (fromUser && isSlideTransitioning) return;
+                currentSponsorSlide = (currentSponsorSlide + 1) % sponsorsData.length;
+                renderSponsorSlide(currentSponsorSlide);
+                resetSponsorTimer();
+            } catch (err) {
+                console.error('[LBL Sponsors] Error en nextSponsorSlide:', err);
+            }
         }
 
         function prevSponsorSlide() {
-            currentSponsorSlide = (currentSponsorSlide - 1 + sponsorsData.length) % sponsorsData.length;
-            renderSponsorSlide(currentSponsorSlide);
-            resetSponsorTimer();
+            try {
+                if (isSlideTransitioning) return;
+                currentSponsorSlide = (currentSponsorSlide - 1 + sponsorsData.length) % sponsorsData.length;
+                renderSponsorSlide(currentSponsorSlide);
+                resetSponsorTimer();
+            } catch (err) {
+                console.error('[LBL Sponsors] Error en prevSponsorSlide:', err);
+            }
         }
 
         function resetSponsorTimer() {
-            clearTimeout(sponsorTimeout);
-            clearTimeout(sponsorHoverResumeTimeout);
-            isSponsorPaused = false;
-            runSponsorTimer(SPONSOR_DURATION, false);
+            try {
+                clearTimeout(sponsorTimeout);
+                clearTimeout(sponsorHoverResumeTimeout);
+                isSponsorPaused = false;
+                runSponsorTimer(SPONSOR_DURATION, false);
+            } catch (err) {
+                console.error('[LBL Sponsors] Error en resetSponsorTimer:', err);
+            }
         }
 
         function pauseSponsor() {
-            if (isSponsorPaused) return;
-            isSponsorPaused = true;
-            clearTimeout(sponsorTimeout);
-            clearTimeout(sponsorHoverResumeTimeout);
+            try {
+                // Solo detectar y pausar UNA vez por diapositiva activa (evita pausar múltiples veces al pasar el cursor)
+                if (isSponsorPaused || hasPausedCurrentSlide) return;
+                
+                isSponsorPaused = true;
+                hasPausedCurrentSlide = true; // Queda registrado que ya se aplicó la pausa en este ciclo
+                clearTimeout(sponsorTimeout);
+                clearTimeout(sponsorHoverResumeTimeout);
 
-            // Calcular tiempo restante exacto de la diapositiva en curso
-            const elapsed = Date.now() - slideStartTime;
-            slideRemainingTime = Math.max(300, slideRemainingTime - elapsed);
+                // Calcular tiempo restante exacto de la diapositiva en curso
+                const elapsed = Date.now() - slideStartTime;
+                slideRemainingTime = Math.max(500, slideRemainingTime - elapsed);
 
-            // Congelar la barra de progreso en su ancho actual exacto
-            const bar = document.getElementById('sponsor-progress-bar');
-            if (bar) {
-                const computedWidth = window.getComputedStyle(bar).width;
-                bar.style.transition = 'none';
-                bar.style.width = computedWidth;
+                // Congelar la barra de progreso en su ancho actual
+                const bar = document.getElementById('sponsor-progress-bar');
+                if (bar) {
+                    const computedWidth = window.getComputedStyle(bar).width;
+                    bar.style.transition = 'none';
+                    bar.style.width = computedWidth;
+                }
+
+                // Pausar por 1 segundo y luego reanudar automáticamente desde donde estaba
+                sponsorHoverResumeTimeout = setTimeout(() => {
+                    resumeSponsor();
+                }, 1000);
+            } catch (err) {
+                console.warn('[LBL Sponsors] Error en pauseSponsor:', err);
             }
-
-            // Pausa ligera de 1 segundo y luego reanudar exactamente desde donde se pausó
-            sponsorHoverResumeTimeout = setTimeout(() => {
-                resumeSponsor();
-            }, 1000);
         }
 
         function resumeSponsor() {
-            clearTimeout(sponsorHoverResumeTimeout);
-            if (!isSponsorPaused) return;
+            try {
+                clearTimeout(sponsorHoverResumeTimeout);
+                if (!isSponsorPaused) return; // Si ya se reanudó, descartar llamadas redundantes
+                isSponsorPaused = false;
 
-            // Reanudar barra y temporizador exactamente con el tiempo y ancho restantes
-            runSponsorTimer(slideRemainingTime, true);
+                // Reanudar con el tiempo restante exacto
+                runSponsorTimer(slideRemainingTime, true);
+            } catch (err) {
+                console.warn('[LBL Sponsors] Error en resumeSponsor:', err);
+            }
         }
 
         // DATOS DE LA DIRECTIVA Y STAFF EJECUTIVO (OPTIMIZADO WEBP)
