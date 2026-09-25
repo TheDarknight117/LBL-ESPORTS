@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=164">
+    <link rel="stylesheet" href="/dist/output.css?v=167">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -630,16 +630,31 @@
             </div>
 
             <!-- LISTA Y CARDS DE TORNEOS REGISTRADOS -->
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-black text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                        <i class="fas fa-list text-cyan-400"></i> Torneos Registrados en la Base de Datos
-                    </span>
-                    <span id="reg-count-badge" class="text-[10px] font-bold text-gray-500">Cargando...</span>
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fas fa-layer-group text-cyan-400"></i> Torneos Registrados
+                        </span>
+                        <span id="reg-count-badge" class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] font-black">Cargando...</span>
+                    </div>
+
+                    <!-- Botones de Filtrado / Pestañas Rápidas -->
+                    <div class="flex items-center gap-1 bg-[#030712] p-1 rounded-xl border border-gray-800 shrink-0 self-start sm:self-auto">
+                        <button type="button" onclick="setFiltroEstadoTorneos('todos')" id="btn-filtro-todos" class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer bg-cyan-500 text-black shadow">
+                            Todos (<span id="count-todos">0</span>)
+                        </button>
+                        <button type="button" onclick="setFiltroEstadoTorneos('vivo')" id="btn-filtro-vivo" class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer text-gray-400 hover:text-white">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block mr-1 animate-pulse"></span> En Vivo (<span id="count-vivo">0</span>)
+                        </button>
+                        <button type="button" onclick="setFiltroEstadoTorneos('finalizado')" id="btn-filtro-finalizado" class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer text-gray-400 hover:text-white">
+                            🏁 Finalizados (<span id="count-finalizados">0</span>)
+                        </button>
+                    </div>
                 </div>
 
-                <div id="grid-torneos-registrados" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Inyectado dinámicamente -->
+                <div id="grid-torneos-registrados" class="space-y-6">
+                    <!-- Inyectado dinámicamente con secciones separadas -->
                 </div>
             </div>
 
@@ -937,80 +952,192 @@
             renderizarTablaTorneosRegistrados(lista);
         }
 
+        window.filtroEstadoTorneos = 'todos';
+
+        window.setFiltroEstadoTorneos = (filtro) => {
+            window.filtroEstadoTorneos = filtro;
+            const btnTodos = document.getElementById('btn-filtro-todos');
+            const btnVivo = document.getElementById('btn-filtro-vivo');
+            const btnFin = document.getElementById('btn-filtro-finalizado');
+
+            const activeClasses = 'bg-cyan-500 text-black shadow';
+            const inactiveClasses = 'text-gray-400 hover:text-white hover:bg-gray-800/60';
+
+            if (btnTodos) btnTodos.className = `px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${filtro === 'todos' ? activeClasses : inactiveClasses}`;
+            if (btnVivo) btnVivo.className = `px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${filtro === 'vivo' ? activeClasses : inactiveClasses}`;
+            if (btnFin) btnFin.className = `px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${filtro === 'finalizado' ? activeClasses : inactiveClasses}`;
+
+            renderizarTablaTorneosRegistrados(torneosRegistradosList);
+        };
+
+        function renderCardTorneo(t) {
+            const datos = t.datosChallonge || {};
+            const chState = (datos.estado || '').toLowerCase();
+            const localState = (t.estado || '').toLowerCase();
+
+            const isCompleted = localState === 'finalizado' || localState === 'complete' || chState === 'complete' || chState === 'awaiting_review';
+            const isPending = !isCompleted && (localState === 'proximamente' || localState === 'pending' || chState === 'pending');
+            const isVivo = !isCompleted && !isPending;
+
+            let statusBadge = '';
+            let cardThemeClasses = '';
+            if (isVivo) {
+                statusBadge = `<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 text-[10px] font-black uppercase flex items-center gap-1.5 whitespace-nowrap shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]"></span> EN VIVO</span>`;
+                cardThemeClasses = 'border-cyan-500/40 bg-gradient-to-b from-[#081827] to-[#070c14] shadow-[0_4px_20px_rgba(6,182,212,0.12)] hover:border-cyan-400';
+            } else if (isPending) {
+                statusBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase flex items-center gap-1.5 whitespace-nowrap"><i class="fas fa-clock text-amber-400 text-[9px]"></i> PRÓXIMAMENTE</span>`;
+                cardThemeClasses = 'border-amber-500/30 bg-[#070c14] hover:border-amber-500/50';
+            } else {
+                statusBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-800/90 text-slate-300 border border-slate-700/70 text-[10px] font-bold uppercase flex items-center gap-1.5 whitespace-nowrap">🏁 FINALIZADO</span>`;
+                cardThemeClasses = 'border-gray-800/90 bg-[#070c14] hover:border-gray-700 hover:bg-[#0a111c]';
+            }
+
+            let catBadge = '';
+            if (t.categoria === 'liga_lbl') {
+                catBadge = `<span class="px-2 py-0.5 rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 text-[9px] font-black uppercase tracking-wider whitespace-nowrap flex items-center gap-1"><i class="fas fa-trophy text-[8px]"></i> Liga LBL</span>`;
+            } else if (t.categoria === 'clasificacion_lbl') {
+                catBadge = `<span class="px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 text-[9px] font-black uppercase tracking-wider whitespace-nowrap flex items-center gap-1"><i class="fas fa-bullseye text-[8px]"></i> Clasificación</span>`;
+            } else if (t.categoria === 'lbl_series') {
+                catBadge = `<span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-400 border border-orange-500/30 text-[9px] font-black uppercase tracking-wider whitespace-nowrap flex items-center gap-1"><i class="fas fa-bolt text-[8px]"></i> Series</span>`;
+            } else {
+                catBadge = `<span class="px-2 py-0.5 rounded-md bg-purple-500/15 text-purple-400 border border-purple-500/30 text-[9px] font-black uppercase tracking-wider whitespace-nowrap flex items-center gap-1"><i class="fas fa-globe text-[8px]"></i> Torneo Abierto</span>`;
+            }
+
+            const divBadge = t.division ? `<span class="px-1.5 py-0.5 rounded-md bg-gray-800/90 text-gray-300 border border-gray-700/60 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap">${t.division}</span>` : '';
+
+            const numMatches = t.datosChallonge?.matches?.length || 0;
+            const lastSync = t.actualizadoEn ? new Date(t.actualizadoEn).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }) : 'Nunca';
+
+            return `
+                <div class="glass-panel p-4 rounded-2xl border ${cardThemeClasses} space-y-3 shadow-lg flex flex-col justify-between transition-all group">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between gap-2 border-b border-gray-800/60 pb-2.5">
+                            <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                                ${catBadge}
+                                ${divBadge}
+                            </div>
+                            <div class="shrink-0">
+                                ${statusBadge}
+                            </div>
+                        </div>
+
+                        <h4 class="font-black text-white text-sm uppercase tracking-wide leading-snug group-hover:text-cyan-300 transition-colors line-clamp-2" title="${t.nombre}">
+                            ${t.nombre}
+                        </h4>
+
+                        <div class="bg-[#030712]/80 rounded-xl p-2.5 border border-gray-800/80 flex items-center justify-between text-[11px] gap-2">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <i class="fas fa-link text-cyan-400/80 text-[10px] shrink-0"></i>
+                                <span class="text-gray-400 text-[10px] font-bold uppercase shrink-0">Slug:</span>
+                                <a href="https://challonge.com/${t.slug}" target="_blank" class="text-cyan-300 hover:text-cyan-200 font-mono font-bold text-[10px] truncate hover:underline" title="Ver torneo en Challonge: ${t.slug}">
+                                    ${t.slug}
+                                </a>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-md bg-gray-800/80 border border-gray-700/50 text-gray-300 text-[10px] font-bold shrink-0 flex items-center gap-1">
+                                <i class="fas fa-gamepad text-cyan-400 text-[9px]"></i> ${numMatches} partidas
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2.5 border-t border-gray-800/70 flex items-center justify-between text-xs">
+                        <span class="text-[10px] text-gray-400 font-medium flex items-center gap-1">
+                            <i class="far fa-clock text-gray-500 text-[9px]"></i> Sync: <strong class="text-gray-300 font-bold">${lastSync}</strong>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="sincronizarTorneoRegistrado('${t.id}')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40 hover:border-cyan-400 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm active:scale-95" title="Sincronizar datos con Challonge">
+                                <i class="fas fa-sync-alt text-[9px]"></i> Sync
+                            </button>
+                            <button onclick="abrirModalTorneo('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-cyan-500/20 text-gray-400 hover:text-cyan-300 border border-gray-700/40 hover:border-cyan-500/40 flex items-center justify-center transition-all cursor-pointer" title="Editar torneo">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button onclick="eliminarTorneoRegistrado('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-gray-700/40 hover:border-rose-500/40 flex items-center justify-center transition-all cursor-pointer" title="Eliminar torneo">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
         function renderizarTablaTorneosRegistrados(lista) {
             const container = document.getElementById('grid-torneos-registrados');
+            const badge = document.getElementById('reg-count-badge');
             if (!container) return;
 
-            if (lista.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-6 text-center text-xs text-gray-500 font-bold uppercase border border-gray-800 rounded-2xl bg-[#030712]">No hay torneos registrados. Haz clic en "Registrar Torneo" para agregar uno.</div>`;
+            if (!lista || lista.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-xs text-gray-500 font-bold uppercase border border-dashed border-gray-800 rounded-2xl bg-[#030712]">No hay torneos registrados. Haz clic en "Registrar Torneo" para agregar uno.</div>`;
+                if (badge) badge.innerText = `0 registrados`;
+                const cTodos = document.getElementById('count-todos');
+                const cVivo = document.getElementById('count-vivo');
+                const cFin = document.getElementById('count-finalizados');
+                if (cTodos) cTodos.innerText = '0';
+                if (cVivo) cVivo.innerText = '0';
+                if (cFin) cFin.innerText = '0';
                 return;
             }
 
-            let html = '';
+            const enVivoList = [];
+            const finalizadosList = [];
+
             lista.forEach(t => {
                 const datos = t.datosChallonge || {};
                 const chState = (datos.estado || '').toLowerCase();
                 const localState = (t.estado || '').toLowerCase();
-
                 const isCompleted = localState === 'finalizado' || localState === 'complete' || chState === 'complete' || chState === 'awaiting_review';
-                const isPending = !isCompleted && (localState === 'proximamente' || localState === 'pending' || chState === 'pending');
-                const isVivo = !isCompleted && !isPending;
-
-                let statusBadge = '';
-                if (isVivo) {
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-black uppercase flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> EN VIVO</span>`;
-                } else if (isPending) {
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase flex items-center gap-1.5"><i class="fas fa-clock text-amber-400"></i> PRÓXIMAMENTE</span>`;
+                if (isCompleted) {
+                    finalizadosList.push(t);
                 } else {
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 text-[10px] font-black uppercase flex items-center gap-1.5">🏁 FINALIZADO</span>`;
+                    enVivoList.push(t);
                 }
-
-                let catBadge = '';
-                if (t.categoria === 'liga_lbl') {
-                    catBadge = `<span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[9px] font-bold uppercase">🏆 Liga LBL</span>`;
-                } else if (t.categoria === 'clasificacion_lbl') {
-                    catBadge = `<span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[9px] font-bold uppercase">🎯 Clasificación</span>`;
-                } else if (t.categoria === 'lbl_series') {
-                    catBadge = `<span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/30 text-[9px] font-bold uppercase">⚡ LBL Series</span>`;
-                } else {
-                    catBadge = `<span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[9px] font-bold uppercase">🌐 Abierto</span>`;
-                }
-
-                const numMatches = t.datosChallonge?.matches?.length || 0;
-                const lastSync = t.actualizadoEn ? new Date(t.actualizadoEn).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }) : 'Nunca';
-
-                html += `
-                    <div class="glass-panel p-4 rounded-2xl border border-gray-800 bg-[#070c14] space-y-3 shadow-lg flex flex-col justify-between hover:border-cyan-500/40 transition-all">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-1.5">${catBadge} <span class="text-[10px] text-cyan-400 font-bold">${t.division || 'Open'}</span></div>
-                                ${statusBadge}
-                            </div>
-                            <h4 class="font-black text-white text-sm uppercase tracking-wide leading-snug">${t.nombre}</h4>
-                            <div class="text-[11px] text-gray-400 font-medium flex items-center justify-between">
-                                <span><i class="fas fa-link text-gray-500 mr-1"></i> Slug: <strong class="text-cyan-400">${t.slug}</strong></span>
-                                <span><i class="fas fa-gamepad text-gray-500 mr-1"></i> ${numMatches} partidas</span>
-                            </div>
-                        </div>
-
-                        <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
-                            <span class="text-[10px] text-gray-500 font-bold">Sync: ${lastSync}</span>
-                            <div class="flex items-center gap-2">
-                                <button onclick="sincronizarTorneoRegistrado('${t.id}')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40 rounded-lg font-black text-[11px] transition-all cursor-pointer shadow" title="Sincronizar datos con Challonge">
-                                    <i class="fas fa-sync-alt mr-1"></i> Sync
-                                </button>
-                                <button onclick="abrirModalTorneo('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-cyan-500/20 text-gray-300 hover:text-cyan-400 flex items-center justify-center transition-colors cursor-pointer" title="Editar torneo">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </button>
-                                <button onclick="eliminarTorneoRegistrado('${t.id}')" class="w-8 h-8 rounded-lg bg-gray-800/80 hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer" title="Eliminar torneo">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
             });
 
-            container.innerHTML = html;
+            if (badge) badge.innerText = `${lista.length} registrados`;
+            const cTodos = document.getElementById('count-todos');
+            const cVivo = document.getElementById('count-vivo');
+            const cFin = document.getElementById('count-finalizados');
+            if (cTodos) cTodos.innerText = lista.length;
+            if (cVivo) cVivo.innerText = enVivoList.length;
+            if (cFin) cFin.innerText = finalizadosList.length;
+
+            const cardsVivoHTML = enVivoList.map(renderCardTorneo).join('');
+            const cardsFinalizadosHTML = finalizadosList.map(renderCardTorneo).join('');
+
+            const seccionVivoHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase tracking-wider flex items-center gap-2 text-cyan-300">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]"></span>
+                            Torneos En Vivo / Activos
+                            <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[9px] font-black tracking-widest">${enVivoList.length}</span>
+                        </h4>
+                    </div>
+                    ${enVivoList.length > 0 
+                        ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cardsVivoHTML}</div>` 
+                        : `<div class="p-6 text-center text-xs text-gray-500 font-bold uppercase border border-dashed border-gray-800 rounded-2xl bg-[#030712]/50">No hay torneos en vivo en este momento.</div>`
+                    }
+                </div>`;
+
+            const seccionFinalizadosHTML = `
+                <div class="space-y-3 ${window.filtroEstadoTorneos === 'todos' ? 'pt-4 border-t border-gray-800/80' : ''}">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase tracking-wider flex items-center gap-2 text-slate-300">
+                            <span>🏁</span>
+                            Historial de Torneos Finalizados
+                            <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[9px] font-black tracking-widest">${finalizadosList.length}</span>
+                        </h4>
+                    </div>
+                    ${finalizadosList.length > 0 
+                        ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cardsFinalizadosHTML}</div>` 
+                        : `<div class="p-6 text-center text-xs text-gray-500 font-bold uppercase border border-dashed border-gray-800 rounded-2xl bg-[#030712]/50">No hay torneos finalizados registrados.</div>`
+                    }
+                </div>`;
+
+            if (window.filtroEstadoTorneos === 'vivo') {
+                container.innerHTML = seccionVivoHTML;
+            } else if (window.filtroEstadoTorneos === 'finalizado') {
+                container.innerHTML = seccionFinalizadosHTML;
+            } else {
+                container.innerHTML = seccionVivoHTML + seccionFinalizadosHTML;
+            }
         }
 
         window.cargarTorneosDeCuentaChallonge = async () => {
@@ -2800,6 +2927,10 @@
                                         <span class="text-[9px] block text-gray-500 uppercase font-black tracking-wider">Email</span>
                                         <span class="text-white font-bold block truncate max-w-[150px] sm:max-w-[220px]" title="${rep.mail}">${rep.mail}</span>
                                     </div>
+                                    <div class="col-span-2 border-t border-gray-800/60 pt-1.5 flex items-center justify-between">
+                                        <span class="text-[9px] block text-gray-500 uppercase font-black tracking-wider">Departamento</span>
+                                        <span class="text-yellow-400 font-bold flex items-center gap-1"><i class="fas fa-map-marker-alt text-[9px] text-yellow-500"></i> ${rep.departamento || '-'}</span>
+                                    </div>
                                 </div>
                             </div>`;
                     }
@@ -2825,6 +2956,8 @@
             const dibujarLectura = (rol, j) => {
                 if(!j || !j.nombre) return `<div class="bg-[#111] border border-dashed border-gray-800 p-4 rounded-xl text-center text-gray-600 text-xs font-bold uppercase mt-4">Sin registro en ${rol}</div>`;
                 
+                const deptoVal = j.departamento && j.departamento.trim() ? j.departamento.trim() : 'No registrado';
+
                 let smurfHTML = '';
                 if(j.cuenta_secundaria && j.cuenta_secundaria.riotId2) {
                     smurfHTML = `
@@ -2841,7 +2974,7 @@
                     <div class="bg-[#111] p-4 rounded-2xl border border-gray-800">
                         <div class="flex justify-between items-center border-b border-gray-800 pb-2 mb-3">
                             <span class="font-black text-blue-500 uppercase tracking-widest text-sm">${rol}</span>
-                            <a href="${j.opgg||'#'}" target="_blank" class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded text-[10px] font-bold">OP.GG</a>
+                            <a href="${j.opgg||'#'}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-3 py-1 rounded text-[10px] font-bold transition-colors">OP.GG</a>
                         </div>
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Riot ID Principal</p>
                         <p class="text-lg font-black text-white leading-none mb-1 break-words">${j.riotId||'-'}</p>
@@ -2851,6 +2984,10 @@
                             <div><span class="block text-[9px] uppercase text-gray-500 font-bold">C.I.</span><span class="text-gray-300 font-medium">${j.ci||'-'}</span></div>
                             <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Celular</span><span class="text-green-400 font-bold text-sm">${j.tel||'-'}</span></div>
                             <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Discord</span><span class="text-indigo-400 font-bold text-sm break-all">${j.discordId||'-'}</span></div>
+                            <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
+                                <span class="text-[9px] uppercase text-gray-500 font-bold">Departamento / Residencia</span>
+                                <span class="text-yellow-400 font-bold text-xs flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-[10px] text-yellow-500"></i> ${deptoVal}</span>
+                            </div>
                         </div>
                     </div>`;
             };
