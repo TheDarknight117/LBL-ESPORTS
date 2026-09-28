@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=167">
+    <link rel="stylesheet" href="/dist/output.css?v=168">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -332,22 +332,26 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
-                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500">
-                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Total Registros</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+                <div onclick="filtrarPorEstado('')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500 cursor-pointer hover:border-blue-400 hover:bg-blue-950/20 transition-all select-none group" title="Ver todos los registros">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-blue-400 font-bold uppercase mb-1 transition-colors">Total Registros</p>
                     <p class="text-2xl sm:text-3xl font-black text-white" id="stat-total">0</p>
                 </div>
-                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500">
-                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Pendientes</p>
+                <div onclick="filtrarPorEstado('Pendiente')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500 cursor-pointer hover:border-yellow-400 hover:bg-yellow-950/20 transition-all select-none group" title="Filtrar por Pendientes">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-yellow-400 font-bold uppercase mb-1 transition-colors">Pendientes</p>
                     <p class="text-2xl sm:text-3xl font-black text-yellow-500" id="stat-pendientes">0</p>
                 </div>
-                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500">
-                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Aceptados</p>
+                <div onclick="filtrarPorEstado('Aceptado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500 cursor-pointer hover:border-green-400 hover:bg-green-950/20 transition-all select-none group" title="Filtrar por Aceptados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-green-400 font-bold uppercase mb-1 transition-colors">Aceptados</p>
                     <p class="text-2xl sm:text-3xl font-black text-green-500" id="stat-aceptados">0</p>
                 </div>
-                <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500">
-                    <p class="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Observados</p>
+                <div onclick="filtrarPorEstado('Observado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500 cursor-pointer hover:border-orange-400 hover:bg-orange-950/20 transition-all select-none group" title="Filtrar por Observados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-orange-400 font-bold uppercase mb-1 transition-colors">Observados</p>
                     <p class="text-2xl sm:text-3xl font-black text-orange-500" id="stat-observados">0</p>
+                </div>
+                <div onclick="filtrarPorEstado('Rechazado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:border-red-400 hover:bg-red-950/20 transition-all select-none group" title="Filtrar por Rechazados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-red-400 font-bold uppercase mb-1 transition-colors">Rechazados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-red-500" id="stat-rechazados">0</p>
                 </div>
             </div>
 
@@ -705,17 +709,27 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block font-black text-gray-300 uppercase tracking-wider mb-1.5">Nombre del Torneo</label>
-                        <input type="text" id="t-nombre" required class="w-full bg-[#030712] border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-white font-bold outline-none focus:border-cyan-500 transition-colors" placeholder="Ej. Liga LBL 2026 - Clausura">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block font-black text-gray-300 uppercase tracking-wider">Nombre del Torneo</label>
+                            <span id="t-nombre-charcount" class="text-[10px] text-gray-500 font-mono font-bold">0/60</span>
+                        </div>
+                        <input type="text" id="t-nombre" required maxlength="60" oninput="actualizarContadorNombreTorneo(this.value)" class="w-full bg-[#030712] border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-white font-bold outline-none focus:border-cyan-500 transition-colors" placeholder="Ej. Liga LBL 2026 - Clausura">
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <label class="block font-black text-gray-300 uppercase tracking-wider">Enlace o Slug de Challonge</label>
+                            <label class="block font-black text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-lock text-[10px] text-cyan-400"></i> Slug / ID de Challonge
+                            </label>
                             <span id="t-slug-status" class="text-[10px] text-cyan-400 font-bold hidden"></span>
                         </div>
-                        <input type="text" id="t-slug" required oninput="debounceAutoDetectarTorneo(this.value)" class="w-full bg-[#030712] border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-cyan-400 font-mono font-bold outline-none focus:border-cyan-500 transition-colors" placeholder="Ej. https://challonge.com/T1CLBL2026 o T1CLBL2026">
-                        <span class="text-[10px] text-gray-500 mt-1 block">Pega cualquier link de Challonge: la API detecta automáticamente los datos.</span>
+                        <div class="relative">
+                            <input type="text" id="t-slug" required readonly class="w-full bg-[#030712]/70 border border-gray-800/80 rounded-xl px-3.5 py-2.5 text-cyan-400 font-mono font-bold outline-none cursor-not-allowed select-all" placeholder="Elige un torneo arriba para vincular">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-400/80 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded-full pointer-events-none">
+                                <i class="fas fa-shield-alt text-[9px] mr-1"></i> Oficial
+                            </span>
+                        </div>
+                        <span class="text-[10px] text-gray-500 mt-1 block">Vinculado a tu cuenta oficial de Challonge para garantizar sincronización 100% libre de errores.</span>
                     </div>
                 </div>
 
@@ -779,7 +793,7 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import "/app-version.js";
+        import "/app-version.js?v=168";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1160,13 +1174,29 @@
             selector.innerHTML = html;
         };
 
+        window.actualizarContadorNombreTorneo = (val) => {
+            const el = document.getElementById('t-nombre-charcount');
+            if (!el) return;
+            const len = (val || '').length;
+            el.innerText = `${len}/60`;
+            if (len >= 60) {
+                el.className = "text-[10px] text-rose-400 font-mono font-black";
+            } else if (len >= 50) {
+                el.className = "text-[10px] text-yellow-400 font-mono font-bold";
+            } else {
+                el.className = "text-[10px] text-gray-500 font-mono font-bold";
+            }
+        };
+
         window.seleccionarTorneoCuentaChallonge = (torneoId) => {
             if (!torneoId) return;
             const t = listaTorneosCuentaChallonge.find(item => item.id.toString() === torneoId.toString());
             if (!t) return;
 
-            document.getElementById('t-nombre').value = t.name || '';
+            const cleanNombre = (t.name || '').substring(0, 60);
+            document.getElementById('t-nombre').value = cleanNombre;
             document.getElementById('t-slug').value = t.url || t.id;
+            actualizarContadorNombreTorneo(cleanNombre);
 
             // Auto-detectar categoría
             const nomLower = (t.name || '').toLowerCase();
@@ -1378,6 +1408,7 @@
                 editIdEl.value = item.id;
                 document.getElementById('t-nombre').value = item.nombre || '';
                 document.getElementById('t-slug').value = item.slug || '';
+                actualizarContadorNombreTorneo(item.nombre || '');
                 const cat = item.categoria || 'liga_lbl';
                 document.getElementById('t-categoria').value = cat;
                 document.getElementById('t-estado').value = item.estado || 'vivo';
@@ -1388,6 +1419,7 @@
                 titleEl.innerHTML = `<i class="fas fa-plus text-cyan-400"></i> Registrar Nuevo Torneo`;
                 editIdEl.value = '';
                 document.getElementById('form-torneo').reset();
+                actualizarContadorNombreTorneo('');
                 actualizarPillsParticipantes('liga_lbl', null);
                 actualizarPillsFormatos(null);
             }
@@ -1407,6 +1439,23 @@
         window.guardarTorneoRegistrado = async (e) => {
             e.preventDefault();
 
+            const editId = document.getElementById('t-edit-id').value;
+            const nombre = document.getElementById('t-nombre').value.trim();
+            let rawSlug = document.getElementById('t-slug').value.trim();
+
+            if (!nombre) {
+                alert("⚠️ ATENCIÓN: El nombre del torneo es obligatorio.");
+                return;
+            }
+            if (nombre.length > 60) {
+                alert(`⚠️ ATENCIÓN: El nombre del torneo no puede superar los 60 caracteres (actual: ${nombre.length}).`);
+                return;
+            }
+            if (!rawSlug) {
+                alert("⚠️ ATENCIÓN: Debes seleccionar un torneo de tu cuenta oficial de Challonge para vincular el slug e ID oficial.");
+                return;
+            }
+
             if (!participantesSeleccionados || participantesSeleccionados.size === 0) {
                 alert("⚠️ ATENCIÓN: Debes marcar al menos una etiqueta en la sección 'Participantes'.");
                 return;
@@ -1415,10 +1464,6 @@
                 alert("⚠️ ATENCIÓN: Debes marcar al menos una etiqueta en 'Formato de Juego'.");
                 return;
             }
-
-            const editId = document.getElementById('t-edit-id').value;
-            const nombre = document.getElementById('t-nombre').value.trim();
-            let rawSlug = document.getElementById('t-slug').value.trim();
             const categoria = document.getElementById('t-categoria').value;
             const division = Array.from(participantesSeleccionados).join(', ');
             const estado = document.getElementById('t-estado').value;
@@ -1954,9 +1999,21 @@
             aplicarFiltrosYOrden();
         };
 
+        window.filtrarPorEstado = (estado) => {
+            const input = document.getElementById('searchInput');
+            if (!input) return;
+            const target = (estado || '').trim();
+            if (input.value.trim().toLowerCase() === target.toLowerCase()) {
+                input.value = '';
+            } else {
+                input.value = target;
+            }
+            aplicarFiltrosYOrden();
+        };
+
         function procesarSnapshotEquipos(querySnapshot) {
             equiposLocales = [];
-            let stats = { total: 0, pendientes: 0, aceptados: 0, observados: 0 };
+            let stats = { total: 0, pendientes: 0, aceptados: 0, observados: 0, rechazados: 0 };
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -1965,10 +2022,12 @@
                 if (eq.equipo && eq.equipo.nombre) {
                     equiposLocales.push(eq);
                     stats.total++;
-                    const estado = eq.estado || 'Pendiente';
-                    if(estado === 'Pendiente') stats.pendientes++;
-                    if(estado === 'Aceptado') stats.aceptados++;
-                    if(estado === 'Observado') stats.observados++;
+                    const estadoNorm = (eq.estado || 'Pendiente').toString().trim().toLowerCase();
+                    if(estadoNorm === 'pendiente') stats.pendientes++;
+                    else if(estadoNorm === 'aceptado') stats.aceptados++;
+                    else if(estadoNorm === 'observado') stats.observados++;
+                    else if(estadoNorm === 'rechazado') stats.rechazados++;
+                    else stats.pendientes++;
                 }
             });
 
@@ -1976,6 +2035,8 @@
             document.getElementById('stat-pendientes').innerText = stats.pendientes;
             document.getElementById('stat-aceptados').innerText = stats.aceptados;
             document.getElementById('stat-observados').innerText = stats.observados;
+            const elRechazados = document.getElementById('stat-rechazados');
+            if (elRechazados) elRechazados.innerText = stats.rechazados;
 
             precargarLogosEquipos(equiposLocales);
             aplicarFiltrosYOrden();

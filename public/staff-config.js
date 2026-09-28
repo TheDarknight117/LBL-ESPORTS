@@ -14,12 +14,13 @@ export const STAFF_DIRECTORY = {
     "jhonatan123progame@gmail.com": "Darkcito",
 
     // Agrega o edita los correos del resto del Staff aquí abajo:
-    "iluigi.xd@gmail.com": "Luico",
-    "poolphoenix2324@gmail.com": "Pol",
-    "leoduran651@gmail.com": "Ren Noroi",
-    "balderramaalexander765@gmail.com": "Aliaselalex",
-    "silesgalarzabts@hotmail.com": "Ketwi",
-    "lf2018.00@gmail.com" : "Luis F.",
+    "iluigi.xd@gmail.com": "LBL Luico",
+    "poolphoenix2324@gmail.com": "LBL Pol",
+    "leoduran651@gmail.com": "LBL Ren Noroi",
+    "balderramaalexander765@gmail.com": "LBL Aliaselalex",
+    "silesgalarzabts@hotmail.com": "LBL Ketwi",
+    "lf2018.00@gmail.com" : "LBL Luchot",
+    "torricocarolina44@gmail.com": "LBL Andy",
      
 };
 
