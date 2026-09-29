@@ -30,8 +30,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=164">
-    <script type="module" src="/app-version.js?v=164"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=169">
+    <script type="module" src="/app-version.js?v=169"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -87,7 +87,13 @@
                 <div class="card-panel p-5 md:p-8 rounded-3xl mb-6 border-t-4 border-blue-500/50">
                     <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fas fa-shield-halved text-blue-500"></i> <span class="text-gradient-blue">IDENTIDAD DEL EQUIPO</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="md:col-span-1"><label class="label-text">Nombre del Equipo *</label><input type="text" id="teamName" class="input-lbl focus:border-blue-500" placeholder="Ej: Equipo Competitivo" required></div>
+                        <div class="md:col-span-1">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="label-text !mb-0">Nombre del Equipo *</label>
+                                <span id="teamName-charcount" class="text-[10px] font-bold text-gray-500 font-mono">0/35</span>
+                            </div>
+                            <input type="text" id="teamName" maxlength="35" class="input-lbl focus:border-blue-500" placeholder="Ej: Equipo Competitivo" required>
+                        </div>
                         <div class="md:col-span-1"><label class="label-text">Tag del Equipo (Acrónimo) *</label><input type="text" id="teamTag" class="input-lbl focus:border-blue-500" placeholder="Ej: EQC" maxlength="5" style="text-transform: uppercase;" required></div>
                         
                         <div><label class="label-text">Tier de Liga *</label>
@@ -107,9 +113,9 @@
                     
                     <div id="streamers-container" class="space-y-4 mb-6">
                         <div class="bg-[#0a0a0a] p-4 rounded-2xl border border-gray-800 streamer-row grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2 border-b border-gray-800 pb-2 mb-2"><span class="text-[10px] font-black text-purple-400 uppercase tracking-widest"><i class="fas fa-star mr-1"></i> Streamer Principal</span></div>
-                            <div><label class="label-text">Nombre del Canal *</label><input type="text" id="streamerName_1" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalOficial" required></div>
-                            <div><label class="label-text">Link del Canal *</label><input type="url" id="streamLink_1" class="input-lbl focus:border-purple-500" placeholder="Twitch / YouTube / Kick" required></div>
+                            <div class="md:col-span-2 border-b border-gray-800 pb-2 mb-2"><span class="text-[10px] font-black text-purple-400 uppercase tracking-widest"><i class="fas fa-star mr-1"></i> Streamer Principal (Opcional)</span></div>
+                            <div><label class="label-text">Nombre del Canal</label><input type="text" id="streamerName_1" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalOficial"></div>
+                            <div><label class="label-text">Link del Canal</label><input type="url" id="streamLink_1" class="input-lbl focus:border-purple-500" placeholder="https://twitch.tv/..."></div>
                         </div>
                     </div>
 
@@ -118,7 +124,7 @@
                     </button>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6 border-t border-gray-800">
-                        <div class="md:col-span-2 mb-2"><span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Redes Oficiales del Equipo</span></div>
+                        <div class="md:col-span-2 mb-2"><span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Redes Oficiales del Equipo (Opcional)</span></div>
                         <div><label class="label-text">Instagram del Equipo</label><input type="text" id="socialIG" class="input-lbl focus:border-purple-500" placeholder="@usuario_equipo"></div>
                         <div><label class="label-text">TikTok del Equipo</label><input type="text" id="socialTK" class="input-lbl focus:border-purple-500" placeholder="@usuario_equipo"></div>
                     </div>
@@ -151,18 +157,22 @@
                         </div>
                     </div>
                     <div class="card-panel p-6 rounded-3xl border-t-4 border-green-700/50">
-                        <h4 class="font-bold text-green-600 mb-5 text-sm tracking-widest">RESPONSABLE #2</h4>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h4 class="font-bold text-green-500 text-sm tracking-widest uppercase">RESPONSABLE #2</h4>
+                            <span class="text-[10px] font-bold text-amber-400 bg-amber-950/40 border border-amber-800/60 px-2.5 py-1 rounded-full uppercase tracking-wider">Opcional (Recomendado)</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mb-5 leading-relaxed">Recomendado para contar con un segundo contacto oficial en caso de imprevistos durante la competencia.</p>
                         <div class="space-y-4">
-                            <div><label class="label-text text-green-600">Nombre Completo *</label><input type="text" id="rep2Nombre" class="input-lbl focus:border-green-600" placeholder="Nombre real" required></div>
+                            <div><label class="label-text text-green-600">Nombre Completo</label><input type="text" id="rep2Nombre" class="input-lbl focus:border-green-600" placeholder="Nombre real"></div>
                             <div class="flex gap-2">
-                                <div class="w-2/3"><label class="label-text text-green-600">C.I. *</label><input type="text" id="rep2CI" class="input-lbl focus:border-green-600" placeholder="Ej: 1234567" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                                <div class="w-2/3"><label class="label-text text-green-600">C.I.</label><input type="text" id="rep2CI" class="input-lbl focus:border-green-600" placeholder="Ej: 1234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                                 <div class="w-1/3"><label class="label-text text-green-600">COMP.</label><input type="text" id="rep2CIComp" class="input-lbl focus:border-green-600" placeholder="Ej: 1A" maxlength="3"></div>
                             </div>
-                            <div><label class="label-text text-green-600">Correo Electrónico *</label><input type="email" id="rep2Mail" class="input-lbl focus:border-green-600" placeholder="correo@ejemplo.com" required></div>
-                            <div><label class="label-text text-green-600">WhatsApp *</label><input type="tel" id="rep2Tel" class="input-lbl focus:border-green-600" placeholder="Ej: 77712345" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                            <div><label class="label-text text-green-600">Correo Electrónico</label><input type="email" id="rep2Mail" class="input-lbl focus:border-green-600" placeholder="correo@ejemplo.com"></div>
+                            <div><label class="label-text text-green-600">WhatsApp</label><input type="tel" id="rep2Tel" class="input-lbl focus:border-green-600" placeholder="Ej: 77712345" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                             <div>
-                                <label class="label-text text-green-600">Departamento / Residencia *</label>
-                                <select id="rep2Dep" class="input-lbl focus:border-green-600 text-white" required onchange="toggleDepOther('rep2')">
+                                <label class="label-text text-green-600">Departamento / Residencia</label>
+                                <select id="rep2Dep" class="input-lbl focus:border-green-600 text-white" onchange="toggleDepOther('rep2')">
                                     <option value="" hidden selected>Selecciona...</option>
                                     <option value="Cochabamba">Cochabamba</option><option value="La Paz">La Paz</option><option value="Santa Cruz">Santa Cruz</option><option value="Oruro">Oruro</option><option value="Potosí">Potosí</option><option value="Tarija">Tarija</option><option value="Chuquisaca">Chuquisaca</option><option value="Beni">Beni</option><option value="Pando">Pando</option><option value="Otro">Otro</option>
                                 </select>
@@ -205,8 +215,13 @@
                         ENVIAR FORMULARIO AHORA <i class="fas fa-paper-plane ml-2"></i>
                     </button>
                 </div>
-                <div class="mt-6 flex gap-4">
-                    <button type="button" onclick="goToStep(4)" class="w-full text-gray-500 py-4 font-bold border border-gray-800 rounded-2xl">Revisar Suplentes</button>
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button type="button" onclick="goToStep(3)" class="w-full text-gray-400 hover:text-yellow-400 hover:border-yellow-600/50 py-4 font-bold border border-gray-800 rounded-2xl transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-gamepad text-yellow-500"></i> Revisar Titulares
+                    </button>
+                    <button type="button" onclick="goToStep(4)" class="w-full text-gray-400 hover:text-teal-400 hover:border-teal-600/50 py-4 font-bold border border-gray-800 rounded-2xl transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-user-clock text-teal-400"></i> Revisar Suplentes
+                    </button>
                 </div>
             </section>
         </form>
@@ -241,8 +256,8 @@
                     <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Streamer #${streamerCount}</span>
                     <button type="button" onclick="removerStreamer(${streamerCount})" class="text-red-500 hover:text-red-400 text-xs font-bold"><i class="fas fa-trash"></i> Eliminar</button>
                 </div>
-                <div><label class="label-text">Nombre del Canal</label><input type="text" id="streamerName_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalSecundario" required></div>
-                <div><label class="label-text">Link del Canal</label><input type="url" id="streamLink_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="URL" required></div>
+                <div><label class="label-text">Nombre del Canal</label><input type="text" id="streamerName_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="Ej: CanalSecundario"></div>
+                <div><label class="label-text">Link del Canal</label><input type="url" id="streamLink_${streamerCount}" class="input-lbl focus:border-purple-500" placeholder="https://twitch.tv/..."></div>
             `;
             container.appendChild(newRow);
         };
@@ -375,7 +390,7 @@
         for (let i = 1; i <= 2; i++) coachHTML += createPlayerForm(`COACH${i}`, `Coach #${i}`, { type: 'coach' });
         document.getElementById('coaches-container').innerHTML = coachHTML;
     </script>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=169"></script>
     
     <!-- Register Service Worker for PWA -->
     <script>
