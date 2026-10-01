@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=169">
+    <link rel="stylesheet" href="/dist/output.css?v=170">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -333,23 +333,23 @@
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                <div onclick="filtrarPorEstado('')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500 cursor-pointer hover:border-blue-400 hover:bg-blue-950/20 transition-all select-none group" title="Ver todos los registros">
+                <div id="card-stat-total" onclick="filtrarPorEstado('')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500 cursor-pointer hover:border-blue-400 hover:bg-blue-950/20 transition-all select-none group" title="Ver todos los registros">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-blue-400 font-bold uppercase mb-1 transition-colors">Total Registros</p>
                     <p class="text-2xl sm:text-3xl font-black text-white" id="stat-total">0</p>
                 </div>
-                <div onclick="filtrarPorEstado('Pendiente')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500 cursor-pointer hover:border-yellow-400 hover:bg-yellow-950/20 transition-all select-none group" title="Filtrar por Pendientes">
+                <div id="card-stat-pendientes" onclick="filtrarPorEstado('Pendiente')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500 cursor-pointer hover:border-yellow-400 hover:bg-yellow-950/20 transition-all select-none group" title="Filtrar por Pendientes">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-yellow-400 font-bold uppercase mb-1 transition-colors">Pendientes</p>
                     <p class="text-2xl sm:text-3xl font-black text-yellow-500" id="stat-pendientes">0</p>
                 </div>
-                <div onclick="filtrarPorEstado('Aceptado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500 cursor-pointer hover:border-green-400 hover:bg-green-950/20 transition-all select-none group" title="Filtrar por Aceptados">
+                <div id="card-stat-aceptados" onclick="filtrarPorEstado('Aceptado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500 cursor-pointer hover:border-green-400 hover:bg-green-950/20 transition-all select-none group" title="Filtrar por Aceptados">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-green-400 font-bold uppercase mb-1 transition-colors">Aceptados</p>
                     <p class="text-2xl sm:text-3xl font-black text-green-500" id="stat-aceptados">0</p>
                 </div>
-                <div onclick="filtrarPorEstado('Observado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500 cursor-pointer hover:border-orange-400 hover:bg-orange-950/20 transition-all select-none group" title="Filtrar por Observados">
+                <div id="card-stat-observados" onclick="filtrarPorEstado('Observado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500 cursor-pointer hover:border-orange-400 hover:bg-orange-950/20 transition-all select-none group" title="Filtrar por Observados">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-orange-400 font-bold uppercase mb-1 transition-colors">Observados</p>
                     <p class="text-2xl sm:text-3xl font-black text-orange-500" id="stat-observados">0</p>
                 </div>
-                <div onclick="filtrarPorEstado('Rechazado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:border-red-400 hover:bg-red-950/20 transition-all select-none group" title="Filtrar por Rechazados">
+                <div id="card-stat-rechazados" onclick="filtrarPorEstado('Rechazado')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:border-red-400 hover:bg-red-950/20 transition-all select-none group" title="Filtrar por Rechazados">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-red-400 font-bold uppercase mb-1 transition-colors">Rechazados</p>
                     <p class="text-2xl sm:text-3xl font-black text-red-500" id="stat-rechazados">0</p>
                 </div>
@@ -361,7 +361,10 @@
                     <div class="flex items-center gap-3">
                         <div class="relative flex-grow sm:flex-grow-0">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                            <input type="text" id="searchInput" placeholder="Buscar..." class="bg-[#111] hover:bg-[#151515] focus:bg-[#1a1a1a] border border-gray-800 text-white pl-8 pr-3 py-1.5 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-xs placeholder-gray-500 w-full sm:w-64" style="color: white !important; background-color: #111 !important; border-color: #27272a !important;">
+                            <input type="text" id="searchInput" placeholder="Buscar por equipo, jugador, CI, etc..." class="bg-[#111] hover:bg-[#151515] focus:bg-[#1a1a1a] border border-gray-800 text-white pl-8 pr-7 py-1.5 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-xs placeholder-gray-500 w-full sm:w-72" style="color: white !important; background-color: #111 !important; border-color: #27272a !important;">
+                            <button id="btnClearSearch" onclick="limpiarBusqueda()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs cursor-pointer p-0.5" title="Limpiar búsqueda">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
                         </div>
                         <button onclick="cargarDatos()" class="text-blue-500 hover:text-white transition-colors text-xs sm:text-sm font-bold bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-900/50 shrink-0"><i class="fas fa-sync-alt mr-1"></i> Actualizar</button>
                     </div>
@@ -793,7 +796,7 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import "/app-version.js?v=169";
+        import "/app-version.js?v=170";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1769,23 +1772,53 @@
         let currentSortField = 'fecha';
         let currentSortDir = 'desc';
 
+        const normalizarBusqueda = (str) => {
+            return (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        };
+
+        function highlightText(text, q) {
+            if (!text || !q) return text || '';
+            const str = String(text);
+            const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            if (!escaped) return str;
+            
+            // Generar patrón con tolerancia a vocales acentuadas
+            const accentPattern = escaped
+                .replace(/a/gi, '[aáàäâAÁÀÄÂ]')
+                .replace(/e/gi, '[eéèëêEÉÈËÊ]')
+                .replace(/i/gi, '[iíìïîIÍÌÏÎ]')
+                .replace(/o/gi, '[oóòöôOÓÒÖÔ]')
+                .replace(/u/gi, '[uúùüûUÚÙÜÛ]');
+            
+            try {
+                const regex = new RegExp(`(${accentPattern})`, 'gi');
+                return str.replace(regex, '<mark class="bg-yellow-400/35 text-yellow-200 px-0.5 rounded font-bold shadow-sm">$1</mark>');
+            } catch(e) {
+                return str;
+            }
+        }
+
         const matchQuery = (eq, q) => {
             if (!q) return true;
-            const term = q.toLowerCase();
+            const term = normalizarBusqueda(q);
+            if (!term) return true;
+
+            const check = (val) => val && normalizarBusqueda(val).includes(term);
             
             // Datos del equipo
-            if (eq.equipo?.nombre?.toLowerCase().includes(term)) return true;
-            if (eq.equipo?.tag?.toLowerCase().includes(term)) return true;
-            if (eq.equipo?.tier?.toLowerCase().includes(term)) return true;
-            if (eq.estado?.toLowerCase().includes(term)) return true;
+            if (check(eq.equipo?.nombre)) return true;
+            if (check(eq.equipo?.tag)) return true;
+            if (check(eq.equipo?.tier)) return true;
+            if (check(eq.estado)) return true;
 
             // Datos de representantes
             if (eq.representantes) {
                 for (const r of eq.representantes) {
-                    if (r.nombre?.toLowerCase().includes(term)) return true;
-                    if (r.tel?.toLowerCase().includes(term)) return true;
-                    if (r.mail?.toLowerCase().includes(term)) return true;
-                    if (r.departamento?.toLowerCase().includes(term)) return true;
+                    if (check(r.nombre)) return true;
+                    if (check(r.tel)) return true;
+                    if (check(r.mail)) return true;
+                    if (check(r.ci)) return true;
+                    if (check(r.departamento)) return true;
                 }
             }
 
@@ -1794,14 +1827,14 @@
                 for (const pos in eq.roster) {
                     const p = eq.roster[pos];
                     if (p) {
-                        if (p.nombre?.toLowerCase().includes(term)) return true;
-                        if (p.riotId?.toLowerCase().includes(term)) return true;
-                        if (p.ci?.toLowerCase().includes(term)) return true;
-                        if (p.tel?.toLowerCase().includes(term)) return true;
-                        if (p.mail?.toLowerCase().includes(term)) return true;
-                        if (p.discordId?.toLowerCase().includes(term)) return true;
-                        if (p.departamento?.toLowerCase().includes(term)) return true;
-                        if (p.cuenta_secundaria?.riotId2?.toLowerCase().includes(term)) return true;
+                        if (check(p.nombre)) return true;
+                        if (check(p.riotId)) return true;
+                        if (check(p.ci)) return true;
+                        if (check(p.tel)) return true;
+                        if (check(p.mail)) return true;
+                        if (check(p.discordId)) return true;
+                        if (check(p.departamento)) return true;
+                        if (check(p.cuenta_secundaria?.riotId2)) return true;
                     }
                 }
             }
@@ -1810,14 +1843,14 @@
             if (eq.suplentes) {
                 for (const p of eq.suplentes) {
                     if (p) {
-                        if (p.nombre?.toLowerCase().includes(term)) return true;
-                        if (p.riotId?.toLowerCase().includes(term)) return true;
-                        if (p.ci?.toLowerCase().includes(term)) return true;
-                        if (p.tel?.toLowerCase().includes(term)) return true;
-                        if (p.mail?.toLowerCase().includes(term)) return true;
-                        if (p.discordId?.toLowerCase().includes(term)) return true;
-                        if (p.departamento?.toLowerCase().includes(term)) return true;
-                        if (p.cuenta_secundaria?.riotId2?.toLowerCase().includes(term)) return true;
+                        if (check(p.nombre)) return true;
+                        if (check(p.riotId)) return true;
+                        if (check(p.ci)) return true;
+                        if (check(p.tel)) return true;
+                        if (check(p.mail)) return true;
+                        if (check(p.discordId)) return true;
+                        if (check(p.departamento)) return true;
+                        if (check(p.cuenta_secundaria?.riotId2)) return true;
                     }
                 }
             }
@@ -1826,13 +1859,23 @@
             if (eq.coaches) {
                 for (const p of eq.coaches) {
                     if (p) {
-                        if (p.nombre?.toLowerCase().includes(term)) return true;
-                        if (p.riotId?.toLowerCase().includes(term)) return true;
-                        if (p.ci?.toLowerCase().includes(term)) return true;
-                        if (p.tel?.toLowerCase().includes(term)) return true;
-                        if (p.mail?.toLowerCase().includes(term)) return true;
-                        if (p.discordId?.toLowerCase().includes(term)) return true;
-                        if (p.departamento?.toLowerCase().includes(term)) return true;
+                        if (check(p.nombre)) return true;
+                        if (check(p.riotId)) return true;
+                        if (check(p.ci)) return true;
+                        if (check(p.tel)) return true;
+                        if (check(p.mail)) return true;
+                        if (check(p.discordId)) return true;
+                        if (check(p.departamento)) return true;
+                    }
+                }
+            }
+
+            // Media
+            if (eq.media) {
+                if (check(eq.media.streamer_nombre)) return true;
+                if (Array.isArray(eq.media.streamers)) {
+                    for (const st of eq.media.streamers) {
+                        if (check(st?.nombre)) return true;
                     }
                 }
             }
@@ -1840,15 +1883,143 @@
             return false;
         };
 
-        function dibujarTablaYTarjetas(list) {
+        function obtenerDetalleCoincidencias(eq, q) {
+            if (!q) return [];
+            const term = normalizarBusqueda(q);
+            if (!term) return [];
+            const check = (val) => val && normalizarBusqueda(val).includes(term);
+
+            const matches = [];
+
+            // 1. Roster Titular
+            if (eq.roster) {
+                for (const pos of ['TOP', 'JG', 'MID', 'ADC', 'SUPP']) {
+                    const p = eq.roster[pos];
+                    if (p) {
+                        const sub = [];
+                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
+                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
+                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
+                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
+                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
+                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
+                        if (check(p.cuenta_secundaria?.riotId2)) sub.push(`Cuenta Sec.: ${highlightText(p.cuenta_secundaria.riotId2, q)}`);
+
+                        if (sub.length > 0) {
+                            const nameDisplay = p.nombre || p.riotId || 'Jugador';
+                            matches.push({
+                                icono: 'fa-gamepad',
+                                color: 'border-blue-500/40 text-blue-300 bg-blue-950/40',
+                                texto: `<strong class="text-white uppercase">[${pos}]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 2. Suplentes
+            if (Array.isArray(eq.suplentes)) {
+                eq.suplentes.forEach((p, idx) => {
+                    if (p) {
+                        const sub = [];
+                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
+                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
+                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
+                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
+                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
+                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
+                        if (check(p.cuenta_secundaria?.riotId2)) sub.push(`Cuenta Sec.: ${highlightText(p.cuenta_secundaria.riotId2, q)}`);
+
+                        if (sub.length > 0) {
+                            const rol = p.rol_seleccionado || `Suplente ${idx + 1}`;
+                            const nameDisplay = p.nombre || p.riotId || rol;
+                            matches.push({
+                                icono: 'fa-user-friends',
+                                color: 'border-purple-500/40 text-purple-300 bg-purple-950/40',
+                                texto: `<strong class="text-white uppercase">[${rol}]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
+                            });
+                        }
+                    }
+                });
+            }
+
+            // 3. Coaches
+            if (Array.isArray(eq.coaches)) {
+                eq.coaches.forEach((p, idx) => {
+                    if (p) {
+                        const sub = [];
+                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
+                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
+                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
+                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
+                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
+                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
+
+                        if (sub.length > 0) {
+                            const nameDisplay = p.nombre || p.riotId || `Coach ${idx + 1}`;
+                            matches.push({
+                                icono: 'fa-brain',
+                                color: 'border-emerald-500/40 text-emerald-300 bg-emerald-950/40',
+                                texto: `<strong class="text-white uppercase">[Coach]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
+                            });
+                        }
+                    }
+                });
+            }
+
+            // 4. Representantes (especialmente Rep 2 o campos ocultos como CI, mail, depto de Rep 1)
+            if (Array.isArray(eq.representantes)) {
+                eq.representantes.forEach((r, idx) => {
+                    if (r) {
+                        const sub = [];
+                        if (idx > 0 && check(r.nombre)) sub.push(`Nombre: ${highlightText(r.nombre, q)}`);
+                        if (idx > 0 && check(r.tel)) sub.push(`Cel: ${highlightText(r.tel, q)}`);
+                        if (check(r.ci)) sub.push(`C.I.: ${highlightText(r.ci, q)}`);
+                        if (check(r.mail)) sub.push(`Email: ${highlightText(r.mail, q)}`);
+                        if (check(r.departamento)) sub.push(`Depto: ${highlightText(r.departamento, q)}`);
+
+                        if (sub.length > 0) {
+                            matches.push({
+                                icono: 'fa-id-card',
+                                color: 'border-amber-500/40 text-amber-300 bg-amber-950/40',
+                                texto: `<strong class="text-white uppercase">[Rep ${idx + 1}]</strong> ${r.nombre ? highlightText(r.nombre, q) : ''} &bull; ${sub.join(' &bull; ')}`
+                            });
+                        }
+                    }
+                });
+            }
+
+            // 5. Media
+            if (eq.media) {
+                const streamers = eq.media.streamers || (eq.media.streamer_nombre ? [{ nombre: eq.media.streamer_nombre }] : []);
+                streamers.forEach(s => {
+                    if (s && check(s.nombre)) {
+                        matches.push({
+                            icono: 'fa-video',
+                            color: 'border-pink-500/40 text-pink-300 bg-pink-950/40',
+                            texto: `<strong class="text-white uppercase">[Streamer]</strong> ${highlightText(s.nombre, q)}`
+                        });
+                    }
+                });
+            }
+
+            return matches;
+        }
+
+        function dibujarTablaYTarjetas(list, queryVal = null) {
             const tbody = document.getElementById('tabla-equipos');
             const cardsDiv = document.getElementById('tarjetas-equipos-movil');
             tbody.innerHTML = '';
             cardsDiv.innerHTML = '';
 
+            const currentQuery = queryVal !== null ? queryVal : (document.getElementById('searchInput')?.value.trim() || '');
+
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-gray-500 font-bold"><i class="fas fa-search mr-2 text-xl"></i> No se encontraron resultados.</td></tr>`;
-                cardsDiv.innerHTML = `<div class="text-center py-10 text-gray-500 font-bold"><i class="fas fa-search mr-2 text-xl"></i> No se encontraron resultados.</div>`;
+                const noResultMsg = currentQuery 
+                    ? `No se encontraron resultados para "${highlightText(currentQuery, currentQuery)}".`
+                    : 'No se encontraron registros.';
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-gray-500 font-bold"><i class="fas fa-search mr-2 text-xl"></i> ${noResultMsg}</td></tr>`;
+                cardsDiv.innerHTML = `<div class="text-center py-10 text-gray-500 font-bold"><i class="fas fa-search mr-2 text-xl"></i> ${noResultMsg}</div>`;
                 return;
             }
 
@@ -1866,51 +2037,103 @@
                 }
                 const fallbackSrc = getFallbackImage(eq.equipo?.nombre);
                 const logoSrc = esUrlValida(eq.equipo?.logo) ? eq.equipo.logo.trim() : fallbackSrc;
-                const teamTag = eq.equipo?.tag ? `[${eq.equipo.tag}]` : '';
+                const rawTag = eq.equipo?.tag ? `[${eq.equipo.tag}]` : '';
 
                 const badgeModificado = tieneModificacion ? `
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-cyan-950/60 text-cyan-300 border border-cyan-500/30 ml-2 shadow-[0_0_10px_rgba(6,182,212,0.2)]" title="Modificado recientemente">
                         <i class="fas fa-bolt text-[8px]"></i> Editado
                     </span>` : '';
 
-                // Fila Escritorio
+                // Obtener coincidencias detalladas (jugadores, C.I., cuentas secundarias, etc.)
+                const coincidencias = currentQuery ? obtenerDetalleCoincidencias(eq, currentQuery) : [];
+
+                // Fila Escritorio Principal
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-[#111] transition-colors";
                 tr.innerHTML = `
-                    <td class="px-6 py-4 font-bold text-white flex items-center gap-3">
-                        <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-8 h-8 rounded bg-black object-contain border border-gray-800">
-                        <span class="flex items-center">${eq.equipo.nombre} ${badgeModificado}</span>
+                    <td class="px-6 py-4 font-bold text-white">
+                        <div class="flex items-center gap-3">
+                            <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-8 h-8 rounded bg-black object-contain border border-gray-800 shrink-0">
+                            <span class="flex items-center text-sm font-bold text-white leading-tight">
+                                ${highlightText(eq.equipo.nombre, currentQuery)} ${badgeModificado}
+                            </span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4 text-gray-400"><span class="text-blue-400 font-bold">${teamTag}</span> ${eq.equipo.tier}</td>
+                    <td class="px-6 py-4 text-gray-400">
+                        <span class="text-blue-400 font-bold">${highlightText(rawTag, currentQuery)}</span> ${highlightText(eq.equipo.tier, currentQuery)}
+                    </td>
                     <td class="px-6 py-4 text-gray-500 text-xs">${fecha}</td>
                     <td class="px-6 py-4">
-                        <p class="text-white font-bold">${rep1.nombre}</p>
-                        <p class="text-xs text-gray-500">${rep1.tel}</p>
+                        <p class="text-white font-bold">${highlightText(rep1.nombre, currentQuery)}</p>
+                        <p class="text-xs text-gray-500">${highlightText(rep1.tel, currentQuery)}</p>
                     </td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${badgeClass}">${estado}</span></td>
-                    <td class="px-6 py-4 text-right"><button onclick="verEquipo('${eq.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">REVISAR</button></td>
+                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${badgeClass}">${highlightText(estado, currentQuery)}</span></td>
+                    <td class="px-6 py-4 text-right"><button onclick="verEquipo('${eq.id}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-colors cursor-pointer">REVISAR</button></td>
                 `;
                 tbody.appendChild(tr);
+
+                // Sub-fila Escritorio de Coincidencia (elegante, ancho completo, no deforma columnas)
+                if (coincidencias.length > 0) {
+                    const trSub = document.createElement('tr');
+                    trSub.className = "bg-[#040813]/90 transition-colors";
+                    trSub.innerHTML = `
+                        <td colspan="6" class="px-6 py-2.5 bg-gradient-to-r from-cyan-950/20 via-transparent to-transparent">
+                            <div class="flex items-center gap-3 pl-2 sm:pl-3 border-l-2 border-cyan-500 flex-wrap">
+                                <span class="text-[9px] font-black uppercase text-cyan-400 flex items-center gap-1.5 tracking-wider shrink-0 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">
+                                    <i class="fas fa-bullseye text-cyan-400 text-[10px]"></i> Coincidencia de búsqueda:
+                                </span>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    ${coincidencias.map(c => `
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${c.color} shadow-sm backdrop-blur-sm">
+                                            <i class="fas ${c.icono} text-[10px] shrink-0"></i>
+                                            <span>${c.texto}</span>
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(trSub);
+                }
 
                 // Tarjeta Móvil
                 const card = document.createElement('div');
                 card.className = "p-4 bg-[#0a0a0a] border border-gray-800/30 rounded-2xl flex flex-col gap-3 shadow-lg";
+                
+                let coincidenciasMovilHTML = '';
+                if (coincidencias.length > 0) {
+                    coincidenciasMovilHTML = `
+                        <div class="p-2.5 rounded-xl bg-[#05070d] border border-cyan-500/20 flex flex-col gap-1.5 text-xs">
+                            <span class="text-[9px] font-black uppercase text-cyan-400 flex items-center gap-1 tracking-wider">
+                                <i class="fas fa-bullseye text-cyan-400"></i> Coincidencia de búsqueda:
+                            </span>
+                            <div class="flex flex-col gap-1">
+                                ${coincidencias.map(c => `
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border ${c.color} text-[10px]">
+                                        <i class="fas ${c.icono} text-[8px] shrink-0"></i> <span>${c.texto}</span>
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                }
+
                 card.innerHTML = `
                     <div class="flex items-center justify-between border-b border-gray-800/50 pb-3">
                         <div class="flex items-center gap-3">
-                            <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-10 h-10 rounded bg-black object-contain border border-gray-800">
+                            <img src="${logoSrc}" decoding="async" loading="eager" onerror="this.onerror=null; this.src='${fallbackSrc}';" class="w-10 h-10 rounded bg-black object-contain border border-gray-800 shrink-0">
                             <div>
-                                <h4 class="font-bold text-white text-sm leading-tight flex items-center gap-1.5">${eq.equipo.nombre} ${badgeModificado}</h4>
-                                <p class="text-xs text-gray-500"><span class="text-blue-400 font-bold">${teamTag}</span> ${eq.equipo.tier}</p>
+                                <h4 class="font-bold text-white text-sm leading-tight flex items-center gap-1.5">${highlightText(eq.equipo.nombre, currentQuery)} ${badgeModificado}</h4>
+                                <p class="text-xs text-gray-500"><span class="text-blue-400 font-bold">${highlightText(rawTag, currentQuery)}</span> ${highlightText(eq.equipo.tier, currentQuery)}</p>
                             </div>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeClass}">${estado}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeClass}">${highlightText(estado, currentQuery)}</span>
                     </div>
+                    ${coincidenciasMovilHTML}
                     <div class="grid grid-cols-2 gap-2 text-xs py-1">
                         <div>
                             <p class="text-[9px] text-gray-500 uppercase font-black">Representante</p>
-                            <p class="text-white font-bold">${rep1.nombre}</p>
-                            <p class="text-[10px] text-gray-400">${rep1.tel}</p>
+                            <p class="text-white font-bold">${highlightText(rep1.nombre, currentQuery)}</p>
+                            <p class="text-[10px] text-gray-400">${highlightText(rep1.tel, currentQuery)}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-[9px] text-gray-500 uppercase font-black">${tieneModificacion ? 'Última Edición' : 'Fecha Registro'}</p>
@@ -1940,9 +2163,18 @@
             });
         }
 
+        let filtroEstadoActual = ''; // '' = todos
+
         function aplicarFiltrosYOrden() {
             const queryVal = document.getElementById('searchInput')?.value.trim() || '';
-            let list = equiposLocales.filter(eq => matchQuery(eq, queryVal));
+            let list = equiposLocales.filter(eq => {
+                // Filtro por Estado (independiente de la búsqueda por texto)
+                if (filtroEstadoActual) {
+                    const eqEstado = (eq.estado || 'Pendiente').toLowerCase();
+                    if (eqEstado !== filtroEstadoActual.toLowerCase()) return false;
+                }
+                return matchQuery(eq, queryVal);
+            });
 
             // Ordenamiento local
             list.sort((a, b) => {
@@ -1969,8 +2201,48 @@
                     : valB.localeCompare(valA);
             });
 
-            dibujarTablaYTarjetas(list);
+            const clearBtn = document.getElementById('btnClearSearch');
+            if (clearBtn) {
+                if (queryVal) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+
+            dibujarTablaYTarjetas(list, queryVal);
             actualizarIconosOrden();
+            actualizarEstilosTarjetasEstado();
+        }
+
+        window.limpiarBusqueda = () => {
+            const input = document.getElementById('searchInput');
+            if (input) {
+                input.value = '';
+                aplicarFiltrosYOrden();
+                input.focus();
+            }
+        };
+
+        function actualizarEstilosTarjetasEstado() {
+            const mapping = {
+                '': { id: 'card-stat-total', ring: 'ring-2 ring-blue-500 bg-blue-950/30' },
+                'pendiente': { id: 'card-stat-pendientes', ring: 'ring-2 ring-yellow-500 bg-yellow-950/30' },
+                'aceptado': { id: 'card-stat-aceptados', ring: 'ring-2 ring-green-500 bg-green-950/30' },
+                'observado': { id: 'card-stat-observados', ring: 'ring-2 ring-orange-500 bg-orange-950/30' },
+                'rechazado': { id: 'card-stat-rechazados', ring: 'ring-2 ring-red-500 bg-red-950/30' }
+            };
+
+            const current = filtroEstadoActual.toLowerCase();
+
+            for (const key in mapping) {
+                const el = document.getElementById(mapping[key].id);
+                if (el) {
+                    const ringClasses = mapping[key].ring.split(' ');
+                    if (current === key) {
+                        el.classList.add(...ringClasses);
+                    } else {
+                        el.classList.remove(...ringClasses);
+                    }
+                }
+            }
         }
 
         function actualizarIconosOrden() {
@@ -2000,13 +2272,11 @@
         };
 
         window.filtrarPorEstado = (estado) => {
-            const input = document.getElementById('searchInput');
-            if (!input) return;
             const target = (estado || '').trim();
-            if (input.value.trim().toLowerCase() === target.toLowerCase()) {
-                input.value = '';
+            if (filtroEstadoActual.toLowerCase() === target.toLowerCase()) {
+                filtroEstadoActual = ''; // Al hacer click en el activo, se desactiva
             } else {
-                input.value = target;
+                filtroEstadoActual = target;
             }
             aplicarFiltrosYOrden();
         };
