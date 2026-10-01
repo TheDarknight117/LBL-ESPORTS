@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=164">
+    <link rel="stylesheet" href="/dist/output.css?v=171">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -348,7 +348,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js";
+        import "/app-version.js?v=171";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -1220,7 +1220,14 @@
             }
             
             formatBadge.innerText = `Formato: ${formatText}`;
-            if (countText) countText.innerText = `${torneo.matches.length} partidas registradas`;
+            const partidasValidas = (torneo.matches || []).filter(m => {
+                const isResetMatch = (m.player1_prereq_match_id && m.player1_prereq_match_id === m.player2_prereq_match_id);
+                const isOptional = !!m.optional || (isResetMatch && !m.winner_id && (!m.player1_id || !m.player2_id));
+                const isCompleted = m.state === 'completed' || m.state === 'complete' || !!m.winner_id;
+                if (isOptional && !isCompleted && m.state !== 'live' && m.state !== 'underway') return false;
+                return true;
+            });
+            if (countText) countText.innerText = `${partidasValidas.length} partidas registradas`;
 
             // Feed de enfrentamiento (Ocultado temporalmente por directiva oficial)
             if (feedSection) feedSection.style.display = 'none';
@@ -1597,12 +1604,30 @@
         // --- RENDERIZADOR DEL CRONOGRAMA VERTICAL DE PARTIDOS (HORARIOS, RESULTADOS, VER MÁS) ---
         function renderizarCronogramaPartidos(docTorneo, animateCards = false) {
             const torneo = docTorneo.datosChallonge || docTorneo;
-            const matches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
+            const rawMatches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
             const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
+
+            // Filtrar partidas opcionales no activadas / no disputadas (Match 2 / Bracket Reset de Gran Final)
+            const matches = rawMatches.filter(m => {
+                const isResetMatch = (m.player1_prereq_match_id && m.player1_prereq_match_id === m.player2_prereq_match_id);
+                const isOptional = !!m.optional || (isResetMatch && !m.winner_id && (!m.player1_id || !m.player2_id));
+                const isCompleted = m.state === 'completed' || m.state === 'complete' || !!m.winner_id;
+                if (isOptional && !isCompleted && m.state !== 'live' && m.state !== 'underway') {
+                    return false;
+                }
+                return true;
+            });
 
             if (matches.length === 0) {
                 return '';
             }
+
+            // Identificar rondas clave de playoffs (Gran Final, Final Lower)
+            const playoffPosRounds = [...new Set(matches.filter(m => !m.group_id && m.round > 0).map(m => m.round))].sort((a, b) => a - b);
+            const maxPlayoffRound = playoffPosRounds.length > 0 ? playoffPosRounds[playoffPosRounds.length - 1] : null;
+
+            const playoffNegRounds = [...new Set(matches.filter(m => !m.group_id && m.round < 0).map(m => m.round))].sort((a, b) => b - a); // -1, -2, -3...
+            const minPlayoffRound = playoffNegRounds.length > 0 ? playoffNegRounds[playoffNegRounds.length - 1] : null;
 
             const estadoActual = (docTorneo.estado || torneo.estado || '').toLowerCase();
             const esTorneoActivo = estadoActual !== 'finalizado' && estadoActual !== 'complete';
@@ -1802,9 +1827,18 @@
                         stateBadge = `<span class="px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-black uppercase">PRÓXIMO</span>`;
                     }
 
-                    const rondaText = m.group_id 
-                        ? `FASE DE GRUPOS • JORNADA ${m.round || 1}`
-                        : (m.round > 0 ? `RONDA ${m.round}` : `LOWER BRACKET • RONDA ${Math.abs(m.round)}`);
+                    let rondaText = '';
+                    if (m.group_id) {
+                        rondaText = `FASE DE GRUPOS • JORNADA ${m.round || 1}`;
+                    } else if (maxPlayoffRound && m.round === maxPlayoffRound) {
+                        rondaText = 'GRAN FINAL';
+                    } else if (minPlayoffRound && m.round === minPlayoffRound && playoffNegRounds.length > 1) {
+                        rondaText = 'FINAL LOWER BRACKET';
+                    } else if (m.round < 0) {
+                        rondaText = `LOWER BRACKET • RONDA ${Math.abs(m.round)}`;
+                    } else {
+                        rondaText = `RONDA ${m.round}`;
+                    }
                     const formatoText = (docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)').split(',').map(s => s.trim()).filter(Boolean).pop() || 'MEJOR DE 1 (BO1)';
 
                     const cardAnimClass = animateCards ? 'match-card-anim' : '';
