@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=188">
+    <link rel="stylesheet" href="/dist/output.css?v=189">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -180,6 +180,14 @@
             scrollbar-color: rgba(6, 182, 212, 0.35) rgba(0, 0, 0, 0.2);
         }
 
+        /* EL SIDEBAR DE ESCRITORIO Y SUS TOOLTIPS FLOTANTES NUNCA DEBEN VISUALIZARSE EN MÓVIL (< 1024px) */
+        @media (max-width: 1023px) {
+            #desktop-tournament-sidebar,
+            #sidebar-floating-tooltip {
+                display: none !important;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .section-anim-enter, .view-fade-enter, .match-card-anim, .badge-live-pulse {
                 animation: none !important;
@@ -224,7 +232,7 @@
     </header>
 
     <!-- SIDEBAR ESCRITORIO FIJO 100% ESTILO TWITCH (ANCLADO AL BORDE IZQUIERDO DE LA PANTALLA, SOLO EN DETALLE) -->
-    <aside id="desktop-tournament-sidebar" class="hidden fixed left-0 top-16 bottom-0 z-40 bg-[#030712] border-r border-white/[0.08] flex-col transition-all duration-300 ease-in-out select-none shadow-2xl w-[285px]">
+    <aside id="desktop-tournament-sidebar" class="hidden lg:flex fixed left-0 top-16 bottom-0 z-40 bg-[#030712] border-r border-white/[0.08] flex-col transition-all duration-300 ease-in-out select-none shadow-2xl w-[285px]">
         <!-- CABECERA DEL SIDEBAR -->
         <div id="sidebar-header-wrapper" class="shrink-0 h-16 flex items-center justify-between px-3.5 py-3 border-b border-white/[0.06] bg-[#02050b] gap-2.5">
             <button onclick="volverAlCatalogo()" id="btn-sidebar-catalogo" class="flex-1 h-10 px-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-cyan-300 border border-white/[0.08] hover:border-cyan-500/30 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm truncate" title="Volver a Torneos">
@@ -358,10 +366,10 @@
             <!-- ÁREA PRINCIPAL DEL TORNEO -->
             <div class="w-full space-y-6">
                     <!-- SUBHEADER DE NAVEGACIÓN DENTRO DEL TORNEO -->
-                    <section class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-t-4 border-cyan-500 shadow-2xl">
+                    <section class="glass-panel p-4 sm:p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-t-4 border-cyan-500 shadow-2xl">
                         <div class="space-y-2 max-w-2xl">
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="volverAlCatalogo()" class="px-3 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 mr-1">
+                                <button onclick="volverAlCatalogo()" class="hidden lg:inline-flex px-3 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest transition-all cursor-pointer items-center gap-1.5 mr-1">
                                     <i class="fas fa-arrow-left"></i> Volver a Torneos
                                 </button>
                                 <span id="detail-status-badge" class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest">
@@ -421,8 +429,8 @@
         </main>
 
     <!-- DRAWER MÓVIL / OFF-CANVAS DE SELECCIÓN DE TORNEOS -->
-    <div id="mobile-sidebar-backdrop" onclick="cerrarSidebarMobileDrawer()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0"></div>
-    <aside id="mobile-sidebar-drawer" class="fixed top-0 left-0 h-full w-[310px] max-w-[85vw] bg-[#030712] border-r border-white/[0.08] z-50 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col p-4 shadow-2xl">
+    <div id="mobile-sidebar-backdrop" onclick="cerrarSidebarMobileDrawer()" class="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0"></div>
+    <aside id="mobile-sidebar-drawer" class="lg:hidden fixed top-0 left-0 h-full w-[310px] max-w-[85vw] bg-[#030712] border-r border-white/[0.08] z-[60] transform -translate-x-full transition-transform duration-300 ease-out flex flex-col p-4 shadow-2xl">
         <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.08] shrink-0 gap-2">
             <button onclick="volverAlCatalogo(); cerrarSidebarMobileDrawer();" class="flex-1 h-10 px-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-cyan-300 border border-white/[0.08] text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm truncate">
                 <i class="fas fa-arrow-left text-[11px] text-cyan-400 shrink-0"></i> <span>Volver a Torneos</span>
@@ -450,7 +458,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=188";
+        import "/app-version.js?v=189";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -1300,9 +1308,8 @@
                 return;
             }
 
-            // 2. SI HAY UN TORNEO SELECCIONADO (VISTA DETALLE): MOSTRAR SIDEBAR Y APLICAR OFFSET
-            sidebar.classList.remove('hidden');
-            sidebar.classList.add('lg:flex');
+            // 2. SI HAY UN TORNEO SELECCIONADO (VISTA DETALLE): MOSTRAR SIDEBAR EXCLUSIVAMENTE EN ESCRITORIO (LG+)
+            sidebar.classList.add('hidden', 'lg:flex');
 
             if (desktopSidebarCompact) {
                 sidebar.classList.remove('w-[285px]');
@@ -1928,9 +1935,9 @@
                 const btn = document.getElementById(`tab-stage-${e}`);
                 if (btn) {
                     if (e === etapa) {
-                        btn.className = 'px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg';
+                        btn.className = 'px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg whitespace-nowrap shrink-0';
                     } else {
-                        btn.className = 'px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5';
+                        btn.className = 'px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 whitespace-nowrap shrink-0';
                     }
                 }
             });
