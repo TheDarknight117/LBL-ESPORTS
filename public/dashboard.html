@@ -3,8 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard | LBL 2026</title>
+    <title>Panel de Administración Staff | LBL Esports</title>
+    <meta name="description" content="Terminal privada de administración y gestión para el staff oficial de la Liga Boliviana de League of Legends (LBL Esports).">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://lbl-esports.web.app/dashboard">
+
+    <!-- OpenGraph (Facebook/Discord/WhatsApp) -->
+    <meta property="og:site_name" content="LBL Esports">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_BO">
+    <meta property="og:url" content="https://lbl-esports.web.app/dashboard">
+    <meta property="og:title" content="Panel de Administración Staff | LBL Esports">
+    <meta property="og:description" content="Terminal privada de administración y gestión para el staff oficial de la Liga Boliviana de League of Legends (LBL Esports).">
+    <meta property="og:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+    <meta property="og:image:secure_url" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Panel Staff LBL Esports">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Panel de Administración Staff | LBL Esports">
+    <meta name="twitter:description" content="Terminal privada de administración y gestión para el staff oficial de la Liga Boliviana de League of Legends (LBL Esports).">
+    <meta name="twitter:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
 
     <!-- Favicon & Touch Icon -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
@@ -17,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=171">
+    <link rel="stylesheet" href="/dist/output.css?v=182">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -290,12 +312,21 @@
 
     <div id="dashboard-content" class="hidden flex-col min-h-screen">
         <header class="w-full glass-panel sticky top-0 z-40 px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-red-900/30 gap-2">
-            <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-                <i class="fas fa-shield-alt text-red-500 text-xl sm:text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] shrink-0"></i>
-                <div class="min-w-0">
-                    <h1 class="text-base sm:text-xl font-black tracking-widest uppercase italic leading-none truncate">LBL <span class="text-red-500">STAFF</span></h1>
-                    <p class="text-[8px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold truncate max-w-[90px] xs:max-w-[140px] sm:max-w-none mt-0.5 sm:mt-1" id="user-display">Panel de Administración</p>
-                </div>
+            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <a href="/" class="flex items-center gap-2.5 group shrink-0">
+                    <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <div class="flex flex-col text-left">
+                        <span class="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase italic leading-none text-white">
+                            LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500">STAFF</span>
+                        </span>
+                        <span class="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
+                            Panel Administrativo
+                        </span>
+                    </div>
+                </a>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-[9px] sm:text-[10px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.25)] ml-1">
+                    <i class="fas fa-shield-alt text-[9px]"></i> <span class="hidden xs:inline">Staff View</span>
+                </span>
             </div>
             <div class="flex gap-1.5 sm:gap-4 items-center shrink-0">
                 <!-- BOTÓN MODIFICACIONES CON TEXTO, AZUL Y RESPIRACIÓN CONDICIONAL -->

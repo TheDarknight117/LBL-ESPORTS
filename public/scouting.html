@@ -3,21 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scouting & Agencia Libre | LBL 2026</title>
-    <meta name="description" content="Encuentra jugadores libres o equipos buscando talento para participar en la Liga Boliviana de League of Legends (LBL) 2026.">
+    <title>Scouting & Archivo Oficial | LBL Esports</title>
+    <meta name="description" content="Base de datos oficial de torneos anteriores, scouting y jugadores de la Liga Boliviana de League of Legends (LBL Esports). Encuentra talento y equipos competitivos.">
+    <meta name="keywords" content="LBL Scouting, Jugadores LoL Bolivia, Agencia Libre LoL, Historial Torneos LBL, Reclutamiento Esports">
+    <meta name="author" content="LBL Esports">
+    <link rel="canonical" href="https://lbl-esports.web.app/scouting">
     
     <!-- OpenGraph (Facebook/Discord/WhatsApp) -->
-    <meta property="og:title" content="Scouting & Agencia Libre | LBL 2026">
-    <meta property="og:description" content="Encuentra jugadores libres o equipos buscando talento para participar en la Liga Boliviana de League of Legends (LBL) 2026.">
-    <meta property="og:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
-    <meta property="og:url" content="https://lbl-esports.web.app/scouting">
+    <meta property="og:site_name" content="LBL Esports">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_BO">
+    <meta property="og:url" content="https://lbl-esports.web.app/scouting">
+    <meta property="og:title" content="Scouting & Archivo Oficial | LBL Esports">
+    <meta property="og:description" content="Base de datos oficial de torneos anteriores, scouting y jugadores de la Liga Boliviana de League of Legends (LBL Esports). Encuentra talento y equipos competitivos.">
+    <meta property="og:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+    <meta property="og:image:secure_url" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Scouting y Archivo Oficial LBL Esports">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Scouting & Agencia Libre | LBL 2026">
-    <meta name="twitter:description" content="Encuentra jugadores libres o equipos buscando talento para participar en la Liga Boliviana de League of Legends (LBL) 2026.">
+    <meta name="twitter:site" content="@lbl_esports">
+    <meta name="twitter:creator" content="@lbl_esports">
+    <meta name="twitter:title" content="Scouting & Archivo Oficial | LBL Esports">
+    <meta name="twitter:description" content="Base de datos oficial de torneos anteriores, scouting y jugadores de la Liga Boliviana de League of Legends (LBL Esports). Encuentra talento y equipos competitivos.">
     <meta name="twitter:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+    <meta name="twitter:image:alt" content="Scouting y Archivo Oficial LBL Esports">
 
     <!-- Favicon & Touch Icon -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
@@ -30,8 +43,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=164">
-    <script type="module" src="/app-version.js?v=164"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=182">
+    <script type="module" src="/app-version.js?v=182"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -425,15 +438,37 @@
 
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-4 flex justify-between items-center">
-        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">   
-            <img src="assets/logo.webp" decoding="async" onerror="this.src='assets/logo.png'" alt="LBL" class="h-10 w-auto object-contain">
-            <span class="text-xl font-black tracking-widest uppercase italic hidden sm:block">LIGA BOLIVIANA DE <span class="text-cyan-400">LEAGUE OF LEGENDS</span></span>
-            <span id="staff-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full badge-banned text-[10px] font-black uppercase tracking-widest animate-pulse ml-2">
-                <i class="fas fa-shield-alt"></i> Staff View
+    <nav class="w-full glass-panel sticky top-0 z-40 px-4 md:px-8 py-3 flex justify-between items-center transition-all duration-300 border-b border-white/5 backdrop-blur-xl bg-[#030712]/90 shadow-xl">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <div class="flex flex-col text-left">
+                    <span class="text-base sm:text-lg md:text-xl font-black tracking-wider uppercase italic leading-none text-white">
+                        LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">ESPORTS</span>
+                    </span>
+                    <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
+                        Liga Boliviana de LoL
+                    </span>
+                </div>
+            </a>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[10px] font-black uppercase tracking-wider ml-1">
+                Scouting
             </span>
-        </a>
-        <a href="equipos" class="text-gray-400 hover:text-white font-bold text-sm transition-colors py-2"><i class="fas fa-list-ul mr-1"></i> Ver Liga Principal</a>
+            <span id="staff-badge" class="hidden items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.25)] ml-1">
+                <i class="fas fa-shield-alt text-[9px]"></i> <span class="hidden md:inline">Staff View</span>
+            </span>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+            <a href="/" class="text-slate-300 hover:text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all flex items-center gap-1.5">
+                <i class="fas fa-home text-slate-400 text-xs"></i> <span class="hidden xs:inline">Inicio</span>
+            </a>
+            <a href="/torneos" class="text-slate-300 hover:text-cyan-300 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-xl hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/25 transition-all flex items-center gap-1.5">
+                <i class="fas fa-trophy text-slate-400 text-xs"></i> <span class="hidden xs:inline">Torneos</span>
+            </a>
+            <a href="/equipos" class="text-slate-300 hover:text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all flex items-center gap-1.5">
+                <i class="fas fa-users text-slate-400 text-xs"></i> <span class="hidden xs:inline">Equipos</span>
+            </a>
+        </div>
     </nav>
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 pt-10 pb-20">

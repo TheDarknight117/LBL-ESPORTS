@@ -70,6 +70,11 @@ export const TAG_OVERRIDES = {
     'iron academy':       'IHA',
     'tfx':                'TFX',
     'lotus reborn':       'LTR',
+    'dark abyssal academy':'DAA',
+    'velocito gaming':     'VLG',
+    'kaoxitos blue academy':'KBA',
+    'los seguidores del primo':'SDP',
+    'crimson twilight knights':'CTK',
     'marines del altiplano': 'MDA',
     'marines':            'MDA',
     't1nacotas':          'T1N',
@@ -101,11 +106,22 @@ export function resolverTag(equipoObj) {
     if (!equipoObj) return '';
     const nombre = (equipoObj.nombre || equipoObj.name || '').trim();
     const clean = nombre.toLowerCase();
-    if (clean.includes('academy') || clean.includes('ata')) return 'ATA';
+    
+    // 1. Coincidencia EXACTA en tabla de tags oficiales
     if (TAG_OVERRIDES[clean]) return TAG_OVERRIDES[clean];
-    for (const [key, tag] of Object.entries(TAG_OVERRIDES)) {
-        if (clean.includes(key)) return tag;
+
+    // 2. Coincidencias de frases más largas primero (ej. 'aether core academy' antes de 'aether core')
+    const sortedKeys = Object.keys(TAG_OVERRIDES).sort((a, b) => b.length - a.length);
+    for (const key of sortedKeys) {
+        if (clean.includes(key)) return TAG_OVERRIDES[key];
     }
+
+    // 3. Casos específicos para Aether Core Academy (ATA) - NUNCA para academias genéricas
+    if (clean === 'aether core academy' || clean.includes('aether core academy') || clean === 'aether academy' || clean === 'ata') {
+        return 'ATA';
+    }
+
+    // 4. Tag propio del participante si está definido y no es un nombre largo
     if (equipoObj.tag && equipoObj.tag.length <= 4) {
         return equipoObj.tag.toUpperCase();
     }
@@ -126,8 +142,12 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
         return rawUrl;
     }
 
-    // 2. Aether Core Academy (ATA) - Comprobar SIEMPRE ANTES de Aether Core
-    if (cleanTag === 'ATA' || cleanName.includes('academy') || cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq')) {
+    // 2. Aether Core Academy (ATA) - Estricto a la identidad de Aether Core Academy, NUNCA 'academy' genérico
+    const esAetherAcademy = cleanUrl.includes('aether-core-academy') || cleanUrl.includes('mfcwgplq') ||
+        cleanName === 'aether core academy' || cleanName.includes('aether core academy') || cleanName === 'aether academy' ||
+        (cleanTag === 'ATA' && (cleanName.includes('aether') || !cleanName));
+
+    if (esAetherAcademy) {
         // Si se cargó un nuevo link externo que no es el oficial de academy, servir el nuevo
         if (cleanUrl.startsWith('http') && !cleanUrl.includes('aether-core-academy') && !cleanUrl.includes('mfcwgplq')) {
             return rawUrl;
@@ -136,7 +156,10 @@ export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
     }
 
     // 3. Aether Core Tier 1 (ATC) - Solo si NO es academy
-    if (cleanTag === 'ATC' || cleanName === 'aether core' || cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || (cleanName.includes('aether') && !cleanName.includes('academy'))) {
+    const esAetherCore = cleanTag === 'ATC' || cleanName === 'aether core' || cleanUrl.includes('atcv3') || cleanUrl.includes('kjpdt5kb') || 
+        (cleanName.includes('aether') && !cleanName.includes('academy'));
+
+    if (esAetherCore) {
         // Si se cargó un nuevo link externo que no es ATCv3, servir el nuevo y desechar el anterior
         if (cleanUrl.startsWith('http') && !cleanUrl.includes('atcv3') && !cleanUrl.includes('kjpdt5kb')) {
             return rawUrl;
@@ -997,8 +1020,28 @@ export function calcularPodio(tData, matches = [], standings = [], participantsM
     const estado = (tData?.state || '').toLowerCase();
     const isTournamentEnded = estado === 'complete' || estado === 'ended';
 
-    // 1. Torneos con Brackets / Eliminatorias (Doble o Simple Eliminación o Playoffs)
-    const positiveMatches = matches.filter(m => m.round > 0).sort((a, b) => b.round - a.round);
+    // 1. PRIORIDAD MÁXIMA: Ranking oficial de Challonge (final_rank) si el torneo ya terminó
+    if (isTournamentEnded && Array.isArray(listaParticipantes) && listaParticipantes.length > 0) {
+        const r1 = listaParticipantes.find(p => p.final_rank === 1);
+        const r2 = listaParticipantes.find(p => p.final_rank === 2);
+        const r3 = listaParticipantes.find(p => p.final_rank === 3);
+
+        if (r1) {
+            return {
+                primerLugar: r1.lblInfo || { nombre: r1.name, tag: r1.name, logo: '' },
+                segundoLugar: r2 ? (r2.lblInfo || { nombre: r2.name, tag: r2.name, logo: '' }) : null,
+                tercerLugar: r3 ? (r3.lblInfo || { nombre: r3.name, tag: r3.name, logo: '' }) : null
+            };
+        }
+    }
+
+    // 2. Torneos con Brackets / Eliminatorias (Doble o Simple Eliminación o Playoffs)
+    // IMPORTANTE: En torneos multietapa (Fase de Grupos + Playoffs), SOLO los matches de Playoffs (group_id === null)
+    // corresponden a la llave final. NUNCA tomar partidos de fase de grupos como si fueran la Gran Final.
+    const playoffMatches = matches.filter(m => m.group_id === null || m.group_id === undefined);
+    const bracketMatches = playoffMatches.length > 0 ? playoffMatches : matches;
+
+    const positiveMatches = bracketMatches.filter(m => m.round > 0).sort((a, b) => b.round - a.round);
     const granFinal = positiveMatches[0] || null;
 
     let primerLugar = null;
@@ -1017,7 +1060,7 @@ export function calcularPodio(tData, matches = [], standings = [], participantsM
         }
 
         // Buscar 3er lugar (Perdedor de la Final de Perdedores en Doble Eliminatoria)
-        const negativeMatches = matches.filter(m => m.round < 0).sort((a, b) => a.round - b.round);
+        const negativeMatches = bracketMatches.filter(m => m.round < 0).sort((a, b) => a.round - b.round);
         const losersFinal = negativeMatches[0] || null;
 
         if (losersFinal && losersFinal.winner_id && (losersFinal.state === 'completed' || losersFinal.state === 'complete')) {
@@ -1044,21 +1087,6 @@ export function calcularPodio(tData, matches = [], standings = [], participantsM
         }
 
         return { primerLugar, segundoLugar, tercerLugar };
-    }
-
-    // 2. Ranking oficial de Challonge (final_rank) SOLO si el torneo ya terminó por completo en Challonge
-    if (isTournamentEnded && Array.isArray(listaParticipantes) && listaParticipantes.length > 0) {
-        const r1 = listaParticipantes.find(p => p.final_rank === 1);
-        const r2 = listaParticipantes.find(p => p.final_rank === 2);
-        const r3 = listaParticipantes.find(p => p.final_rank === 3);
-
-        if (r1) {
-            return {
-                primerLugar: r1.lblInfo || { nombre: r1.name, tag: r1.name, logo: '' },
-                segundoLugar: r2 ? (r2.lblInfo || { nombre: r2.name, tag: r2.name, logo: '' }) : null,
-                tercerLugar: r3 ? (r3.lblInfo || { nombre: r3.name, tag: r3.name, logo: '' }) : null
-            };
-        }
     }
 
     // 3. Torneos PUROS de Round Robin / Grupos (sin playoffs) SOLO si el torneo ya concluyó
