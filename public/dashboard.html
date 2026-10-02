@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=190">
+    <link rel="stylesheet" href="/dist/output.css?v=191">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -315,17 +315,17 @@
             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 <a href="/" class="flex items-center gap-2.5 group shrink-0">
                     <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
-                    <div class="flex flex-col text-left">
+                    <div class="flex flex-col text-left min-w-0">
                         <span class="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase italic leading-none text-white">
                             LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500">STAFF</span>
                         </span>
-                        <span class="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
-                            Panel Administrativo
-                        </span>
+                        <p class="text-[8px] sm:text-[9px] md:text-[10px] font-bold tracking-widest text-slate-400 uppercase truncate mt-0.5 max-w-[140px] xs:max-w-[200px] sm:max-w-none" id="user-display">
+                            Sesión: Staff
+                        </p>
                     </div>
                 </a>
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-[9px] sm:text-[10px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.25)] ml-1 shrink-0" title="Sesión activa">
-                    <i class="fas fa-shield-alt text-[9px] shrink-0"></i> <span id="user-display" class="truncate max-w-[120px] sm:max-w-none">Sesión: Staff</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/60 text-red-400 border border-red-500/40 text-[9px] sm:text-[10px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.25)] ml-1 shrink-0">
+                    <i class="fas fa-shield-alt text-[9px]"></i> <span class="hidden xs:inline">Staff View</span>
                 </span>
             </div>
             <div class="flex gap-1.5 sm:gap-4 items-center shrink-0">
@@ -827,7 +827,7 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import "/app-version.js?v=190";
+        import "/app-version.js?v=191";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
