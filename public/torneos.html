@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=192">
+    <link rel="stylesheet" href="/dist/output.css?v=193">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -232,7 +232,7 @@
     </header>
 
     <!-- SIDEBAR ESCRITORIO FIJO 100% ESTILO TWITCH (ANCLADO AL BORDE IZQUIERDO DE LA PANTALLA, SOLO EN DETALLE) -->
-    <aside id="desktop-tournament-sidebar" class="hidden lg:flex fixed left-0 top-16 bottom-0 z-40 bg-[#030712] border-r border-white/[0.08] flex-col transition-all duration-300 ease-in-out select-none shadow-2xl w-[285px]">
+    <aside id="desktop-tournament-sidebar" class="hidden fixed left-0 top-16 bottom-0 z-40 bg-[#030712] border-r border-white/[0.08] flex-col transition-all duration-300 ease-in-out select-none shadow-2xl w-[285px]" style="display: none;">
         <!-- CABECERA DEL SIDEBAR -->
         <div id="sidebar-header-wrapper" class="shrink-0 h-16 flex items-center justify-between px-3.5 py-3 border-b border-white/[0.06] bg-[#02050b] gap-2.5">
             <button onclick="volverAlCatalogo()" id="btn-sidebar-catalogo" class="flex-1 h-10 px-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-cyan-300 border border-white/[0.08] hover:border-cyan-500/30 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm truncate" title="Volver a Torneos">
@@ -337,7 +337,7 @@
             </div>
 
             <!-- GRID DE TARJETAS DE TORNEOS -->
-            <div id="catalog-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[320px]"></div>
+            <div id="catalog-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start"></div>
         </div>
 
         <!-- VISTA 2: DETALLE DEL TORNEO SELECCIONADO (CON NUESTRA ARQUITECTURA) -->
@@ -454,7 +454,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=192";
+        import "/app-version.js?v=193";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -1245,7 +1245,7 @@
                 const cardAnimStyle = animate ? `style="animation-delay: ${Math.min(idx * 0.04, 0.24)}s;"` : '';
 
                 html += `
-                    <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-6 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between ${cardAnimClass}" ${cardAnimStyle}>
+                    <div onclick="seleccionarTorneo('${t.id}')" class="glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-800 bg-[#070c14] space-y-4 shadow-xl hover:border-cyan-500/50 hover:bg-[#0b121e] transition-all cursor-pointer group flex flex-col justify-between ${cardAnimClass}" ${cardAnimStyle}>
                         <div class="space-y-3">
                             <div class="flex items-center justify-between gap-2">
                                 ${catBadge}
@@ -1299,6 +1299,7 @@
             if (!torneoSeleccionadoId) {
                 sidebar.classList.add('hidden');
                 sidebar.classList.remove('lg:flex');
+                sidebar.style.display = 'none';
                 if (mainContent) {
                     mainContent.classList.remove('lg:pl-[285px]', 'lg:pl-[60px]');
                     mainContent.classList.add('lg:pl-0');
@@ -1311,6 +1312,7 @@
             }
 
             // 2. SI HAY UN TORNEO SELECCIONADO (VISTA DETALLE): MOSTRAR SIDEBAR EXCLUSIVAMENTE EN ESCRITORIO (LG+)
+            sidebar.style.display = '';
             sidebar.classList.add('hidden', 'lg:flex');
 
             if (desktopSidebarCompact) {
