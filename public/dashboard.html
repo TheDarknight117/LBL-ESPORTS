@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=191">
+    <link rel="stylesheet" href="/dist/output.css?v=194">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -1918,6 +1918,78 @@
 
             return false;
         };
+        window.toggleBloqueCoincidencias = function(id) {
+            const body = document.getElementById(`matches-body-${id}`);
+            const chev = document.getElementById(`chevron-main-${id}`);
+            if (!body) return;
+            const isHidden = body.classList.toggle('hidden');
+            if (chev) {
+                chev.classList.toggle('rotate-180', isHidden);
+            }
+        };
+
+        window.toggleExpandCoincidencias = function(id, total) {
+            const extra = document.getElementById(`matches-extra-${id}`);
+            const btnText = document.getElementById(`btn-expand-text-${id}`);
+            const chev = document.getElementById(`chevron-expand-${id}`);
+            const countDisp = document.getElementById(`count-disp-${id}`);
+            if (!extra) return;
+
+            const isNowExpanded = extra.classList.toggle('hidden') === false;
+            if (isNowExpanded) {
+                if (btnText) btnText.textContent = 'Mostrar menos';
+                if (chev) {
+                    chev.classList.remove('fa-chevron-down');
+                    chev.classList.add('fa-chevron-up');
+                }
+                if (countDisp) countDisp.textContent = total;
+            } else {
+                if (btnText) btnText.textContent = `Ver todas las coincidencias (${total})`;
+                if (chev) {
+                    chev.classList.remove('fa-chevron-up');
+                    chev.classList.add('fa-chevron-down');
+                }
+                if (countDisp) countDisp.textContent = Math.min(3, total);
+            }
+        };
+
+        function renderFilaCoincidencia(c, q, isMobile = false) {
+            if (isMobile) {
+                return `
+                    <div class="flex flex-col gap-1.5 py-2 px-2.5 rounded-lg bg-black/40 border border-gray-800/40">
+                        <div class="flex items-center gap-2 text-xs font-semibold text-gray-300">
+                            <i class="fas ${c.icono} ${c.iconoColor || 'text-cyan-400'} text-xs w-4 text-center shrink-0"></i>
+                            <span>${c.rol}</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-6">
+                            ${c.campos.map(campo => `
+                                <div>
+                                    <div class="text-xs font-bold text-white leading-tight break-words">${highlightText(campo.valor, q)}</div>
+                                    <div class="text-[10px] text-gray-400 font-medium">${campo.label}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="flex items-center gap-6 py-2 px-3 rounded-lg hover:bg-white/[0.02] transition-colors border border-transparent hover:border-gray-800/40">
+                    <div class="w-48 shrink-0 flex items-center gap-2.5 text-xs font-semibold text-gray-300">
+                        <i class="fas ${c.icono} ${c.iconoColor || 'text-cyan-400'} text-sm w-4 text-center shrink-0"></i>
+                        <span class="truncate">${c.rol}</span>
+                    </div>
+                    <div class="flex-1 flex items-start gap-x-12 gap-y-2 flex-wrap">
+                        ${c.campos.map(campo => `
+                            <div class="min-w-[140px] max-w-full">
+                                <div class="text-xs font-bold text-white leading-tight break-words">${highlightText(campo.valor, q)}</div>
+                                <div class="text-[10px] text-gray-400 font-medium mt-0.5">${campo.label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
 
         function obtenerDetalleCoincidencias(eq, q) {
             if (!q) return [];
@@ -1927,113 +1999,120 @@
 
             const matches = [];
 
-            // 1. Roster Titular
+            // 1. Representantes (aparecen al inicio tal como en el mockup de Andrea)
+            if (Array.isArray(eq.representantes)) {
+                eq.representantes.forEach((r, idx) => {
+                    if (!r) return;
+                    const campos = [];
+                    if (check(r.nombre)) campos.push({ label: idx === 0 ? 'Nombre del representante' : 'Nombre del representante 2', valor: r.nombre });
+                    if (check(r.tel)) campos.push({ label: 'Teléfono', valor: r.tel });
+                    if (check(r.ci)) campos.push({ label: 'C.I.', valor: r.ci });
+                    if (check(r.mail)) campos.push({ label: 'Email', valor: r.mail });
+                    if (check(r.departamento)) campos.push({ label: 'Departamento', valor: r.departamento });
+
+                    if (campos.length > 0) {
+                        matches.push({
+                            rol: idx === 0 ? 'Representante' : `Representante ${idx + 1}`,
+                            icono: 'fa-id-card',
+                            iconoColor: 'text-cyan-400',
+                            campos
+                        });
+                    }
+                });
+            }
+
+            // 2. Roster Titular
             if (eq.roster) {
                 for (const pos of ['TOP', 'JG', 'MID', 'ADC', 'SUPP']) {
                     const p = eq.roster[pos];
-                    if (p) {
-                        const sub = [];
-                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
-                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
-                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
-                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
-                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
-                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
-                        if (check(p.cuenta_secundaria?.riotId2)) sub.push(`Cuenta Sec.: ${highlightText(p.cuenta_secundaria.riotId2, q)}`);
+                    if (!p) continue;
+                    const campos = [];
+                    if (check(p.nombre)) campos.push({ label: 'Nombre del jugador', valor: p.nombre });
+                    if (check(p.riotId)) campos.push({ label: 'Riot ID', valor: p.riotId });
+                    if (check(p.ci)) campos.push({ label: 'C.I.', valor: p.ci });
+                    if (check(p.tel)) campos.push({ label: 'Teléfono', valor: p.tel });
+                    if (check(p.discordId)) campos.push({ label: 'Discord', valor: p.discordId });
+                    if (check(p.departamento)) campos.push({ label: 'Departamento', valor: p.departamento });
+                    if (check(p.cuenta_secundaria?.riotId2)) campos.push({ label: 'Cuenta secundaria', valor: p.cuenta_secundaria.riotId2 });
 
-                        if (sub.length > 0) {
-                            const nameDisplay = p.nombre || p.riotId || 'Jugador';
-                            matches.push({
-                                icono: 'fa-gamepad',
-                                color: 'border-blue-500/40 text-blue-300 bg-blue-950/40',
-                                texto: `<strong class="text-white uppercase">[${pos}]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
-                            });
-                        }
+                    if (campos.length > 0) {
+                        let icono = 'fa-user';
+                        let iconoColor = 'text-cyan-400';
+                        if (pos === 'MID') iconoColor = 'text-amber-400';
+                        else if (pos === 'JG') { icono = 'fa-bolt'; iconoColor = 'text-purple-400'; }
+                        else if (pos === 'ADC') { icono = 'fa-crosshairs'; iconoColor = 'text-pink-400'; }
+                        else if (pos === 'SUPP') { icono = 'fa-shield-halved'; iconoColor = 'text-teal-400'; }
+                        else if (pos === 'TOP') { icono = 'fa-user'; iconoColor = 'text-blue-400'; }
+
+                        matches.push({
+                            rol: `Jugador (${pos})`,
+                            icono,
+                            iconoColor,
+                            campos
+                        });
                     }
                 }
             }
 
-            // 2. Suplentes
+            // 3. Suplentes
             if (Array.isArray(eq.suplentes)) {
                 eq.suplentes.forEach((p, idx) => {
-                    if (p) {
-                        const sub = [];
-                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
-                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
-                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
-                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
-                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
-                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
-                        if (check(p.cuenta_secundaria?.riotId2)) sub.push(`Cuenta Sec.: ${highlightText(p.cuenta_secundaria.riotId2, q)}`);
+                    if (!p) return;
+                    const campos = [];
+                    if (check(p.nombre)) campos.push({ label: 'Nombre del suplente', valor: p.nombre });
+                    if (check(p.riotId)) campos.push({ label: 'Riot ID', valor: p.riotId });
+                    if (check(p.ci)) campos.push({ label: 'C.I.', valor: p.ci });
+                    if (check(p.tel)) campos.push({ label: 'Teléfono', valor: p.tel });
+                    if (check(p.discordId)) campos.push({ label: 'Discord', valor: p.discordId });
+                    if (check(p.departamento)) campos.push({ label: 'Departamento', valor: p.departamento });
+                    if (check(p.cuenta_secundaria?.riotId2)) campos.push({ label: 'Cuenta secundaria', valor: p.cuenta_secundaria.riotId2 });
 
-                        if (sub.length > 0) {
-                            const rol = p.rol_seleccionado || `Suplente ${idx + 1}`;
-                            const nameDisplay = p.nombre || p.riotId || rol;
-                            matches.push({
-                                icono: 'fa-user-friends',
-                                color: 'border-purple-500/40 text-purple-300 bg-purple-950/40',
-                                texto: `<strong class="text-white uppercase">[${rol}]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
-                            });
-                        }
+                    if (campos.length > 0) {
+                        const rolName = p.rol_seleccionado ? `Suplente (${p.rol_seleccionado})` : `Suplente ${idx + 1}`;
+                        matches.push({
+                            rol: rolName,
+                            icono: 'fa-user-clock',
+                            iconoColor: 'text-indigo-400',
+                            campos
+                        });
                     }
                 });
             }
 
-            // 3. Coaches
+            // 4. Coaches
             if (Array.isArray(eq.coaches)) {
                 eq.coaches.forEach((p, idx) => {
-                    if (p) {
-                        const sub = [];
-                        if (check(p.nombre)) sub.push(`Nombre: ${highlightText(p.nombre, q)}`);
-                        if (check(p.riotId)) sub.push(`Riot ID: ${highlightText(p.riotId, q)}`);
-                        if (check(p.ci)) sub.push(`C.I.: ${highlightText(p.ci, q)}`);
-                        if (check(p.tel)) sub.push(`Cel: ${highlightText(p.tel, q)}`);
-                        if (check(p.discordId)) sub.push(`Discord: ${highlightText(p.discordId, q)}`);
-                        if (check(p.departamento)) sub.push(`Depto: ${highlightText(p.departamento, q)}`);
+                    if (!p) return;
+                    const campos = [];
+                    if (check(p.nombre)) campos.push({ label: 'Nombre del coach', valor: p.nombre });
+                    if (check(p.riotId)) campos.push({ label: 'Riot ID', valor: p.riotId });
+                    if (check(p.ci)) campos.push({ label: 'C.I.', valor: p.ci });
+                    if (check(p.tel)) campos.push({ label: 'Teléfono', valor: p.tel });
+                    if (check(p.mail)) campos.push({ label: 'Email', valor: p.mail });
+                    if (check(p.discordId)) campos.push({ label: 'Discord', valor: p.discordId });
+                    if (check(p.departamento)) campos.push({ label: 'Departamento', valor: p.departamento });
 
-                        if (sub.length > 0) {
-                            const nameDisplay = p.nombre || p.riotId || `Coach ${idx + 1}`;
-                            matches.push({
-                                icono: 'fa-brain',
-                                color: 'border-emerald-500/40 text-emerald-300 bg-emerald-950/40',
-                                texto: `<strong class="text-white uppercase">[Coach]</strong> ${highlightText(nameDisplay, q)} &bull; ${sub.join(' &bull; ')}`
-                            });
-                        }
+                    if (campos.length > 0) {
+                        matches.push({
+                            rol: eq.coaches.length > 1 ? `Coach ${idx + 1}` : 'Coach',
+                            icono: 'fa-brain',
+                            iconoColor: 'text-emerald-400',
+                            campos
+                        });
                     }
                 });
             }
 
-            // 4. Representantes (especialmente Rep 2 o campos ocultos como CI, mail, depto de Rep 1)
-            if (Array.isArray(eq.representantes)) {
-                eq.representantes.forEach((r, idx) => {
-                    if (r) {
-                        const sub = [];
-                        if (idx > 0 && check(r.nombre)) sub.push(`Nombre: ${highlightText(r.nombre, q)}`);
-                        if (idx > 0 && check(r.tel)) sub.push(`Cel: ${highlightText(r.tel, q)}`);
-                        if (check(r.ci)) sub.push(`C.I.: ${highlightText(r.ci, q)}`);
-                        if (check(r.mail)) sub.push(`Email: ${highlightText(r.mail, q)}`);
-                        if (check(r.departamento)) sub.push(`Depto: ${highlightText(r.departamento, q)}`);
-
-                        if (sub.length > 0) {
-                            matches.push({
-                                icono: 'fa-id-card',
-                                color: 'border-amber-500/40 text-amber-300 bg-amber-950/40',
-                                texto: `<strong class="text-white uppercase">[Rep ${idx + 1}]</strong> ${r.nombre ? highlightText(r.nombre, q) : ''} &bull; ${sub.join(' &bull; ')}`
-                            });
-                        }
-                    }
-                });
-            }
-
-            // 5. Media
+            // 5. Media (Streamers)
             if (eq.media) {
                 const streamers = eq.media.streamers || (eq.media.streamer_nombre ? [{ nombre: eq.media.streamer_nombre }] : []);
                 streamers.forEach(s => {
                     if (s && check(s.nombre)) {
                         matches.push({
+                            rol: 'Streamer',
                             icono: 'fa-video',
-                            color: 'border-pink-500/40 text-pink-300 bg-pink-950/40',
-                            texto: `<strong class="text-white uppercase">[Streamer]</strong> ${highlightText(s.nombre, q)}`
+                            iconoColor: 'text-pink-400',
+                            campos: [{ label: 'Nombre del streamer', valor: s.nombre }]
                         });
                     }
                 });
@@ -2108,23 +2187,39 @@
                 `;
                 tbody.appendChild(tr);
 
-                // Sub-fila Escritorio de Coincidencia (elegante, ancho completo, no deforma columnas)
+                // Sub-fila Escritorio de Coincidencias estructurada y limpia (Propuesta QA Andrea)
                 if (coincidencias.length > 0) {
                     const trSub = document.createElement('tr');
-                    trSub.className = "bg-[#040813]/90 transition-colors";
+                    trSub.className = "bg-[#030712]/95 border-b border-gray-800/60";
                     trSub.innerHTML = `
-                        <td colspan="6" class="px-6 py-2.5 bg-gradient-to-r from-cyan-950/20 via-transparent to-transparent">
-                            <div class="flex items-center gap-3 pl-2 sm:pl-3 border-l-2 border-cyan-500 flex-wrap">
-                                <span class="text-[9px] font-black uppercase text-cyan-400 flex items-center gap-1.5 tracking-wider shrink-0 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">
-                                    <i class="fas fa-bullseye text-cyan-400 text-[10px]"></i> Coincidencia de búsqueda:
-                                </span>
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    ${coincidencias.map(c => `
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${c.color} shadow-sm backdrop-blur-sm">
-                                            <i class="fas ${c.icono} text-[10px] shrink-0"></i>
-                                            <span>${c.texto}</span>
-                                        </span>
-                                    `).join('')}
+                        <td colspan="6" class="px-6 py-3">
+                            <div class="rounded-xl bg-[#060b17]/90 border border-cyan-500/20 p-3 sm:p-4 shadow-lg shadow-black/40">
+                                <div class="flex items-center justify-between cursor-pointer select-none pb-2 border-b border-gray-800/40" onclick="window.toggleBloqueCoincidencias('${eq.id}')">
+                                    <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold tracking-wide">
+                                        <i class="fas fa-search text-cyan-400 text-xs"></i>
+                                        <span>Coincidencias de búsqueda (<span id="count-disp-${eq.id}">${coincidencias.length > 3 ? 3 : coincidencias.length}</span>)</span>
+                                    </div>
+                                    <button type="button" class="text-gray-400 hover:text-cyan-400 p-1 transition-colors" title="Minimizar / Expandir">
+                                        <i id="chevron-main-${eq.id}" class="fas fa-chevron-up text-xs transition-transform duration-200"></i>
+                                    </button>
+                                </div>
+
+                                <div id="matches-body-${eq.id}" class="mt-3 space-y-2">
+                                    <div class="space-y-2">
+                                        ${coincidencias.slice(0, 3).map(c => renderFilaCoincidencia(c, currentQuery, false)).join('')}
+                                    </div>
+
+                                    ${coincidencias.length > 3 ? `
+                                        <div id="matches-extra-${eq.id}" class="hidden space-y-2 pt-2 border-t border-gray-800/40">
+                                            ${coincidencias.slice(3).map(c => renderFilaCoincidencia(c, currentQuery, false)).join('')}
+                                        </div>
+                                        <div class="pt-2 text-center">
+                                            <button type="button" onclick="window.toggleExpandCoincidencias('${eq.id}', ${coincidencias.length})" id="btn-expand-${eq.id}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors py-1 px-3 rounded-lg hover:bg-blue-500/10 cursor-pointer">
+                                                <span id="btn-expand-text-${eq.id}">Ver todas las coincidencias (${coincidencias.length})</span>
+                                                <i id="chevron-expand-${eq.id}" class="fas fa-chevron-down text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    ` : ''}
                                 </div>
                             </div>
                         </td>
@@ -2139,16 +2234,31 @@
                 let coincidenciasMovilHTML = '';
                 if (coincidencias.length > 0) {
                     coincidenciasMovilHTML = `
-                        <div class="p-2.5 rounded-xl bg-[#05070d] border border-cyan-500/20 flex flex-col gap-1.5 text-xs">
-                            <span class="text-[9px] font-black uppercase text-cyan-400 flex items-center gap-1 tracking-wider">
-                                <i class="fas fa-bullseye text-cyan-400"></i> Coincidencia de búsqueda:
-                            </span>
-                            <div class="flex flex-col gap-1">
-                                ${coincidencias.map(c => `
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border ${c.color} text-[10px]">
-                                        <i class="fas ${c.icono} text-[8px] shrink-0"></i> <span>${c.texto}</span>
-                                    </span>
-                                `).join('')}
+                        <div class="rounded-xl bg-[#060b17]/90 border border-cyan-500/20 p-3 shadow-md flex flex-col gap-2">
+                            <div class="flex items-center justify-between cursor-pointer select-none pb-1.5 border-b border-gray-800/40" onclick="window.toggleBloqueCoincidencias('m-${eq.id}')">
+                                <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold tracking-wide">
+                                    <i class="fas fa-search text-cyan-400 text-xs"></i>
+                                    <span>Coincidencias (<span id="count-disp-m-${eq.id}">${coincidencias.length > 3 ? 3 : coincidencias.length}</span>)</span>
+                                </div>
+                                <button type="button" class="text-gray-400 hover:text-cyan-400 p-1">
+                                    <i id="chevron-main-m-${eq.id}" class="fas fa-chevron-up text-xs transition-transform duration-200"></i>
+                                </button>
+                            </div>
+                            <div id="matches-body-m-${eq.id}" class="space-y-2 mt-1">
+                                <div class="space-y-2">
+                                    ${coincidencias.slice(0, 3).map(c => renderFilaCoincidencia(c, currentQuery, true)).join('')}
+                                </div>
+                                ${coincidencias.length > 3 ? `
+                                    <div id="matches-extra-m-${eq.id}" class="hidden space-y-2 pt-2 border-t border-gray-800/40">
+                                        ${coincidencias.slice(3).map(c => renderFilaCoincidencia(c, currentQuery, true)).join('')}
+                                    </div>
+                                    <div class="pt-1 text-center">
+                                        <button type="button" onclick="window.toggleExpandCoincidencias('m-${eq.id}', ${coincidencias.length})" id="btn-expand-m-${eq.id}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 py-1 px-3 rounded-lg hover:bg-blue-500/10 cursor-pointer">
+                                            <span id="btn-expand-text-m-${eq.id}">Ver todas las coincidencias (${coincidencias.length})</span>
+                                            <i id="chevron-expand-m-${eq.id}" class="fas fa-chevron-down text-[10px]"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>`;
                 }
