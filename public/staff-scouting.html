@@ -230,28 +230,28 @@
                 </button>
             </div>
 
-            <!-- PESTAÑAS DEL MODAL -->
-            <div class="px-4 sm:px-6 pt-3 border-b border-gray-800 bg-[#050810] flex gap-2 overflow-x-auto select-none shrink-0">
-                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider border-b-2 border-emerald-400 text-emerald-300 bg-emerald-950/30">
-                    <i class="fas fa-info-circle mr-1"></i> General & Horarios
+            <!-- PESTAÑAS DEL MODAL (Segmented modern dock) -->
+            <div class="px-4 sm:px-6 py-2.5 border-b border-gray-800/80 bg-[#050810]/95 flex items-center gap-1.5 overflow-x-auto select-none shrink-0">
+                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 border bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] cursor-pointer">
+                    <i class="fas fa-info-circle text-emerald-400"></i> General & Horarios
                 </button>
-                <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
-                    <i class="fas fa-crown mr-1"></i> Capitán & Sub
+                <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                    <i class="fas fa-crown text-yellow-400"></i> Capitán & Sub
                 </button>
-                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
-                    <i class="fas fa-users mr-1"></i> 5 Titulares
+                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                    <i class="fas fa-users text-blue-400"></i> 5 Titulares
                 </button>
-                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
-                    <i class="fas fa-user-plus mr-1"></i> Suplentes
+                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                    <i class="fas fa-user-plus text-purple-400"></i> Suplentes
                 </button>
-                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
-                    <i class="fas fa-receipt mr-1"></i> Pago & Comprobante
+                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                    <i class="fas fa-receipt text-emerald-400"></i> Pago & Comprobante
                 </button>
-                <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider border-b-2 border-transparent text-emerald-400 hover:text-emerald-300">
-                    <i class="fas fa-stamp mr-1"></i> Panel Staff
+                <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-emerald-500/25 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30 cursor-pointer">
+                    <i class="fas fa-stamp text-emerald-400"></i> Panel Staff
                 </button>
-                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-amber-400 hover:text-amber-300">
-                    <i class="fas fa-edit mr-1"></i> Editar Ficha
+                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-amber-500/30 text-amber-400 hover:text-amber-300 hover:bg-amber-950/30 cursor-pointer ml-auto">
+                    <i class="fas fa-edit text-amber-400"></i> Editar Ficha
                 </button>
             </div>
 
@@ -261,35 +261,91 @@
                 <!-- TAB 1: GENERAL & HORARIOS -->
                 <div id="mtab-general" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
-                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-2.5 flex items-center gap-1.5">
-                                <i class="fas fa-id-card"></i> Identidad del Equipo
-                            </h4>
-                            <div class="space-y-2">
-                                <div><span class="text-gray-500">Nombre Oficial:</span> <strong id="m-d-nombre" class="text-white">--</strong></div>
-                                <div><span class="text-gray-500">Tag / Abreviatura:</span> <strong id="m-d-tag" class="text-white">--</strong></div>
-                                <div><span class="text-gray-500">Procedencia / Ciudad:</span> <span id="m-d-procedencia" class="text-gray-300">--</span></div>
-                                <div><span class="text-gray-500">Correo Electrónico:</span> <span id="m-d-email" class="text-gray-300 font-mono">--</span></div>
-                                <div><span class="text-gray-500">Principal Objetivo:</span> <p id="m-d-objetivo" class="text-gray-300 mt-1 italic bg-black/30 p-2 rounded border border-gray-800">--</p></div>
+                        <!-- Identidad del Equipo -->
+                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                    <i class="fas fa-id-card text-emerald-400 text-sm"></i> Identidad del Equipo
+                                </h4>
+                                <span id="m-d-tag" class="px-2.5 py-1 rounded-lg text-xs font-mono font-black text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 shadow-sm">[TAG]</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Oficial</span>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-shield-alt text-emerald-400 text-xs"></i>
+                                        <span id="m-d-nombre" class="text-white text-base font-black uppercase tracking-wide">--</span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-gray-800/50">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Procedencia / Composición</span>
+                                        <div class="flex items-center gap-1.5 text-gray-200">
+                                            <i class="fas fa-globe-americas text-blue-400 text-xs shrink-0"></i>
+                                            <span id="m-d-procedencia" class="font-semibold text-xs leading-tight">--</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Correo Electrónico</span>
+                                        <div class="flex items-center gap-1.5 text-gray-200">
+                                            <i class="fas fa-envelope text-purple-400 text-xs shrink-0"></i>
+                                            <span id="m-d-email" class="font-mono text-xs text-gray-300 truncate">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                        <i class="fas fa-bullseye text-emerald-400 mr-1"></i> Principal Objetivo Declarado
+                                    </span>
+                                    <div class="p-3 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-200 font-medium text-xs leading-relaxed flex items-start gap-2.5">
+                                        <i class="fas fa-quote-left text-gray-600 text-xs shrink-0 mt-0.5"></i>
+                                        <span id="m-d-objetivo">--</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
-                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-2.5 flex items-center gap-1.5">
-                                <i class="fas fa-clock"></i> Disponibilidad y Horarios Oficiales
-                            </h4>
+                        <!-- Disponibilidad y Horarios Oficiales -->
+                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                    <i class="fas fa-clock text-emerald-400 text-sm"></i> Disponibilidad y Horarios Oficiales
+                                </h4>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-400 bg-black/40 border border-gray-800">Scouting T3</span>
+                            </div>
+
                             <div class="space-y-3">
                                 <div>
-                                    <span class="text-gray-500 block mb-0.5 font-bold">Franja habitual en días de semana:</span>
-                                    <span id="m-d-franja-semana" class="text-emerald-300 font-semibold bg-emerald-950/40 px-2 py-1 rounded border border-emerald-500/20 block">--</span>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                        <i class="fas fa-calendar-day text-emerald-400 mr-1"></i> Franja habitual en días de semana
+                                    </span>
+                                    <div class="p-2.5 bg-emerald-950/40 rounded-2xl border border-emerald-500/30 text-emerald-300 font-black text-xs flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-emerald-400"></i>
+                                        <span id="m-d-franja-semana">--</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="text-gray-500 block mb-0.5 font-bold">Dificultades recurrentes (estudio/trabajo):</span>
-                                    <span id="m-d-dificultades" class="text-gray-300 bg-black/40 p-2 rounded block border border-gray-800">--</span>
+
+                                <div class="pt-1 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                        <i class="fas fa-calendar-week text-blue-400 mr-1"></i> Preferencia en fines de semana
+                                    </span>
+                                    <div class="p-2.5 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-200 font-semibold text-xs flex items-center gap-2">
+                                        <i class="fas fa-calendar-alt text-blue-400"></i>
+                                        <span id="m-d-fines-semana">--</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="text-gray-500 block mb-0.5 font-bold">Preferencia en fines de semana:</span>
-                                    <span id="m-d-fines-semana" class="text-gray-300 bg-black/40 p-2 rounded block border border-gray-800">--</span>
+
+                                <div class="pt-1 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                        <i class="fas fa-exclamation-triangle text-amber-400 mr-1"></i> Dificultades recurrentes (estudio/trabajo)
+                                    </span>
+                                    <div class="p-2.5 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-300 font-medium text-xs flex items-start gap-2">
+                                        <i class="fas fa-info-circle text-amber-400 text-xs shrink-0 mt-0.5"></i>
+                                        <span id="m-d-dificultades">--</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -299,48 +355,98 @@
                 <!-- TAB 2: CAPITÁN & SUBCAPITÁN -->
                 <div id="mtab-capitan" class="hidden space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Capitán -->
-                        <div class="bg-gradient-to-b from-emerald-950/20 to-black/40 p-4 rounded-2xl border border-emerald-500/30">
-                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-3 flex items-center gap-1.5">
-                                <i class="fas fa-crown text-yellow-400"></i> Capitán Oficial
-                            </h4>
-                            <div class="space-y-2.5">
-                                <div><span class="text-gray-500 block text-[10px] uppercase font-bold">Nombre Completo & CI</span><strong id="m-cap-nombre" class="text-white text-sm">--</strong></div>
+                        <!-- Capitán Oficial -->
+                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/25 via-[#070e17] to-[#04060c] space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                    <i class="fas fa-crown text-yellow-400 text-sm"></i> Capitán Oficial
+                                </h4>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">Líder</span>
+                            </div>
+
+                            <div class="space-y-3.5">
                                 <div>
-                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">WhatsApp</span>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <span id="m-cap-tel" class="text-white font-mono font-bold">--</span>
-                                        <a id="m-cap-wa-link" href="#" target="_blank" class="px-2 py-0.5 rounded bg-green-600 hover:bg-green-500 text-white font-bold text-[10px] flex items-center gap-1 transition-all">
-                                            <i class="fab fa-whatsapp"></i> Chat WhatsApp
-                                        </a>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Completo & CI</span>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-user text-emerald-400 text-xs"></i>
+                                        <strong id="m-cap-nombre" class="text-white text-sm font-black tracking-wide">--</strong>
                                     </div>
                                 </div>
-                                <div>
-                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">Usuario de Discord</span>
-                                    <span id="m-cap-discord" class="text-cyan-300 font-mono bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/20 inline-block mt-0.5">--</span>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">WhatsApp / Contacto</span>
+                                    <div class="flex items-center justify-between gap-2 p-2 bg-black/50 rounded-2xl border border-gray-800">
+                                        <span id="m-cap-tel" class="text-white font-mono font-bold text-xs pl-1">--</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <button type="button" onclick="copiarTexto(document.getElementById('m-cap-tel').textContent, 'Teléfono')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                            <a id="m-cap-wa-link" href="#" target="_blank" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md active:scale-95">
+                                                <i class="fab fa-whatsapp text-xs"></i> Chat WhatsApp
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Usuario de Discord</span>
+                                    <div class="flex items-center justify-between gap-2 p-2 bg-[#5865F2]/10 rounded-2xl border border-[#5865F2]/30">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fab fa-discord text-[#5865F2] text-sm"></i>
+                                            <span id="m-cap-discord" class="text-white font-mono font-bold text-xs">--</span>
+                                        </div>
+                                        <button type="button" onclick="copiarTexto(document.getElementById('m-cap-discord').textContent, 'Discord')" class="px-2 py-1 rounded-lg bg-[#5865F2]/30 hover:bg-[#5865F2] text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Subcapitán -->
-                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
-                            <h4 class="text-xs font-black uppercase text-gray-400 mb-3 flex items-center gap-1.5">
-                                <i class="fas fa-user-shield text-cyan-400"></i> Subcapitán (Contacto Alternativo)
-                            </h4>
-                            <div class="space-y-2.5">
-                                <div><span class="text-gray-500 block text-[10px] uppercase font-bold">Nombre Completo & CI</span><strong id="m-sub-nombre" class="text-white text-sm">--</strong></div>
+                        <div class="glass-panel p-5 rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/15 via-[#070e17] to-[#04060c] space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                                    <i class="fas fa-user-shield text-cyan-400 text-sm"></i> Subcapitán (Contacto Alternativo)
+                                </h4>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Sub</span>
+                            </div>
+
+                            <div class="space-y-3.5">
                                 <div>
-                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">WhatsApp</span>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <span id="m-sub-tel" class="text-white font-mono font-bold">--</span>
-                                        <a id="m-sub-wa-link" href="#" target="_blank" class="px-2 py-0.5 rounded bg-green-600 hover:bg-green-500 text-white font-bold text-[10px] flex items-center gap-1 transition-all">
-                                            <i class="fab fa-whatsapp"></i> Chat WhatsApp
-                                        </a>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Completo & CI</span>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-user text-cyan-400 text-xs"></i>
+                                        <strong id="m-sub-nombre" class="text-white text-sm font-black tracking-wide">--</strong>
                                     </div>
                                 </div>
-                                <div>
-                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">Usuario de Discord</span>
-                                    <span id="m-sub-discord" class="text-cyan-300 font-mono bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/20 inline-block mt-0.5">--</span>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">WhatsApp / Contacto</span>
+                                    <div class="flex items-center justify-between gap-2 p-2 bg-black/50 rounded-2xl border border-gray-800">
+                                        <span id="m-sub-tel" class="text-white font-mono font-bold text-xs pl-1">--</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <button type="button" onclick="copiarTexto(document.getElementById('m-sub-tel').textContent, 'Teléfono')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                            <a id="m-sub-wa-link" href="#" target="_blank" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md active:scale-95">
+                                                <i class="fab fa-whatsapp text-xs"></i> Chat WhatsApp
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Usuario de Discord</span>
+                                    <div class="flex items-center justify-between gap-2 p-2 bg-[#5865F2]/10 rounded-2xl border border-[#5865F2]/30">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fab fa-discord text-[#5865F2] text-sm"></i>
+                                            <span id="m-sub-discord" class="text-white font-mono font-bold text-xs">--</span>
+                                        </div>
+                                        <button type="button" onclick="copiarTexto(document.getElementById('m-sub-discord').textContent, 'Discord')" class="px-2 py-1 rounded-lg bg-[#5865F2]/30 hover:bg-[#5865F2] text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -365,32 +471,49 @@
                 <!-- TAB 5: PAGO & COMPROBANTE -->
                 <div id="mtab-pago" class="hidden space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80 space-y-3">
-                            <h4 class="text-xs font-black uppercase text-emerald-400 flex items-center gap-1.5">
-                                <i class="fas fa-credit-card"></i> Datos de Transacción
-                            </h4>
-                            <div>
-                                <span class="text-gray-500 block text-[10px] uppercase font-bold">Modalidad / Método de Pago:</span>
-                                <strong id="m-pago-modalidad" class="text-white text-sm">--</strong>
+                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                    <i class="fas fa-credit-card text-emerald-400 text-sm"></i> Datos de Transacción
+                                </h4>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">Inscripción</span>
                             </div>
-                            <div>
-                                <span class="text-gray-500 block text-[10px] uppercase font-bold">Número de Referencia / Transacción:</span>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span id="m-pago-referencia" class="text-emerald-300 font-mono font-bold bg-emerald-950/40 px-2 py-1 rounded border border-emerald-500/30 text-sm">--</span>
-                                    <button onclick="copiarReferencia()" class="text-gray-400 hover:text-white p-1 text-xs" title="Copiar referencia"><i class="fas fa-copy"></i></button>
+
+                            <div class="space-y-3.5">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Modalidad / Método de Pago</span>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-wallet text-emerald-400 text-xs"></i>
+                                        <strong id="m-pago-modalidad" class="text-white text-sm font-black tracking-wide">--</strong>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 border-t border-gray-800/50">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Número de Referencia / Comprobante</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-black/50 rounded-2xl border border-gray-800">
+                                        <span id="m-pago-referencia" class="text-emerald-300 font-mono font-bold text-xs pl-1">--</span>
+                                        <button type="button" onclick="copiarTexto(document.getElementById('m-pago-referencia').textContent, 'Nº de Referencia')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1">
+                                            <i class="fas fa-copy"></i> Copiar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80 flex flex-col justify-between">
+                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] flex flex-col justify-between shadow-xl">
                             <div>
-                                <h4 class="text-xs font-black uppercase text-emerald-400 mb-2 flex items-center gap-1.5">
-                                    <i class="fas fa-image"></i> Comprobante Adjunto
-                                </h4>
-                                <p class="text-gray-400 text-xs mb-3">Captura enviada en el formulario de Google Forms.</p>
+                                <div class="flex items-center justify-between pb-3 border-b border-gray-800/80 mb-3">
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                        <i class="fas fa-file-invoice-dollar text-emerald-400 text-sm"></i> Comprobante Adjunto
+                                    </h4>
+                                    <span class="text-[10px] text-gray-500 font-mono">Google Drive</span>
+                                </div>
+                                <p class="text-gray-300 text-xs leading-relaxed mb-4">
+                                    El archivo de comprobante de pago fue subido por el capitán al completar el formulario de inscripción oficial.
+                                </p>
                             </div>
-                            <div id="m-pago-comprobante-box" class="text-center p-3 bg-black/60 rounded-xl border border-gray-800">
-                                <a id="m-pago-comprobante-link" href="#" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md">
+                            <div id="m-pago-comprobante-box" class="text-center p-4 bg-black/50 rounded-2xl border border-gray-800/80">
+                                <a id="m-pago-comprobante-link" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95">
                                     <i class="fas fa-external-link-alt"></i> Ver Comprobante en Google Drive
                                 </a>
                             </div>
@@ -1512,28 +1635,75 @@
         };
 
         function renderFichaJugador(j, esTitular) {
-            const opggUrl = j.opggLas || (j.riotIdLas ? `https://www.op.gg/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
-            const opggLink = opggUrl ? `<a href="${opggUrl}" target="_blank" class="text-blue-400 hover:text-white flex items-center gap-1 font-bold text-[10px]"><i class="fas fa-chart-line"></i> OP.GG</a>` : '';
+            const opggUrl = j.opggLas || (j.riotIdLas ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
+            const opggLink = opggUrl 
+                ? `<a href="${opggUrl}" target="_blank" class="px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 hover:border-blue-400 text-blue-300 hover:text-white flex items-center gap-1.5 font-bold text-[10px] transition-all shadow-sm active:scale-95"><i class="fas fa-chart-line text-blue-400"></i> OP.GG</a>` 
+                : '';
+
+            const posColorMap = {
+                'TOP': { badge: 'bg-blue-950/80 text-blue-300 border-blue-500/40', icon: 'fas fa-shield-alt text-blue-400' },
+                'JG': { badge: 'bg-purple-950/80 text-purple-300 border-purple-500/40', icon: 'fas fa-tree text-purple-400' },
+                'MID': { badge: 'bg-amber-950/80 text-amber-300 border-amber-500/40', icon: 'fas fa-fire text-amber-400' },
+                'ADC': { badge: 'bg-pink-950/80 text-pink-300 border-pink-500/40', icon: 'fas fa-crosshairs text-pink-400' },
+                'SUPP': { badge: 'bg-teal-950/80 text-teal-300 border-teal-500/40', icon: 'fas fa-hand-holding-heart text-teal-400' }
+            };
+
+            const posTheme = posColorMap[j.posicion] || { badge: 'bg-gray-900 text-gray-300 border-gray-700', icon: 'fas fa-user text-gray-400' };
 
             return `
-                <div class="bg-black/50 p-3.5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/40 transition-colors flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between pb-2 border-b border-gray-800/60 mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                <div class="glass-panel p-4 rounded-3xl border border-gray-800/80 hover:border-emerald-500/40 bg-gradient-to-br from-[#080d16] via-[#050810] to-[#04060c] transition-all shadow-xl flex flex-col justify-between group hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                    <div class="space-y-3">
+                        <!-- Cabecera de la Ficha -->
+                        <div class="flex items-center justify-between pb-2.5 border-b border-gray-800/80">
+                            <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border flex items-center gap-1.5 ${posTheme.badge}">
+                                <i class="${posTheme.icon}"></i>
                                 ${esTitular ? `[${j.posicion}] Titular ${j.numero}` : `Suplente ${j.numero}`}
                             </span>
                             ${opggLink}
                         </div>
-                        <div class="space-y-1.5">
-                            <div><span class="text-gray-500 block text-[9px] uppercase font-bold">Riot ID LAS</span><strong class="text-white text-xs font-mono">${j.riotIdLas || '--'}</strong></div>
-                            <div><span class="text-gray-500 block text-[9px] uppercase font-bold">Nombre Completo</span><span class="text-gray-200">${j.nombreCi || '--'}</span></div>
-                            <div class="grid grid-cols-2 gap-1 pt-1">
-                                <div><span class="text-gray-500 text-[9px] uppercase font-bold block">Solo/Duo</span><span class="text-yellow-400 font-bold text-[11px]">${j.rangoSoloQ || '-'}</span></div>
-                                <div><span class="text-gray-500 text-[9px] uppercase font-bold block">Flex</span><span class="text-cyan-400 font-bold text-[11px]">${j.rangoFlex || '-'}</span></div>
+
+                        <!-- Identidad y Nombre -->
+                        <div class="space-y-2">
+                            <div>
+                                <span class="text-gray-400 block text-[9px] uppercase font-bold tracking-wider mb-0.5">Riot ID LAS</span>
+                                <div class="flex items-center justify-between gap-1 bg-black/40 px-2.5 py-1.5 rounded-xl border border-gray-800/90">
+                                    <strong class="text-white text-xs font-mono tracking-wide truncate">${j.riotIdLas || '--'}</strong>
+                                    ${j.riotIdLas ? `<button type="button" onclick="copiarTexto('${j.riotIdLas}', 'Riot ID')" class="text-gray-400 hover:text-white p-1 text-[10px] transition-colors cursor-pointer" title="Copiar Riot ID"><i class="fas fa-copy"></i></button>` : ''}
+                                </div>
                             </div>
-                            <div class="pt-1 text-gray-400 text-[10px]">
-                                <span>Rol Sec: <strong class="text-gray-200">${j.rolSecundario || 'N/A'}</strong></span> &bull; 
-                                <span>Discord: <strong class="text-gray-200 font-mono">${j.discord || 'N/A'}</strong></span>
+
+                            <div>
+                                <span class="text-gray-400 block text-[9px] uppercase font-bold tracking-wider mb-0.5">Nombre Completo</span>
+                                <span class="text-gray-200 text-xs font-medium block truncate">${j.nombreCi || '--'}</span>
+                            </div>
+
+                            <!-- Rangos SoloQ y Flex en Pills -->
+                            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-800/50">
+                                <div class="bg-black/30 p-2 rounded-xl border border-gray-800/80">
+                                    <span class="text-gray-400 text-[9px] uppercase font-bold block mb-0.5">
+                                        <i class="fas fa-trophy text-yellow-400 mr-1"></i> Solo/Duo
+                                    </span>
+                                    <span class="text-yellow-400 font-black text-[11px] block truncate">${j.rangoSoloQ || 'Sin rango'}</span>
+                                </div>
+                                <div class="bg-black/30 p-2 rounded-xl border border-gray-800/80">
+                                    <span class="text-gray-400 text-[9px] uppercase font-bold block mb-0.5">
+                                        <i class="fas fa-layer-group text-cyan-400 mr-1"></i> Flex 5v5
+                                    </span>
+                                    <span class="text-cyan-400 font-black text-[11px] block truncate">${j.rangoFlex || 'Sin rango'}</span>
+                                </div>
+                            </div>
+
+                            <!-- Rol Secundario y Discord -->
+                            <div class="pt-1.5 border-t border-gray-800/50 flex items-center justify-between gap-2 text-[10px]">
+                                <span class="text-gray-400 truncate">
+                                    Rol Sec: <strong class="text-gray-200 font-bold">${j.rolSecundario || 'N/A'}</strong>
+                                </span>
+                                ${j.discord ? `
+                                    <div class="flex items-center gap-1 text-[#7983f5] bg-[#5865F2]/10 px-2 py-0.5 rounded-lg border border-[#5865F2]/20 font-mono text-[9px] shrink-0">
+                                        <i class="fab fa-discord text-[10px]"></i>
+                                        <span class="truncate max-w-[80px]">${j.discord}</span>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -1553,7 +1723,10 @@
                 const btn = document.getElementById(`mtab-btn-${t}`);
                 if (el) el.classList.add('hidden');
                 if (btn) {
-                    btn.classList.remove('border-emerald-400', 'text-emerald-300', 'bg-emerald-950/30', 'border-amber-400', 'text-amber-300', 'bg-amber-950/30');
+                    btn.classList.remove(
+                        'bg-emerald-500/15', 'border-emerald-500/40', 'text-emerald-300', 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
+                        'bg-amber-500/15', 'border-amber-500/50', 'text-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.15)]'
+                    );
                     btn.classList.add('border-transparent', 'text-gray-400');
                 }
             });
@@ -1564,11 +1737,20 @@
             if (activeBtn) {
                 activeBtn.classList.remove('border-transparent', 'text-gray-400');
                 if (tabName === 'editar') {
-                    activeBtn.classList.add('border-amber-400', 'text-amber-300', 'bg-amber-950/30');
+                    activeBtn.classList.add('bg-amber-500/15', 'border-amber-500/50', 'text-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.15)]');
                 } else {
-                    activeBtn.classList.add('border-emerald-400', 'text-emerald-300', 'bg-emerald-950/30');
+                    activeBtn.classList.add('bg-emerald-500/15', 'border-emerald-500/40', 'text-emerald-300', 'shadow-[0_0_15px_rgba(16,185,129,0.15)]');
                 }
             }
+        };
+
+        window.copiarTexto = function(texto, label) {
+            if (!texto || texto === '--') return;
+            navigator.clipboard.writeText(texto.trim()).then(() => {
+                alert(`✅ ${label || 'Dato'} copiado: ${texto.trim()}`);
+            }).catch(() => {
+                prompt("Copiar:", texto.trim());
+            });
         };
 
         // 8. CRUD - UPDATE DICTAMEN (U)
