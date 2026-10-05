@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scouting Tournament 3 | Panel de Staff LBL</title>
+    <meta name="description" content="Gestor y verificador oficial de inscripciones para el Torneo de Scouting 3 de LBL Esports con sincronización bidireccional a Google Sheets.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://lbl-esports.web.app/staff-scouting">
+
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
+    <meta name="theme-color" content="#10b981">
+
+    <link rel="stylesheet" href="/dist/output.css?v=194">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #030712; color: #e5e7eb; }
+        .glass-panel { background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .badge-pendiente { background-color: #ca8a0420; color: #facc15; border: 1px solid #ca8a04; }
+        .badge-aceptado { background-color: #16a34a20; color: #4ade80; border: 1px solid #16a34a; }
+        .badge-observado { background-color: #ea580c20; color: #fb923c; border: 1px solid #ea580c; }
+        .badge-rechazado { background-color: #dc262620; color: #f87171; border: 1px solid #dc2626; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #060b13; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        
+        .tab-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
+        }
+        .tab-btn:not(.active) {
+            background: #090e17;
+            color: #94a3b8;
+            border-color: #1e293b;
+        }
+        .tab-btn:not(.active):hover {
+            color: #ffffff;
+            border-color: #334155;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- PANTALLA DE LOGIN SI NO ESTÁ AUTENTICADO -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#020202] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] hidden">
+        <div class="glass-panel p-8 rounded-3xl max-w-md w-full border-t-4 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative overflow-hidden">
+            <div class="text-center mb-8">
+                <i class="fas fa-binoculars text-5xl text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]"></i>
+                <h1 class="text-2xl font-black uppercase tracking-widest text-white">Scouting <span class="text-emerald-500">T3</span></h1>
+                <p class="text-gray-500 text-xs font-bold tracking-widest uppercase mt-1">Terminal de Verificación Staff</p>
+            </div>
+            <form id="form-login" class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Correo Electrónico</label>
+                    <input type="email" id="login-email" class="w-full bg-[#0a0a0a] border border-[#333] p-3.5 rounded-xl outline-none focus:border-emerald-500 transition-all text-white text-sm" placeholder="staff@lbl.com" required>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Contraseña</label>
+                    <input type="password" id="login-pass" class="w-full bg-[#0a0a0a] border border-[#333] p-3.5 rounded-xl outline-none focus:border-emerald-500 transition-all text-white text-sm" placeholder="••••••••" required>
+                </div>
+                <p id="login-error" class="text-red-500 text-xs font-bold text-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i> Credenciales incorrectas.</p>
+                <button type="submit" id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 active:scale-95 cursor-pointer">ACCEDER A SCOUTING T3</button>
+            </form>
+            <div class="mt-6 text-center">
+                <a href="/dashboard" class="text-gray-500 hover:text-white text-xs transition-colors"><i class="fas fa-arrow-left mr-1"></i> Volver al Dashboard General</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
+    <div id="dashboard-content" class="flex flex-col min-h-screen">
+        
+        <!-- HEADER ESPECIALIZADO SCOUTING T3 -->
+        <header class="w-full glass-panel sticky top-0 z-40 px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-emerald-900/30 gap-2">
+            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <a href="/dashboard" class="flex items-center gap-2.5 group shrink-0">
+                    <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <div class="flex flex-col text-left min-w-0">
+                        <span class="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase italic leading-none text-white">
+                            LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">SCOUTING T3</span>
+                        </span>
+                        <p class="text-[8px] sm:text-[9px] md:text-[10px] font-bold tracking-widest text-emerald-400 uppercase truncate mt-0.5" id="user-display">
+                            Sesión: Staff
+                        </p>
+                    </div>
+                </a>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-[0_0_12px_rgba(16,185,129,0.25)] ml-1 shrink-0">
+                    <i class="fas fa-file-excel text-[9px]"></i> <span class="hidden xs:inline">Sheets Sync</span>
+                </span>
+            </div>
+
+            <div class="flex gap-1.5 sm:gap-3 items-center shrink-0">
+                <!-- Botón Nuevo Equipo Manual (C de CRUD) -->
+                <button onclick="abrirModalCrearEquipo()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md hover:shadow-blue-500/25 active:scale-95 cursor-pointer" title="Inscribir equipo manualmente en Google Sheets">
+                    <i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Equipo</span>
+                </button>
+
+                <!-- Botón Volver a Liga -->
+                <a href="/dashboard" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-700/60 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Regresar al panel general de la Liga">
+                    <i class="fas fa-arrow-left"></i> <span class="hidden sm:inline">Liga Principal</span>
+                </a>
+
+                <!-- Botón Sincronizar Google Sheets -->
+                <button onclick="sincronizarGoogleSheets()" id="btn-sync-sheets" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md hover:shadow-emerald-500/25 active:scale-95 cursor-pointer" title="Cargar últimas inscripciones de Google Sheets">
+                    <i id="icon-sync-sheets" class="fas fa-sync-alt"></i> <span class="hidden xs:inline">Sincronizar</span>
+                </button>
+
+                <!-- Botón Configurar Apps Script URL -->
+                <button onclick="abrirModalConfigUrl()" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-700/60 text-gray-400 hover:text-emerald-400 font-bold text-xs transition-colors cursor-pointer" title="Configurar URL del Web App de Apps Script">
+                    <i class="fas fa-cog"></i>
+                </button>
+
+                <!-- Cerrar Sesión -->
+                <button onclick="cerrarSesionStaff()" class="border border-red-900/50 text-red-400 hover:bg-red-600 hover:text-white text-xs font-bold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-all shadow-sm">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="flex-grow w-full max-w-[1440px] mx-auto p-3 sm:p-5 md:p-6 mt-2 sm:mt-4">
+            
+            <!-- BANNER DE ESTADO Y SINCRONIZACIÓN -->
+            <div class="glass-panel p-4 sm:p-5 rounded-3xl mb-6 border-l-4 border-emerald-500 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-emerald-950/20 via-transparent to-transparent">
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-emerald-400"></i> Centro de Verificación: Scouting Tournament 3
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Revisa los 118 datos enviados en el formulario, valida comprobantes de pago y asigna estados con sincronización bidireccional automática.</p>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-gray-400 shrink-0">
+                    <div class="text-right">
+                        <p class="text-[10px] uppercase font-bold text-gray-500">Última Sincronización</p>
+                        <p id="label-ultima-sync" class="text-emerald-400 font-mono font-bold">Cargando...</p>
+                    </div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" title="API Conectada"></div>
+                </div>
+            </div>
+
+            <!-- TARJETAS DE MÉTRICAS KPI -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+                <div onclick="filtrarPorEstado('')" class="glass-panel p-3.5 sm:p-4 rounded-2xl border-l-4 border-emerald-500 cursor-pointer hover:bg-emerald-950/20 transition-all select-none group" title="Ver todos">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-emerald-400 font-bold uppercase mb-1 transition-colors">Total Equipos</p>
+                    <p class="text-2xl sm:text-3xl font-black text-white" id="stat-total">0</p>
+                </div>
+                <div onclick="filtrarPorEstado('Pendiente')" class="glass-panel p-3.5 sm:p-4 rounded-2xl border-l-4 border-yellow-500 cursor-pointer hover:bg-yellow-950/20 transition-all select-none group" title="Filtrar pendientes">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-yellow-400 font-bold uppercase mb-1 transition-colors">Pendientes</p>
+                    <p class="text-2xl sm:text-3xl font-black text-yellow-500" id="stat-pendientes">0</p>
+                </div>
+                <div onclick="filtrarPorEstado('Aceptado')" class="glass-panel p-3.5 sm:p-4 rounded-2xl border-l-4 border-green-500 cursor-pointer hover:bg-green-950/20 transition-all select-none group" title="Filtrar aceptados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-green-400 font-bold uppercase mb-1 transition-colors">Aceptados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-green-500" id="stat-aceptados">0</p>
+                </div>
+                <div onclick="filtrarPorEstado('Observado')" class="glass-panel p-3.5 sm:p-4 rounded-2xl border-l-4 border-orange-500 cursor-pointer hover:bg-orange-950/20 transition-all select-none group" title="Filtrar observados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-orange-400 font-bold uppercase mb-1 transition-colors">Observados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-orange-500" id="stat-observados">0</p>
+                </div>
+                <div onclick="filtrarPorEstado('Rechazado')" class="glass-panel p-3.5 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:bg-red-950/20 transition-all select-none group" title="Filtrar rechazados">
+                    <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-red-400 font-bold uppercase mb-1 transition-colors">Rechazados</p>
+                    <p class="text-2xl sm:text-3xl font-black text-red-500" id="stat-rechazados">0</p>
+                </div>
+            </div>
+
+            <!-- PANEL PRINCIPAL CON BUSCADOR Y LISTA -->
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+                
+                <!-- BARRA DE HERRAMIENTAS: Búsqueda y Filtros -->
+                <div class="p-4 sm:p-5 border-b border-gray-800 flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-[#070b12] gap-4">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs uppercase font-black text-gray-400 mr-1"><i class="fas fa-filter text-emerald-400 mr-1"></i> Estado:</span>
+                        <button onclick="filtrarPorEstado('')" id="tab-filtro-todos" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all active">Todos</button>
+                        <button onclick="filtrarPorEstado('Pendiente')" id="tab-filtro-pendiente" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Pendientes</button>
+                        <button onclick="filtrarPorEstado('Aceptado')" id="tab-filtro-aceptado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Aceptados</button>
+                        <button onclick="filtrarPorEstado('Observado')" id="tab-filtro-observado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Observados</button>
+                        <button onclick="filtrarPorEstado('Rechazado')" id="tab-filtro-rechazado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Rechazados</button>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="relative flex-grow sm:flex-grow-0">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                            <input type="text" id="searchInput" oninput="aplicarFiltros()" placeholder="Buscar equipo, tag, jugador, Riot ID, CI..." class="bg-[#0b121e] hover:bg-[#0f1726] focus:bg-[#111c2e] border border-gray-800 text-white pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:border-emerald-500 transition-all text-xs placeholder-gray-500 w-full sm:w-80">
+                            <button id="btnClearSearch" onclick="limpiarBusqueda()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs cursor-pointer p-0.5" title="Limpiar búsqueda">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR DE TARJETAS DE EQUIPOS -->
+                <div id="contenedor-equipos" class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <!-- Dinámico vía JavaScript -->
+                </div>
+
+                <!-- ESTADO VACÍO O CARGANDO -->
+                <div id="estado-vacio" class="p-12 text-center text-gray-500 font-bold hidden">
+                    <i class="fas fa-search text-3xl mb-3 text-gray-600"></i>
+                    <p class="text-sm">No se encontraron equipos registrados con ese criterio.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DE FICHA TÉCNICA DETALLADA (118 CAMPOS POR EQUIPO)       -->
+    <!-- ============================================================== -->
+    <div id="modal-detalle-equipo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+        <div class="glass-panel w-full max-w-5xl rounded-3xl max-h-[92vh] flex flex-col overflow-hidden border border-emerald-500/30 shadow-[0_0_50px_rgba(0,0,0,0.9)] animate-fadeIn">
+            
+            <!-- HEADER DEL MODAL -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#070b13] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <img id="m-logo" src="" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=fff'" class="w-12 h-12 rounded-xl object-contain bg-black border border-gray-800 shrink-0">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 id="m-nombre" class="text-lg font-black text-white uppercase tracking-wider truncate">Nombre del Equipo</h3>
+                            <span id="m-tag" class="text-emerald-400 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/40">[TAG]</span>
+                            <span id="m-estado-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5" id="m-subtitulo">Marca temporal: --</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- PESTAÑAS DEL MODAL -->
+            <div class="px-4 sm:px-6 pt-3 border-b border-gray-800 bg-[#050810] flex gap-2 overflow-x-auto select-none shrink-0">
+                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider border-b-2 border-emerald-400 text-emerald-300 bg-emerald-950/30">
+                    <i class="fas fa-info-circle mr-1"></i> General & Horarios
+                </button>
+                <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
+                    <i class="fas fa-crown mr-1"></i> Capitán & Sub
+                </button>
+                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
+                    <i class="fas fa-users mr-1"></i> 5 Titulares
+                </button>
+                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
+                    <i class="fas fa-user-plus mr-1"></i> Suplentes
+                </button>
+                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-white">
+                    <i class="fas fa-receipt mr-1"></i> Pago & Comprobante
+                </button>
+                <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider border-b-2 border-transparent text-emerald-400 hover:text-emerald-300">
+                    <i class="fas fa-stamp mr-1"></i> Panel Staff
+                </button>
+                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-4 py-2 rounded-t-xl text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-amber-400 hover:text-amber-300">
+                    <i class="fas fa-edit mr-1"></i> Editar Ficha
+                </button>
+            </div>
+
+            <!-- CONTENIDO CON SCROLL DE LAS PESTAÑAS -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-4 text-xs">
+                
+                <!-- TAB 1: GENERAL & HORARIOS -->
+                <div id="mtab-general" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
+                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-2.5 flex items-center gap-1.5">
+                                <i class="fas fa-id-card"></i> Identidad del Equipo
+                            </h4>
+                            <div class="space-y-2">
+                                <div><span class="text-gray-500">Nombre Oficial:</span> <strong id="m-d-nombre" class="text-white">--</strong></div>
+                                <div><span class="text-gray-500">Tag / Abreviatura:</span> <strong id="m-d-tag" class="text-white">--</strong></div>
+                                <div><span class="text-gray-500">Procedencia / Ciudad:</span> <span id="m-d-procedencia" class="text-gray-300">--</span></div>
+                                <div><span class="text-gray-500">Correo Electrónico:</span> <span id="m-d-email" class="text-gray-300 font-mono">--</span></div>
+                                <div><span class="text-gray-500">Principal Objetivo:</span> <p id="m-d-objetivo" class="text-gray-300 mt-1 italic bg-black/30 p-2 rounded border border-gray-800">--</p></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
+                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-2.5 flex items-center gap-1.5">
+                                <i class="fas fa-clock"></i> Disponibilidad y Horarios Oficiales
+                            </h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="text-gray-500 block mb-0.5 font-bold">Franja habitual en días de semana:</span>
+                                    <span id="m-d-franja-semana" class="text-emerald-300 font-semibold bg-emerald-950/40 px-2 py-1 rounded border border-emerald-500/20 block">--</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 block mb-0.5 font-bold">Dificultades recurrentes (estudio/trabajo):</span>
+                                    <span id="m-d-dificultades" class="text-gray-300 bg-black/40 p-2 rounded block border border-gray-800">--</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 block mb-0.5 font-bold">Preferencia en fines de semana:</span>
+                                    <span id="m-d-fines-semana" class="text-gray-300 bg-black/40 p-2 rounded block border border-gray-800">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: CAPITÁN & SUBCAPITÁN -->
+                <div id="mtab-capitan" class="hidden space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Capitán -->
+                        <div class="bg-gradient-to-b from-emerald-950/20 to-black/40 p-4 rounded-2xl border border-emerald-500/30">
+                            <h4 class="text-xs font-black uppercase text-emerald-400 mb-3 flex items-center gap-1.5">
+                                <i class="fas fa-crown text-yellow-400"></i> Capitán Oficial
+                            </h4>
+                            <div class="space-y-2.5">
+                                <div><span class="text-gray-500 block text-[10px] uppercase font-bold">Nombre Completo & CI</span><strong id="m-cap-nombre" class="text-white text-sm">--</strong></div>
+                                <div>
+                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">WhatsApp</span>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span id="m-cap-tel" class="text-white font-mono font-bold">--</span>
+                                        <a id="m-cap-wa-link" href="#" target="_blank" class="px-2 py-0.5 rounded bg-green-600 hover:bg-green-500 text-white font-bold text-[10px] flex items-center gap-1 transition-all">
+                                            <i class="fab fa-whatsapp"></i> Chat WhatsApp
+                                        </a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">Usuario de Discord</span>
+                                    <span id="m-cap-discord" class="text-cyan-300 font-mono bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/20 inline-block mt-0.5">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subcapitán -->
+                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80">
+                            <h4 class="text-xs font-black uppercase text-gray-400 mb-3 flex items-center gap-1.5">
+                                <i class="fas fa-user-shield text-cyan-400"></i> Subcapitán (Contacto Alternativo)
+                            </h4>
+                            <div class="space-y-2.5">
+                                <div><span class="text-gray-500 block text-[10px] uppercase font-bold">Nombre Completo & CI</span><strong id="m-sub-nombre" class="text-white text-sm">--</strong></div>
+                                <div>
+                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">WhatsApp</span>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span id="m-sub-tel" class="text-white font-mono font-bold">--</span>
+                                        <a id="m-sub-wa-link" href="#" target="_blank" class="px-2 py-0.5 rounded bg-green-600 hover:bg-green-500 text-white font-bold text-[10px] flex items-center gap-1 transition-all">
+                                            <i class="fab fa-whatsapp"></i> Chat WhatsApp
+                                        </a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 block text-[10px] uppercase font-bold">Usuario de Discord</span>
+                                    <span id="m-sub-discord" class="text-cyan-300 font-mono bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/20 inline-block mt-0.5">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: 5 TITULARES -->
+                <div id="mtab-titulares" class="hidden space-y-3">
+                    <p class="text-gray-400 text-xs mb-2">Fichas técnicas individuales de los 5 jugadores inscritos en la escuadra titular:</p>
+                    <div id="m-lista-titulares" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- TAB 4: SUPLENTES -->
+                <div id="mtab-suplentes" class="hidden space-y-3">
+                    <div id="m-lista-suplentes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- TAB 5: PAGO & COMPROBANTE -->
+                <div id="mtab-pago" class="hidden space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80 space-y-3">
+                            <h4 class="text-xs font-black uppercase text-emerald-400 flex items-center gap-1.5">
+                                <i class="fas fa-credit-card"></i> Datos de Transacción
+                            </h4>
+                            <div>
+                                <span class="text-gray-500 block text-[10px] uppercase font-bold">Modalidad / Método de Pago:</span>
+                                <strong id="m-pago-modalidad" class="text-white text-sm">--</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block text-[10px] uppercase font-bold">Número de Referencia / Transacción:</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span id="m-pago-referencia" class="text-emerald-300 font-mono font-bold bg-emerald-950/40 px-2 py-1 rounded border border-emerald-500/30 text-sm">--</span>
+                                    <button onclick="copiarReferencia()" class="text-gray-400 hover:text-white p-1 text-xs" title="Copiar referencia"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/80 flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-xs font-black uppercase text-emerald-400 mb-2 flex items-center gap-1.5">
+                                    <i class="fas fa-image"></i> Comprobante Adjunto
+                                </h4>
+                                <p class="text-gray-400 text-xs mb-3">Captura enviada en el formulario de Google Forms.</p>
+                            </div>
+                            <div id="m-pago-comprobante-box" class="text-center p-3 bg-black/60 rounded-xl border border-gray-800">
+                                <a id="m-pago-comprobante-link" href="#" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md">
+                                    <i class="fas fa-external-link-alt"></i> Ver Comprobante en Google Drive
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 6: PANEL DE VERIFICACIÓN STAFF -->
+                <div id="mtab-verificacion" class="hidden space-y-4">
+                    <div class="bg-gradient-to-r from-emerald-950/30 via-[#070b13] to-transparent p-5 rounded-2xl border border-emerald-500/40 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-800 pb-3">
+                            <div>
+                                <h4 class="text-sm font-black uppercase tracking-wider text-emerald-300 flex items-center gap-2">
+                                    <i class="fas fa-stamp text-emerald-400"></i> Dictamen de Verificación Staff
+                                </h4>
+                                <p class="text-gray-400 text-xs mt-0.5">Al presionar Guardar, se actualizará directamente la fila del equipo en Google Sheets.</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-gray-500 uppercase font-bold block">Fila en Google Sheet</span>
+                                <span id="m-v-rowid" class="text-white font-mono font-bold bg-black px-2 py-0.5 rounded border border-gray-800">Fila --</span>
+                            </div>
+                        </div>
+
+                        <!-- Selector de Estado -->
+                        <div>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-2">Seleccionar Estado Oficial:</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-green-500/40 bg-green-950/20 hover:bg-green-900/40 cursor-pointer transition-all">
+                                    <input type="radio" name="m-v-estado" value="Aceptado" class="accent-green-500 w-4 h-4">
+                                    <span class="font-black text-green-400 uppercase text-xs">Aceptado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-orange-500/40 bg-orange-950/20 hover:bg-orange-900/40 cursor-pointer transition-all">
+                                    <input type="radio" name="m-v-estado" value="Observado" class="accent-orange-500 w-4 h-4">
+                                    <span class="font-black text-orange-400 uppercase text-xs">Observado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-red-500/40 bg-red-950/20 hover:bg-red-900/40 cursor-pointer transition-all">
+                                    <input type="radio" name="m-v-estado" value="Rechazado" class="accent-red-500 w-4 h-4">
+                                    <span class="font-black text-red-400 uppercase text-xs">Rechazado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-yellow-500/40 bg-yellow-950/20 hover:bg-yellow-900/40 cursor-pointer transition-all">
+                                    <input type="radio" name="m-v-estado" value="Pendiente" class="accent-yellow-500 w-4 h-4">
+                                    <span class="font-black text-yellow-400 uppercase text-xs">Pendiente</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Observaciones del Staff -->
+                        <div>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-1.5">
+                                Notas u Observaciones del Staff (se guardan en Google Sheets):
+                            </label>
+                            <textarea id="m-v-notas" rows="3" class="w-full bg-[#04060a] border border-gray-800 rounded-xl p-3 text-white text-xs outline-none focus:border-emerald-500 transition-all placeholder-gray-600" placeholder="Ej: Pago verificado correctamente por Binance. Falta confirmar Discord del suplente 1..."></textarea>
+                        </div>
+
+                        <!-- Información de Auditoría y Acciones -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500 gap-3 pt-3 border-t border-gray-800/80">
+                            <div>
+                                <span class="font-bold text-gray-400">Última revisión:</span>
+                                <span id="m-v-historial" class="text-gray-300">Sin revisiones previas</span>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <button type="button" onclick="eliminarEquipoActual()" id="btn-eliminar-equipo" class="px-4 py-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/40 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="Eliminar fila permanentemente de Google Sheets">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                                <button type="button" onclick="guardarDictamenStaff()" id="btn-guardar-dictamen" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-wider transition-all shadow-lg hover:shadow-emerald-500/30 flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                                    <i class="fas fa-save"></i> Guardar Dictamen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 7: EDITAR DATOS DEL EQUIPO (U de CRUD) -->
+                <div id="mtab-editar" class="hidden space-y-4">
+                    <div class="bg-black/40 p-4 sm:p-5 rounded-2xl border border-amber-500/30 space-y-4">
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-2.5">
+                            <h4 class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                                <i class="fas fa-edit"></i> Edición Directa de Datos (Escribe en Google Sheets)
+                            </h4>
+                            <span class="text-[10px] text-gray-500 font-mono">Actualiza celdas en tiempo real</span>
+                        </div>
+
+                        <!-- Datos Generales -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nombre del Equipo</label>
+                                <input type="text" id="edit-nombre" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Tag (Abreviatura)</label>
+                                <input type="text" id="edit-tag" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Procedencia / Composición</label>
+                                <select id="edit-procedencia" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                    <option value="">-- Seleccionar Composición --</option>
+                                    <option value="Nacional (Mínimo 4 jugadores bolivianos y máx. 1 extranjero — Habilitado para clasificar a la LBL)">Nacional (Mín. 4 bolivianos, máx. 1 extranjero - Habilitado LBL)</option>
+                                    <option value="Internacional (2 o más extranjeros — Compite exclusivamente por la bolsa de premios en efectivo)">Internacional (2 o más extranjeros - Solo premios)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Objetivo y Disponibilidad -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-800/60">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Principal Objetivo</label>
+                                <select id="edit-objetivo" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                    <option value="">-- Seleccionar Objetivo --</option>
+                                    <option value="Disputar el cupo de clasificación a la Liga LBL (Cupo)">Disputar el cupo de clasificación a la Liga LBL (Cupo)</option>
+                                    <option value="Competir por la bolsa de premios en efectivo (Premio)">Competir por la bolsa de premios en efectivo (Premio)</option>
+                                    <option value="Adquirir experiencia competitiva">Adquirir experiencia competitiva</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Franja Días de Semana</label>
+                                <select id="edit-franja-semana" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                    <option value="">-- Horario Días de Semana --</option>
+                                    <option value="A partir de las 19:00">A partir de las 19:00</option>
+                                    <option value="A partir de las 20:00">A partir de las 20:00</option>
+                                    <option value="A partir de las 21:00">A partir de las 21:00</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Preferencia Fines de Semana</label>
+                                <select id="edit-fines-semana" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                    <option value="">-- Fines de Semana --</option>
+                                    <option value="15:00 a 17:00">15:00 a 17:00</option>
+                                    <option value="17:00 a 19:00">17:00 a 19:00</option>
+                                    <option value="19:00 a 21:00">19:00 a 21:00</option>
+                                    <option value="21:00 a 23:00">21:00 a 23:00</option>
+                                    <option value="Sin preferencia (cualquier bloque)">Sin preferencia (cualquier bloque)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Capitán y Subcapitán -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-800/60">
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-black uppercase text-emerald-400">Datos Capitán</h5>
+                                <input type="text" id="edit-cap-nombre" placeholder="Nombre y CI Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                                <input type="text" id="edit-cap-tel" placeholder="WhatsApp Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                                <input type="text" id="edit-cap-discord" placeholder="Discord Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                            </div>
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-black uppercase text-cyan-400">Datos Subcapitán</h5>
+                                <input type="text" id="edit-sub-nombre" placeholder="Nombre y CI Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                                <input type="text" id="edit-sub-tel" placeholder="WhatsApp Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                                <input type="text" id="edit-sub-discord" placeholder="Discord Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                            </div>
+                        </div>
+
+                        <!-- Titulares (5 Jugadores) -->
+                        <div class="pt-2 border-t border-gray-800/60 space-y-2">
+                            <h5 class="text-[10px] font-black uppercase text-amber-400">Riot IDs, Rangos SoloQ/Flex & Roles Secundarios (5 Titulares)</h5>
+                            <div id="contenedor-inputs-titulares" class="space-y-2">
+                                <!-- Generado dinámicamente con desplegables -->
+                            </div>
+                        </div>
+
+                        <!-- Pago Referencia -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-800/60">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Modalidad de Pago</label>
+                                <select id="edit-pago-modalidad" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                    <option value="">-- Seleccionar Modalidad --</option>
+                                    <option value="Bolivia">Bolivia (QR / Transferencia BNB/Mercantil)</option>
+                                    <option value="Internacional">Internacional (Binance USDT / Cripto)</option>
+                                    <option value="Mixto (1 extranjero máx.)">Mixto (1 extranjero máx.)</option>
+                                    <option value="Mixto (>1 extranjero)">Mixto (>1 extranjero)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nº Referencia / Transacción</label>
+                                <input type="text" id="edit-pago-referencia" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-gray-800 flex justify-end">
+                            <button type="button" onclick="guardarEdicionEquipo()" id="btn-guardar-edicion" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-wider text-xs transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5">
+                                <i class="fas fa-save"></i> Guardar Cambios en Google Sheets
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FOOTER DEL MODAL -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#060a12] flex justify-end gap-3 shrink-0">
+                <button onclick="cerrarModalDetalle()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DE CREACIÓN MANUAL DE EQUIPO (C de CRUD)                  -->
+    <!-- ============================================================== -->
+    <div id="modal-crear-equipo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+        <div class="glass-panel w-full max-w-3xl rounded-3xl max-h-[92vh] flex flex-col overflow-hidden border border-blue-500/40 shadow-2xl animate-fadeIn">
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#070b13] shrink-0">
+                <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-plus-circle text-blue-400"></i> Inscribir Equipo Manualmente (Google Sheets)
+                </h3>
+                <button onclick="cerrarModalCrearEquipo()" class="text-gray-400 hover:text-white p-1 cursor-pointer"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form id="form-crear-equipo" onsubmit="crearEquipoManualSubmit(event)" class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-4 text-xs">
+                <!-- Datos generales -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nombre del Equipo *</label>
+                        <input type="text" id="c-nombre" required placeholder="Ej: Nova Esports" class="w-full bg-[#060a12] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Tag (Abreviatura) *</label>
+                        <input type="text" id="c-tag" required maxlength="5" placeholder="Ej: NVA" class="w-full bg-[#060a12] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Composición / Procedencia *</label>
+                        <select id="c-procedencia" required class="w-full bg-[#060a12] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                            <option value="Nacional (Mínimo 4 jugadores bolivianos y máx. 1 extranjero — Habilitado para clasificar a la LBL)">Nacional (Mín. 4 bolivianos, máx. 1 extranjero - Habilitado LBL)</option>
+                            <option value="Internacional (2 o más extranjeros — Compite exclusivamente por la bolsa de premios en efectivo)">Internacional (2 o más extranjeros - Solo premios)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Objetivo y Horarios -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Principal Objetivo</label>
+                        <select id="c-objetivo" class="w-full bg-[#060a12] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                            <option value="Disputar el cupo de clasificación a la Liga LBL (Cupo)">Disputar el cupo de clasificación a la Liga LBL (Cupo)</option>
+                            <option value="Competir por la bolsa de premios en efectivo (Premio)">Competir por la bolsa de premios en efectivo (Premio)</option>
+                            <option value="Adquirir experiencia competitiva">Adquirir experiencia competitiva</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Franja Días de Semana</label>
+                        <select id="c-franja-semana" class="w-full bg-[#060a12] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                            <option value="A partir de las 19:00">A partir de las 19:00</option>
+                            <option value="A partir de las 20:00" selected>A partir de las 20:00</option>
+                            <option value="A partir de las 21:00">A partir de las 21:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Capitán -->
+                <div class="p-3.5 bg-black/40 rounded-2xl border border-gray-800 space-y-2">
+                    <h5 class="text-[10px] font-black uppercase text-emerald-400 flex items-center gap-1.5">
+                        <i class="fas fa-crown text-yellow-400"></i> Datos del Capitán
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="text" id="c-cap-nombre" required placeholder="Nombre Completo & CI *" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                        <input type="text" id="c-cap-tel" required placeholder="WhatsApp Capitán *" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                        <input type="text" id="c-cap-discord" placeholder="Discord Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <!-- Los 5 Jugadores Titulares -->
+                <div class="p-3.5 bg-black/40 rounded-2xl border border-gray-800 space-y-2.5">
+                    <h5 class="text-[10px] font-black uppercase text-blue-400 flex items-center gap-1.5">
+                        <i class="fas fa-users"></i> 5 Titulares del Roster (Riot ID, Rango SoloQ y Rol Secundario)
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                        <!-- TOP -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-black text-blue-400 uppercase block">TOP</span>
+                            <input type="text" id="c-j1-riot" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white text-[11px]">
+                            <select id="c-j1-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
+                                <option value="Challenger/Retador">Challenger</option>
+                                <option value="Grandmaster/Gran Maestro">Grandmaster</option>
+                                <option value="Master/Maestro">Master</option>
+                                <option value="Diamante I - II">Diamante I - II</option>
+                                <option value="Diamante III - IV" selected>Diamante III - IV</option>
+                                <option value="Esmeralda / Platino">Esmeralda / Platino</option>
+                                <option value="Oro / Plata">Oro / Plata</option>
+                                <option value="Bronce / Hierro">Bronce / Hierro</option>
+                                <option value="Sin clasificar (Unranked)">Unranked</option>
+                            </select>
+                            <select id="c-j1-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-300 text-[10px] outline-none">
+                                <option value="Superior (Top)">Rol Sec: TOP</option>
+                                <option value="Jungla (JG)">Rol Sec: JG</option>
+                                <option value="Medio (Mid)" selected>Rol Sec: MID</option>
+                                <option value="Tirador (Adc)">Rol Sec: ADC</option>
+                                <option value="Soporte (Sup)">Rol Sec: SUP</option>
+                                <option value="Comodín/Fill (Valido solo para 1 jugador)">Comodín/Fill</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                        </div>
+                        <!-- JG -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-black text-purple-400 uppercase block">JG</span>
+                            <input type="text" id="c-j2-riot" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white text-[11px]">
+                            <select id="c-j2-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
+                                <option value="Challenger/Retador">Challenger</option>
+                                <option value="Grandmaster/Gran Maestro">Grandmaster</option>
+                                <option value="Master/Maestro">Master</option>
+                                <option value="Diamante I - II">Diamante I - II</option>
+                                <option value="Diamante III - IV" selected>Diamante III - IV</option>
+                                <option value="Esmeralda / Platino">Esmeralda / Platino</option>
+                                <option value="Oro / Plata">Oro / Plata</option>
+                                <option value="Bronce / Hierro">Bronce / Hierro</option>
+                                <option value="Sin clasificar (Unranked)">Unranked</option>
+                            </select>
+                            <select id="c-j2-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-300 text-[10px] outline-none">
+                                <option value="Superior (Top)" selected>Rol Sec: TOP</option>
+                                <option value="Jungla (JG)">Rol Sec: JG</option>
+                                <option value="Medio (Mid)">Rol Sec: MID</option>
+                                <option value="Tirador (Adc)">Rol Sec: ADC</option>
+                                <option value="Soporte (Sup)">Rol Sec: SUP</option>
+                                <option value="Comodín/Fill (Valido solo para 1 jugador)">Comodín/Fill</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                        </div>
+                        <!-- MID -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-black text-amber-400 uppercase block">MID</span>
+                            <input type="text" id="c-j3-riot" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white text-[11px]">
+                            <select id="c-j3-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
+                                <option value="Challenger/Retador">Challenger</option>
+                                <option value="Grandmaster/Gran Maestro">Grandmaster</option>
+                                <option value="Master/Maestro">Master</option>
+                                <option value="Diamante I - II">Diamante I - II</option>
+                                <option value="Diamante III - IV" selected>Diamante III - IV</option>
+                                <option value="Esmeralda / Platino">Esmeralda / Platino</option>
+                                <option value="Oro / Plata">Oro / Plata</option>
+                                <option value="Bronce / Hierro">Bronce / Hierro</option>
+                                <option value="Sin clasificar (Unranked)">Unranked</option>
+                            </select>
+                            <select id="c-j3-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-300 text-[10px] outline-none">
+                                <option value="Superior (Top)">Rol Sec: TOP</option>
+                                <option value="Jungla (JG)">Rol Sec: JG</option>
+                                <option value="Medio (Mid)">Rol Sec: MID</option>
+                                <option value="Tirador (Adc)" selected>Rol Sec: ADC</option>
+                                <option value="Soporte (Sup)">Rol Sec: SUP</option>
+                                <option value="Comodín/Fill (Valido solo para 1 jugador)">Comodín/Fill</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                        </div>
+                        <!-- ADC -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-black text-pink-400 uppercase block">ADC</span>
+                            <input type="text" id="c-j4-riot" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white text-[11px]">
+                            <select id="c-j4-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
+                                <option value="Challenger/Retador">Challenger</option>
+                                <option value="Grandmaster/Gran Maestro">Grandmaster</option>
+                                <option value="Master/Maestro">Master</option>
+                                <option value="Diamante I - II">Diamante I - II</option>
+                                <option value="Diamante III - IV" selected>Diamante III - IV</option>
+                                <option value="Esmeralda / Platino">Esmeralda / Platino</option>
+                                <option value="Oro / Plata">Oro / Plata</option>
+                                <option value="Bronce / Hierro">Bronce / Hierro</option>
+                                <option value="Sin clasificar (Unranked)">Unranked</option>
+                            </select>
+                            <select id="c-j4-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-300 text-[10px] outline-none">
+                                <option value="Superior (Top)">Rol Sec: TOP</option>
+                                <option value="Jungla (JG)">Rol Sec: JG</option>
+                                <option value="Medio (Mid)">Rol Sec: MID</option>
+                                <option value="Tirador (Adc)">Rol Sec: ADC</option>
+                                <option value="Soporte (Sup)">Rol Sec: SUP</option>
+                                <option value="Comodín/Fill (Valido solo para 1 jugador)">Comodín/Fill</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                        </div>
+                        <!-- SUPP -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-black text-teal-400 uppercase block">SUPP</span>
+                            <input type="text" id="c-j5-riot" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white text-[11px]">
+                            <select id="c-j5-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
+                                <option value="Challenger/Retador">Challenger</option>
+                                <option value="Grandmaster/Gran Maestro">Grandmaster</option>
+                                <option value="Master/Maestro">Master</option>
+                                <option value="Diamante I - II">Diamante I - II</option>
+                                <option value="Diamante III - IV" selected>Diamante III - IV</option>
+                                <option value="Esmeralda / Platino">Esmeralda / Platino</option>
+                                <option value="Oro / Plata">Oro / Plata</option>
+                                <option value="Bronce / Hierro">Bronce / Hierro</option>
+                                <option value="Sin clasificar (Unranked)">Unranked</option>
+                            </select>
+                            <select id="c-j5-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-300 text-[10px] outline-none">
+                                <option value="Superior (Top)">Rol Sec: TOP</option>
+                                <option value="Jungla (JG)">Rol Sec: JG</option>
+                                <option value="Medio (Mid)">Rol Sec: MID</option>
+                                <option value="Tirador (Adc)">Rol Sec: ADC</option>
+                                <option value="Soporte (Sup)" selected>Rol Sec: SUP</option>
+                                <option value="Comodín/Fill (Valido solo para 1 jugador)">Comodín/Fill</option>
+                                <option value="No aplica">No aplica</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pago -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Modalidad de Pago *</label>
+                        <select id="c-pago-modalidad" required class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                            <option value="Bolivia">Bolivia (QR / Transferencia BNB/Mercantil)</option>
+                            <option value="Internacional">Internacional (Binance USDT / Cripto)</option>
+                            <option value="Mixto (1 extranjero máx.)">Mixto (1 extranjero máx.)</option>
+                            <option value="Mixto (>1 extranjero)">Mixto (>1 extranjero)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nº Referencia / Transacción</label>
+                        <input type="text" id="c-pago-ref" placeholder="Ej: 98124018" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-gray-800 flex justify-end gap-3 shrink-0">
+                    <button type="button" onclick="cerrarModalCrearEquipo()" class="px-5 py-2.5 rounded-xl border border-gray-800 text-gray-400 hover:text-white font-bold text-xs">Cancelar</button>
+                    <button type="submit" id="btn-submit-crear" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-xs shadow-lg transition-all active:scale-95 cursor-pointer">
+                        <i class="fas fa-check mr-1"></i> Inscribir en Google Sheets
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DE CONFIGURACIÓN DE URL DE APPS SCRIPT                    -->
+    <!-- ============================================================== -->
+    <div id="modal-config-url" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 hidden">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-emerald-500/40 shadow-2xl space-y-4 animate-fadeIn">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 class="text-sm font-black uppercase text-white tracking-wider flex items-center gap-2">
+                    <i class="fas fa-cog text-emerald-400"></i> Configurar Conexión Google Sheets API
+                </h3>
+                <button onclick="cerrarModalConfigUrl()" class="text-gray-500 hover:text-white cursor-pointer"><i class="fas fa-times"></i></button>
+            </div>
+            <p class="text-xs text-gray-400">
+                Pega la URL de la Aplicación Web generada al implementar el Apps Script en tu hoja de cálculo (debe terminar en <code class="text-emerald-300 bg-black/50 px-1 py-0.5 rounded">/exec</code>):
+            </p>
+            <div>
+                <label class="block text-[10px] font-black uppercase text-gray-500 mb-1">URL de la Web App (Google Apps Script):</label>
+                <input type="url" id="input-api-url" class="w-full bg-[#050810] border border-gray-800 p-3 rounded-xl text-white text-xs font-mono outline-none focus:border-emerald-500 transition-all" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="cerrarModalConfigUrl()" class="px-4 py-2 rounded-xl text-gray-400 hover:text-white text-xs font-bold">Cancelar</button>
+                <button onclick="guardarConfigUrl()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase text-xs transition-all shadow-md">Guardar y Sincronizar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS MODULARES -->
+    <script type="module">
+        import { auth } from "/firebase-config.js";
+        import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getStaffNick } from "/staff-config.js";
+
+        // URL por defecto oficial de la API de Google Apps Script (Scouting T3)
+        const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxbFYMNG8XBK9dlScH7QNc9I3el7NK2VHAtTeNCrn18q6ymNefx2G3Z20N1EGaL9Mdo/exec";
+        const STORAGE_KEY_API = "lbl_scouting_sheets_api_url";
+        const STORAGE_KEY_CACHE = "lbl_scouting_equipos_cache";
+
+        function getApiUrl() {
+            return localStorage.getItem(STORAGE_KEY_API) || DEFAULT_API_URL;
+        }
+
+        // Estado en memoria
+        let equiposScouting = [];
+        let equipoSeleccionado = null;
+        let filtroEstadoActivo = "";
+        let staffNickActual = "Staff LBL";
+
+        // Opciones oficiales extraídas del Formulario Google Forms (FORMS SC3.pdf)
+        const OPCIONES_SOLOQ = [
+            "Challenger/Retador",
+            "Grandmaster/Gran Maestro",
+            "Master/Maestro",
+            "Diamante I - II",
+            "Diamante III - IV",
+            "Esmeralda / Platino",
+            "Oro / Plata",
+            "Bronce / Hierro",
+            "Sin clasificar (Unranked)"
+        ];
+
+        const OPCIONES_ROL_SECUNDARIO = [
+            "Superior (Top)",
+            "Jungla (JG)",
+            "Medio (Mid)",
+            "Tirador (Adc)",
+            "Soporte (Sup)",
+            "Comodín/Fill (Valido solo para 1 jugador)",
+            "No aplica"
+        ];
+
+        const OPCIONES_FLEX = [
+            "Challenger / Grandmaster",
+            "Master",
+            "Diamante",
+            "Esmeralda",
+            "Platino",
+            "Oro",
+            "Plata / Bronce / Hierro",
+            "Sin clasificar (Unranked)"
+        ];
+
+        function setSelectValueSafely(selectEl, value) {
+            if (!selectEl) return;
+            const valStr = String(value || '').trim();
+            if (!valStr) {
+                selectEl.value = "";
+                return;
+            }
+            let found = false;
+            for (let opt of selectEl.options) {
+                if (opt.value.toLowerCase() === valStr.toLowerCase() || opt.text.toLowerCase() === valStr.toLowerCase()) {
+                    selectEl.value = opt.value;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                // Si la celda de Sheets tiene un texto distinto o personalizado, lo preservamos como opción dinámica
+                const newOpt = document.createElement("option");
+                newOpt.value = valStr;
+                newOpt.textContent = `${valStr} (Original)`;
+                selectEl.appendChild(newOpt);
+                selectEl.value = valStr;
+            }
+        }
+
+        // Datos fallback iniciales (obtenidos directamente de la fila 2 de la hoja de cálculo)
+        const MOCK_INICIAL = [
+            {
+                rowId: 2,
+                timestamp: "2026-10-04 18:30:00",
+                email: "armerosgaming@gmail.com",
+                nombre: "Armeros Gaming",
+                tag: "ARG",
+                logo: "",
+                procedencia: "Argentina / Jujuy",
+                objetivo: "Clasificar a fase final y demostrar nivel competitivo regional",
+                capitan: {
+                    nombreCi: "Ignacio Lisandro Valdez 47241323",
+                    telefono: "+54 9 3885089206",
+                    discord: "arthickd"
+                },
+                subcapitan: {
+                    nombreCi: "Franco Daniel Mamaní 45129381",
+                    telefono: "+54 9 3884192031",
+                    discord: "francomamani"
+                },
+                horarios: {
+                    franjaSemana: "20:00 a 23:00 (Noche)",
+                    dificultades: "Martes y Jueves hasta las 19:30 por trabajo",
+                    finesDeSemana: "Sábados y Domingos a partir de las 16:00"
+                },
+                titulares: [
+                    { posicion: "TOP", numero: 1, nombreCi: "Alexis Nelson Gutierrez 44877986", ciudad: "Jujuy", telefono: "+54 9 3885089206", discord: "fordyon", riotIdLas: "Fordyon#420", opggLas: "https://www.op.gg/summoners/las/Fordyon-420", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Esmeralda / Platino", rangoFlex: "Oro" },
+                    { posicion: "JG", numero: 2, nombreCi: "Ignacio Lisandro Valdez 47241323", ciudad: "Jujuy", telefono: "+54 9 3885089206", discord: "arthickd", riotIdLas: "Arthick#LAS", opggLas: "https://www.op.gg/summoners/las/Arthick-LAS", riotIdMain: "", opggMain: "", rolSecundario: "TOP", rangoSoloQ: "Diamante IV", rangoFlex: "Platino" },
+                    { posicion: "MID", numero: 3, nombreCi: "Joaquín Ramiro Torres 46812039", ciudad: "Salta", telefono: "+54 9 3874102938", discord: "joacot", riotIdLas: "Shadow#ARG", opggLas: "https://www.op.gg/summoners/las/Shadow-ARG", riotIdMain: "", opggMain: "", rolSecundario: "ADC", rangoSoloQ: "Master", rangoFlex: "Diamante" },
+                    { posicion: "ADC", numero: 4, nombreCi: "Santiago Benítez 48192019", ciudad: "Tucumán", telefono: "+54 9 3815920192", discord: "santix", riotIdLas: "Arrow#LAS", opggLas: "https://www.op.gg/summoners/las/Arrow-LAS", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Esmeralda I", rangoFlex: "Esmeralda" },
+                    { posicion: "SUPP", numero: 5, nombreCi: "Lucas Agustín Flores 45192039", ciudad: "Jujuy", telefono: "+54 9 3884920193", discord: "lucasf", riotIdLas: "Shield#LAS", opggLas: "https://www.op.gg/summoners/las/Shield-LAS", riotIdMain: "", opggMain: "", rolSecundario: "JG", rangoSoloQ: "Platino II", rangoFlex: "Platino" }
+                ],
+                suplentes: [],
+                pago: {
+                    modalidad: "Internacional / Binance",
+                    referencia: "TX-BIN-981240192",
+                    comprobante: "",
+                    comprobanteRaw: ""
+                },
+                estado: "Pendiente",
+                notasStaff: "",
+                staffRevisor: "",
+                fechaRevision: ""
+            }
+        ];
+
+        // 1. Control de Autenticación
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const loginError = document.getElementById('login-error');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginScreen.classList.add('hidden');
+                dashboardContent.classList.remove('hidden');
+                staffNickActual = getStaffNick(user.email || user.displayName);
+                document.getElementById('user-display').textContent = `Sesión: ${staffNickActual}`;
+                inicializarModulo();
+            } else {
+                loginScreen.classList.remove('hidden');
+                dashboardContent.classList.add('hidden');
+            }
+        });
+
+        // Formulario de login
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value;
+            const btn = document.getElementById('btn-login');
+            loginError.classList.add('hidden');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando...';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                console.error("Error de login:", err);
+                loginError.classList.remove('hidden');
+                btn.innerHTML = 'ACCEDER A SCOUTING T3';
+            }
+        });
+
+        window.cerrarSesionStaff = () => signOut(auth);
+
+        // 2. Inicialización
+        function inicializarModulo() {
+            // Cargar de caché o mock inicial
+            const cached = localStorage.getItem(STORAGE_KEY_CACHE);
+            if (cached) {
+                try {
+                    equiposScouting = JSON.parse(cached);
+                } catch(e) {
+                    equiposScouting = MOCK_INICIAL;
+                }
+            } else {
+                equiposScouting = MOCK_INICIAL;
+            }
+
+            actualizarMetricas();
+            renderizarTarjetasEquipos();
+
+            // Sincronizar automáticamente con Google Sheets
+            const apiUrl = getApiUrl();
+            if (apiUrl) {
+                sincronizarGoogleSheets();
+            } else {
+                document.getElementById('label-ultima-sync').textContent = "Modo Local (Configura URL de Sheets)";
+            }
+        }
+
+        // 3. Sincronización con Google Sheets (GET)
+        window.sincronizarGoogleSheets = async function() {
+            const apiUrl = getApiUrl();
+            if (!apiUrl) {
+                abrirModalConfigUrl();
+                return;
+            }
+
+            const icon = document.getElementById('icon-sync-sheets');
+            const labelSync = document.getElementById('label-ultima-sync');
+            if (icon) icon.classList.add('fa-spin');
+            if (labelSync) labelSync.textContent = "Sincronizando con Google Sheets...";
+
+            try {
+                const res = await fetch(apiUrl, { method: "GET" });
+                const json = await res.json();
+
+                if (json.success && Array.isArray(json.equipos)) {
+                    equiposScouting = json.equipos;
+                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    
+                    const ahora = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    if (labelSync) labelSync.textContent = `Hoy a las ${ahora} (${equiposScouting.length} equipos)`;
+                } else {
+                    console.warn("Respuesta sin formato esperado:", json);
+                    if (labelSync) labelSync.textContent = "Error al leer datos de Sheets";
+                }
+            } catch (err) {
+                console.error("Error al sincronizar con Apps Script:", err);
+                if (labelSync) labelSync.textContent = "Error de conexión con Apps Script";
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+                actualizarMetricas();
+                renderizarTarjetasEquipos();
+            }
+        };
+
+        // 4. Renderizado de Tarjetas
+        function renderizarTarjetasEquipos() {
+            const contenedor = document.getElementById('contenedor-equipos');
+            const estadoVacio = document.getElementById('estado-vacio');
+            const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+
+            const filtrados = equiposScouting.filter(eq => {
+                // Filtro por Estado
+                if (filtroEstadoActivo && (eq.estado || 'Pendiente').toLowerCase() !== filtroEstadoActivo.toLowerCase()) {
+                    return false;
+                }
+
+                // Filtro por Búsqueda
+                if (!query) return true;
+
+                const matchText = (val) => val && val.toString().toLowerCase().includes(query);
+
+                if (matchText(eq.nombre)) return true;
+                if (matchText(eq.tag)) return true;
+                if (matchText(eq.procedencia)) return true;
+                if (matchText(eq.capitan?.nombreCi)) return true;
+                if (matchText(eq.capitan?.telefono)) return true;
+                if (matchText(eq.capitan?.discord)) return true;
+
+                // Titulares
+                if (Array.isArray(eq.titulares)) {
+                    for (const t of eq.titulares) {
+                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.discord)) return true;
+                    }
+                }
+                // Suplentes
+                if (Array.isArray(eq.suplentes)) {
+                    for (const s of eq.suplentes) {
+                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.discord)) return true;
+                    }
+                }
+
+                return false;
+            });
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = "";
+                estadoVacio.classList.remove('hidden');
+                return;
+            }
+
+            estadoVacio.classList.add('hidden');
+
+            contenedor.innerHTML = filtrados.map(eq => {
+                const estado = eq.estado || 'Pendiente';
+                const badgeCls = `badge-${estado.toLowerCase()}`;
+                const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
+                const logoSrc = eq.logo || fallbackLogo;
+
+                // Roster compacto (5 titulares)
+                const titularesHTML = (eq.titulares || []).map(t => `
+                    <div class="flex items-center justify-between text-[11px] py-1 border-b border-gray-800/40 last:border-0">
+                        <span class="text-emerald-400 font-mono font-bold w-10">${t.posicion}</span>
+                        <span class="text-white font-medium truncate flex-1 px-1" title="${t.nombreCi}">${t.riotIdLas || t.nombreCi}</span>
+                        <span class="text-gray-400 font-mono text-[10px] shrink-0">${t.rangoSoloQ || '-'}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-600 text-xs italic">Sin jugadores registrados</p>';
+
+                const capTel = eq.capitan?.telefono || '';
+                const waNumber = capTel.replace(/[^0-9]/g, '');
+                const waBtn = waNumber ? `
+                    <a href="https://wa.me/${waNumber}" target="_blank" class="px-2 py-0.5 rounded bg-green-600/30 hover:bg-green-600 text-green-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all border border-green-500/30" title="Contactar Capitán">
+                        <i class="fab fa-whatsapp"></i> Chat
+                    </a>` : '';
+
+                return `
+                    <div class="glass-panel p-4 rounded-2xl border border-gray-800 hover:border-emerald-500/50 transition-all flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group">
+                        <div>
+                            <!-- Header de Tarjeta -->
+                            <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="${logoSrc}" onerror="this.src='${fallbackLogo}'" class="w-10 h-10 rounded-xl bg-black object-contain border border-gray-800 shrink-0">
+                                    <div class="min-w-0">
+                                        <h4 class="font-black text-white text-sm truncate uppercase group-hover:text-emerald-400 transition-colors">${eq.nombre}</h4>
+                                        <p class="text-[10px] text-gray-400 flex items-center gap-1.5 font-mono">
+                                            <span class="text-emerald-400 font-bold">[${eq.tag || 'S/T'}]</span>
+                                            <span>&bull;</span>
+                                            <span class="truncate">${eq.procedencia || 'Sin ciudad'}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 ${badgeCls}">
+                                    ${estado}
+                                </span>
+                            </div>
+
+                            <!-- Capitán -->
+                            <div class="py-2.5 flex items-center justify-between border-b border-gray-800/40 text-xs">
+                                <div>
+                                    <span class="text-[9px] uppercase font-bold text-gray-500 block">Capitán</span>
+                                    <span class="text-white font-bold truncate block max-w-[170px]" title="${eq.capitan?.nombreCi || ''}">${eq.capitan?.nombreCi || 'Sin capitán'}</span>
+                                </div>
+                                ${waBtn}
+                            </div>
+
+                            <!-- Resumen Roster -->
+                            <div class="py-2.5">
+                                <span class="text-[9px] uppercase font-black text-gray-500 block mb-1.5">Roster Titular</span>
+                                <div class="bg-black/40 p-2 rounded-xl border border-gray-800/60 space-y-0.5">
+                                    ${titularesHTML}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer con botón de acción -->
+                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2">
+                            <span class="text-[10px] text-gray-500 font-mono">Fila ${eq.rowId || '-'}</span>
+                            <button onclick="abrirModalDetalle(${eq.rowId})" class="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+                                <i class="fas fa-eye"></i> Revisar Ficha
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 5. Métricas KPI
+        function actualizarMetricas() {
+            const total = equiposScouting.length;
+            const pendientes = equiposScouting.filter(e => (e.estado || 'Pendiente').toLowerCase() === 'pendiente').length;
+            const aceptados = equiposScouting.filter(e => (e.estado || '').toLowerCase() === 'aceptado').length;
+            const observados = equiposScouting.filter(e => (e.estado || '').toLowerCase() === 'observado').length;
+            const rechazados = equiposScouting.filter(e => (e.estado || '').toLowerCase() === 'rechazado').length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-pendientes').textContent = pendientes;
+            document.getElementById('stat-aceptados').textContent = aceptados;
+            document.getElementById('stat-observados').textContent = observados;
+            document.getElementById('stat-rechazados').textContent = rechazados;
+        }
+
+        // 6. Filtros y Búsqueda
+        window.filtrarPorEstado = function(estado) {
+            filtroEstadoActivo = estado;
+            const tabs = ['todos', 'pendiente', 'aceptado', 'observado', 'rechazado'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-filtro-${t}`);
+                if (el) el.classList.remove('active');
+            });
+            const activeTab = document.getElementById(estado ? `tab-filtro-${estado.toLowerCase()}` : 'tab-filtro-todos');
+            if (activeTab) activeTab.classList.add('active');
+
+            renderizarTarjetasEquipos();
+        };
+
+        window.aplicarFiltros = function() {
+            const input = document.getElementById('searchInput');
+            const btnClear = document.getElementById('btnClearSearch');
+            if (input && btnClear) {
+                btnClear.classList.toggle('hidden', !input.value);
+            }
+            renderizarTarjetasEquipos();
+        };
+
+        window.limpiarBusqueda = function() {
+            const input = document.getElementById('searchInput');
+            if (input) {
+                input.value = "";
+                aplicarFiltros();
+            }
+        };
+
+        // 7. Modal de Ficha Técnica
+        window.abrirModalDetalle = function(rowId) {
+            const eq = equiposScouting.find(e => e.rowId === rowId);
+            if (!eq) return;
+            equipoSeleccionado = eq;
+
+            const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
+            document.getElementById('m-logo').src = eq.logo || fallbackLogo;
+            document.getElementById('m-nombre').textContent = eq.nombre || 'Equipo Sin Nombre';
+            document.getElementById('m-tag').textContent = `[${eq.tag || 'S/T'}]`;
+            
+            const badge = document.getElementById('m-estado-badge');
+            const estado = eq.estado || 'Pendiente';
+            badge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider badge-${estado.toLowerCase()}`;
+            badge.textContent = estado;
+
+            document.getElementById('m-subtitulo').textContent = `Marca temporal: ${eq.timestamp || 'Sin fecha'} • Fila Google Sheets: ${eq.rowId}`;
+
+            // Pestaña General
+            document.getElementById('m-d-nombre').textContent = eq.nombre || '--';
+            document.getElementById('m-d-tag').textContent = eq.tag || '--';
+            document.getElementById('m-d-procedencia').textContent = eq.procedencia || '--';
+            document.getElementById('m-d-email').textContent = eq.email || '--';
+            document.getElementById('m-d-objetivo').textContent = eq.objetivo || 'Sin objetivo redactado.';
+            document.getElementById('m-d-franja-semana').textContent = eq.horarios?.franjaSemana || 'No especificada';
+            document.getElementById('m-d-dificultades').textContent = eq.horarios?.dificultades || 'Ninguna indicada';
+            document.getElementById('m-d-fines-semana').textContent = eq.horarios?.finesDeSemana || 'No especificada';
+
+            // Pestaña Capitán
+            document.getElementById('m-cap-nombre').textContent = eq.capitan?.nombreCi || 'Sin datos';
+            document.getElementById('m-cap-tel').textContent = eq.capitan?.telefono || '--';
+            document.getElementById('m-cap-discord').textContent = eq.capitan?.discord || '--';
+            const capWa = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
+            document.getElementById('m-cap-wa-link').href = capWa ? `https://wa.me/${capWa}` : '#';
+
+            // Subcapitán
+            document.getElementById('m-sub-nombre').textContent = eq.subcapitan?.nombreCi || 'Sin subcapitán';
+            document.getElementById('m-sub-tel').textContent = eq.subcapitan?.telefono || '--';
+            document.getElementById('m-sub-discord').textContent = eq.subcapitan?.discord || '--';
+            const subWa = (eq.subcapitan?.telefono || '').replace(/[^0-9]/g, '');
+            document.getElementById('m-sub-wa-link').href = subWa ? `https://wa.me/${subWa}` : '#';
+
+            // Pestaña Titulares
+            const contTitulares = document.getElementById('m-lista-titulares');
+            contTitulares.innerHTML = (eq.titulares || []).map(t => renderFichaJugador(t, true)).join('') || '<p class="text-gray-500 italic">No hay titulares registrados.</p>';
+
+            // Pestaña Suplentes
+            const contSuplentes = document.getElementById('m-lista-suplentes');
+            if (eq.suplentes && eq.suplentes.length > 0) {
+                contSuplentes.innerHTML = eq.suplentes.map(s => renderFichaJugador(s, false)).join('');
+            } else {
+                contSuplentes.innerHTML = `<div class="col-span-full p-8 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold"><i class="fas fa-info-circle mr-1"></i> Este equipo no registró suplentes.</div>`;
+            }
+
+            // Pestaña Pago
+            document.getElementById('m-pago-modalidad').textContent = eq.pago?.modalidad || 'No indicada';
+            document.getElementById('m-pago-referencia').textContent = eq.pago?.referencia || 'Sin número de referencia';
+            const linkComp = document.getElementById('m-pago-comprobante-link');
+            if (eq.pago?.comprobante) {
+                linkComp.href = eq.pago.comprobante;
+                linkComp.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                linkComp.href = '#';
+                linkComp.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            // Pestaña Verificación Staff
+            document.getElementById('m-v-rowid').textContent = `Fila ${eq.rowId}`;
+            const radios = document.getElementsByName('m-v-estado');
+            radios.forEach(r => {
+                r.checked = (r.value.toLowerCase() === estado.toLowerCase());
+            });
+            document.getElementById('m-v-notas').value = eq.notasStaff || '';
+            const hist = (eq.staffRevisor || eq.fechaRevision) 
+                ? `Revisado por <strong>${eq.staffRevisor || 'Staff'}</strong> el ${eq.fechaRevision || '--'}`
+                : 'Sin dictamen previo';
+            document.getElementById('m-v-historial').innerHTML = hist;
+
+            // Cargar datos en la pestaña de Edición Directa (U de CRUD)
+            document.getElementById('edit-nombre').value = eq.nombre || '';
+            document.getElementById('edit-tag').value = eq.tag || '';
+            setSelectValueSafely(document.getElementById('edit-procedencia'), eq.procedencia);
+            setSelectValueSafely(document.getElementById('edit-objetivo'), eq.objetivo);
+            setSelectValueSafely(document.getElementById('edit-franja-semana'), eq.horarios?.franjaSemana);
+            setSelectValueSafely(document.getElementById('edit-fines-semana'), eq.horarios?.finesDeSemana);
+
+            document.getElementById('edit-cap-nombre').value = eq.capitan?.nombreCi || '';
+            document.getElementById('edit-cap-tel').value = eq.capitan?.telefono || '';
+            document.getElementById('edit-cap-discord').value = eq.capitan?.discord || '';
+            document.getElementById('edit-sub-nombre').value = eq.subcapitan?.nombreCi || '';
+            document.getElementById('edit-sub-tel').value = eq.subcapitan?.telefono || '';
+            document.getElementById('edit-sub-discord').value = eq.subcapitan?.discord || '';
+            setSelectValueSafely(document.getElementById('edit-pago-modalidad'), eq.pago?.modalidad);
+            document.getElementById('edit-pago-referencia').value = eq.pago?.referencia || '';
+
+            const contEditTitulares = document.getElementById('contenedor-inputs-titulares');
+            const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+            contEditTitulares.innerHTML = posNames.map((pos, idx) => {
+                const t = (eq.titulares && eq.titulares[idx]) ? eq.titulares[idx] : {};
+                
+                const optSoloQ = OPCIONES_SOLOQ.map(opt => `<option value="${opt}" ${String(t.rangoSoloQ || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                const optRolSec = OPCIONES_ROL_SECUNDARIO.map(opt => `<option value="${opt}" ${String(t.rolSecundario || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                const optFlex = OPCIONES_FLEX.map(opt => `<option value="${opt}" ${String(t.rangoFlex || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+
+                return `
+                    <div class="bg-black/50 p-3 rounded-2xl border border-gray-800 space-y-2 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1.5 font-bold text-amber-400">
+                                <span class="w-14 text-center bg-amber-950/60 px-1 py-1 rounded border border-amber-500/30 text-[10px] font-mono">[${pos}]</span>
+                                <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Riot ID #TAG" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-xs">
+                            </div>
+                            <input type="text" id="edit-t-${idx}-nombre" value="${t.nombreCi || ''}" placeholder="Nombre Completo & CI" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-200 text-xs">
+                            <input type="text" id="edit-t-${idx}-discord" value="${t.discord || ''}" placeholder="Discord" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-cyan-300 text-xs font-mono">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-gray-800/40">
+                            <div>
+                                <span class="text-[9px] font-bold text-yellow-400 block mb-0.5">Rango Solo/Dúo:</span>
+                                <select id="edit-t-${idx}-soloeo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-xs outline-none">
+                                    <option value="">-- Seleccionar SoloQ --</option>
+                                    ${optSoloQ}
+                                </select>
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-cyan-400 block mb-0.5">Rango Flex:</span>
+                                <select id="edit-t-${idx}-flex" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-cyan-300 text-xs outline-none">
+                                    <option value="">-- Seleccionar Flex --</option>
+                                    ${optFlex}
+                                </select>
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-purple-400 block mb-0.5">Rol Secundario:</span>
+                                <select id="edit-t-${idx}-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-gray-200 text-xs outline-none">
+                                    <option value="">-- Rol Secundario --</option>
+                                    ${optRolSec}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            switchModalTab('general');
+            document.getElementById('modal-detalle-equipo').classList.remove('hidden');
+        };
+
+        function renderFichaJugador(j, esTitular) {
+            const opggUrl = j.opggLas || (j.riotIdLas ? `https://www.op.gg/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
+            const opggLink = opggUrl ? `<a href="${opggUrl}" target="_blank" class="text-blue-400 hover:text-white flex items-center gap-1 font-bold text-[10px]"><i class="fas fa-chart-line"></i> OP.GG</a>` : '';
+
+            return `
+                <div class="bg-black/50 p-3.5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/40 transition-colors flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-2 border-b border-gray-800/60 mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                                ${esTitular ? `[${j.posicion}] Titular ${j.numero}` : `Suplente ${j.numero}`}
+                            </span>
+                            ${opggLink}
+                        </div>
+                        <div class="space-y-1.5">
+                            <div><span class="text-gray-500 block text-[9px] uppercase font-bold">Riot ID LAS</span><strong class="text-white text-xs font-mono">${j.riotIdLas || '--'}</strong></div>
+                            <div><span class="text-gray-500 block text-[9px] uppercase font-bold">Nombre Completo</span><span class="text-gray-200">${j.nombreCi || '--'}</span></div>
+                            <div class="grid grid-cols-2 gap-1 pt-1">
+                                <div><span class="text-gray-500 text-[9px] uppercase font-bold block">Solo/Duo</span><span class="text-yellow-400 font-bold text-[11px]">${j.rangoSoloQ || '-'}</span></div>
+                                <div><span class="text-gray-500 text-[9px] uppercase font-bold block">Flex</span><span class="text-cyan-400 font-bold text-[11px]">${j.rangoFlex || '-'}</span></div>
+                            </div>
+                            <div class="pt-1 text-gray-400 text-[10px]">
+                                <span>Rol Sec: <strong class="text-gray-200">${j.rolSecundario || 'N/A'}</strong></span> &bull; 
+                                <span>Discord: <strong class="text-gray-200 font-mono">${j.discord || 'N/A'}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.cerrarModalDetalle = function() {
+            document.getElementById('modal-detalle-equipo').classList.add('hidden');
+            equipoSeleccionado = null;
+        };
+
+        window.switchModalTab = function(tabName) {
+            const tabs = ['general', 'capitan', 'titulares', 'suplentes', 'pago', 'verificacion', 'editar'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`mtab-${t}`);
+                const btn = document.getElementById(`mtab-btn-${t}`);
+                if (el) el.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('border-emerald-400', 'text-emerald-300', 'bg-emerald-950/30', 'border-amber-400', 'text-amber-300', 'bg-amber-950/30');
+                    btn.classList.add('border-transparent', 'text-gray-400');
+                }
+            });
+
+            const activeEl = document.getElementById(`mtab-${tabName}`);
+            const activeBtn = document.getElementById(`mtab-btn-${tabName}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-gray-400');
+                if (tabName === 'editar') {
+                    activeBtn.classList.add('border-amber-400', 'text-amber-300', 'bg-amber-950/30');
+                } else {
+                    activeBtn.classList.add('border-emerald-400', 'text-emerald-300', 'bg-emerald-950/30');
+                }
+            }
+        };
+
+        // 8. CRUD - UPDATE DICTAMEN (U)
+        window.guardarDictamenStaff = async function() {
+            if (!equipoSeleccionado) return;
+
+            const radios = document.getElementsByName('m-v-estado');
+            let estadoSeleccionado = "Pendiente";
+            for (const r of radios) {
+                if (r.checked) {
+                    estadoSeleccionado = r.value;
+                    break;
+                }
+            }
+
+            const notasStaff = document.getElementById('m-v-notas').value.trim();
+            const btn = document.getElementById('btn-guardar-dictamen');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
+            btn.disabled = true;
+
+            const apiUrl = getApiUrl();
+            const fechaStr = new Date().toLocaleString('es-BO');
+
+            // Actualización optimista local
+            equipoSeleccionado.estado = estadoSeleccionado;
+            equipoSeleccionado.notasStaff = notasStaff;
+            equipoSeleccionado.staffRevisor = staffNickActual;
+            equipoSeleccionado.fechaRevision = fechaStr;
+
+            localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+            actualizarMetricas();
+            renderizarTarjetasEquipos();
+
+            if (!apiUrl) {
+                btn.innerHTML = '<i class="fas fa-check text-green-400 mr-1"></i> Guardado Local';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Guardar Dictamen';
+                    btn.disabled = false;
+                    cerrarModalDetalle();
+                }, 1000);
+                return;
+            }
+
+            try {
+                const payload = {
+                    action: "update",
+                    rowId: equipoSeleccionado.rowId,
+                    estado: estadoSeleccionado,
+                    notasStaff: notasStaff,
+                    staffRevisor: staffNickActual
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    btn.innerHTML = '<i class="fas fa-check text-green-400 mr-1"></i> ¡Guardado en Sheets!';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save mr-1"></i> Guardar Dictamen';
+                        btn.disabled = false;
+                        cerrarModalDetalle();
+                    }, 1000);
+                } else {
+                    alert(`Error en Sheets: ${json.error || 'Desconocido'}`);
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Reintentar';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Error al enviar POST a Google Apps Script:", err);
+                alert("Error de conexión con Google Apps Script.");
+                btn.innerHTML = '<i class="fas fa-save mr-1"></i> Reintentar';
+                btn.disabled = false;
+            }
+        };
+
+        // 9. CRUD - UPDATE EDICIÓN DATOS EQUIPO (U)
+        window.guardarEdicionEquipo = async function() {
+            if (!equipoSeleccionado) return;
+            const btn = document.getElementById('btn-guardar-edicion');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando cambios...';
+            btn.disabled = true;
+
+            const editNombre = document.getElementById('edit-nombre').value.trim();
+            const editTag = document.getElementById('edit-tag').value.trim();
+            const editProcedencia = document.getElementById('edit-procedencia').value.trim();
+            const editObjetivo = document.getElementById('edit-objetivo').value.trim();
+            const editFranjaSemana = document.getElementById('edit-franja-semana').value.trim();
+            const editFinesSemana = document.getElementById('edit-fines-semana').value.trim();
+
+            const editCapNombre = document.getElementById('edit-cap-nombre').value.trim();
+            const editCapTel = document.getElementById('edit-cap-tel').value.trim();
+            const editCapDiscord = document.getElementById('edit-cap-discord').value.trim();
+            const editSubNombre = document.getElementById('edit-sub-nombre').value.trim();
+            const editSubTel = document.getElementById('edit-sub-tel').value.trim();
+            const editSubDiscord = document.getElementById('edit-sub-discord').value.trim();
+            const editPagoModalidad = document.getElementById('edit-pago-modalidad').value.trim();
+            const editPagoRef = document.getElementById('edit-pago-referencia').value.trim();
+
+            const titularesActualizados = [];
+            const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+            for (let i = 0; i < 5; i++) {
+                const prev = (equipoSeleccionado.titulares && equipoSeleccionado.titulares[i]) ? equipoSeleccionado.titulares[i] : {};
+                const rRiot = document.getElementById(`edit-t-${i}-riot`)?.value.trim() || '';
+                const rNom = document.getElementById(`edit-t-${i}-nombre`)?.value.trim() || '';
+                const rSoloQ = document.getElementById(`edit-t-${i}-soloeo`)?.value.trim() || '';
+                const rFlex = document.getElementById(`edit-t-${i}-flex`)?.value.trim() || '';
+                const rRolSec = document.getElementById(`edit-t-${i}-rolsec`)?.value.trim() || '';
+                const rDisc = document.getElementById(`edit-t-${i}-discord`)?.value.trim() || '';
+
+                titularesActualizados.push({
+                    ...prev,
+                    posicion: posNames[i],
+                    numero: i + 1,
+                    riotIdLas: rRiot,
+                    nombreCi: rNom,
+                    rangoSoloQ: rSoloQ,
+                    rangoFlex: rFlex,
+                    rolSecundario: rRolSec,
+                    discord: rDisc,
+                    opggLas: rRiot ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(rRiot.replace('#', '-'))}` : prev.opggLas
+                });
+            }
+
+            const equipoModificado = {
+                nombre: editNombre || equipoSeleccionado.nombre,
+                tag: editTag || equipoSeleccionado.tag,
+                procedencia: editProcedencia || equipoSeleccionado.procedencia,
+                objetivo: editObjetivo || equipoSeleccionado.objetivo,
+                horarios: {
+                    ...equipoSeleccionado.horarios,
+                    franjaSemana: editFranjaSemana || equipoSeleccionado.horarios?.franjaSemana || '',
+                    finesDeSemana: editFinesSemana || equipoSeleccionado.horarios?.finesDeSemana || ''
+                },
+                capitan: {
+                    nombreCi: editCapNombre,
+                    telefono: editCapTel,
+                    discord: editCapDiscord
+                },
+                subcapitan: {
+                    nombreCi: editSubNombre,
+                    telefono: editSubTel,
+                    discord: editSubDiscord
+                },
+                titulares: titularesActualizados,
+                pago: {
+                    ...equipoSeleccionado.pago,
+                    modalidad: editPagoModalidad,
+                    referencia: editPagoRef
+                }
+            };
+
+            // Aplicar localmente
+            Object.assign(equipoSeleccionado, equipoModificado);
+            localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+            actualizarMetricas();
+            renderizarTarjetasEquipos();
+
+            const apiUrl = getApiUrl();
+            if (!apiUrl) {
+                btn.innerHTML = '<i class="fas fa-check text-green-400 mr-1"></i> Guardado Local';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Guardar Cambios en Google Sheets';
+                    btn.disabled = false;
+                    cerrarModalDetalle();
+                }, 1000);
+                return;
+            }
+
+            try {
+                const payload = {
+                    action: "update",
+                    rowId: equipoSeleccionado.rowId,
+                    equipo: equipoModificado,
+                    staffRevisor: staffNickActual
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    btn.innerHTML = '<i class="fas fa-check text-green-400 mr-1"></i> ¡Actualizado en Sheets!';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save mr-1"></i> Guardar Cambios en Google Sheets';
+                        btn.disabled = false;
+                        cerrarModalDetalle();
+                    }, 1000);
+                } else {
+                    alert(`Error en Sheets: ${json.error || 'Desconocido'}`);
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Reintentar';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Error al actualizar equipo en Apps Script:", err);
+                alert("Error de conexión al guardar cambios en Google Sheets.");
+                btn.innerHTML = '<i class="fas fa-save mr-1"></i> Reintentar';
+                btn.disabled = false;
+            }
+        };
+
+        // 10. CRUD - DELETE (D)
+        window.eliminarEquipoActual = async function() {
+            if (!equipoSeleccionado) return;
+
+            const confirmar = confirm(`⚠️ ¿ELIMINAR EQUIPO?\n\n¿Estás seguro de que deseas eliminar permanentemente a "${equipoSeleccionado.nombre}" (Fila ${equipoSeleccionado.rowId}) de Google Sheets?\nEsta acción no se puede deshacer.`);
+            if (!confirmar) return;
+
+            const btn = document.getElementById('btn-eliminar-equipo');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Eliminando...';
+            btn.disabled = true;
+
+            const targetRowId = equipoSeleccionado.rowId;
+            const apiUrl = getApiUrl();
+
+            // Eliminar de memoria local
+            equiposScouting = equiposScouting.filter(e => e.rowId !== targetRowId);
+            localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+            actualizarMetricas();
+            renderizarTarjetasEquipos();
+
+            if (!apiUrl) {
+                cerrarModalDetalle();
+                alert("Fila eliminada de la memoria local.");
+                return;
+            }
+
+            try {
+                const payload = {
+                    action: "delete",
+                    rowId: targetRowId
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    cerrarModalDetalle();
+                    alert(`✅ Fila ${targetRowId} eliminada permanentemente de Google Sheets.`);
+                    sincronizarGoogleSheets();
+                } else {
+                    alert(`Error en Sheets: ${json.error || 'Desconocido'}`);
+                    btn.innerHTML = '<i class="fas fa-trash-alt mr-1"></i> Eliminar';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Error al eliminar en Apps Script:", err);
+                alert("Error de conexión al eliminar en Google Sheets.");
+                btn.innerHTML = '<i class="fas fa-trash-alt mr-1"></i> Eliminar';
+                btn.disabled = false;
+            }
+        };
+
+        // 11. CRUD - CREATE MANUAL (C)
+        window.abrirModalCrearEquipo = function() {
+            document.getElementById('form-crear-equipo').reset();
+            document.getElementById('modal-crear-equipo').classList.remove('hidden');
+        };
+
+        window.cerrarModalCrearEquipo = function() {
+            document.getElementById('modal-crear-equipo').classList.add('hidden');
+        };
+
+        window.crearEquipoManualSubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-crear');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Inscribiendo en Sheets...';
+            btn.disabled = true;
+
+            const nombre = document.getElementById('c-nombre').value.trim();
+            const tag = document.getElementById('c-tag').value.trim().toUpperCase();
+            const procedencia = document.getElementById('c-procedencia').value.trim() || 'Nacional (Mínimo 4 jugadores bolivianos y máx. 1 extranjero — Habilitado para clasificar a la LBL)';
+            const objetivo = document.getElementById('c-objetivo').value.trim() || 'Disputar el cupo de clasificación a la Liga LBL (Cupo)';
+            const franjaSemana = document.getElementById('c-franja-semana').value.trim() || 'A partir de las 20:00';
+            const capNombre = document.getElementById('c-cap-nombre').value.trim();
+            const capTel = document.getElementById('c-cap-tel').value.trim();
+            const capDiscord = document.getElementById('c-cap-discord').value.trim();
+
+            const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+            const titulares = [];
+            for (let i = 1; i <= 5; i++) {
+                const rRiot = document.getElementById(`c-j${i}-riot`).value.trim();
+                const rElo = document.getElementById(`c-j${i}-elo`).value.trim() || 'Diamante III - IV';
+                const rRolSec = document.getElementById(`c-j${i}-rolsec`).value.trim() || 'No aplica';
+                titulares.push({
+                    posicion: posNames[i - 1],
+                    numero: i,
+                    nombreCi: `Jugador ${i} (${posNames[i - 1]})`,
+                    ciudad: procedencia.includes('Nacional') ? 'Bolivia' : 'Internacional',
+                    telefono: capTel,
+                    discord: '',
+                    riotIdLas: rRiot || `Player${i}#LAS`,
+                    opggLas: rRiot ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(rRiot.replace('#', '-'))}` : '',
+                    riotIdMain: rRiot,
+                    opggMain: '',
+                    rolSecundario: rRolSec,
+                    rangoSoloQ: rElo,
+                    rangoFlex: 'Sin clasificar (Unranked)'
+                });
+            }
+
+            const pagoModalidad = document.getElementById('c-pago-modalidad').value.trim() || 'Bolivia';
+            const pagoRef = document.getElementById('c-pago-ref').value.trim() || 'MANUAL-' + Date.now();
+
+            const nuevoEquipoObj = {
+                nombre: nombre,
+                tag: tag,
+                procedencia: procedencia,
+                email: 'staff-manual@lbl.com',
+                objetivo: objetivo,
+                capitan: {
+                    nombreCi: capNombre,
+                    telefono: capTel,
+                    discord: capDiscord
+                },
+                horarios: {
+                    franjaSemana: franjaSemana,
+                    dificultades: 'Ninguna',
+                    finesDeSemana: 'Sin preferencia (cualquier bloque)'
+                },
+                titulares: titulares,
+                suplentes: [],
+                pago: {
+                    modalidad: pagoModalidad,
+                    referencia: pagoRef,
+                    comprobante: '',
+                    comprobanteRaw: ''
+                },
+                estado: 'Pendiente',
+                notasStaff: 'Inscrito manualmente desde el panel de Staff',
+                staffRevisor: staffNickActual
+            };
+
+            const apiUrl = getApiUrl();
+            if (!apiUrl) {
+                nuevoEquipoObj.rowId = (equiposScouting.length > 0 ? Math.max(...equiposScouting.map(x => x.rowId || 0)) : 1) + 1;
+                equiposScouting.unshift(nuevoEquipoObj);
+                localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                actualizarMetricas();
+                renderizarTarjetasEquipos();
+                cerrarModalCrearEquipo();
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i> Inscribir en Google Sheets';
+                btn.disabled = false;
+                alert("Equipo registrado en memoria local.");
+                return;
+            }
+
+            try {
+                const payload = {
+                    action: "create",
+                    equipo: nuevoEquipoObj,
+                    staffRevisor: staffNickActual
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await res.json();
+                if (json.success) {
+                    nuevoEquipoObj.rowId = json.rowId;
+                    equiposScouting.unshift(nuevoEquipoObj);
+                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    actualizarMetricas();
+                    renderizarTarjetasEquipos();
+                    cerrarModalCrearEquipo();
+                    alert(`✅ ¡Equipo "${nombre}" [${tag}] inscrito en la fila ${json.rowId} de Google Sheets!`);
+                } else {
+                    alert(`Error en Sheets: ${json.error || 'Desconocido'}`);
+                }
+            } catch (err) {
+                console.error("Error al crear equipo en Apps Script:", err);
+                alert("Error de conexión al crear equipo en Google Sheets.");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i> Inscribir en Google Sheets';
+                btn.disabled = false;
+            }
+        };
+
+        // 9. Configuración de URL Apps Script
+        window.abrirModalConfigUrl = function() {
+            const current = getApiUrl();
+            document.getElementById('input-api-url').value = current;
+            document.getElementById('modal-config-url').classList.remove('hidden');
+        };
+
+        window.cerrarModalConfigUrl = function() {
+            document.getElementById('modal-config-url').classList.add('hidden');
+        };
+
+        window.guardarConfigUrl = function() {
+            const val = document.getElementById('input-api-url').value.trim();
+            if (val) {
+                localStorage.setItem(STORAGE_KEY_API, val);
+                cerrarModalConfigUrl();
+                sincronizarGoogleSheets();
+            } else {
+                localStorage.removeItem(STORAGE_KEY_API);
+                cerrarModalConfigUrl();
+                alert("URL removida. Se utilizará el modo local.");
+            }
+        };
+
+        window.copiarReferencia = function() {
+            const ref = document.getElementById('m-pago-referencia').textContent;
+            if (ref && ref !== '--') {
+                navigator.clipboard.writeText(ref).then(() => {
+                    alert(`Referencia copiada: ${ref}`);
+                });
+            }
+        };
+    </script>
+</body>
+</html>
