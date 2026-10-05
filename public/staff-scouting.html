@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=194">
+    <link rel="stylesheet" href="/dist/output.css?v=195">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -42,6 +42,28 @@
         .tab-btn:not(.active):hover {
             color: #ffffff;
             border-color: #334155;
+        }
+
+        /* ESTILOS DE PESTAÑAS FLUSH DEL MODAL (ESTILO LIGA PRINCIPAL) */
+        .modal-tab-btn {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            color: #9ca3af;
+            background: transparent;
+        }
+        .modal-tab-btn:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .modal-tab-active {
+            color: #34d399 !important;
+            border-bottom: 2px solid #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
+        }
+        .modal-tab-active-amber {
+            color: #fbbf24 !important;
+            border-bottom: 2px solid #f59e0b !important;
+            background-color: rgba(245, 158, 11, 0.1) !important;
         }
     </style>
 </head>
@@ -96,6 +118,11 @@
             </div>
 
             <div class="flex gap-1.5 sm:gap-3 items-center shrink-0">
+                <!-- Botón Censo Residencias -->
+                <button onclick="abrirModalCensoResidencias()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-yellow-500/15 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-300 font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer" title="Censo y desglose de residencia de todos los jugadores">
+                    <i class="fas fa-map-marked-alt text-yellow-400"></i> <span class="hidden sm:inline">Censo Residencias</span>
+                </button>
+
                 <!-- Botón Nuevo Equipo Manual (C de CRUD) -->
                 <button onclick="abrirModalCrearEquipo()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md hover:shadow-blue-500/25 active:scale-95 cursor-pointer" title="Inscribir equipo manualmente en Google Sheets">
                     <i class="fas fa-plus"></i> <span class="hidden sm:inline">Nuevo Equipo</span>
@@ -179,6 +206,10 @@
                         <button onclick="filtrarPorEstado('Aceptado')" id="tab-filtro-aceptado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Aceptados</button>
                         <button onclick="filtrarPorEstado('Observado')" id="tab-filtro-observado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Observados</button>
                         <button onclick="filtrarPorEstado('Rechazado')" id="tab-filtro-rechazado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all">Rechazados</button>
+                        <div class="h-4 w-px bg-gray-800 mx-1 hidden sm:block"></div>
+                        <button onclick="abrirModalCensoResidencias()" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95" title="Ver censo y desglose de residencia de todos los jugadores">
+                            <i class="fas fa-map-marker-alt text-yellow-400"></i> Censo Residencias (<span id="stat-ciudades-count">0</span>)
+                        </button>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -210,10 +241,10 @@
     <!-- MODAL DE FICHA TÉCNICA DETALLADA (118 CAMPOS POR EQUIPO)       -->
     <!-- ============================================================== -->
     <div id="modal-detalle-equipo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
-        <div class="glass-panel w-full max-w-5xl rounded-3xl max-h-[92vh] flex flex-col overflow-hidden border border-emerald-500/30 shadow-[0_0_50px_rgba(0,0,0,0.9)] animate-fadeIn">
+        <div class="bg-[#050505] border border-gray-800 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
             
             <!-- HEADER DEL MODAL -->
-            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#070b13] shrink-0">
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0">
                 <div class="flex items-center gap-3.5 min-w-0">
                     <img id="m-logo" src="" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=fff'" class="w-12 h-12 rounded-xl object-contain bg-black border border-gray-800 shrink-0">
                     <div class="min-w-0">
@@ -230,77 +261,68 @@
                 </button>
             </div>
 
-            <!-- PESTAÑAS DEL MODAL (Segmented modern dock) -->
-            <div class="px-4 sm:px-6 py-2.5 border-b border-gray-800/80 bg-[#050810]/95 flex items-center gap-1.5 overflow-x-auto select-none shrink-0">
-                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 border bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] cursor-pointer">
-                    <i class="fas fa-info-circle text-emerald-400"></i> General & Horarios
+            <!-- PESTAÑAS FLUSH DOCK (BENCHMARK LIGA PRINCIPAL) -->
+            <div class="px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a] flex items-center gap-1 sm:gap-2 overflow-x-auto select-none shrink-0">
+                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn modal-tab-active px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                    <i class="fas fa-info-circle"></i> General & Horarios
                 </button>
-                <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
-                    <i class="fas fa-crown text-yellow-400"></i> Capitán & Sub
+                <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                    <i class="fas fa-crown text-yellow-500"></i> Capitán & Sub
                 </button>
-                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
                     <i class="fas fa-users text-blue-400"></i> 5 Titulares
                 </button>
-                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
                     <i class="fas fa-user-plus text-purple-400"></i> Suplentes
                 </button>
-                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-transparent text-gray-400 hover:text-white hover:bg-gray-800/50 cursor-pointer">
+                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
                     <i class="fas fa-receipt text-emerald-400"></i> Pago & Comprobante
                 </button>
-                <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-emerald-500/25 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30 cursor-pointer">
-                    <i class="fas fa-stamp text-emerald-400"></i> Panel Staff
+                <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap text-emerald-400">
+                    <i class="fas fa-clipboard-check"></i> Notas & Correcciones
                 </button>
-                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border border-amber-500/30 text-amber-400 hover:text-amber-300 hover:bg-amber-950/30 cursor-pointer ml-auto">
-                    <i class="fas fa-edit text-amber-400"></i> Editar Ficha
+                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap ml-auto text-amber-400 hover:text-amber-300">
+                    <i class="fas fa-edit"></i> Editar Ficha
                 </button>
             </div>
 
             <!-- CONTENIDO CON SCROLL DE LAS PESTAÑAS -->
-            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-4 text-xs">
+            <div class="p-4 md:p-6 overflow-y-auto flex-grow bg-[#050505] space-y-6 text-xs">
                 
                 <!-- TAB 1: GENERAL & HORARIOS -->
-                <div id="mtab-general" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="mtab-general" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Identidad del Equipo -->
-                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                                    <i class="fas fa-id-card text-emerald-400 text-sm"></i> Identidad del Equipo
-                                </h4>
-                                <span id="m-d-tag" class="px-2.5 py-1 rounded-lg text-xs font-mono font-black text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 shadow-sm">[TAG]</span>
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-id-card"></i> Identidad del Equipo
+                                </h3>
+                                <span id="m-d-tag" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-black text-emerald-400 bg-emerald-950/60 border border-emerald-500/30">[TAG]</span>
                             </div>
 
                             <div class="space-y-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Oficial</span>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-shield-alt text-emerald-400 text-xs"></i>
-                                        <span id="m-d-nombre" class="text-white text-base font-black uppercase tracking-wide">--</span>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Nombre Oficial</span>
+                                    <p id="m-d-nombre" class="text-white text-base font-black uppercase tracking-wide mt-0.5">--</p>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-800/60">
+                                    <div>
+                                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Procedencia / Composición</span>
+                                        <p id="m-d-procedencia" class="text-gray-300 font-bold text-xs mt-0.5">--</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Correo Electrónico</span>
+                                        <p id="m-d-email" class="text-gray-300 font-mono text-xs mt-0.5 truncate">--</p>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-gray-800/50">
-                                    <div>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Procedencia / Composición</span>
-                                        <div class="flex items-center gap-1.5 text-gray-200">
-                                            <i class="fas fa-globe-americas text-blue-400 text-xs shrink-0"></i>
-                                            <span id="m-d-procedencia" class="font-semibold text-xs leading-tight">--</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Correo Electrónico</span>
-                                        <div class="flex items-center gap-1.5 text-gray-200">
-                                            <i class="fas fa-envelope text-purple-400 text-xs shrink-0"></i>
-                                            <span id="m-d-email" class="font-mono text-xs text-gray-300 truncate">--</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">
                                         <i class="fas fa-bullseye text-emerald-400 mr-1"></i> Principal Objetivo Declarado
                                     </span>
-                                    <div class="p-3 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-200 font-medium text-xs leading-relaxed flex items-start gap-2.5">
+                                    <div class="bg-[#111] p-3 rounded-xl border border-gray-800 text-gray-200 text-xs leading-relaxed flex items-start gap-2.5">
                                         <i class="fas fa-quote-left text-gray-600 text-xs shrink-0 mt-0.5"></i>
                                         <span id="m-d-objetivo">--</span>
                                     </div>
@@ -309,41 +331,41 @@
                         </div>
 
                         <!-- Disponibilidad y Horarios Oficiales -->
-                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                                    <i class="fas fa-clock text-emerald-400 text-sm"></i> Disponibilidad y Horarios Oficiales
-                                </h4>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-400 bg-black/40 border border-gray-800">Scouting T3</span>
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-clock"></i> Disponibilidad & Horarios
+                                </h3>
+                                <span class="text-[10px] text-gray-500 font-mono">Scouting T3</span>
                             </div>
 
                             <div class="space-y-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">
                                         <i class="fas fa-calendar-day text-emerald-400 mr-1"></i> Franja habitual en días de semana
                                     </span>
-                                    <div class="p-2.5 bg-emerald-950/40 rounded-2xl border border-emerald-500/30 text-emerald-300 font-black text-xs flex items-center gap-2">
-                                        <i class="fas fa-check-circle text-emerald-400"></i>
+                                    <div class="bg-[#111] p-3 rounded-xl border border-emerald-500/20 text-emerald-400 font-black text-xs flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-emerald-500"></i>
                                         <span id="m-d-franja-semana">--</span>
                                     </div>
                                 </div>
 
-                                <div class="pt-1 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">
                                         <i class="fas fa-calendar-week text-blue-400 mr-1"></i> Preferencia en fines de semana
                                     </span>
-                                    <div class="p-2.5 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-200 font-semibold text-xs flex items-center gap-2">
+                                    <div class="bg-[#111] p-3 rounded-xl border border-gray-800 text-gray-200 font-bold text-xs flex items-center gap-2">
                                         <i class="fas fa-calendar-alt text-blue-400"></i>
                                         <span id="m-d-fines-semana">--</span>
                                     </div>
                                 </div>
 
-                                <div class="pt-1 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">
                                         <i class="fas fa-exclamation-triangle text-amber-400 mr-1"></i> Dificultades recurrentes (estudio/trabajo)
                                     </span>
-                                    <div class="p-2.5 bg-black/50 rounded-2xl border border-gray-800/80 text-gray-300 font-medium text-xs flex items-start gap-2">
-                                        <i class="fas fa-info-circle text-amber-400 text-xs shrink-0 mt-0.5"></i>
+                                    <div class="bg-[#111] p-3 rounded-xl border border-gray-800 text-gray-300 text-xs flex items-start gap-2">
+                                        <i class="fas fa-info-circle text-amber-400 text-xs mt-0.5 shrink-0"></i>
                                         <span id="m-d-dificultades">--</span>
                                     </div>
                                 </div>
@@ -353,49 +375,46 @@
                 </div>
 
                 <!-- TAB 2: CAPITÁN & SUBCAPITÁN -->
-                <div id="mtab-capitan" class="hidden space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="mtab-capitan" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Capitán Oficial -->
-                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/25 via-[#070e17] to-[#04060c] space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                                    <i class="fas fa-crown text-yellow-400 text-sm"></i> Capitán Oficial
-                                </h4>
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-crown"></i> Capitán Oficial
+                                </h3>
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">Líder</span>
                             </div>
 
-                            <div class="space-y-3.5">
+                            <div class="space-y-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Completo & CI</span>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-user text-emerald-400 text-xs"></i>
-                                        <strong id="m-cap-nombre" class="text-white text-sm font-black tracking-wide">--</strong>
-                                    </div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Nombre Completo & CI</span>
+                                    <strong id="m-cap-nombre" class="text-white text-sm font-black tracking-wide block mt-0.5">--</strong>
                                 </div>
 
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">WhatsApp / Contacto</span>
-                                    <div class="flex items-center justify-between gap-2 p-2 bg-black/50 rounded-2xl border border-gray-800">
-                                        <span id="m-cap-tel" class="text-white font-mono font-bold text-xs pl-1">--</span>
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">WhatsApp / Contacto</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-[#111] rounded-xl border border-gray-800">
+                                        <span id="m-cap-tel" class="text-green-400 font-mono font-bold text-xs pl-1">--</span>
                                         <div class="flex items-center gap-1.5">
-                                            <button type="button" onclick="copiarTexto(document.getElementById('m-cap-tel').textContent, 'Teléfono')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
+                                            <button type="button" onclick="copiarTexto(document.getElementById('m-cap-tel').textContent, 'Teléfono')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
                                                 <i class="fas fa-copy"></i>
                                             </button>
                                             <a id="m-cap-wa-link" href="#" target="_blank" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md active:scale-95">
-                                                <i class="fab fa-whatsapp text-xs"></i> Chat WhatsApp
+                                                <i class="fab fa-whatsapp text-xs"></i> WhatsApp
                                             </a>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Usuario de Discord</span>
-                                    <div class="flex items-center justify-between gap-2 p-2 bg-[#5865F2]/10 rounded-2xl border border-[#5865F2]/30">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fab fa-discord text-[#5865F2] text-sm"></i>
-                                            <span id="m-cap-discord" class="text-white font-mono font-bold text-xs">--</span>
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Usuario de Discord</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-[#111] rounded-xl border border-gray-800">
+                                        <div class="flex items-center gap-2 pl-1">
+                                            <i class="fab fa-discord text-indigo-400 text-sm"></i>
+                                            <span id="m-cap-discord" class="text-indigo-300 font-mono font-bold text-xs">--</span>
                                         </div>
-                                        <button type="button" onclick="copiarTexto(document.getElementById('m-cap-discord').textContent, 'Discord')" class="px-2 py-1 rounded-lg bg-[#5865F2]/30 hover:bg-[#5865F2] text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
+                                        <button type="button" onclick="copiarTexto(document.getElementById('m-cap-discord').textContent, 'Discord')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
                                             <i class="fas fa-copy"></i>
                                         </button>
                                     </div>
@@ -404,46 +423,43 @@
                         </div>
 
                         <!-- Subcapitán -->
-                        <div class="glass-panel p-5 rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/15 via-[#070e17] to-[#04060c] space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-                                    <i class="fas fa-user-shield text-cyan-400 text-sm"></i> Subcapitán (Contacto Alternativo)
-                                </h4>
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-user-shield"></i> Subcapitán (Contacto Alternativo)
+                                </h3>
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Sub</span>
                             </div>
 
-                            <div class="space-y-3.5">
+                            <div class="space-y-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Nombre Completo & CI</span>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-user text-cyan-400 text-xs"></i>
-                                        <strong id="m-sub-nombre" class="text-white text-sm font-black tracking-wide">--</strong>
-                                    </div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Nombre Completo & CI</span>
+                                    <strong id="m-sub-nombre" class="text-white text-sm font-black tracking-wide block mt-0.5">--</strong>
                                 </div>
 
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">WhatsApp / Contacto</span>
-                                    <div class="flex items-center justify-between gap-2 p-2 bg-black/50 rounded-2xl border border-gray-800">
-                                        <span id="m-sub-tel" class="text-white font-mono font-bold text-xs pl-1">--</span>
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">WhatsApp / Contacto</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-[#111] rounded-xl border border-gray-800">
+                                        <span id="m-sub-tel" class="text-green-400 font-mono font-bold text-xs pl-1">--</span>
                                         <div class="flex items-center gap-1.5">
-                                            <button type="button" onclick="copiarTexto(document.getElementById('m-sub-tel').textContent, 'Teléfono')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
+                                            <button type="button" onclick="copiarTexto(document.getElementById('m-sub-tel').textContent, 'Teléfono')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar número">
                                                 <i class="fas fa-copy"></i>
                                             </button>
                                             <a id="m-sub-wa-link" href="#" target="_blank" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md active:scale-95">
-                                                <i class="fab fa-whatsapp text-xs"></i> Chat WhatsApp
+                                                <i class="fab fa-whatsapp text-xs"></i> WhatsApp
                                             </a>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Usuario de Discord</span>
-                                    <div class="flex items-center justify-between gap-2 p-2 bg-[#5865F2]/10 rounded-2xl border border-[#5865F2]/30">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fab fa-discord text-[#5865F2] text-sm"></i>
-                                            <span id="m-sub-discord" class="text-white font-mono font-bold text-xs">--</span>
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Usuario de Discord</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-[#111] rounded-xl border border-gray-800">
+                                        <div class="flex items-center gap-2 pl-1">
+                                            <i class="fab fa-discord text-indigo-400 text-sm"></i>
+                                            <span id="m-sub-discord" class="text-indigo-300 font-mono font-bold text-xs">--</span>
                                         </div>
-                                        <button type="button" onclick="copiarTexto(document.getElementById('m-sub-discord').textContent, 'Discord')" class="px-2 py-1 rounded-lg bg-[#5865F2]/30 hover:bg-[#5865F2] text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
+                                        <button type="button" onclick="copiarTexto(document.getElementById('m-sub-discord').textContent, 'Discord')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer" title="Copiar Discord">
                                             <i class="fas fa-copy"></i>
                                         </button>
                                     </div>
@@ -454,44 +470,52 @@
                 </div>
 
                 <!-- TAB 3: 5 TITULARES -->
-                <div id="mtab-titulares" class="hidden space-y-3">
-                    <p class="text-gray-400 text-xs mb-2">Fichas técnicas individuales de los 5 jugadores inscritos en la escuadra titular:</p>
-                    <div id="m-lista-titulares" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Generado dinámicamente -->
+                <div id="mtab-titulares" class="hidden space-y-4">
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl">
+                        <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2 flex items-center justify-between">
+                            <span><i class="fas fa-users text-blue-500 mr-2"></i> Alineación Principal (5 Titulares)</span>
+                            <span class="text-[10px] text-gray-500 font-mono">Scouting T3</span>
+                        </h3>
+                        <div id="m-lista-titulares" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Generado dinámicamente -->
+                        </div>
                     </div>
                 </div>
 
                 <!-- TAB 4: SUPLENTES -->
-                <div id="mtab-suplentes" class="hidden space-y-3">
-                    <div id="m-lista-suplentes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Generado dinámicamente -->
+                <div id="mtab-suplentes" class="hidden space-y-4">
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl">
+                        <h3 class="text-sm font-black text-purple-400 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2 flex items-center justify-between">
+                            <span><i class="fas fa-user-plus text-purple-400 mr-2"></i> Jugadores Suplentes Registrados</span>
+                            <span class="text-[10px] text-gray-500 font-mono">Banca</span>
+                        </h3>
+                        <div id="m-lista-suplentes" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Generado dinámicamente -->
+                        </div>
                     </div>
                 </div>
 
                 <!-- TAB 5: PAGO & COMPROBANTE -->
-                <div id="mtab-pago" class="hidden space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                                    <i class="fas fa-credit-card text-emerald-400 text-sm"></i> Datos de Transacción
-                                </h4>
+                <div id="mtab-pago" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-credit-card"></i> Datos de Transacción
+                                </h3>
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">Inscripción</span>
                             </div>
 
-                            <div class="space-y-3.5">
+                            <div class="space-y-3">
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Modalidad / Método de Pago</span>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-wallet text-emerald-400 text-xs"></i>
-                                        <strong id="m-pago-modalidad" class="text-white text-sm font-black tracking-wide">--</strong>
-                                    </div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Modalidad / Método de Pago</span>
+                                    <strong id="m-pago-modalidad" class="text-white text-sm font-black tracking-wide block mt-0.5">--</strong>
                                 </div>
 
-                                <div class="pt-2 border-t border-gray-800/50">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Número de Referencia / Comprobante</span>
-                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-black/50 rounded-2xl border border-gray-800">
-                                        <span id="m-pago-referencia" class="text-emerald-300 font-mono font-bold text-xs pl-1">--</span>
+                                <div class="pt-2 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Número de Referencia / Comprobante</span>
+                                    <div class="flex items-center justify-between gap-2 p-2.5 bg-[#111] rounded-xl border border-gray-800">
+                                        <span id="m-pago-referencia" class="text-emerald-400 font-mono font-bold text-xs pl-1">--</span>
                                         <button type="button" onclick="copiarTexto(document.getElementById('m-pago-referencia').textContent, 'Nº de Referencia')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1">
                                             <i class="fas fa-copy"></i> Copiar
                                         </button>
@@ -500,19 +524,19 @@
                             </div>
                         </div>
 
-                        <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-[#070e17] via-[#050810] to-[#04060c] flex flex-col justify-between shadow-xl">
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl flex flex-col justify-between space-y-4">
                             <div>
-                                <div class="flex items-center justify-between pb-3 border-b border-gray-800/80 mb-3">
-                                    <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                                        <i class="fas fa-file-invoice-dollar text-emerald-400 text-sm"></i> Comprobante Adjunto
-                                    </h4>
+                                <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
+                                    <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-file-invoice-dollar"></i> Comprobante Adjunto
+                                    </h3>
                                     <span class="text-[10px] text-gray-500 font-mono">Google Drive</span>
                                 </div>
-                                <p class="text-gray-300 text-xs leading-relaxed mb-4">
+                                <p class="text-gray-400 text-xs leading-relaxed mb-4">
                                     El archivo de comprobante de pago fue subido por el capitán al completar el formulario de inscripción oficial.
                                 </p>
                             </div>
-                            <div id="m-pago-comprobante-box" class="text-center p-4 bg-black/50 rounded-2xl border border-gray-800/80">
+                            <div id="m-pago-comprobante-box" class="text-center p-4 bg-[#111] rounded-xl border border-gray-800">
                                 <a id="m-pago-comprobante-link" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95">
                                     <i class="fas fa-external-link-alt"></i> Ver Comprobante en Google Drive
                                 </a>
@@ -521,65 +545,97 @@
                     </div>
                 </div>
 
-                <!-- TAB 6: PANEL DE VERIFICACIÓN STAFF -->
+                <!-- TAB 6: PANEL DE VERIFICACIÓN STAFF & CORRECCIONES -->
                 <div id="mtab-verificacion" class="hidden space-y-4">
-                    <div class="bg-gradient-to-r from-emerald-950/30 via-[#070b13] to-transparent p-5 rounded-2xl border border-emerald-500/40 space-y-4">
+                    <div class="bg-[#0a0a0a] border border-emerald-500/30 p-5 rounded-2xl space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-800 pb-3">
                             <div>
-                                <h4 class="text-sm font-black uppercase tracking-wider text-emerald-300 flex items-center gap-2">
-                                    <i class="fas fa-stamp text-emerald-400"></i> Dictamen de Verificación Staff
-                                </h4>
-                                <p class="text-gray-400 text-xs mt-0.5">Al presionar Guardar, se actualizará directamente la fila del equipo en Google Sheets.</p>
+                                <h3 class="text-sm font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                                    <i class="fas fa-clipboard-check text-emerald-400"></i> Dictamen & Solicitud de Correcciones al Equipo
+                                </h3>
+                                <p class="text-gray-400 text-xs mt-0.5">Detecta inconsistencias de datos (Data Garbage), redacta notas y genera el mensaje de corrección para el capitán.</p>
                             </div>
                             <div class="text-right">
                                 <span class="text-[10px] text-gray-500 uppercase font-bold block">Fila en Google Sheet</span>
-                                <span id="m-v-rowid" class="text-white font-mono font-bold bg-black px-2 py-0.5 rounded border border-gray-800">Fila --</span>
+                                <span id="m-v-rowid" class="text-white font-mono font-bold bg-[#111] px-2.5 py-1 rounded-lg border border-gray-800 inline-block">Fila --</span>
                             </div>
                         </div>
 
-                        <!-- Selector de Estado -->
+                        <!-- 1. AUDITORÍA AUTOMÁTICA DE DATOS DEL EQUIPO (DATA HYGIENE / DATA GARBAGE) -->
+                        <div id="m-v-auditoria-box" class="space-y-2">
+                            <!-- Inyectado dinámicamente con auditarInconsistenciasEquipo() -->
+                        </div>
+
+                        <!-- 2. SELECTOR DE ESTADO OFICIAL -->
                         <div>
-                            <label class="block text-xs font-black uppercase text-gray-400 mb-2">Seleccionar Estado Oficial:</label>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-2">Estado Oficial del Equipo:</label>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                <label class="flex items-center gap-2 p-3 rounded-xl border border-green-500/40 bg-green-950/20 hover:bg-green-900/40 cursor-pointer transition-all">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-green-500/30 bg-green-950/20 hover:bg-green-900/30 cursor-pointer transition-all">
                                     <input type="radio" name="m-v-estado" value="Aceptado" class="accent-green-500 w-4 h-4">
                                     <span class="font-black text-green-400 uppercase text-xs">Aceptado</span>
                                 </label>
-                                <label class="flex items-center gap-2 p-3 rounded-xl border border-orange-500/40 bg-orange-950/20 hover:bg-orange-900/40 cursor-pointer transition-all">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-orange-500/30 bg-orange-950/20 hover:bg-orange-900/30 cursor-pointer transition-all">
                                     <input type="radio" name="m-v-estado" value="Observado" class="accent-orange-500 w-4 h-4">
                                     <span class="font-black text-orange-400 uppercase text-xs">Observado</span>
                                 </label>
-                                <label class="flex items-center gap-2 p-3 rounded-xl border border-red-500/40 bg-red-950/20 hover:bg-red-900/40 cursor-pointer transition-all">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-900/30 cursor-pointer transition-all">
                                     <input type="radio" name="m-v-estado" value="Rechazado" class="accent-red-500 w-4 h-4">
                                     <span class="font-black text-red-400 uppercase text-xs">Rechazado</span>
                                 </label>
-                                <label class="flex items-center gap-2 p-3 rounded-xl border border-yellow-500/40 bg-yellow-950/20 hover:bg-yellow-900/40 cursor-pointer transition-all">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-yellow-500/30 bg-yellow-950/20 hover:bg-yellow-900/30 cursor-pointer transition-all">
                                     <input type="radio" name="m-v-estado" value="Pendiente" class="accent-yellow-500 w-4 h-4">
                                     <span class="font-black text-yellow-400 uppercase text-xs">Pendiente</span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Observaciones del Staff -->
-                        <div>
-                            <label class="block text-xs font-black uppercase text-gray-400 mb-1.5">
-                                Notas u Observaciones del Staff (se guardan en Google Sheets):
-                            </label>
-                            <textarea id="m-v-notas" rows="3" class="w-full bg-[#04060a] border border-gray-800 rounded-xl p-3 text-white text-xs outline-none focus:border-emerald-500 transition-all placeholder-gray-600" placeholder="Ej: Pago verificado correctamente por Binance. Falta confirmar Discord del suplente 1..."></textarea>
+                        <!-- 3. NOTAS U OBSERVACIONES CON PLANTILLAS RÁPIDAS -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <label class="block text-xs font-black uppercase text-gray-400">
+                                    Notas u Observaciones para Pedir Correcciones:
+                                </label>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[10px] uppercase font-bold text-gray-500">Plantillas:</span>
+                                    <button type="button" onclick="insertarPlantillaNota('📍 Falta Ciudad / Residencia exacta de jugadores')" class="px-2 py-0.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-yellow-300 text-[10px] font-bold border border-gray-700 cursor-pointer transition-colors">+ Falta Ciudad</button>
+                                    <button type="button" onclick="insertarPlantillaNota('⚔️ Riot ID o Tag LAS inválido')" class="px-2 py-0.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-blue-300 text-[10px] font-bold border border-gray-700 cursor-pointer transition-colors">+ Riot ID</button>
+                                    <button type="button" onclick="insertarPlantillaNota('💳 Comprobante no visible o referencia incorrecta')" class="px-2 py-0.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-emerald-300 text-[10px] font-bold border border-gray-700 cursor-pointer transition-colors">+ Comprobante</button>
+                                    <button type="button" onclick="insertarPlantillaNota('📱 Falta WhatsApp activo o Discord de capitán')" class="px-2 py-0.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-indigo-300 text-[10px] font-bold border border-gray-700 cursor-pointer transition-colors">+ Contacto</button>
+                                </div>
+                            </div>
+                            <textarea id="m-v-notas" rows="3" class="w-full bg-[#111] border border-gray-800 rounded-xl p-3 text-white text-xs outline-none focus:border-emerald-500 transition-all placeholder-gray-600 leading-relaxed font-sans" placeholder="Escribe aquí las observaciones o correcciones requeridas al equipo..."></textarea>
+                        </div>
+
+                        <!-- 4. BOTONES PARA PEDIR CORRECCIONES AL CAPITÁN -->
+                        <div class="p-3.5 bg-[#0f1726]/60 rounded-xl border border-blue-900/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div>
+                                <span class="text-xs font-black uppercase text-blue-300 flex items-center gap-1.5">
+                                    <i class="fab fa-whatsapp text-green-400 text-sm"></i> Comunicación Directa con el Capitán
+                                </span>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Envía las observaciones por WhatsApp o copia el mensaje listo para Discord.</p>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <button type="button" onclick="copiarMensajeCorrecciones()" class="px-3.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 border border-gray-700 transition-all cursor-pointer active:scale-95 shadow-sm">
+                                    <i class="fas fa-copy"></i> Copiar Mensaje
+                                </button>
+                                <button type="button" onclick="pedirCorreccionesWhatsApp()" id="btn-wa-correcciones" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-green-600 hover:bg-green-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-lg shadow-green-950/40">
+                                    <i class="fab fa-whatsapp text-base"></i> Abrir WhatsApp
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Información de Auditoría y Acciones -->
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500 gap-3 pt-3 border-t border-gray-800/80">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500 gap-3 pt-3 border-t border-gray-800">
                             <div>
                                 <span class="font-bold text-gray-400">Última revisión:</span>
-                                <span id="m-v-historial" class="text-gray-300">Sin revisiones previas</span>
+                                <span id="m-v-historial" class="text-gray-300 ml-1">Sin revisiones previas</span>
                             </div>
                             <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <button type="button" onclick="eliminarEquipoActual()" id="btn-eliminar-equipo" class="px-4 py-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/40 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="Eliminar fila permanentemente de Google Sheets">
+                                <button type="button" onclick="eliminarEquipoActual()" id="btn-eliminar-equipo" class="px-4 py-2.5 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 hover:text-white border border-red-500/30 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="Eliminar fila permanentemente de Google Sheets">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                                 <button type="button" onclick="guardarDictamenStaff()" id="btn-guardar-dictamen" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-wider transition-all shadow-lg hover:shadow-emerald-500/30 flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
-                                    <i class="fas fa-save"></i> Guardar Dictamen
+                                    <i class="fas fa-save"></i> Guardar Dictamen & Notas
                                 </button>
                             </div>
                         </div>
@@ -588,11 +644,11 @@
 
                 <!-- TAB 7: EDITAR DATOS DEL EQUIPO (U de CRUD) -->
                 <div id="mtab-editar" class="hidden space-y-4">
-                    <div class="bg-black/40 p-4 sm:p-5 rounded-2xl border border-amber-500/30 space-y-4">
+                    <div class="bg-[#0a0a0a] p-5 rounded-2xl border border-amber-500/30 space-y-4">
                         <div class="flex justify-between items-center border-b border-gray-800 pb-2.5">
-                            <h4 class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
-                                <i class="fas fa-edit"></i> Edición Directa de Datos (Escribe en Google Sheets)
-                            </h4>
+                            <h3 class="text-sm font-black uppercase tracking-widest text-amber-400 flex items-center gap-2">
+                                <i class="fas fa-edit"></i> Edición Directa de Datos (Google Sheets)
+                            </h3>
                             <span class="text-[10px] text-gray-500 font-mono">Actualiza celdas en tiempo real</span>
                         </div>
 
@@ -600,15 +656,15 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nombre del Equipo</label>
-                                <input type="text" id="edit-nombre" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <input type="text" id="edit-nombre" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Tag (Abreviatura)</label>
-                                <input type="text" id="edit-tag" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <input type="text" id="edit-tag" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Procedencia / Composición</label>
-                                <select id="edit-procedencia" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <select id="edit-procedencia" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                                     <option value="">-- Seleccionar Composición --</option>
                                     <option value="Nacional (Mínimo 4 jugadores bolivianos y máx. 1 extranjero — Habilitado para clasificar a la LBL)">Nacional (Mín. 4 bolivianos, máx. 1 extranjero - Habilitado LBL)</option>
                                     <option value="Internacional (2 o más extranjeros — Compite exclusivamente por la bolsa de premios en efectivo)">Internacional (2 o más extranjeros - Solo premios)</option>
@@ -620,7 +676,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-800/60">
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Principal Objetivo</label>
-                                <select id="edit-objetivo" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <select id="edit-objetivo" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                                     <option value="">-- Seleccionar Objetivo --</option>
                                     <option value="Disputar el cupo de clasificación a la Liga LBL (Cupo)">Disputar el cupo de clasificación a la Liga LBL (Cupo)</option>
                                     <option value="Competir por la bolsa de premios en efectivo (Premio)">Competir por la bolsa de premios en efectivo (Premio)</option>
@@ -630,7 +686,7 @@
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Franja Días de Semana</label>
-                                <select id="edit-franja-semana" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <select id="edit-franja-semana" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                                     <option value="">-- Horario Días de Semana --</option>
                                     <option value="A partir de las 19:00">A partir de las 19:00</option>
                                     <option value="A partir de las 20:00">A partir de las 20:00</option>
@@ -639,7 +695,7 @@
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Preferencia Fines de Semana</label>
-                                <select id="edit-fines-semana" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <select id="edit-fines-semana" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                                     <option value="">-- Fines de Semana --</option>
                                     <option value="15:00 a 17:00">15:00 a 17:00</option>
                                     <option value="17:00 a 19:00">17:00 a 19:00</option>
@@ -660,19 +716,19 @@
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fas fa-user text-emerald-400 mr-1"></i> Nombre Completo & CI
                                     </label>
-                                    <input type="text" id="edit-cap-nombre" placeholder="Nombre Completo y CI del Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                                    <input type="text" id="edit-cap-nombre" placeholder="Nombre Completo y CI del Capitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
                                 </div>
                                 <div>
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fab fa-whatsapp text-green-400 mr-1"></i> WhatsApp / Teléfono
                                     </label>
-                                    <input type="text" id="edit-cap-tel" placeholder="WhatsApp / Teléfono del Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                                    <input type="text" id="edit-cap-tel" placeholder="WhatsApp / Teléfono del Capitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
                                 </div>
                                 <div>
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fab fa-discord text-indigo-400 mr-1"></i> Usuario de Discord
                                     </label>
-                                    <input type="text" id="edit-cap-discord" placeholder="Discord del Capitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
+                                    <input type="text" id="edit-cap-discord" placeholder="Discord del Capitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-emerald-500">
                                 </div>
                             </div>
                             <div class="space-y-2.5">
@@ -683,19 +739,19 @@
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fas fa-user text-cyan-400 mr-1"></i> Nombre Completo & CI
                                     </label>
-                                    <input type="text" id="edit-sub-nombre" placeholder="Nombre Completo y CI del Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                                    <input type="text" id="edit-sub-nombre" placeholder="Nombre Completo y CI del Subcapitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
                                 </div>
                                 <div>
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fab fa-whatsapp text-green-400 mr-1"></i> WhatsApp / Teléfono
                                     </label>
-                                    <input type="text" id="edit-sub-tel" placeholder="WhatsApp / Teléfono del Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                                    <input type="text" id="edit-sub-tel" placeholder="WhatsApp / Teléfono del Subcapitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
                                 </div>
                                 <div>
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                         <i class="fab fa-discord text-indigo-400 mr-1"></i> Usuario de Discord
                                     </label>
-                                    <input type="text" id="edit-sub-discord" placeholder="Discord del Subcapitán" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
+                                    <input type="text" id="edit-sub-discord" placeholder="Discord del Subcapitán" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-cyan-500">
                                 </div>
                             </div>
                         </div>
@@ -712,7 +768,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-800/60">
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Modalidad de Pago</label>
-                                <select id="edit-pago-modalidad" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <select id="edit-pago-modalidad" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                                     <option value="">-- Seleccionar Modalidad --</option>
                                     <option value="Bolivia">Bolivia (QR / Transferencia BNB/Mercantil)</option>
                                     <option value="Internacional">Internacional (Binance USDT / Cripto)</option>
@@ -722,7 +778,7 @@
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nº Referencia / Transacción</label>
-                                <input type="text" id="edit-pago-referencia" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <input type="text" id="edit-pago-referencia" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
                             </div>
                         </div>
 
@@ -737,8 +793,8 @@
             </div>
 
             <!-- FOOTER DEL MODAL -->
-            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#060a12] flex justify-end gap-3 shrink-0">
-                <button onclick="cerrarModalDetalle()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs">
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0a0a0a] flex justify-end gap-3 shrink-0">
+                <button onclick="cerrarModalDetalle()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs cursor-pointer">
                     Cerrar
                 </button>
             </div>
@@ -841,6 +897,10 @@
                                 <input type="text" id="c-j1-riot" placeholder="Player1#LAS" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-[10px]">
                             </div>
                             <div>
+                                <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Ciudad / Residencia</label>
+                                <input type="text" id="c-j1-ciudad" placeholder="Ej: La Paz" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px]">
+                            </div>
+                            <div>
                                 <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Rango SoloQ</label>
                                 <select id="c-j1-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
                                     <option value="Challenger/Retador">Challenger</option>
@@ -875,6 +935,10 @@
                             <div>
                                 <label class="block text-[8px] font-bold text-gray-400 uppercase mb-0.5">Riot ID #TAG</label>
                                 <input type="text" id="c-j2-riot" placeholder="Player2#LAS" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-[10px]">
+                            </div>
+                            <div>
+                                <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Ciudad / Residencia</label>
+                                <input type="text" id="c-j2-ciudad" placeholder="Ej: Santa Cruz" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px]">
                             </div>
                             <div>
                                 <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Rango SoloQ</label>
@@ -913,6 +977,10 @@
                                 <input type="text" id="c-j3-riot" placeholder="Player3#LAS" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-[10px]">
                             </div>
                             <div>
+                                <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Ciudad / Residencia</label>
+                                <input type="text" id="c-j3-ciudad" placeholder="Ej: Cochabamba" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px]">
+                            </div>
+                            <div>
                                 <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Rango SoloQ</label>
                                 <select id="c-j3-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
                                     <option value="Challenger/Retador">Challenger</option>
@@ -949,6 +1017,10 @@
                                 <input type="text" id="c-j4-riot" placeholder="Player4#LAS" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-[10px]">
                             </div>
                             <div>
+                                <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Ciudad / Residencia</label>
+                                <input type="text" id="c-j4-ciudad" placeholder="Ej: Tarija" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px]">
+                            </div>
+                            <div>
                                 <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Rango SoloQ</label>
                                 <select id="c-j4-elo" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px] outline-none">
                                     <option value="Challenger/Retador">Challenger</option>
@@ -983,6 +1055,10 @@
                             <div>
                                 <label class="block text-[8px] font-bold text-gray-400 uppercase mb-0.5">Riot ID #TAG</label>
                                 <input type="text" id="c-j5-riot" placeholder="Player5#LAS" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-white font-mono text-[10px]">
+                            </div>
+                            <div>
+                                <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Ciudad / Residencia</label>
+                                <input type="text" id="c-j5-ciudad" placeholder="Ej: Sucre" class="w-full bg-[#060a12] border border-gray-800 p-1.5 rounded-lg text-yellow-300 text-[10px]">
                             </div>
                             <div>
                                 <label class="block text-[8px] font-bold text-yellow-400 uppercase mb-0.5">Rango SoloQ</label>
@@ -1038,6 +1114,108 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DE CENSO DE RESIDENCIAS Y CONTABILIZADOR GEOGRÁFICO       -->
+    <!-- ============================================================== -->
+    <div id="modal-censo-residencias" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+        <div class="bg-[#050505] border border-gray-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            
+            <!-- HEADER -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-yellow-500/15 border border-yellow-500/40 flex items-center justify-center text-yellow-400 text-xl shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider truncate">
+                            Censo de Residencias & Distribución Geográfica
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Contabilización precisa de departamentos y ciudades de todos los jugadores (Titulares & Suplentes)</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalCensoResidencias()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- FILTROS Y CONTROLES DEL CENSO -->
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#070b12] flex flex-col gap-2.5 shrink-0 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[10px] uppercase font-black text-gray-500 mr-1">Filtro Equipos:</span>
+                        <button type="button" onclick="cambiarFiltroCenso('')" id="btn-censo-filtro-todos" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 cursor-pointer">Todos</button>
+                        <button type="button" onclick="cambiarFiltroCenso('Aceptado')" id="btn-censo-filtro-aceptados" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">Aceptados</button>
+                        <button type="button" onclick="cambiarFiltroCenso('Pendiente')" id="btn-censo-filtro-pendientes" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">Pendientes</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="copiarReporteCenso()" class="px-3.5 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer border border-gray-700 shadow-sm active:scale-95">
+                            <i class="fas fa-copy text-yellow-400"></i> Copiar Resumen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FILTRO POR ÁMBITO GEOGRÁFICO Y DATA GARBAGE -->
+                <div class="flex items-center gap-1.5 flex-wrap pt-2 border-t border-gray-800/60">
+                    <span class="text-[10px] uppercase font-black text-gray-500 mr-1">Ámbito / Cernido:</span>
+                    <button type="button" onclick="cambiarFiltroAmbitoCenso('')" id="btn-censo-ambito-todos" class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 cursor-pointer">Todos</button>
+                    <button type="button" onclick="cambiarFiltroAmbitoCenso('nacional')" id="btn-censo-ambito-nacional" class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all text-emerald-400 hover:text-emerald-300 border border-transparent hover:bg-emerald-950/40 cursor-pointer">🇧🇴 Bolivia Nacional</button>
+                    <button type="button" onclick="cambiarFiltroAmbitoCenso('internacional')" id="btn-censo-ambito-exterior" class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all text-cyan-400 hover:text-cyan-300 border border-transparent hover:bg-cyan-950/40 cursor-pointer">🌎 Exterior</button>
+                    <button type="button" onclick="cambiarFiltroAmbitoCenso('incompletos')" id="btn-censo-ambito-incompletos" class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all text-amber-400 hover:text-amber-300 border border-transparent hover:bg-amber-950/40 cursor-pointer flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Incompletos / Cernir</button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO CON SCROLL -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#050505]">
+                
+                <!-- KPI CARDS DEL CENSO CON MÉTRICAS EXACTAS BOLIVIA VS EXTERIOR Y DATA GARBAGE -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Total Censados</span>
+                        <p id="censo-total-jugadores" class="text-xl sm:text-2xl font-black text-white">0</p>
+                        <span id="censo-equipos-count" class="text-[10px] text-gray-500 mt-0.5 block truncate">En 0 equipos</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-emerald-900/40 bg-gradient-to-b from-emerald-950/20 to-transparent">
+                        <span class="text-[9px] sm:text-[10px] text-emerald-400 font-bold uppercase tracking-widest block mb-1">🇧🇴 Bolivia (Nacional)</span>
+                        <p id="censo-total-bolivia" class="text-xl sm:text-2xl font-black text-emerald-400">0</p>
+                        <span id="censo-pct-bolivia" class="text-[10px] text-emerald-500/80 mt-0.5 block">0% del total</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-cyan-900/40 bg-gradient-to-b from-cyan-950/20 to-transparent">
+                        <span class="text-[9px] sm:text-[10px] text-cyan-400 font-bold uppercase tracking-widest block mb-1">🌎 Exterior (Internacional)</span>
+                        <p id="censo-total-exterior" class="text-xl sm:text-2xl font-black text-cyan-400">0</p>
+                        <span id="censo-pct-exterior" class="text-[10px] text-cyan-500/80 mt-0.5 block">0% del total</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-amber-900/40 bg-gradient-to-b from-amber-950/20 to-transparent">
+                        <span class="text-[9px] sm:text-[10px] text-amber-400 font-bold uppercase tracking-widest block mb-1">⚠️ Requiere Corrección</span>
+                        <p id="censo-total-incompletos" class="text-xl sm:text-2xl font-black text-amber-400">0</p>
+                        <span id="censo-pct-incompletos" class="text-[10px] text-amber-500/80 mt-0.5 block">Data Garbage cernida</span>
+                    </div>
+                </div>
+
+                <!-- LISTA Y RANKING DE RESIDENCIAS -->
+                <div class="bg-[#0a0a0a] border border-gray-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                        <h4 class="text-xs font-black uppercase tracking-widest text-gray-300 flex items-center gap-2">
+                            <i class="fas fa-list-ol text-yellow-500"></i> Desglose Detallado por Residencia
+                        </h4>
+                        <span class="text-[10px] text-gray-500 font-mono">Ordenado por mayor cantidad</span>
+                    </div>
+                    
+                    <div id="censo-lista-ranking" class="space-y-3">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0a0a0a] flex flex-col sm:flex-row justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-500 text-center sm:text-left">Haz clic en <strong class="text-yellow-400">"Filtrar en Panel"</strong> para ver los equipos de una residencia directamente.</span>
+                <button onclick="cerrarModalCensoResidencias()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1321,13 +1499,13 @@
                 // Titulares
                 if (Array.isArray(eq.titulares)) {
                     for (const t of eq.titulares) {
-                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.discord)) return true;
+                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.discord) || matchText(t.ciudad)) return true;
                     }
                 }
                 // Suplentes
                 if (Array.isArray(eq.suplentes)) {
                     for (const s of eq.suplentes) {
-                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.discord)) return true;
+                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.discord) || matchText(s.ciudad)) return true;
                     }
                 }
 
@@ -1428,6 +1606,11 @@
             document.getElementById('stat-aceptados').textContent = aceptados;
             document.getElementById('stat-observados').textContent = observados;
             document.getElementById('stat-rechazados').textContent = rechazados;
+
+            // Actualizar conteo de ciudades en botón del censo
+            const censo = obtenerDatosCenso();
+            const badgeCount = document.getElementById('stat-ciudades-count');
+            if (badgeCount) badgeCount.textContent = `${censo.ranking.length} zonas`;
         }
 
         // 6. Filtros y Búsqueda
@@ -1538,6 +1721,7 @@
                 ? `Revisado por <strong>${eq.staffRevisor || 'Staff'}</strong> el ${eq.fechaRevision || '--'}`
                 : 'Sin dictamen previo';
             document.getElementById('m-v-historial').innerHTML = hist;
+            auditarInconsistenciasEquipo(eq);
 
             // Cargar datos en la pestaña de Edición Directa (U de CRUD)
             document.getElementById('edit-nombre').value = eq.nombre || '';
@@ -1566,8 +1750,8 @@
                 const optFlex = OPCIONES_FLEX.map(opt => `<option value="${opt}" ${String(t.rangoFlex || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
 
                 return `
-                    <div class="bg-black/50 p-3.5 rounded-2xl border border-gray-800 space-y-2.5 text-xs">
-                        <div class="flex items-center justify-between pb-1.5 border-b border-gray-800/60">
+                    <div class="bg-[#111] p-4 rounded-xl border border-gray-800 space-y-2.5 text-xs">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-gray-800">
                             <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
                                 <span class="bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/40 text-[10px] font-mono">[${pos}]</span>
                                 Titular ${idx + 1}
@@ -1575,34 +1759,40 @@
                         </div>
 
                         <!-- Fila 1: Identificación del Jugador -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                             <div>
                                 <label class="block text-[9px] font-bold text-amber-400 uppercase mb-1">
                                     <i class="fas fa-crosshairs mr-1"></i> Riot ID LAS (#TAG)
                                 </label>
-                                <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Ej: Invoker#LAS" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-amber-500">
+                                <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Ej: Invoker#LAS" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-amber-500">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
                                     <i class="fas fa-id-card mr-1"></i> Nombre Completo & CI
                                 </label>
-                                <input type="text" id="edit-t-${idx}-nombre" value="${t.nombreCi || ''}" placeholder="Ej: Juan Pérez 1234567" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-gray-200 text-xs outline-none focus:border-amber-500">
+                                <input type="text" id="edit-t-${idx}-nombre" value="${t.nombreCi || ''}" placeholder="Ej: Juan Pérez 1234567" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-gray-200 text-xs outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
+                                    <i class="fas fa-map-marker-alt mr-1"></i> Residencia / Ciudad
+                                </label>
+                                <input type="text" id="edit-t-${idx}-ciudad" value="${t.ciudad || ''}" placeholder="Ej: La Paz" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-bold text-indigo-400 uppercase mb-1">
-                                    <i class="fab fa-discord mr-1"></i> Usuario de Discord
+                                    <i class="fab fa-discord mr-1"></i> Usuario Discord
                                 </label>
-                                <input type="text" id="edit-t-${idx}-discord" value="${t.discord || ''}" placeholder="Ej: usuario#0000" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs font-mono outline-none focus:border-indigo-500">
+                                <input type="text" id="edit-t-${idx}-discord" value="${t.discord || ''}" placeholder="Ej: usuario#0000" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs font-mono outline-none focus:border-indigo-500">
                             </div>
                         </div>
 
                         <!-- Fila 2: Rangos Competitivos y Rol Secundario -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-gray-800/40">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-gray-800/60">
                             <div>
                                 <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
                                     <i class="fas fa-trophy mr-1"></i> Rango Solo/Dúo (Split Actual):
                                 </label>
-                                <select id="edit-t-${idx}-soloeo" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
+                                <select id="edit-t-${idx}-soloeo" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
                                     <option value="">-- Seleccionar SoloQ --</option>
                                     ${optSoloQ}
                                 </select>
@@ -1611,7 +1801,7 @@
                                 <label class="block text-[9px] font-bold text-cyan-400 uppercase mb-1">
                                     <i class="fas fa-layer-group mr-1"></i> Rango Flex 5v5:
                                 </label>
-                                <select id="edit-t-${idx}-flex" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs outline-none focus:border-cyan-500">
+                                <select id="edit-t-${idx}-flex" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs outline-none focus:border-cyan-500">
                                     <option value="">-- Seleccionar Flex --</option>
                                     ${optFlex}
                                 </select>
@@ -1620,7 +1810,7 @@
                                 <label class="block text-[9px] font-bold text-purple-400 uppercase mb-1">
                                     <i class="fas fa-random mr-1"></i> Rol Secundario:
                                 </label>
-                                <select id="edit-t-${idx}-rolsec" class="w-full bg-[#060a12] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
+                                <select id="edit-t-${idx}-rolsec" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
                                     <option value="">-- Rol Secundario --</option>
                                     ${optRolSec}
                                 </select>
@@ -1637,73 +1827,57 @@
         function renderFichaJugador(j, esTitular) {
             const opggUrl = j.opggLas || (j.riotIdLas ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
             const opggLink = opggUrl 
-                ? `<a href="${opggUrl}" target="_blank" class="px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 hover:border-blue-400 text-blue-300 hover:text-white flex items-center gap-1.5 font-bold text-[10px] transition-all shadow-sm active:scale-95"><i class="fas fa-chart-line text-blue-400"></i> OP.GG</a>` 
+                ? `<a href="${opggUrl}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-3 py-1 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-chart-line"></i> OP.GG</a>` 
                 : '';
 
             const posColorMap = {
-                'TOP': { badge: 'bg-blue-950/80 text-blue-300 border-blue-500/40', icon: 'fas fa-shield-alt text-blue-400' },
-                'JG': { badge: 'bg-purple-950/80 text-purple-300 border-purple-500/40', icon: 'fas fa-tree text-purple-400' },
-                'MID': { badge: 'bg-amber-950/80 text-amber-300 border-amber-500/40', icon: 'fas fa-fire text-amber-400' },
-                'ADC': { badge: 'bg-pink-950/80 text-pink-300 border-pink-500/40', icon: 'fas fa-crosshairs text-pink-400' },
-                'SUPP': { badge: 'bg-teal-950/80 text-teal-300 border-teal-500/40', icon: 'fas fa-hand-holding-heart text-teal-400' }
+                'TOP': { badge: 'text-blue-400 border-blue-500/30 bg-blue-950/40', icon: 'fas fa-shield-alt text-blue-400' },
+                'JG': { badge: 'text-purple-400 border-purple-500/30 bg-purple-950/40', icon: 'fas fa-tree text-purple-400' },
+                'MID': { badge: 'text-amber-400 border-amber-500/30 bg-amber-950/40', icon: 'fas fa-fire text-amber-400' },
+                'ADC': { badge: 'text-rose-400 border-rose-500/30 bg-rose-950/40', icon: 'fas fa-crosshairs text-rose-400' },
+                'SUPP': { badge: 'text-teal-400 border-teal-500/30 bg-teal-950/40', icon: 'fas fa-hand-holding-heart text-teal-400' }
             };
 
-            const posTheme = posColorMap[j.posicion] || { badge: 'bg-gray-900 text-gray-300 border-gray-700', icon: 'fas fa-user text-gray-400' };
+            const posTheme = posColorMap[j.posicion] || { badge: 'text-gray-400 border-gray-700 bg-gray-900', icon: 'fas fa-user text-gray-400' };
+            const rolEtiqueta = esTitular ? `[${j.posicion || 'ROL'}] Titular ${j.numero}` : `Suplente ${j.numero}`;
+
+            const infoGeo = analizarYNormalizarResidencia(j.ciudad);
 
             return `
-                <div class="glass-panel p-4 rounded-3xl border border-gray-800/80 hover:border-emerald-500/40 bg-gradient-to-br from-[#080d16] via-[#050810] to-[#04060c] transition-all shadow-xl flex flex-col justify-between group hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-                    <div class="space-y-3">
+                <div class="bg-[#111] p-4 rounded-2xl border ${infoGeo.esIncompleto ? 'border-amber-500/40' : 'border-gray-800'} hover:border-gray-700 transition-colors flex flex-col justify-between">
+                    <div>
                         <!-- Cabecera de la Ficha -->
-                        <div class="flex items-center justify-between pb-2.5 border-b border-gray-800/80">
-                            <span class="px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border flex items-center gap-1.5 ${posTheme.badge}">
-                                <i class="${posTheme.icon}"></i>
-                                ${esTitular ? `[${j.posicion}] Titular ${j.numero}` : `Suplente ${j.numero}`}
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-2 mb-3">
+                            <span class="font-black text-xs uppercase tracking-widest px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${posTheme.badge}">
+                                <i class="${posTheme.icon}"></i> ${rolEtiqueta}
                             </span>
                             ${opggLink}
                         </div>
 
-                        <!-- Identidad y Nombre -->
-                        <div class="space-y-2">
-                            <div>
-                                <span class="text-gray-400 block text-[9px] uppercase font-bold tracking-wider mb-0.5">Riot ID LAS</span>
-                                <div class="flex items-center justify-between gap-1 bg-black/40 px-2.5 py-1.5 rounded-xl border border-gray-800/90">
-                                    <strong class="text-white text-xs font-mono tracking-wide truncate">${j.riotIdLas || '--'}</strong>
-                                    ${j.riotIdLas ? `<button type="button" onclick="copiarTexto('${j.riotIdLas}', 'Riot ID')" class="text-gray-400 hover:text-white p-1 text-[10px] transition-colors cursor-pointer" title="Copiar Riot ID"><i class="fas fa-copy"></i></button>` : ''}
-                                </div>
-                            </div>
+                        <!-- Identidad Riot ID -->
+                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Riot ID LAS</p>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <p class="text-base sm:text-lg font-black text-white font-mono leading-tight break-all">${j.riotIdLas || '--'}</p>
+                            ${j.riotIdLas ? `<button type="button" onclick="copiarTexto('${j.riotIdLas}', 'Riot ID')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID"><i class="fas fa-copy"></i></button>` : ''}
+                        </div>
 
-                            <div>
-                                <span class="text-gray-400 block text-[9px] uppercase font-bold tracking-wider mb-0.5">Nombre Completo</span>
-                                <span class="text-gray-200 text-xs font-medium block truncate">${j.nombreCi || '--'}</span>
+                        <!-- Sub-panel de Datos -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 bg-[#0a0a0a] p-3 rounded-xl border border-gray-800 text-xs mt-3">
+                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Nombre</span><span class="text-white font-bold text-xs break-words">${j.nombreCi || '--'}</span></div>
+                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Discord</span><span class="text-indigo-400 font-bold text-xs break-all">${j.discord || '--'}</span></div>
+                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Solo/Duo</span><span class="text-yellow-400 font-bold text-xs">${j.rangoSoloQ || 'Sin rango'}</span></div>
+                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Flex 5v5</span><span class="text-cyan-400 font-bold text-xs">${j.rangoFlex || 'Sin rango'}</span></div>
+                            <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
+                                <span class="text-[9px] uppercase text-gray-500 font-bold">Rol Secundario</span>
+                                <span class="text-purple-400 font-bold text-xs">${j.rolSecundario || 'Ninguno'}</span>
                             </div>
-
-                            <!-- Rangos SoloQ y Flex en Pills -->
-                            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-800/50">
-                                <div class="bg-black/30 p-2 rounded-xl border border-gray-800/80">
-                                    <span class="text-gray-400 text-[9px] uppercase font-bold block mb-0.5">
-                                        <i class="fas fa-trophy text-yellow-400 mr-1"></i> Solo/Duo
-                                    </span>
-                                    <span class="text-yellow-400 font-black text-[11px] block truncate">${j.rangoSoloQ || 'Sin rango'}</span>
-                                </div>
-                                <div class="bg-black/30 p-2 rounded-xl border border-gray-800/80">
-                                    <span class="text-gray-400 text-[9px] uppercase font-bold block mb-0.5">
-                                        <i class="fas fa-layer-group text-cyan-400 mr-1"></i> Flex 5v5
-                                    </span>
-                                    <span class="text-cyan-400 font-black text-[11px] block truncate">${j.rangoFlex || 'Sin rango'}</span>
-                                </div>
-                            </div>
-
-                            <!-- Rol Secundario y Discord -->
-                            <div class="pt-1.5 border-t border-gray-800/50 flex items-center justify-between gap-2 text-[10px]">
-                                <span class="text-gray-400 truncate">
-                                    Rol Sec: <strong class="text-gray-200 font-bold">${j.rolSecundario || 'N/A'}</strong>
+                            <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
+                                <span class="text-[9px] uppercase text-gray-500 font-bold">Residencia / Departamento</span>
+                                <span class="text-xs font-bold flex items-center gap-1.5 ${infoGeo.esIncompleto ? 'text-amber-400' : 'text-yellow-400'}">
+                                    <i class="${infoGeo.esIncompleto ? 'fas fa-exclamation-triangle text-amber-500' : 'fas fa-map-marker-alt text-yellow-500'} text-[10px]"></i>
+                                    <span>${infoGeo.limpio}</span>
+                                    ${infoGeo.esIncompleto ? '<span class="bg-amber-950/80 text-amber-300 text-[8px] font-mono px-1.5 py-0.5 rounded border border-amber-500/40 uppercase">Requiere Corrección</span>' : ''}
                                 </span>
-                                ${j.discord ? `
-                                    <div class="flex items-center gap-1 text-[#7983f5] bg-[#5865F2]/10 px-2 py-0.5 rounded-lg border border-[#5865F2]/20 font-mono text-[9px] shrink-0">
-                                        <i class="fab fa-discord text-[10px]"></i>
-                                        <span class="truncate max-w-[80px]">${j.discord}</span>
-                                    </div>
-                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -1723,11 +1897,7 @@
                 const btn = document.getElementById(`mtab-btn-${t}`);
                 if (el) el.classList.add('hidden');
                 if (btn) {
-                    btn.classList.remove(
-                        'bg-emerald-500/15', 'border-emerald-500/40', 'text-emerald-300', 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
-                        'bg-amber-500/15', 'border-amber-500/50', 'text-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.15)]'
-                    );
-                    btn.classList.add('border-transparent', 'text-gray-400');
+                    btn.classList.remove('modal-tab-active', 'modal-tab-active-amber');
                 }
             });
 
@@ -1735,11 +1905,10 @@
             const activeBtn = document.getElementById(`mtab-btn-${tabName}`);
             if (activeEl) activeEl.classList.remove('hidden');
             if (activeBtn) {
-                activeBtn.classList.remove('border-transparent', 'text-gray-400');
                 if (tabName === 'editar') {
-                    activeBtn.classList.add('bg-amber-500/15', 'border-amber-500/50', 'text-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.15)]');
+                    activeBtn.classList.add('modal-tab-active-amber');
                 } else {
-                    activeBtn.classList.add('bg-emerald-500/15', 'border-emerald-500/40', 'text-emerald-300', 'shadow-[0_0_15px_rgba(16,185,129,0.15)]');
+                    activeBtn.classList.add('modal-tab-active');
                 }
             }
         };
@@ -1859,6 +2028,7 @@
                 const prev = (equipoSeleccionado.titulares && equipoSeleccionado.titulares[i]) ? equipoSeleccionado.titulares[i] : {};
                 const rRiot = document.getElementById(`edit-t-${i}-riot`)?.value.trim() || '';
                 const rNom = document.getElementById(`edit-t-${i}-nombre`)?.value.trim() || '';
+                const rCiudad = document.getElementById(`edit-t-${i}-ciudad`)?.value.trim() || '';
                 const rSoloQ = document.getElementById(`edit-t-${i}-soloeo`)?.value.trim() || '';
                 const rFlex = document.getElementById(`edit-t-${i}-flex`)?.value.trim() || '';
                 const rRolSec = document.getElementById(`edit-t-${i}-rolsec`)?.value.trim() || '';
@@ -1870,6 +2040,7 @@
                     numero: i + 1,
                     riotIdLas: rRiot,
                     nombreCi: rNom,
+                    ciudad: rCiudad || prev.ciudad || '',
                     rangoSoloQ: rSoloQ,
                     rangoFlex: rFlex,
                     rolSecundario: rRolSec,
@@ -2043,13 +2214,14 @@
             const titulares = [];
             for (let i = 1; i <= 5; i++) {
                 const rRiot = document.getElementById(`c-j${i}-riot`).value.trim();
+                const rCiudad = document.getElementById(`c-j${i}-ciudad`)?.value.trim();
                 const rElo = document.getElementById(`c-j${i}-elo`).value.trim() || 'Diamante III - IV';
                 const rRolSec = document.getElementById(`c-j${i}-rolsec`).value.trim() || 'No aplica';
                 titulares.push({
                     posicion: posNames[i - 1],
                     numero: i,
                     nombreCi: `Jugador ${i} (${posNames[i - 1]})`,
-                    ciudad: procedencia.includes('Nacional') ? 'Bolivia' : 'Internacional',
+                    ciudad: rCiudad || (procedencia.includes('Nacional') ? 'Bolivia' : 'Internacional'),
                     telefono: capTel,
                     discord: '',
                     riotIdLas: rRiot || `Player${i}#LAS`,
@@ -2164,6 +2336,662 @@
                 cerrarModalConfigUrl();
                 alert("URL removida. Se utilizará el modo local.");
             }
+        };
+
+        // ==============================================================
+        // 10. MOTOR DE NORMALIZACIÓN GEOGRÁFICA Y CERNIDO DE DATOS (DATA HYGIENE)
+        // ==============================================================
+        function normalizarTextoBase(str) {
+            if (!str) return '';
+            return str
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // quita tildes
+                .replace(/[^\w\s-]/g, " ")       // caracteres especiales
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function analizarYNormalizarResidencia(rawResidencia) {
+            const raw = (rawResidencia || '').trim();
+            if (!raw || raw === '--' || raw.length < 2) {
+                return {
+                    raw: raw || 'Sin especificar',
+                    limpio: 'Sin registrar ⚠️',
+                    pais: 'Desconocido',
+                    ambito: 'Incompleto',
+                    esIncompleto: true,
+                    motivoIncompleto: 'Campo de residencia vacío o no registrado'
+                };
+            }
+
+            const norm = normalizarTextoBase(raw);
+
+            // 1. Departamentos y Ciudades de BOLIVIA
+            if (norm.includes('la paz') || norm.includes('lapaz') || norm.includes('el alto') || norm.includes('elalto')) {
+                return { raw, limpio: 'La Paz', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('santa cruz') || norm.includes('santacruz') || norm.includes('scz') || norm.includes('montero') || norm.includes('warnes')) {
+                return { raw, limpio: 'Santa Cruz', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('cochabamba') || norm.includes('cbba') || norm.includes('cocha') || norm.includes('quillacollo') || norm.includes('sacaba')) {
+                return { raw, limpio: 'Cochabamba', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('sucre') || norm.includes('chuquisaca')) {
+                return { raw, limpio: 'Chuquisaca (Sucre)', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('tarija') || norm.includes('yacuiba') || norm.includes('bermejo') || norm.includes('villamontes')) {
+                return { raw, limpio: 'Tarija', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('oruro')) {
+                return { raw, limpio: 'Oruro', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('potosi') || norm.includes('tupiza') || norm.includes('villazon') || norm.includes('uyuni')) {
+                return { raw, limpio: 'Potosí', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('beni') || norm.includes('trinidad') || norm.includes('riberalta') || norm.includes('guayaramerin')) {
+                return { raw, limpio: 'Beni', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+            if (norm.includes('pando') || norm.includes('cobija')) {
+                return { raw, limpio: 'Pando', pais: 'Bolivia', ambito: 'Nacional', esIncompleto: false };
+            }
+
+            // 2. DATA GARBAGE NACIONAL (Solo puso "Boliviano", "Bolivia", sin ciudad)
+            if (norm === 'boliviano' || norm === 'boliviana' || norm === 'bolivia' || norm === 'nacional' || (norm.startsWith('boliviano -') && norm.length <= 13)) {
+                return {
+                    raw,
+                    limpio: 'Bolivia (Ciudad sin especificar ⚠️)',
+                    pais: 'Bolivia',
+                    ambito: 'Incompleto',
+                    esIncompleto: true,
+                    motivoIncompleto: 'Solo indicó "Boliviano", falta departamento o ciudad'
+                };
+            }
+
+            // 3. EXTERIOR / INTERNACIONAL
+            // Argentina
+            if (norm.includes('argentina') || norm.includes('argentino') || norm.includes('buenos aires') || norm.includes('baires') || norm.includes('jujuy') || norm.includes('cordoba') || norm.includes('salta') || norm.includes('mendoza') || norm.includes('rosario')) {
+                let ciudadArg = 'Argentina';
+                if (norm.includes('jujuy')) ciudadArg = 'Argentina - Jujuy';
+                else if (norm.includes('buenos aires') || norm.includes('baires') || norm.includes('caba')) ciudadArg = 'Argentina - Buenos Aires';
+                else if (norm.includes('cordoba')) ciudadArg = 'Argentina - Córdoba';
+                else if (norm.includes('salta')) ciudadArg = 'Argentina - Salta';
+                else if (norm.includes('mendoza')) ciudadArg = 'Argentina - Mendoza';
+                else if (norm.includes('rosario') || norm.includes('santa fe')) ciudadArg = 'Argentina - Santa Fe / Rosario';
+                
+                const falta = ciudadArg === 'Argentina';
+                return {
+                    raw,
+                    limpio: falta ? 'Argentina (Ciudad sin especificar ⚠️)' : ciudadArg,
+                    pais: 'Argentina',
+                    ambito: falta ? 'Incompleto' : 'Internacional',
+                    esIncompleto: falta,
+                    motivoIncompleto: falta ? 'Solo indicó Argentina sin ciudad' : ''
+                };
+            }
+
+            // Perú
+            if (norm.includes('peru') || norm.includes('peruano') || norm.includes('lima') || norm.includes('arequipa') || norm.includes('cusco') || norm.includes('cuzco') || norm.includes('trujillo')) {
+                let ciudadPer = 'Perú';
+                if (norm.includes('lima')) ciudadPer = 'Perú - Lima';
+                else if (norm.includes('arequipa')) ciudadPer = 'Perú - Arequipa';
+                else if (norm.includes('cusco') || norm.includes('cuzco')) ciudadPer = 'Perú - Cusco';
+                else if (norm.includes('trujillo')) ciudadPer = 'Perú - Trujillo';
+
+                const falta = ciudadPer === 'Perú';
+                return {
+                    raw,
+                    limpio: falta ? 'Perú (Ciudad sin especificar ⚠️)' : ciudadPer,
+                    pais: 'Perú',
+                    ambito: falta ? 'Incompleto' : 'Internacional',
+                    esIncompleto: falta,
+                    motivoIncompleto: falta ? 'Solo indicó Perú sin ciudad' : ''
+                };
+            }
+
+            // Chile
+            if (norm.includes('chile') || norm.includes('chileno') || norm.includes('santiago') || norm.includes('antofagasta') || norm.includes('iquique') || norm.includes('valparaiso')) {
+                let ciudadChi = 'Chile';
+                if (norm.includes('santiago')) ciudadChi = 'Chile - Santiago';
+                else if (norm.includes('antofagasta')) ciudadChi = 'Chile - Antofagasta';
+                else if (norm.includes('iquique')) ciudadChi = 'Chile - Iquique';
+                else if (norm.includes('valparaiso')) ciudadChi = 'Chile - Valparaíso';
+
+                const falta = ciudadChi === 'Chile';
+                return {
+                    raw,
+                    limpio: falta ? 'Chile (Ciudad sin especificar ⚠️)' : ciudadChi,
+                    pais: 'Chile',
+                    ambito: falta ? 'Incompleto' : 'Internacional',
+                    esIncompleto: falta,
+                    motivoIncompleto: falta ? 'Solo indicó Chile sin ciudad' : ''
+                };
+            }
+
+            // Otros países
+            if (norm.includes('brasil') || norm.includes('colombia') || norm.includes('mexico') || norm.includes('paraguay') || norm.includes('uruguay')) {
+                return {
+                    raw,
+                    limpio: raw,
+                    pais: 'Exterior',
+                    ambito: 'Internacional',
+                    esIncompleto: false
+                };
+            }
+
+            // DATA GARBAGE EXTERIOR
+            if (norm === 'extranjero' || norm === 'internacional' || norm === 'exterior') {
+                return {
+                    raw,
+                    limpio: 'Exterior (País/Ciudad sin especificar ⚠️)',
+                    pais: 'Exterior',
+                    ambito: 'Incompleto',
+                    esIncompleto: true,
+                    motivoIncompleto: 'Solo indicó "Extranjero", requiere país y ciudad'
+                };
+            }
+
+            // Fallback limpio
+            let limpiaStr = raw.replace(/^(boliviano|boliviana|argentino|argentina|peruano|peruana)\s*[-:]?\s*/i, '').trim();
+            if (limpiaStr.length > 2) {
+                limpiaStr = limpiaStr.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                return {
+                    raw,
+                    limpio: limpiaStr,
+                    pais: 'Bolivia',
+                    ambito: 'Nacional',
+                    esIncompleto: false
+                };
+            }
+
+            return {
+                raw,
+                limpio: raw || 'Sin especificar ⚠️',
+                pais: 'Desconocido',
+                ambito: 'Incompleto',
+                esIncompleto: true,
+                motivoIncompleto: 'Formato ambiguo, requiere corrección'
+            };
+        }
+
+        // ==============================================================
+        // 11. AUDITORÍA AUTOMÁTICA DE DATOS Y GESTIÓN DE NOTAS/CORRECCIONES
+        // ==============================================================
+        window._inconsistenciasActuales = [];
+
+        function auditarInconsistenciasEquipo(eq) {
+            const box = document.getElementById('m-v-auditoria-box');
+            if (!box || !eq) return;
+
+            const inconsistencias = [];
+
+            // 1. Revisar titulares
+            (eq.titulares || []).forEach((t, idx) => {
+                const geo = analizarYNormalizarResidencia(t.ciudad);
+                if (geo.esIncompleto) {
+                    inconsistencias.push(`[${t.posicion || 'TITULAR ' + (idx + 1)}] ${t.riotIdLas || t.nombreCi || 'Jugador'}: Residencia incompleta ("${t.ciudad || 'Vacía'}"). Debe indicar ciudad o departamento exacto.`);
+                }
+            });
+
+            // 2. Revisar suplentes
+            (eq.suplentes || []).forEach((s, idx) => {
+                if (s.nombreCi || s.riotIdLas || s.ciudad) {
+                    const geo = analizarYNormalizarResidencia(s.ciudad);
+                    if (geo.esIncompleto) {
+                        inconsistencias.push(`[SUPLENTE ${idx + 1}] ${s.riotIdLas || s.nombreCi || 'Jugador'}: Residencia incompleta ("${s.ciudad || 'Vacía'}").`);
+                    }
+                }
+            });
+
+            // 3. Revisar contacto
+            const tel = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
+            if (!tel || tel.length < 7) {
+                inconsistencias.push(`[CAPITÁN] Falta número de WhatsApp o teléfono válido.`);
+            }
+
+            window._inconsistenciasActuales = inconsistencias;
+
+            if (inconsistencias.length > 0) {
+                box.innerHTML = `
+                    <div class="bg-amber-950/20 border border-amber-500/40 p-3.5 rounded-xl space-y-2.5">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                                <i class="fas fa-exclamation-triangle text-amber-500"></i> ${inconsistencias.length} Inconsistencia${inconsistencias.length > 1 ? 's' : ''} de Datos Detectada${inconsistencias.length > 1 ? 's' : ''} (Data Garbage)
+                            </span>
+                            <button type="button" onclick="insertarInconsistenciasEnNotas()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase border border-amber-500/40 cursor-pointer flex items-center gap-1 transition-all">
+                                <i class="fas fa-plus"></i> Cargar en Notas
+                            </button>
+                        </div>
+                        <div class="space-y-1 text-xs text-amber-200/90 font-mono bg-black/40 p-2.5 rounded-lg border border-gray-800">
+                            ${inconsistencias.map(inc => `<div class="flex items-start gap-1.5"><i class="fas fa-angle-right text-amber-500 mt-0.5 shrink-0 text-[10px]"></i><span>${inc}</span></div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `
+                    <div class="bg-emerald-950/20 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 text-xs flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-emerald-500"></i> Calidad de Datos Aprobada: Todos los jugadores tienen residencias y datos especificados correctamente.
+                        </span>
+                        <span class="text-[10px] font-mono text-emerald-500/80 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">0 Inconsistencias</span>
+                    </div>
+                `;
+            }
+        }
+
+        window.insertarPlantillaNota = function(texto) {
+            const textarea = document.getElementById('m-v-notas');
+            if (!textarea) return;
+            const actual = textarea.value.trim();
+            textarea.value = actual ? `${actual}\n- ${texto}` : `- ${texto}`;
+            textarea.focus();
+        };
+
+        window.insertarInconsistenciasEnNotas = function() {
+            const textarea = document.getElementById('m-v-notas');
+            if (!textarea || !window._inconsistenciasActuales || window._inconsistenciasActuales.length === 0) return;
+            const textoIncs = window._inconsistenciasActuales.map(inc => `- ${inc}`).join('\n');
+            const actual = textarea.value.trim();
+            textarea.value = actual ? `${actual}\n${textoIncs}` : textoIncs;
+            textarea.focus();
+        };
+
+        window.generarMensajeWhatsAppCorreccion = function() {
+            if (!equipoSeleccionado) return "";
+            const capNombre = equipoSeleccionado.capitan?.nombreCi || 'Capitán';
+            const eqNombre = equipoSeleccionado.nombre || 'tu equipo';
+            const eqTag = equipoSeleccionado.tag ? `[${equipoSeleccionado.tag}]` : '';
+            const notas = (document.getElementById('m-v-notas')?.value || equipoSeleccionado.notasStaff || '').trim();
+
+            let cuerpo = notas;
+            if (!cuerpo && window._inconsistenciasActuales && window._inconsistenciasActuales.length > 0) {
+                cuerpo = window._inconsistenciasActuales.map(inc => `- ${inc}`).join('\n');
+            }
+
+            if (!cuerpo) {
+                cuerpo = "- Indicar la ciudad o departamento exacto de residencia de los jugadores del equipo.";
+            }
+
+            return `👋 Hola *${capNombre}*, te escribe el Staff de *LBL Esports* respecto a la inscripción de *${eqNombre} ${eqTag}* en el *Scouting Tournament 3*.
+
+Revisando su información, necesitamos que nos envíen las siguientes correcciones a la brevedad para validar y habilitar su cupo oficial:
+
+${cuerpo}
+
+Por favor responder a este mensaje con los datos corregidos. ¡Muchas gracias!`;
+        };
+
+        window.pedirCorreccionesWhatsApp = function() {
+            if (!equipoSeleccionado) return;
+            const tel = (equipoSeleccionado.capitan?.telefono || '').replace(/[^0-9]/g, '');
+            const msg = generarMensajeWhatsAppCorreccion();
+
+            if (!tel) {
+                alert("⚠️ El capitán no tiene un número telefónico registrado. Hemos copiado el mensaje de corrección al portapapeles para que puedas enviárselo por Discord.");
+                navigator.clipboard.writeText(msg);
+                return;
+            }
+
+            const waUrl = `https://wa.me/${tel}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        };
+
+        window.copiarMensajeCorrecciones = function() {
+            const msg = generarMensajeWhatsAppCorreccion();
+            navigator.clipboard.writeText(msg).then(() => {
+                alert("✅ Mensaje de corrección copiado al portapapeles. Listo para pegar en WhatsApp o Discord.");
+            }).catch(() => {
+                prompt("Copiar mensaje de corrección:", msg);
+            });
+        };
+
+        // ==============================================================
+        // 12. CENSO Y CONTABILIZADOR GEOGRÁFICO DE RESIDENCIAS
+        // ==============================================================
+        let filtroCensoEstado = "";
+        let filtroCensoAmbito = ""; // "" | "nacional" | "internacional" | "incompletos"
+
+        function obtenerDatosCenso(estadoFiltro = filtroCensoEstado, ambitoFiltro = filtroCensoAmbito) {
+            const equiposFiltrados = equiposScouting.filter(eq => {
+                if (!estadoFiltro) return true;
+                return (eq.estado || 'Pendiente').toLowerCase() === estadoFiltro.toLowerCase();
+            });
+
+            let totalJugadores = 0;
+            let totalBolivia = 0;
+            let totalExterior = 0;
+            let totalIncompletos = 0;
+
+            const conteoPorResidencia = {};
+            const jugadoresPorResidencia = {};
+
+            equiposFiltrados.forEach(eq => {
+                const procesarJugador = (j, esTitular) => {
+                    if (!j) return;
+                    const tieneDato = j.riotIdLas || j.nombreCi || j.ciudad;
+                    if (!tieneDato) return;
+
+                    totalJugadores++;
+                    const infoGeo = analizarYNormalizarResidencia(j.ciudad);
+
+                    if (infoGeo.esIncompleto) {
+                        totalIncompletos++;
+                    } else if (infoGeo.ambito === 'Nacional') {
+                        totalBolivia++;
+                    } else if (infoGeo.ambito === 'Internacional') {
+                        totalExterior++;
+                    }
+
+                    // Filtrado por ámbito en el censo
+                    if (ambitoFiltro === 'nacional' && infoGeo.ambito !== 'Nacional') return;
+                    if (ambitoFiltro === 'internacional' && infoGeo.ambito !== 'Internacional') return;
+                    if (ambitoFiltro === 'incompletos' && !infoGeo.esIncompleto) return;
+
+                    const clave = infoGeo.limpio;
+
+                    if (!conteoPorResidencia[clave]) {
+                        conteoPorResidencia[clave] = {
+                            ciudad: clave,
+                            pais: infoGeo.pais,
+                            ambito: infoGeo.ambito,
+                            esIncompleto: infoGeo.esIncompleto,
+                            motivoIncompleto: infoGeo.motivoIncompleto || '',
+                            count: 0
+                        };
+                        jugadoresPorResidencia[clave] = [];
+                    }
+                    conteoPorResidencia[clave].count++;
+                    jugadoresPorResidencia[clave].push({
+                        ...j,
+                        residenciaRaw: j.ciudad || 'Sin dato',
+                        residenciaLimpia: infoGeo.limpio,
+                        esIncompleto: infoGeo.esIncompleto,
+                        equipoNombre: eq.nombre || 'Sin nombre',
+                        equipoTag: eq.tag || 'S/T',
+                        equipoEstado: eq.estado || 'Pendiente',
+                        capitanTel: eq.capitan?.telefono || '',
+                        rowId: eq.rowId,
+                        tipoRoster: esTitular ? 'Titular' : 'Suplente'
+                    });
+                };
+
+                (eq.titulares || []).forEach(t => procesarJugador(t, true));
+                (eq.suplentes || []).forEach(s => procesarJugador(s, false));
+            });
+
+            const ranking = Object.values(conteoPorResidencia).map(item => {
+                const pct = totalJugadores > 0 ? ((item.count / totalJugadores) * 100).toFixed(1) : '0.0';
+                return {
+                    ...item,
+                    porcentaje: pct,
+                    jugadores: jugadoresPorResidencia[item.ciudad]
+                };
+            }).sort((a, b) => b.count - a.count);
+
+            return {
+                totalJugadores,
+                totalEquipos: equiposFiltrados.length,
+                totalBolivia,
+                totalExterior,
+                totalIncompletos,
+                pctBolivia: totalJugadores > 0 ? ((totalBolivia / totalJugadores) * 100).toFixed(1) : '0.0',
+                pctExterior: totalJugadores > 0 ? ((totalExterior / totalJugadores) * 100).toFixed(1) : '0.0',
+                pctIncompletos: totalJugadores > 0 ? ((totalIncompletos / totalJugadores) * 100).toFixed(1) : '0.0',
+                ranking,
+                lider: ranking.length > 0 ? ranking[0] : null
+            };
+        }
+
+        function renderizarCensoResidencias() {
+            const data = obtenerDatosCenso(filtroCensoEstado, filtroCensoAmbito);
+
+            const elTotal = document.getElementById('censo-total-jugadores');
+            const elEquipos = document.getElementById('censo-equipos-count');
+            const elBolivia = document.getElementById('censo-total-bolivia');
+            const elPctBol = document.getElementById('censo-pct-bolivia');
+            const elExterior = document.getElementById('censo-total-exterior');
+            const elPctExt = document.getElementById('censo-pct-exterior');
+            const elIncomp = document.getElementById('censo-total-incompletos');
+            const elPctInc = document.getElementById('censo-pct-incompletos');
+            const contRanking = document.getElementById('censo-lista-ranking');
+
+            if (elTotal) elTotal.textContent = data.totalJugadores;
+            if (elEquipos) elEquipos.textContent = `En ${data.totalEquipos} equipos (${filtroCensoEstado || 'Todos'})`;
+            if (elBolivia) elBolivia.textContent = data.totalBolivia;
+            if (elPctBol) elPctBol.textContent = `${data.pctBolivia}% de jugadores`;
+            if (elExterior) elExterior.textContent = data.totalExterior;
+            if (elPctExt) elPctExt.textContent = `${data.pctExterior}% de jugadores`;
+            if (elIncomp) elIncomp.textContent = data.totalIncompletos;
+            if (elPctInc) elPctInc.textContent = `${data.pctIncompletos}% cernidos / Data Garbage`;
+
+            if (!contRanking) return;
+
+            if (data.ranking.length === 0) {
+                contRanking.innerHTML = `
+                    <div class="p-8 text-center text-gray-500 font-bold">
+                        <i class="fas fa-filter text-3xl mb-2 text-gray-600 block"></i>
+                        No se encontraron registros de residencia para este filtro específico.
+                    </div>
+                `;
+                return;
+            }
+
+            const maxCount = data.ranking.length > 0 ? data.ranking[0].count : 1;
+
+            contRanking.innerHTML = data.ranking.map((item, idx) => {
+                const barWidth = Math.max(6, Math.round((item.count / maxCount) * 100));
+                const rankNum = idx + 1;
+                const medalBadge = rankNum === 1 
+                    ? '<span class="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-[11px] font-black flex items-center justify-center shrink-0">1º</span>'
+                    : rankNum === 2 
+                    ? '<span class="w-6 h-6 rounded-full bg-gray-400/20 text-gray-300 border border-gray-400/40 text-[11px] font-black flex items-center justify-center shrink-0">2º</span>'
+                    : rankNum === 3
+                    ? '<span class="w-6 h-6 rounded-full bg-amber-700/20 text-amber-500 border border-amber-600/40 text-[11px] font-black flex items-center justify-center shrink-0">3º</span>'
+                    : `<span class="w-6 h-6 rounded-full bg-gray-800 text-gray-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">${rankNum}º</span>`;
+
+                const ambitoBadge = item.esIncompleto
+                    ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-500/40 flex items-center gap-1"><i class="fas fa-exclamation-triangle text-amber-400"></i> Incompleto</span>'
+                    : item.ambito === 'Nacional'
+                    ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">🇧🇴 Bolivia</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">🌎 Exterior</span>';
+
+                const jugadoresHtml = item.jugadores.map(j => {
+                    const accionPedir = j.esIncompleto ? `
+                        <button type="button" onclick="cerrarModalCensoResidencias(); abrirModalDetalle(${j.rowId}); switchModalTab('verificacion');" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-bold border border-amber-500/40 flex items-center gap-1 transition-all cursor-pointer" title="Pedir corrección al equipo">
+                            <i class="fas fa-comment-dots"></i> Pedir Corrección
+                        </button>
+                    ` : '';
+
+                    return `
+                        <div class="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-[#070b12] border border-gray-800/80 hover:border-gray-700 gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="text-yellow-400 font-mono font-bold text-[10px]">[${j.equipoTag}]</span>
+                                <span class="text-white font-medium truncate text-xs" title="${j.nombreCi || j.riotIdLas}">${j.riotIdLas || j.nombreCi || 'Sin Riot ID'}</span>
+                                <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-gray-800 text-gray-400 font-mono">${j.posicion || j.tipoRoster}</span>
+                                <span class="text-[10px] text-gray-500 italic truncate hidden md:inline">(Escribió: "${j.residenciaRaw}")</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-gray-400 font-mono text-[10px] hidden sm:inline">${j.equipoNombre}</span>
+                                ${accionPedir}
+                                <button type="button" onclick="cerrarModalCensoResidencias(); abrirModalDetalle(${j.rowId}); switchModalTab('verificacion');" class="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold p-1 transition-colors cursor-pointer" title="Ver ficha del equipo">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const barColor = item.esIncompleto
+                    ? 'from-amber-600 to-amber-400'
+                    : item.ambito === 'Nacional'
+                    ? 'from-emerald-600 to-teal-400'
+                    : 'from-cyan-600 to-blue-400';
+
+                return `
+                    <div class="bg-[#111] p-3.5 sm:p-4 rounded-2xl border ${item.esIncompleto ? 'border-amber-500/40 bg-amber-950/10' : 'border-gray-800'} space-y-2.5 hover:border-gray-700 transition-colors">
+                        <!-- Fila Superior: Datos y Acciones -->
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                ${medalBadge}
+                                <div>
+                                    <h5 class="text-sm font-black text-white flex items-center gap-1.5">
+                                        <i class="fas ${item.esIncompleto ? 'fa-exclamation-triangle text-amber-500' : 'fa-map-marker-alt text-yellow-500'} text-xs"></i>
+                                        <span>${item.ciudad}</span>
+                                        ${ambitoBadge}
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs font-mono font-bold ${item.esIncompleto ? 'text-amber-400 bg-amber-500/10 border-amber-500/30' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30'} border px-2.5 py-0.5 rounded-full">
+                                    ${item.count} jugador${item.count > 1 ? 'es' : ''} (${item.porcentaje}%)
+                                </span>
+                                <button type="button" onclick="filtrarDesdeCenso('${item.ciudad.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-xl bg-gray-800 hover:bg-yellow-500/20 hover:text-yellow-300 text-gray-300 text-[11px] font-bold transition-all border border-gray-700 cursor-pointer flex items-center gap-1" title="Filtrar en el panel principal">
+                                    <i class="fas fa-filter text-[10px]"></i> <span class="hidden sm:inline">Filtrar</span>
+                                </button>
+                                <button type="button" onclick="toggleDetalleCenso(${idx})" class="p-1 text-gray-400 hover:text-white transition-colors cursor-pointer text-xs" title="Ver lista de jugadores">
+                                    <i id="censo-arrow-${idx}" class="fas fa-chevron-down transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Proporción Visual -->
+                        <div class="w-full bg-gray-800/80 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r ${barColor} h-2 rounded-full transition-all duration-500" style="width: ${barWidth}%"></div>
+                        </div>
+
+                        <!-- Acordeón Desplegable de Jugadores -->
+                        <div id="censo-roster-${idx}" class="hidden pt-2 border-t border-gray-800 space-y-1.5 mt-2">
+                            <span class="text-[9px] uppercase font-bold text-gray-500 block mb-1">Roster de Jugadores clasificados en ${item.ciudad}:</span>
+                            <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
+                                ${jugadoresHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.abrirModalCensoResidencias = function() {
+            renderizarCensoResidencias();
+            document.getElementById('modal-censo-residencias').classList.remove('hidden');
+        };
+
+        window.cerrarModalCensoResidencias = function() {
+            document.getElementById('modal-censo-residencias').classList.add('hidden');
+        };
+
+        window.cambiarFiltroCenso = function(estado) {
+            filtroCensoEstado = estado;
+            
+            const btnTodos = document.getElementById('btn-censo-filtro-todos');
+            const btnAceptados = document.getElementById('btn-censo-filtro-aceptados');
+            const btnPendientes = document.getElementById('btn-censo-filtro-pendientes');
+
+            const resetBtn = (btn) => {
+                if (!btn) return;
+                btn.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer";
+            };
+            const activeBtn = (btn) => {
+                if (!btn) return;
+                btn.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 cursor-pointer";
+            };
+
+            resetBtn(btnTodos);
+            resetBtn(btnAceptados);
+            resetBtn(btnPendientes);
+
+            if (estado === 'Aceptado') activeBtn(btnAceptados);
+            else if (estado === 'Pendiente') activeBtn(btnPendientes);
+            else activeBtn(btnTodos);
+
+            renderizarCensoResidencias();
+        };
+
+        window.cambiarFiltroAmbitoCenso = function(ambito) {
+            filtroCensoAmbito = ambito;
+
+            const btnTodos = document.getElementById('btn-censo-ambito-todos');
+            const btnNac = document.getElementById('btn-censo-ambito-nacional');
+            const btnExt = document.getElementById('btn-censo-ambito-exterior');
+            const btnInc = document.getElementById('btn-censo-ambito-incompletos');
+
+            const resetBtn = (btn, colorText) => {
+                if (!btn) return;
+                btn.className = `px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all ${colorText} border border-transparent hover:bg-gray-800/60 cursor-pointer`;
+            };
+
+            resetBtn(btnTodos, 'text-gray-400 hover:text-white');
+            resetBtn(btnNac, 'text-emerald-400 hover:text-emerald-300');
+            resetBtn(btnExt, 'text-cyan-400 hover:text-cyan-300');
+            resetBtn(btnInc, 'text-amber-400 hover:text-amber-300');
+
+            if (ambito === 'nacional') {
+                if (btnNac) btnNac.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer";
+            } else if (ambito === 'internacional') {
+                if (btnExt) btnExt.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 cursor-pointer";
+            } else if (ambito === 'incompletos') {
+                if (btnInc) btnInc.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer flex items-center gap-1";
+            } else {
+                if (btnTodos) btnTodos.className = "px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-all bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 cursor-pointer";
+            }
+
+            renderizarCensoResidencias();
+        };
+
+        window.filtrarDesdeCenso = function(ciudad) {
+            cerrarModalCensoResidencias();
+            const input = document.getElementById('searchInput');
+            if (input) {
+                input.value = ciudad;
+                aplicarFiltros();
+            }
+        };
+
+        window.toggleDetalleCenso = function(idx) {
+            const roster = document.getElementById(`censo-roster-${idx}`);
+            const arrow = document.getElementById(`censo-arrow-${idx}`);
+            if (roster) {
+                roster.classList.toggle('hidden');
+            }
+            if (arrow) {
+                arrow.classList.toggle('rotate-180');
+            }
+        };
+
+        window.copiarReporteCenso = function() {
+            const data = obtenerDatosCenso(filtroCensoEstado, filtroCensoAmbito);
+            if (data.ranking.length === 0) {
+                alert("No hay datos de censo disponibles para copiar.");
+                return;
+            }
+
+            const lineas = [
+                `📊 *LBL ESPORTS - CENSO DE RESIDENCIA DE JUGADORES*`,
+                `Torneo: Scouting Tournament 3`,
+                `Filtro de Equipos: ${filtroCensoEstado || 'Todos'}`,
+                `Filtro de Ámbito: ${filtroCensoAmbito || 'General'}`,
+                `Total Jugadores Censados: ${data.totalJugadores} (${data.totalEquipos} equipos)`,
+                `🇧🇴 Bolivia (Nacional): ${data.totalBolivia} jugadores (${data.pctBolivia}%)`,
+                `🌎 Exterior (Internacional): ${data.totalExterior} jugadores (${data.pctExterior}%)`,
+                `⚠️ Incompletos / Requieren Corrección: ${data.totalIncompletos} jugadores (${data.pctIncompletos}%)`,
+                ``,
+                `📍 *DISTRIBUCIÓN GEOGRÁFICA CANÓNICA:*`
+            ];
+
+            data.ranking.forEach((r, i) => {
+                const tipo = r.esIncompleto ? '⚠️ INCOMPLETO' : (r.ambito === 'Nacional' ? '🇧🇴 BOL' : '🌎 EXT');
+                lineas.push(`${i + 1}. [${tipo}] ${r.ciudad}: ${r.count} jugadores (${r.porcentaje}%)`);
+            });
+
+            lineas.push(``);
+            lineas.push(`Generado automáticamente desde Staff LBL Scouting T3.`);
+
+            const reporteStr = lineas.join('\n');
+            navigator.clipboard.writeText(reporteStr).then(() => {
+                alert("✅ Reporte completo y cernido del censo copiado al portapapeles.");
+            }).catch(() => {
+                prompt("Copia el reporte manualmente:", reporteStr);
+            });
         };
 
         window.copiarReferencia = function() {
