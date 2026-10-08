@@ -167,6 +167,54 @@
             .hero-halo-light { width: 220px; height: 220px; filter: blur(35px); }
         }
 
+        /* ====================================================================
+           ESTRUCTURA DE AFICHE SECCIONAL (FULL-VIEWPORT POSTER LAYOUT)
+           ==================================================================== */
+        html {
+            scroll-behavior: smooth;
+        }
+        .section-afiche {
+            min-height: calc(100svh - 68px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding-top: clamp(48px, 8vh, 100px);
+            padding-bottom: clamp(48px, 8vh, 100px);
+            scroll-margin-top: 68px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        @media (max-width: 768px) {
+            .section-afiche {
+                min-height: auto;
+                padding-top: clamp(44px, 7vh, 72px);
+                padding-bottom: clamp(44px, 7vh, 72px);
+            }
+        }
+        .glow-spot-ambient {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(780px, 92vw);
+            height: min(520px, 75vh);
+            border-radius: 9999px;
+            filter: blur(75px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glow-cyan {
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(37, 99, 235, 0.08) 45%, transparent 70%);
+        }
+        .glow-gold-dual {
+            background: radial-gradient(circle at 30% 50%, rgba(234, 179, 8, 0.14) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.14) 0%, transparent 50%);
+        }
+        .glow-purple {
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.08) 45%, transparent 70%);
+        }
+
         /* Drawer Móvil Desplegable */
         #mobile-menu-drawer {
             transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
@@ -406,203 +454,253 @@
         </div>
     </div>
 
-    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 pt-10 md:pt-20 pb-20 z-10 relative">
+    <!-- ====================================================================
+         AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
+         ==================================================================== -->
+    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10">
+        <!-- Luz focal ambiental azul centrado -->
+        <div class="glow-spot-ambient glow-cyan"></div>
         
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-8 fade-in-up" style="animation-delay: 0.1s;">
-            <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
-            </span>
-            Temporada Oficial 2026
-        </div>
+        <div class="max-w-4xl mx-auto w-full relative z-10 flex flex-col items-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-6 md:mb-8 fade-in-up" style="animation-delay: 0.1s;">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                </span>
+                Temporada Oficial 2026
+            </div>
 
-        <div class="relative mb-8 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
-            <div class="hero-halo-light"></div>
-            <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-48 md:h-64 w-auto object-contain" alt="Logo LBL Central">
-        </div>
+            <div class="relative mb-6 md:mb-8 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
+                <div class="hero-halo-light"></div>
+                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-44 sm:h-52 md:h-64 w-auto object-contain" alt="Logo LBL Central">
+            </div>
 
-        <!-- TÍTULO ORIGINAL CON GLOW-TEXT INTACTO -->
-        <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
-            LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
-        </h1>
-        
-        <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
-            El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
-        </p>
-
-        <div class="max-w-4xl mx-auto w-full px-4 mb-10 z-10 relative">
+            <!-- TÍTULO ORIGINAL CON GLOW-TEXT INTACTO -->
+            <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-4 md:mb-6 fade-in-up glow-text leading-[1.08]" style="animation-delay: 0.3s;">
+                LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
+            </h1>
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6 flex-wrap" style="animation-delay: 0.5s;">
-                <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer">
-                    <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                    <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
-                </button>
-                <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3">
-                    <i class="fas fa-users"></i> VER ROSTERS
-                </a>
-                <a href="torneos" class="px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
-                    <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                    <i class="fas fa-trophy" style="color: #000000 !important;"></i> 
-                    <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
-                </a>
-            </div>
+            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg mb-8 md:mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
+                El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
+            </p>
 
-            <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) - Debajo de los CTAs -->
-            <div id="pwa-install-container" class="fade-in-up flex justify-center mt-2 mb-4" style="animation-delay: 0.55s;">
-                <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
-                    <i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN
-                </button>
-            </div>
-
-            <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito e Interactivo) -->
-            <div class="max-w-5xl mx-auto w-full px-4 fade-in-up mt-6 text-center" style="animation-delay: 0.65s;">
-                <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTRAS CLASIFICACIONES</h2>
-                <p class="text-gray-400 text-sm md:text-base mb-6 max-w-xl mx-auto">
-                    ¿Quieres buscar equipo o algún jugador?<br>
-                    Accede a la información de nuestros anteriores torneos clasificatorios.
-                </p>
+            <div class="w-full px-2 z-10 relative">
                 
-                <!-- Contenedor del Carrusel Infinito con Fading Mask -->
-                <div class="relative w-full overflow-hidden mask-gradient py-2">
-                    <div id="marquee-track" class="flex flex-row gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-4 pt-2">
-                        <!-- Set 1 -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        
-                        <!-- Set 2 (Duplicado para loop infinito) -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                    </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-3.5 sm:gap-4 fade-in-up mb-4 flex-wrap" style="animation-delay: 0.5s;">
+                    <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-7 md:px-8 py-3.5 md:py-4 rounded-2xl font-black text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer border border-blue-400/40">
+                        <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                        <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
+                    </button>
+                    <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] px-7 md:px-8 py-3.5 md:py-4 rounded-2xl font-black text-base md:text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3">
+                        <i class="fas fa-users"></i> VER ROSTERS
+                    </a>
+                    <a href="torneos" class="px-7 md:px-8 py-3.5 md:py-4 rounded-2xl font-black text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
+                        <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                        <i class="fas fa-trophy" style="color: #000000 !important;"></i> 
+                        <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
+                    </a>
+                </div>
+
+                <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) - Píldora sutil integrada al afiche -->
+                <div id="pwa-install-container" class="fade-in-up flex justify-center mt-3" style="animation-delay: 0.55s;">
+                    <button id="pwa-install-btn" onclick="installPWA()" class="px-5 py-2 rounded-full bg-white/[0.04] hover:bg-cyan-500/10 text-slate-400 hover:text-cyan-300 border border-white/10 hover:border-cyan-400/40 shadow-sm font-bold text-[11px] md:text-xs tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
+                        <i class="fas fa-download text-[10px] text-cyan-400"></i> INSTALAR APP LBL
+                    </button>
                 </div>
             </div>
-        </div>
 
+            <!-- Indicador sutil de scroll al siguiente afiche -->
+            <div class="fade-in-up mt-8 md:mt-12 flex justify-center" style="animation-delay: 0.6s;">
+                <a href="#clasificaciones" class="inline-flex flex-col items-center gap-1.5 text-slate-500 hover:text-cyan-400 text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Clasificaciones">
+                    <span>Explora la Liga</span>
+                    <i class="fas fa-chevron-down text-xs group-hover:translate-y-1 transition-transform duration-300"></i>
+                </a>
+            </div>
+        </div>
     </main>
 
-    <section class="max-w-5xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.7s;">
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/40 border border-blue-500/30 text-blue-400 font-black text-[10px] tracking-widest uppercase mb-3">
-                <i class="fas fa-layer-group text-[9px]"></i> DIVISIONES OFICIALES
-            </div>
-            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">CIRCUITO <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">COMPETITIVO</span></h2>
-            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
-                Estructura por divisiones: desde la máxima gloria nacional hasta la lucha por el ascenso.
-            </p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Card Tier 1: Premier League -->
-            <a href="equipos?tier=Tier 1" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-gold relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
-                <div class="absolute -top-12 -right-12 w-44 h-44 bg-yellow-500/10 rounded-full blur-[50px] group-hover:bg-yellow-500/20 transition-colors"></div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-yellow-500/25 group-hover:scale-110 group-hover:border-yellow-400/50 transition-all duration-300">
-                        <i class="fas fa-trophy text-3xl text-yellow-400 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]"></i>
-                    </div>
-                    <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[10px] font-black uppercase tracking-wider">
-                        PRIMERA DIVISIÓN
-                    </span>
+    <!-- ====================================================================
+         AFICHE 2: CLASIFICATORIOS & SCOUTING (VITRINA HISTÓRICA)
+         ==================================================================== -->
+    <section id="clasificaciones" class="section-afiche w-full text-center px-4 md:px-6 relative z-10">
+        <!-- Luz focal ambiental cian centrado -->
+        <div class="glow-spot-ambient glow-cyan"></div>
+
+        <div class="max-w-5xl mx-auto w-full relative z-10">
+            <div class="text-center mb-6 md:mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                    <i class="fas fa-trophy text-[9px]"></i> CLASIFICATORIOS HISTÓRICOS
                 </div>
-                <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
-                    <span><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</span>
-                    <i class="fas fa-arrow-right text-base text-yellow-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
-                </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-                    La élite del circuito competitivo de la LBL. Aquí convergen los mejores equipos del país por el campeonato oficial y la gloria nacional.
+                <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-3">
+                    NUESTRAS <span class="text-gradient-cyan">CLASIFICACIONES</span>
+                </h2>
+                <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+                    ¿Quieres buscar equipo o algún jugador?<br>
+                    Accede a la información de nuestros torneos clasificatorios oficiales.
                 </p>
-            </a>
+            </div>
             
-            <!-- Card Tier 2: Circuito Ascenso -->
-            <a href="equipos?tier=Tier 2" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-blue relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
-                <div class="absolute -top-12 -right-12 w-44 h-44 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-colors"></div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-blue-500/25 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
-                        <i class="fas fa-level-up-alt text-3xl text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"></i>
-                    </div>
-                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider">
-                        CIRCUITO ASCENSO
-                    </span>
+            <!-- Contenedor del Carrusel Infinito con Fading Mask -->
+            <div class="relative w-full overflow-hidden mask-gradient py-2">
+                <div id="marquee-track" class="flex flex-row gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-4 pt-2">
+                    <!-- Set 1 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    
+                    <!-- Set 2 (Duplicado para loop infinito) -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
                 </div>
-                <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
-                    <span><span class="text-gradient-blue">TIER 2</span> (Ascenso Oficial)</span>
-                    <i class="fas fa-arrow-right text-base text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
-                </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-                    La segunda división oficial de la LBL. Escuadras emergentes batallan ronda a ronda para conseguir su cupo directo a la máxima categoría.
-                </p>
-            </a>
-        </div>
-    </section>
-
-    <!-- SECCIÓN DE SPONSORS OFICIALES -->
-    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-20 z-10 fade-in-up" style="animation-delay: 0.75s;">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
-                <i class="fas fa-handshake text-[9px]"></i> PARTNERS & ACTIVACIONES
-            </div>
-            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">
-                NUESTROS <span class="text-gradient-cyan">SPONSORS</span>
-            </h2>
-            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
-                Las primeras marcas que confiaron en este proyecto, <br class="hidden sm:block"> e impulsan la competencia en el país.
-            </p>
-        </div>
-
-
-        <!-- Contenedor del Slideshow de Sponsors (Diseño Abierto y Sin Bounding Boxes) -->
-        <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-4 md:py-8 px-2 md:px-4">
-            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[340px] md:min-h-[220px]">
-                <!-- Se inyecta dinámicamente con JavaScript -->
-            </div>
-
-            <!-- Barra de Progreso Delgada Minimalista (2px) -->
-            <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-8 pointer-events-none max-w-3xl mx-auto">
-                <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN DE DIRECTIVA Y STAFF EJECUTIVO -->
-    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
-      
-        <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha (Sin Box Global) -->
-        <div class="staff-section-layout">
-            
-            <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas de 72px a 320px) -->
-            <div id="executives-accordion" class="staff-accordion-wrap">
-                <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
-            </div>
+    <!-- ====================================================================
+         AFICHE 3: CIRCUITO COMPETITIVO (TIER 1 VS TIER 2)
+         ==================================================================== -->
+    <section id="circuito" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center">
+        <!-- Luz focal dual ambiental: Oro a la izquierda y Azul a la derecha -->
+        <div class="glow-spot-ambient glow-gold-dual"></div>
 
-            <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
-            <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-6">
-                <div id="exec-active-badge-container" class="mb-3">
-                    <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
-                        STAFF LBL
-                    </span>
+        <div class="max-w-5xl mx-auto w-full relative z-10">
+            <div class="text-center mb-10 md:mb-12">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/40 border border-blue-500/30 text-blue-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                    <i class="fas fa-layer-group text-[9px]"></i> DIVISIONES OFICIALES
                 </div>
+                <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-3">
+                    CIRCUITO <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">COMPETITIVO</span>
+                </h2>
+                <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+                    Estructura por divisiones: desde la máxima gloria nacional hasta la lucha por el ascenso.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch text-left">
+                <!-- Card Tier 1: Premier League -->
+                <a href="equipos?tier=Tier 1" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-gold relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/85 to-[#030712]/95 block cursor-pointer border border-yellow-500/20 hover:border-yellow-400/50">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-yellow-500/10 rounded-full blur-[50px] group-hover:bg-yellow-500/20 transition-colors"></div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-yellow-500/25 group-hover:scale-110 group-hover:border-yellow-400/50 transition-all duration-300">
+                            <i class="fas fa-trophy text-3xl text-yellow-400 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[10px] font-black uppercase tracking-wider">
+                            PRIMERA DIVISIÓN
+                        </span>
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
+                        <span><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</span>
+                        <i class="fas fa-arrow-right text-base text-yellow-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    </h3>
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+                        La élite del circuito competitivo de la LBL. Aquí convergen los mejores equipos del país por el campeonato oficial y la gloria nacional.
+                    </p>
+                </a>
                 
-                <h3 id="exec-active-name" class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-4 exec-text-fade">
-                    NUESTRO STAFF
-                </h3>
-                
-                <p id="exec-active-desc" class="text-gray-300 text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
-                    Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración, regulación y dirección creativa de la Liga Boliviana de League of Legends.
+                <!-- Card Tier 2: Circuito Ascenso -->
+                <a href="equipos?tier=Tier 2" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-blue relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/85 to-[#030712]/95 block cursor-pointer border border-blue-500/20 hover:border-cyan-400/50">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-colors"></div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-blue-500/25 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+                            <i class="fas fa-level-up-alt text-3xl text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider">
+                            CIRCUITO ASCENSO
+                        </span>
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
+                        <span><span class="text-gradient-blue">TIER 2</span> (Ascenso Oficial)</span>
+                        <i class="fas fa-arrow-right text-base text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    </h3>
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+                        La segunda división oficial de la LBL. Escuadras emergentes batallan ronda a ronda para conseguir su cupo directo a la máxima categoría.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         AFICHE 4: PARTNERS & SPONSORS OFICIALES
+         ==================================================================== -->
+    <section id="sponsors" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center">
+        <!-- Luz focal ambiental cian -->
+        <div class="glow-spot-ambient glow-cyan"></div>
+
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <div class="text-center mb-8 md:mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                    <i class="fas fa-handshake text-[9px]"></i> PARTNERS & ACTIVACIONES
+                </div>
+                <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-3">
+                    NUESTROS <span class="text-gradient-cyan">SPONSORS</span>
+                </h2>
+                <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+                    Las primeras marcas que confiaron en este proyecto, <br class="hidden sm:block"> e impulsan la competencia en el país.
                 </p>
             </div>
 
+            <!-- Contenedor del Slideshow de Sponsors (Diseño Abierto y Sin Bounding Boxes) -->
+            <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-4 md:py-8 px-2 md:px-4">
+                <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[340px] md:min-h-[220px]">
+                    <!-- Se inyecta dinámicamente con JavaScript -->
+                </div>
+
+                <!-- Barra de Progreso Delgada Minimalista (2px) -->
+                <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-8 pointer-events-none max-w-3xl mx-auto">
+                    <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         AFICHE 5: NUESTRO STAFF & COMUNIDAD
+         ==================================================================== -->
+    <section id="staff" class="section-afiche w-full px-4 md:px-6 relative z-10">
+        <!-- Luz focal ambiental violeta/hextech -->
+        <div class="glow-spot-ambient glow-purple"></div>
+
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha -->
+            <div class="staff-section-layout">
+                
+                <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas de 72px a 320px) -->
+                <div id="executives-accordion" class="staff-accordion-wrap">
+                    <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
+                </div>
+
+                <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
+                <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-6">
+                    <div id="exec-active-badge-container" class="mb-3">
+                        <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
+                            STAFF LBL
+                        </span>
+                    </div>
+                    
+                    <h3 id="exec-active-name" class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-4 exec-text-fade">
+                        NUESTRO STAFF
+                    </h3>
+                    
+                    <p id="exec-active-desc" class="text-gray-300 text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
+                        Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración, regulación y dirección creativa de la Liga Boliviana de League of Legends.
+                    </p>
+                </div>
+
+            </div>
         </div>
     </section>
 
