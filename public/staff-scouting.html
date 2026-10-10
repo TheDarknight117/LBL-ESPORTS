@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=195">
+    <link rel="stylesheet" href="/dist/output.css?v=196">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -69,34 +69,8 @@
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- PANTALLA DE LOGIN SI NO ESTÁ AUTENTICADO -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#020202] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] hidden">
-        <div class="glass-panel p-8 rounded-3xl max-w-md w-full border-t-4 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative overflow-hidden">
-            <div class="text-center mb-8">
-                <i class="fas fa-binoculars text-5xl text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]"></i>
-                <h1 class="text-2xl font-black uppercase tracking-widest text-white">Scouting <span class="text-emerald-500">T3</span></h1>
-                <p class="text-gray-500 text-xs font-bold tracking-widest uppercase mt-1">Terminal de Verificación Staff</p>
-            </div>
-            <form id="form-login" class="space-y-5">
-                <div>
-                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Correo Electrónico</label>
-                    <input type="email" id="login-email" class="w-full bg-[#0a0a0a] border border-[#333] p-3.5 rounded-xl outline-none focus:border-emerald-500 transition-all text-white text-sm" placeholder="staff@lbl.com" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Contraseña</label>
-                    <input type="password" id="login-pass" class="w-full bg-[#0a0a0a] border border-[#333] p-3.5 rounded-xl outline-none focus:border-emerald-500 transition-all text-white text-sm" placeholder="••••••••" required>
-                </div>
-                <p id="login-error" class="text-red-500 text-xs font-bold text-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i> Credenciales incorrectas.</p>
-                <button type="submit" id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 active:scale-95 cursor-pointer">ACCEDER A SCOUTING T3</button>
-            </form>
-            <div class="mt-6 text-center">
-                <a href="/dashboard" class="text-gray-500 hover:text-white text-xs transition-colors"><i class="fas fa-arrow-left mr-1"></i> Volver al Dashboard General</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
-    <div id="dashboard-content" class="flex flex-col min-h-screen">
+    <!-- CONTENIDO PRINCIPAL DEL DASHBOARD (PROTEGIDO POR SESIÓN STAFF) -->
+    <div id="dashboard-content" class="flex flex-col min-h-screen hidden">
         
         <!-- HEADER ESPECIALIZADO SCOUTING T3 -->
         <header class="w-full glass-panel sticky top-0 z-40 px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-emerald-900/30 gap-2">
@@ -240,13 +214,19 @@
     <!-- ============================================================== -->
     <!-- MODAL DE FICHA TÉCNICA DETALLADA (118 CAMPOS POR EQUIPO)       -->
     <!-- ============================================================== -->
-    <div id="modal-detalle-equipo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+    <div id="modal-detalle-equipo" onclick="if(event.target === this) cerrarModalDetalle()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden" style="z-index: 50;">
         <div class="bg-[#050505] border border-gray-800 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
             
             <!-- HEADER DEL MODAL -->
             <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0">
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <img id="m-logo" src="" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=fff'" class="w-12 h-12 rounded-xl object-contain bg-black border border-gray-800 shrink-0">
+                    <!-- Logo interactivo con visor HD y zoom -->
+                    <div class="relative group cursor-pointer shrink-0" onclick="abrirVisorLogo()" title="Clic para ampliar y descargar logo oficial">
+                        <img id="m-logo" src="" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=fff'" class="w-12 h-12 rounded-xl object-contain bg-black border border-gray-800 group-hover:border-emerald-500/80 transition-all shadow-md">
+                        <span class="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">
+                            <i class="fas fa-search-plus"></i>
+                        </span>
+                    </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
                             <h3 id="m-nombre" class="text-lg font-black text-white uppercase tracking-wider truncate">Nombre del Equipo</h3>
@@ -256,33 +236,35 @@
                         <p class="text-xs text-gray-400 mt-0.5" id="m-subtitulo">Marca temporal: --</p>
                     </div>
                 </div>
-                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
-                    <i class="fas fa-times"></i>
-                </button>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- BOTÓN FIJO DE ACCIÓN: EDITAR FICHA DIRECTAMENTE SIN SCROLL -->
+                    <button id="btn-toggle-modo-edicion" onclick="toggleModoEdicion()" class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95" title="Activar o desactivar modo de edición directa">
+                        <i class="fas fa-edit" id="btn-toggle-edicion-icon"></i>
+                        <span id="btn-toggle-edicion-text">Editar Ficha</span>
+                    </button>
+                    <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- PESTAÑAS FLUSH DOCK (BENCHMARK LIGA PRINCIPAL) -->
-            <div class="px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a] flex items-center gap-1 sm:gap-2 overflow-x-auto select-none shrink-0">
+            <!-- PESTAÑAS FLUSH DOCK (5 PESTAÑAS ESENCIALES SIN DESBORDE) -->
+            <div id="modal-tabs-bar" class="px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a] flex items-center gap-1 sm:gap-2 overflow-x-auto select-none shrink-0">
                 <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn modal-tab-active px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                    <i class="fas fa-info-circle"></i> General & Horarios
+                    <i class="fas fa-info-circle text-emerald-400"></i> General & Horarios
                 </button>
                 <button onclick="switchModalTab('capitan')" id="mtab-btn-capitan" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
                     <i class="fas fa-crown text-yellow-500"></i> Capitán & Sub
                 </button>
-                <button onclick="switchModalTab('titulares')" id="mtab-btn-titulares" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                    <i class="fas fa-users text-blue-400"></i> 5 Titulares
-                </button>
-                <button onclick="switchModalTab('suplentes')" id="mtab-btn-suplentes" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                    <i class="fas fa-user-plus text-purple-400"></i> Suplentes
+                <button onclick="switchModalTab('roster')" id="mtab-btn-roster" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                    <i class="fas fa-users text-blue-400"></i> Roster Oficial <span id="tab-badge-roster-count" class="px-1.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 text-[10px] font-mono">5</span>
                 </button>
                 <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap">
                     <i class="fas fa-receipt text-emerald-400"></i> Pago & Comprobante
                 </button>
                 <button onclick="switchModalTab('verificacion')" id="mtab-btn-verificacion" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap text-emerald-400">
-                    <i class="fas fa-clipboard-check"></i> Notas & Correcciones
-                </button>
-                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-3 sm:px-4 py-3 text-xs md:text-sm font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer whitespace-nowrap ml-auto text-amber-400 hover:text-amber-300">
-                    <i class="fas fa-edit"></i> Editar Ficha
+                    <i class="fas fa-clipboard-check"></i> Dictamen & Notas
                 </button>
             </div>
 
@@ -325,6 +307,35 @@
                                     <div class="bg-[#111] p-3 rounded-xl border border-gray-800 text-gray-200 text-xs leading-relaxed flex items-start gap-2.5">
                                         <i class="fas fa-quote-left text-gray-600 text-xs shrink-0 mt-0.5"></i>
                                         <span id="m-d-objetivo">--</span>
+                                    </div>
+                                </div>
+
+                                <!-- TARJETA DEDICADA: LOGO OFICIAL DEL EQUIPO -->
+                                <div class="pt-2.5 border-t border-gray-800/60">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">
+                                        <i class="fas fa-shield-alt text-emerald-400 mr-1"></i> Logo Oficial del Equipo
+                                    </span>
+                                    <div class="bg-[#111] p-3 rounded-xl border border-gray-800 flex items-center justify-between gap-3">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="relative group cursor-pointer shrink-0" onclick="abrirVisorLogo()" title="Clic para ampliar">
+                                                <img id="m-d-logo-preview" src="" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=LBL&background=0D0D0D&color=fff'" class="w-12 h-12 rounded-xl object-contain bg-black border border-gray-800 group-hover:border-emerald-500 transition-all shadow">
+                                                <span class="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">
+                                                    <i class="fas fa-search-plus"></i>
+                                                </span>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span id="m-d-logo-status" class="text-xs font-bold text-gray-200 block truncate">Google Drive</span>
+                                                <span class="text-[10px] text-gray-500 font-mono block">Archivo subido por el equipo</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 shrink-0">
+                                            <button type="button" onclick="abrirVisorLogo()" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm" title="Ampliar en pantalla completa">
+                                                <i class="fas fa-expand"></i> Ver HD
+                                            </button>
+                                            <a id="m-d-logo-drive-link" href="#" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95" title="Abrir en Google Drive">
+                                                <i class="fab fa-google-drive"></i> Drive
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -469,26 +480,29 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: 5 TITULARES -->
-                <div id="mtab-titulares" class="hidden space-y-4">
+                <!-- TAB 3: ROSTER OFICIAL (5 TITULARES + SUPLENTES) -->
+                <div id="mtab-roster" class="hidden space-y-6">
+                    <!-- ALINEACIÓN TITULAR (5 TITULARES) -->
                     <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl">
-                        <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2 flex items-center justify-between">
-                            <span><i class="fas fa-users text-blue-500 mr-2"></i> Alineación Principal (5 Titulares)</span>
-                            <span class="text-[10px] text-gray-500 font-mono">Scouting T3</span>
-                        </h3>
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-4">
+                            <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-users text-blue-500"></i> Alineación Titular Oficial (5 Jugadores)
+                            </h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">5 Titulares</span>
+                        </div>
                         <div id="m-lista-titulares" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- Generado dinámicamente -->
                         </div>
                     </div>
-                </div>
 
-                <!-- TAB 4: SUPLENTES -->
-                <div id="mtab-suplentes" class="hidden space-y-4">
+                    <!-- SUPLENTES REGISTRADOS -->
                     <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl">
-                        <h3 class="text-sm font-black text-purple-400 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2 flex items-center justify-between">
-                            <span><i class="fas fa-user-plus text-purple-400 mr-2"></i> Jugadores Suplentes Registrados</span>
-                            <span class="text-[10px] text-gray-500 font-mono">Banca</span>
-                        </h3>
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-4">
+                            <h3 class="text-sm font-black text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-user-plus text-purple-400"></i> Jugadores Suplentes Registrados
+                            </h3>
+                            <span id="badge-suplentes-count" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">Banca</span>
+                        </div>
                         <div id="m-lista-suplentes" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- Generado dinámicamente -->
                         </div>
@@ -642,18 +656,28 @@
                     </div>
                 </div>
 
-                <!-- TAB 7: EDITAR DATOS DEL EQUIPO (U de CRUD) -->
+                <!-- PANEL DE EDICIÓN DIRECTA DE DATOS (ACTIVABLE VÍA BOTÓN FIJO EDITAR FICHA) -->
                 <div id="mtab-editar" class="hidden space-y-4">
                     <div class="bg-[#0a0a0a] p-5 rounded-2xl border border-amber-500/30 space-y-4">
-                        <div class="flex justify-between items-center border-b border-gray-800 pb-2.5">
-                            <h3 class="text-sm font-black uppercase tracking-widest text-amber-400 flex items-center gap-2">
-                                <i class="fas fa-edit"></i> Edición Directa de Datos (Google Sheets)
-                            </h3>
-                            <span class="text-[10px] text-gray-500 font-mono">Actualiza celdas en tiempo real</span>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-800 pb-3">
+                            <div>
+                                <h3 class="text-sm font-black uppercase tracking-widest text-amber-400 flex items-center gap-2">
+                                    <i class="fas fa-edit"></i> Edición Directa de Datos (Google Sheets)
+                                </h3>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Corrige celdas del equipo, jugadores o el enlace del logo en tiempo real.</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="switchModalTab('general')" class="px-3.5 py-1.5 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white font-bold text-xs uppercase transition-all cursor-pointer">
+                                    <i class="fas fa-times mr-1"></i> Cancelar
+                                </button>
+                                <button type="button" onclick="guardarEdicionEquipo()" class="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase text-xs transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Datos Generales -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <!-- Datos Generales + Logo -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nombre del Equipo</label>
                                 <input type="text" id="edit-nombre" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
@@ -669,6 +693,12 @@
                                     <option value="Nacional (Mínimo 4 jugadores bolivianos y máx. 1 extranjero — Habilitado para clasificar a la LBL)">Nacional (Mín. 4 bolivianos, máx. 1 extranjero - Habilitado LBL)</option>
                                     <option value="Internacional (2 o más extranjeros — Compite exclusivamente por la bolsa de premios en efectivo)">Internacional (2 o más extranjeros - Solo premios)</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-amber-400 mb-1">
+                                    <i class="fas fa-image mr-1"></i> URL Logo (Drive / Web)
+                                </label>
+                                <input type="text" id="edit-logo" placeholder="https://drive.google.com/..." class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500 font-mono">
                             </div>
                         </div>
 
@@ -802,9 +832,43 @@
     </div>
 
     <!-- ============================================================== -->
+    <!-- MODAL VISOR LIGHTBOX DE LOGO DEL EQUIPO (HD + GOOGLE DRIVE)   -->
+    <!-- ============================================================== -->
+    <div id="modal-visor-logo" onclick="if(event.target === this) cerrarVisorLogo()" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 hidden animate-fadeIn" style="z-index: 70;">
+        <div class="bg-[#0a0a0a] border border-gray-800 rounded-3xl p-6 max-w-md w-full flex flex-col items-center gap-5 shadow-2xl relative">
+            <button onclick="cerrarVisorLogo()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800 transition-colors text-base cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="text-center pt-1">
+                <h4 id="visor-logo-equipo" class="text-base font-black text-white uppercase tracking-wider">Logo Oficial</h4>
+                <p id="visor-logo-sub" class="text-xs text-gray-400 mt-0.5">Scouting Tournament 3</p>
+            </div>
+            
+            <!-- Contenedor de Imagen HD -->
+            <div class="w-64 h-64 bg-black/90 rounded-2xl border border-gray-800/80 p-4 flex items-center justify-center relative shadow-inner">
+                <img id="visor-logo-img" src="" alt="Logo Oficial" class="max-w-full max-h-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] transition-all">
+                <div id="visor-logo-placeholder" class="hidden text-center text-gray-500">
+                    <i class="fas fa-image text-4xl mb-2 text-gray-600"></i>
+                    <p class="text-xs">Sin logo registrado</p>
+                </div>
+            </div>
+
+            <!-- Acciones Directas -->
+            <div class="flex items-center gap-2.5 w-full flex-wrap justify-center pt-1">
+                <a id="visor-logo-drive-link" href="#" target="_blank" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95" title="Abrir archivo en Google Drive">
+                    <i class="fab fa-google-drive"></i> Abrir en Drive
+                </a>
+                <button type="button" onclick="copiarEnlaceLogo()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-gray-700 cursor-pointer active:scale-95" title="Copiar URL directa">
+                    <i class="fas fa-link"></i> Copiar Enlace
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
     <!-- MODAL DE CREACIÓN MANUAL DE EQUIPO (C de CRUD)                  -->
     <!-- ============================================================== -->
-    <div id="modal-crear-equipo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+    <div id="modal-crear-equipo" onclick="if(event.target === this) cerrarModalCrearEquipo()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden" style="z-index: 50;">
         <div class="glass-panel w-full max-w-3xl rounded-3xl max-h-[92vh] flex flex-col overflow-hidden border border-blue-500/40 shadow-2xl animate-fadeIn">
             <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#070b13] shrink-0">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
@@ -1120,7 +1184,7 @@
     <!-- ============================================================== -->
     <!-- MODAL DE CENSO DE RESIDENCIAS Y CONTABILIZADOR GEOGRÁFICO       -->
     <!-- ============================================================== -->
-    <div id="modal-censo-residencias" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden">
+    <div id="modal-censo-residencias" onclick="if(event.target === this) cerrarModalCensoResidencias()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden" style="z-index: 50;">
         <div class="bg-[#050505] border border-gray-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
             
             <!-- HEADER -->
@@ -1222,7 +1286,7 @@
     <!-- ============================================================== -->
     <!-- MODAL DE CONFIGURACIÓN DE URL DE APPS SCRIPT                    -->
     <!-- ============================================================== -->
-    <div id="modal-config-url" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 hidden">
+    <div id="modal-config-url" onclick="if(event.target === this) cerrarModalConfigUrl()" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 hidden" style="z-index: 60;">
         <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-emerald-500/40 shadow-2xl space-y-4 animate-fadeIn">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                 <h3 class="text-sm font-black uppercase text-white tracking-wider flex items-center gap-2">
@@ -1247,8 +1311,9 @@
     <!-- SCRIPTS MODULARES -->
     <script type="module">
         import { auth } from "/firebase-config.js";
-        import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStaffNick } from "/staff-config.js";
+        import "/app-version.js?v=196";
 
         // URL por defecto oficial de la API de Google Apps Script (Scouting T3)
         const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxbFYMNG8XBK9dlScH7QNc9I3el7NK2VHAtTeNCrn18q6ymNefx2G3Z20N1EGaL9Mdo/exec";
@@ -1324,6 +1389,140 @@
             }
         }
 
+        // ==============================================================
+        // HELPERS PARA NORMALIZACIÓN DE IMÁGENES Y LOGOS DE GOOGLE DRIVE
+        // ==============================================================
+        function normalizarUrlDriveImagen(url, size = 's800') {
+            if (!url || typeof url !== 'string') return '';
+            const str = url.trim();
+            // Detectar id de Google Drive
+            const idMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (idMatch && idMatch[1]) {
+                const driveId = idMatch[1];
+                // En entorno local usamos el proxy nativo con caché para eliminar al 100% el Rate Limit 429 de Google
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    return `/api/drive-proxy?id=${driveId}&sz=${size}`;
+                }
+                return `https://lh3.googleusercontent.com/d/${driveId}=${size}`;
+            }
+            return str;
+        }
+
+        function obtenerUrlDirectaDrive(url) {
+            if (!url || typeof url !== 'string') return '#';
+            const str = url.trim();
+            const idMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (idMatch && idMatch[1]) {
+                return `https://drive.google.com/file/d/${idMatch[1]}/view`;
+            }
+            return str;
+        }
+
+        // CONTROL DEL MODAL VISOR LIGHTBOX DE LOGO
+        window.abrirVisorLogo = function() {
+            if (!equipoSeleccionado) return;
+            const rawLogo = equipoSeleccionado.logoRaw || equipoSeleccionado.logo || '';
+            const imgUrl = normalizarUrlDriveImagen(rawLogo, 's1000');
+            const driveUrl = obtenerUrlDirectaDrive(rawLogo);
+
+            document.getElementById('visor-logo-equipo').textContent = equipoSeleccionado.nombre || 'Logo Oficial';
+            document.getElementById('visor-logo-sub').textContent = `[${equipoSeleccionado.tag || 'S/T'}] • Fila ${equipoSeleccionado.rowId || '-'}`;
+
+            const visorImg = document.getElementById('visor-logo-img');
+            const visorPlaceholder = document.getElementById('visor-logo-placeholder');
+            const driveBtn = document.getElementById('visor-logo-drive-link');
+
+            if (rawLogo) {
+                visorImg.dataset.tried = "";
+                visorImg.src = imgUrl;
+                visorImg.classList.remove('hidden');
+                visorPlaceholder.classList.add('hidden');
+                driveBtn.href = driveUrl;
+                driveBtn.classList.remove('pointer-events-none', 'opacity-50');
+
+                // Fallback automático en caso de que Google requiera endpoint secundario
+                visorImg.onerror = function() {
+                    const idMatch = rawLogo.match(/id=([a-zA-Z0-9_-]+)/) || rawLogo.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (idMatch && !this.dataset.tried) {
+                        this.dataset.tried = "thumbnail";
+                        this.src = `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+                    } else {
+                        this.classList.add('hidden');
+                        visorPlaceholder.classList.remove('hidden');
+                    }
+                };
+            } else {
+                const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(equipoSeleccionado.nombre || 'LBL')}&background=0B1320&color=34d399&size=256&bold=true`;
+                visorImg.src = fallback;
+                visorImg.classList.remove('hidden');
+                visorPlaceholder.classList.add('hidden');
+                driveBtn.href = '#';
+                driveBtn.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            document.getElementById('modal-visor-logo').classList.remove('hidden');
+        };
+
+        window.cerrarVisorLogo = function() {
+            document.getElementById('modal-visor-logo').classList.add('hidden');
+        };
+
+        window.copiarEnlaceLogo = function() {
+            if (!equipoSeleccionado) return;
+            const link = equipoSeleccionado.logoRaw || equipoSeleccionado.logo;
+            if (link) {
+                copiarTexto(link, 'Enlace del Logo');
+            } else {
+                alert('Este equipo no tiene un enlace de logo registrado.');
+            }
+        };
+
+        // ALTERNAR MODO EDICIÓN DIRECTA DESDE EL BOTÓN FIJO DE CABECERA
+        window.toggleModoEdicion = function() {
+            if (!equipoSeleccionado) return;
+            const panelEditar = document.getElementById('mtab-editar');
+            const isEditing = !panelEditar.classList.contains('hidden');
+            if (isEditing) {
+                switchModalTab('general');
+            } else {
+                switchModalTab('editar');
+            }
+        };
+
+        // GESTIÓN GLOBAL DE CIERRE EN CASCADA CON TECLA ESCAPE
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // 1. Sub-modal de nivel superior (Visor HD de Logo)
+                const visorLogo = document.getElementById('modal-visor-logo');
+                if (visorLogo && !visorLogo.classList.contains('hidden')) {
+                    cerrarVisorLogo();
+                    return;
+                }
+                // 2. Modales secundarios
+                const modalConfig = document.getElementById('modal-config-url');
+                if (modalConfig && !modalConfig.classList.contains('hidden')) {
+                    cerrarModalConfigUrl();
+                    return;
+                }
+                const modalCrear = document.getElementById('modal-crear-equipo');
+                if (modalCrear && !modalCrear.classList.contains('hidden')) {
+                    cerrarModalCrearEquipo();
+                    return;
+                }
+                const modalCenso = document.getElementById('modal-censo-residencias');
+                if (modalCenso && !modalCenso.classList.contains('hidden')) {
+                    cerrarModalCensoResidencias();
+                    return;
+                }
+                // 3. Modal de ficha técnica principal
+                const modalDetalle = document.getElementById('modal-detalle-equipo');
+                if (modalDetalle && !modalDetalle.classList.contains('hidden')) {
+                    cerrarModalDetalle();
+                    return;
+                }
+            }
+        });
+
         // Datos fallback iniciales (obtenidos directamente de la fila 2 de la hoja de cálculo)
         const MOCK_INICIAL = [
             {
@@ -1371,43 +1570,32 @@
             }
         ];
 
-        // 1. Control de Autenticación
-        const loginScreen = document.getElementById('login-screen');
+        // 1. Control de Autenticación Centralizado (Ligado a Sesión Staff de Dashboard)
         const dashboardContent = document.getElementById('dashboard-content');
-        const loginError = document.getElementById('login-error');
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginScreen.classList.add('hidden');
+            const sesionStaffActiva = sessionStorage.getItem('lbl_staff_session_active') === 'true';
+            if (user && sesionStaffActiva) {
+                // Sesión de Staff válida y activa
                 dashboardContent.classList.remove('hidden');
                 staffNickActual = getStaffNick(user.email || user.displayName);
                 document.getElementById('user-display').textContent = `Sesión: ${staffNickActual}`;
                 inicializarModulo();
             } else {
-                loginScreen.classList.remove('hidden');
-                dashboardContent.classList.add('hidden');
+                // No autenticado como Staff -> Redirigir al Login oficial de Staff
+                window.location.replace('/dashboard?redirect=/staff-scouting');
             }
         });
 
-        // Formulario de login
-        document.getElementById('form-login').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            const btn = document.getElementById('btn-login');
-            loginError.classList.add('hidden');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando...';
-
+        window.cerrarSesionStaff = async () => {
+            sessionStorage.removeItem('lbl_staff_session_active');
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                await signOut(auth);
             } catch (err) {
-                console.error("Error de login:", err);
-                loginError.classList.remove('hidden');
-                btn.innerHTML = 'ACCEDER A SCOUTING T3';
+                console.error("Error cerrando sesión:", err);
             }
-        });
-
-        window.cerrarSesionStaff = () => signOut(auth);
+            window.location.replace('/dashboard');
+        };
 
         // 2. Inicialización
         function inicializarModulo() {
@@ -1524,7 +1712,7 @@
                 const estado = eq.estado || 'Pendiente';
                 const badgeCls = `badge-${estado.toLowerCase()}`;
                 const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-                const logoSrc = eq.logo || fallbackLogo;
+                const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo) || fallbackLogo;
 
                 // Roster compacto (5 titulares)
                 const titularesHTML = (eq.titulares || []).map(t => `
@@ -1651,7 +1839,10 @@
             equipoSeleccionado = eq;
 
             const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-            document.getElementById('m-logo').src = eq.logo || fallbackLogo;
+            const logoVal = eq.logoRaw || eq.logo || '';
+            const logoDriveUrl = normalizarUrlDriveImagen(logoVal) || fallbackLogo;
+
+            document.getElementById('m-logo').src = logoDriveUrl;
             document.getElementById('m-nombre').textContent = eq.nombre || 'Equipo Sin Nombre';
             document.getElementById('m-tag').textContent = `[${eq.tag || 'S/T'}]`;
             
@@ -1661,6 +1852,23 @@
             badge.textContent = estado;
 
             document.getElementById('m-subtitulo').textContent = `Marca temporal: ${eq.timestamp || 'Sin fecha'} • Fila Google Sheets: ${eq.rowId}`;
+
+            // Tarjeta de Logo Oficial en Pestaña General
+            const logoPreviewEl = document.getElementById('m-d-logo-preview');
+            const driveLogoLink = document.getElementById('m-d-logo-drive-link');
+            const statusLogoTxt = document.getElementById('m-d-logo-status');
+            if (logoPreviewEl) logoPreviewEl.src = logoDriveUrl;
+            if (driveLogoLink && statusLogoTxt) {
+                if (logoVal) {
+                    driveLogoLink.href = obtenerUrlDirectaDrive(logoVal);
+                    driveLogoLink.classList.remove('pointer-events-none', 'opacity-50');
+                    statusLogoTxt.textContent = "Google Drive (Adjunto)";
+                } else {
+                    driveLogoLink.href = "#";
+                    driveLogoLink.classList.add('pointer-events-none', 'opacity-50');
+                    statusLogoTxt.textContent = "Sin logo registrado";
+                }
+            }
 
             // Pestaña General
             document.getElementById('m-d-nombre').textContent = eq.nombre || '--';
@@ -1698,6 +1906,14 @@
                 contSuplentes.innerHTML = `<div class="col-span-full p-8 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold"><i class="fas fa-info-circle mr-1"></i> Este equipo no registró suplentes.</div>`;
             }
 
+            // Actualizar contadores del Roster
+            const numTitulares = (eq.titulares || []).length;
+            const numSuplentes = (eq.suplentes || []).length;
+            const badgeRosterTotal = document.getElementById('tab-badge-roster-count');
+            const badgeSuplentes = document.getElementById('badge-suplentes-count');
+            if (badgeRosterTotal) badgeRosterTotal.textContent = numTitulares + numSuplentes;
+            if (badgeSuplentes) badgeSuplentes.textContent = `${numSuplentes} Suplente${numSuplentes === 1 ? '' : 's'}`;
+
             // Pestaña Pago
             document.getElementById('m-pago-modalidad').textContent = eq.pago?.modalidad || 'No indicada';
             document.getElementById('m-pago-referencia').textContent = eq.pago?.referencia || 'Sin número de referencia';
@@ -1723,9 +1939,10 @@
             document.getElementById('m-v-historial').innerHTML = hist;
             auditarInconsistenciasEquipo(eq);
 
-            // Cargar datos en la pestaña de Edición Directa (U de CRUD)
+            // Cargar datos en el panel de Edición Directa (U de CRUD)
             document.getElementById('edit-nombre').value = eq.nombre || '';
             document.getElementById('edit-tag').value = eq.tag || '';
+            document.getElementById('edit-logo').value = logoVal;
             setSelectValueSafely(document.getElementById('edit-procedencia'), eq.procedencia);
             setSelectValueSafely(document.getElementById('edit-objetivo'), eq.objetivo);
             setSelectValueSafely(document.getElementById('edit-franja-semana'), eq.horarios?.franjaSemana);
@@ -1891,7 +2108,7 @@
         };
 
         window.switchModalTab = function(tabName) {
-            const tabs = ['general', 'capitan', 'titulares', 'suplentes', 'pago', 'verificacion', 'editar'];
+            const tabs = ['general', 'capitan', 'roster', 'pago', 'verificacion', 'editar'];
             tabs.forEach(t => {
                 const el = document.getElementById(`mtab-${t}`);
                 const btn = document.getElementById(`mtab-btn-${t}`);
@@ -1909,6 +2126,22 @@
                     activeBtn.classList.add('modal-tab-active-amber');
                 } else {
                     activeBtn.classList.add('modal-tab-active');
+                }
+            }
+
+            // Sincronizar el botón fijo de cabecera (Editar Ficha vs Ver Ficha)
+            const btnToggle = document.getElementById('btn-toggle-modo-edicion');
+            const iconToggle = document.getElementById('btn-toggle-edicion-icon');
+            const txtToggle = document.getElementById('btn-toggle-edicion-text');
+            if (btnToggle && iconToggle && txtToggle) {
+                if (tabName === 'editar') {
+                    iconToggle.className = 'fas fa-eye text-emerald-400';
+                    txtToggle.textContent = 'Ver Ficha';
+                    btnToggle.className = 'px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95';
+                } else {
+                    iconToggle.className = 'fas fa-edit text-amber-400';
+                    txtToggle.textContent = 'Editar Ficha';
+                    btnToggle.className = 'px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95';
                 }
             }
         };
@@ -2008,6 +2241,7 @@
 
             const editNombre = document.getElementById('edit-nombre').value.trim();
             const editTag = document.getElementById('edit-tag').value.trim();
+            const editLogo = document.getElementById('edit-logo').value.trim();
             const editProcedencia = document.getElementById('edit-procedencia').value.trim();
             const editObjetivo = document.getElementById('edit-objetivo').value.trim();
             const editFranjaSemana = document.getElementById('edit-franja-semana').value.trim();
@@ -2052,6 +2286,8 @@
             const equipoModificado = {
                 nombre: editNombre || equipoSeleccionado.nombre,
                 tag: editTag || equipoSeleccionado.tag,
+                logo: editLogo,
+                logoRaw: editLogo,
                 procedencia: editProcedencia || equipoSeleccionado.procedencia,
                 objetivo: editObjetivo || equipoSeleccionado.objetivo,
                 horarios: {

@@ -40,6 +40,69 @@ function serveFile(res, filePath) {
     });
 }
 
+// Caché en memoria para imágenes de Google Drive (evita Rate Limit 429)
+const driveImageCache = new Map();
+
+function fetchDriveImage(id, size, callback) {
+    if (driveImageCache.has(id)) {
+        return callback(null, driveImageCache.get(id));
+    }
+
+    const primaryUrl = `https://lh3.googleusercontent.com/d/${id}=${size || 's800'}`;
+    const fallbackUrl = `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+
+    function doRequest(url, isFallback = false) {
+        const req = https.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+            },
+            timeout: 10000
+        }, (res) => {
+            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                return doRequest(res.headers.location, isFallback);
+            }
+
+            if (res.statusCode === 200) {
+                const chunks = [];
+                res.on('data', chunk => chunks.push(chunk));
+                res.on('end', () => {
+                    const buffer = Buffer.concat(chunks);
+                    const item = {
+                        data: buffer,
+                        contentType: res.headers['content-type'] || 'image/jpeg'
+                    };
+                    driveImageCache.set(id, item);
+                    callback(null, item);
+                });
+            } else if (!isFallback) {
+                setTimeout(() => doRequest(fallbackUrl, true), 300);
+            } else {
+                callback(new Error(`Status ${res.statusCode}`));
+            }
+        });
+
+        req.on('error', (err) => {
+            if (!isFallback) {
+                setTimeout(() => doRequest(fallbackUrl, true), 300);
+            } else {
+                callback(err);
+            }
+        });
+
+        req.on('timeout', () => {
+            req.destroy();
+            if (!isFallback) {
+                doRequest(fallbackUrl, true);
+            } else {
+                callback(new Error('Timeout'));
+            }
+        });
+    }
+
+    doRequest(primaryUrl);
+}
+
 const server = http.createServer((req, res) => {
     // Manejo de Preflight OPTIONS para CORS
     if (req.method === 'OPTIONS') {
@@ -54,6 +117,31 @@ const server = http.createServer((req, res) => {
 
     const urlObj = new URL(req.url, `http://${req.headers.host}`);
     let pathname = decodeURIComponent(urlObj.pathname);
+
+    // PROXY CON CACHÉ PARA IMÁGENES DE GOOGLE DRIVE (Elimina Rate Limit 429)
+    if (pathname === '/api/drive-proxy') {
+        const id = urlObj.searchParams.get('id');
+        const size = urlObj.searchParams.get('sz') || 's800';
+        if (!id) {
+            res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+            return res.end('Falta el parámetro id');
+        }
+
+        fetchDriveImage(id, size, (err, item) => {
+            if (err || !item) {
+                res.writeHead(302, { 'Location': `https://lh3.googleusercontent.com/d/${id}=${size}` });
+                return res.end();
+            }
+
+            res.writeHead(200, {
+                'Content-Type': item.contentType,
+                'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(item.data);
+        });
+        return;
+    }
 
     // 0. CORS PROXY NATIVO PARA CHALLONGE (100% Sin Fallas en Desarrollo Local)
     if (pathname === '/api/challonge-proxy') {

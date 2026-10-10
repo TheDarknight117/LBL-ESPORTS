@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=194">
+    <link rel="stylesheet" href="/dist/output.css?v=196">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -848,7 +848,7 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import "/app-version.js?v=191";
+        import "/app-version.js?v=196";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1665,8 +1665,18 @@
             }
         };
 
+        const estaSesionActiva = () => sessionStorage.getItem('lbl_staff_session_active') === 'true';
+
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if (user && estaSesionActiva()) {
+                // Si venía redirigido desde Scouting T3 u otra sección protegida, enviarlo allí directamente
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectTo = urlParams.get('redirect');
+                if (redirectTo && redirectTo.startsWith('/')) {
+                    window.location.replace(redirectTo);
+                    return;
+                }
+
                 loginScreen.classList.add('hidden');
                 dashboardContent.classList.remove('hidden');
                 dashboardContent.classList.add('flex');
@@ -1685,6 +1695,10 @@
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 iniciarSuscripcionEnTiempoReal();
             } else {
+                // Si no hay sesión explícita en esta sesión de navegador, cerrar y exigir inicio
+                if (user && !estaSesionActiva()) {
+                    signOut(auth);
+                }
                 if (unsubscribeSnapshot) {
                     unsubscribeSnapshot();
                     unsubscribeSnapshot = null;
@@ -1693,6 +1707,7 @@
                 dashboardContent.classList.add('hidden');
                 dashboardContent.classList.remove('flex');
                 localStorage.removeItem('lbl_staff_logged_in');
+                sessionStorage.removeItem('lbl_staff_session_active');
             }
         });
 
@@ -1701,12 +1716,14 @@
             const btn = document.getElementById('btn-login');
             const mail = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFICANDO...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> VERIFICANDO...';
             errorMsg.classList.add('hidden');
             try {
+                sessionStorage.setItem('lbl_staff_session_active', 'true');
                 await signInWithEmailAndPassword(auth, mail, pass);
                 btn.innerHTML = 'INICIAR SESIÓN';
             } catch (error) {
+                sessionStorage.removeItem('lbl_staff_session_active');
                 console.error("Firebase Auth Error:", error);
                 let mensaje = 'Credenciales incorrectas.';
                 if (error.code === 'auth/unauthorized-domain') {
@@ -1726,7 +1743,10 @@
             }
         });
 
-        window.cerrarSesion = () => signOut(auth);
+        window.cerrarSesion = () => {
+            sessionStorage.removeItem('lbl_staff_session_active');
+            signOut(auth);
+        };
 
         window.switchTab = (tabName) => {
             const tabs = ['general', 'roster', 'extra', 'audit', 'edit'];

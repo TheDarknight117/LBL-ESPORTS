@@ -344,6 +344,7 @@ function doPost(e) {
       if (eq) {
         if (eq.nombre !== undefined) sheet.getRange(rowId, 4).setValue(eq.nombre);
         if (eq.tag !== undefined) sheet.getRange(rowId, 5).setValue(eq.tag);
+        if (eq.logo !== undefined) sheet.getRange(rowId, 6).setValue(eq.logo);
         if (eq.procedencia !== undefined) sheet.getRange(rowId, 7).setValue(eq.procedencia);
         if (eq.email !== undefined) sheet.getRange(rowId, 2).setValue(eq.email);
         if (eq.objetivo !== undefined) sheet.getRange(rowId, 9).setValue(eq.objetivo);
