@@ -585,10 +585,10 @@
          AFICHE 3: CIRCUITO COMPETITIVO (TIER 1 VS TIER 2)
          ==================================================================== -->
     <section id="circuito" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center overflow-hidden">
-        <!-- CAPA DE VIDEO DE FONDO: CIRCUITO COMPETITIVO -->
+        <!-- CAPA DE VIDEO DE FONDO: CIRCUITO COMPETITIVO (SIN FILTROS NI VIÑETA) -->
         <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
             <video 
-                autoplay 
+                id="circuito-video"
                 muted 
                 loop 
                 playsinline 
@@ -596,11 +596,6 @@
                 class="w-full h-full object-cover">
                 <source src="assets/overlaylol.mp4" type="video/mp4">
             </video>
-            <!-- Overlays cinematográficos: fundido suave con secciones adyacentes y contraste para las cards -->
-            <div class="absolute inset-0 bg-[#020202]/30"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,#020202_95%)]"></div>
-            <div class="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#020202] to-transparent"></div>
-            <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#020202] to-transparent"></div>
         </div>
 
         <!-- Luz focal dual ambiental: Oro a la izquierda y Azul a la derecha -->
@@ -1466,6 +1461,22 @@
             if (isStaff && mobileStaffLink) {
                 mobileStaffLink.classList.remove('hidden');
                 mobileStaffLink.classList.add('flex');
+            }
+
+            // Reproducir video de Circuito Competitivo ÚNICAMENTE al llegar a su sección
+            const circuitoSec = document.getElementById('circuito');
+            const circuitoVid = document.getElementById('circuito-video');
+            if (circuitoSec && circuitoVid) {
+                const circuitoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            circuitoVid.play().catch(() => {});
+                        } else {
+                            circuitoVid.pause();
+                        }
+                    });
+                }, { threshold: 0.15 });
+                circuitoObserver.observe(circuitoSec);
             }
         });
     </script>
