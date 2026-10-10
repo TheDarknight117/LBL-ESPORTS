@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=197">
+    <link rel="stylesheet" href="/dist/output.css?v=198">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -1325,7 +1325,7 @@
         import { auth } from "/firebase-config.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=197";
+        import "/app-version.js?v=198";
 
         // URL por defecto oficial de la API de Google Apps Script (Scouting T3)
         const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxbFYMNG8XBK9dlScH7QNc9I3el7NK2VHAtTeNCrn18q6ymNefx2G3Z20N1EGaL9Mdo/exec";
@@ -1673,6 +1673,43 @@
             }
         };
 
+        // Helpers de Normalización y Filtro Visual
+        function esCuentaExtDistinta(riotIdMain, riotIdLas) {
+            if (!riotIdMain || typeof riotIdMain !== 'string') return false;
+            const m = riotIdMain.trim();
+            if (!m) return false;
+            const mLower = m.toLowerCase();
+            const ignoreList = [
+                'n/a', 'na', 'no', 'ninguno', 'ninguna', '-', '--', 'none',
+                'misma', 'mismo', 'la misma', 'el mismo', 'no aplica', 'no tengo',
+                'same', 'sin cuenta', 'las', 'no posee', 'ningun'
+            ];
+            if (ignoreList.includes(mLower)) return false;
+
+            const l = (riotIdLas || '').trim();
+            const lLower = l.toLowerCase();
+            if (mLower === lLower) return false;
+
+            // Comparar ignorando espacios (ej: "Fordyon #420" vs "Fordyon#420")
+            if (mLower.replace(/\s+/g, '') === lLower.replace(/\s+/g, '')) return false;
+
+            return true;
+        }
+
+        function normalizarProcedenciaCorta(proc) {
+            if (!proc || typeof proc !== 'string') return 'Sin procedencia';
+            const p = proc.trim();
+            if (/^internacional/i.test(p)) return 'Internacional';
+            if (/^nacional/i.test(p)) {
+                if (/bolivia/i.test(p)) return 'Nacional (Bolivia)';
+                return 'Nacional';
+            }
+            if (p.length > 25) {
+                return p.split(/[\(\/-]/)[0].trim() || p;
+            }
+            return p;
+        }
+
         // 4. Renderizado de Tarjetas
         function renderizarTarjetasEquipos() {
             const contenedor = document.getElementById('contenedor-equipos');
@@ -1721,100 +1758,126 @@
 
             estadoVacio.classList.add('hidden');
 
+            const rolColorMap = {
+                'TOP': 'text-blue-400',
+                'JG': 'text-purple-400',
+                'JGL': 'text-purple-400',
+                'MID': 'text-amber-400',
+                'ADC': 'text-rose-400',
+                'SUPP': 'text-teal-400',
+                'SUP': 'text-teal-400'
+            };
+
             contenedor.innerHTML = filtrados.map(eq => {
                 const estado = eq.estado || 'Pendiente';
                 const badgeCls = `badge-${estado.toLowerCase()}`;
                 const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
                 const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo) || fallbackLogo;
+                const procCorta = normalizarProcedenciaCorta(eq.procedencia);
 
-                const tieneCuentasExt = (eq.titulares || []).some(t => t.riotIdMain && t.riotIdMain.trim()) ||
-                                        (eq.suplentes || []).some(s => s.riotIdMain && s.riotIdMain.trim());
+                const tieneCuentasExt = (eq.titulares || []).some(t => esCuentaExtDistinta(t.riotIdMain, t.riotIdLas)) ||
+                                        (eq.suplentes || []).some(s => esCuentaExtDistinta(s.riotIdMain, s.riotIdLas));
 
-                // Roster compacto (5 titulares con cuenta LAS y cuenta Main/Ext si existe)
+                // Roster compacto (5 titulares con cuenta LAS y cuenta Main/Ext si existe y es genuinamente distinta)
                 const titularesHTML = (eq.titulares || []).map(t => {
-                    const rMain = t.riotIdMain && t.riotIdMain.trim() ? t.riotIdMain.trim() : '';
+                    const esExt = esCuentaExtDistinta(t.riotIdMain, t.riotIdLas);
+                    const rMain = esExt ? t.riotIdMain.trim() : '';
+                    const rolColor = rolColorMap[(t.posicion || '').toUpperCase()] || 'text-emerald-400';
+
+                    const opggMainLink = t.opggMain ? (t.opggMain.startsWith('http') ? t.opggMain : `https://${t.opggMain}`) : null;
+
                     return `
-                    <div class="py-1 border-b border-gray-800/40 last:border-0">
-                        <div class="flex items-center justify-between text-[11px]">
-                            <span class="text-emerald-400 font-mono font-bold w-9 shrink-0">${t.posicion}</span>
-                            <span class="text-white font-medium truncate flex-1 px-1" title="${t.nombreCi}">${t.riotIdLas || t.nombreCi}</span>
-                            <span class="text-gray-400 font-mono text-[10px] shrink-0">${t.rangoSoloQ || '-'}</span>
+                    <div class="py-1 border-b border-gray-800/30 last:border-0">
+                        <div class="flex items-center justify-between text-[11px] gap-2">
+                            <span class="${rolColor} font-mono font-bold w-8 shrink-0 text-[10px] tracking-wide">${t.posicion || '-'}</span>
+                            <span class="text-gray-100 font-medium truncate flex-1 px-1" title="${t.nombreCi ? `${t.nombreCi} | ` : ''}${t.riotIdLas || ''}">${t.riotIdLas || t.nombreCi || 'Sin Nick'}</span>
+                            <span class="text-gray-400 font-mono text-[10px] shrink-0 text-right truncate max-w-[95px]" title="${t.rangoSoloQ || '-'}">${t.rangoSoloQ || '-'}</span>
                         </div>
                         ${rMain ? `
-                        <div class="flex items-center gap-1.5 pl-9 pr-1 text-[10px] text-amber-300 font-mono mt-0.5">
-                            <span class="text-[8px] bg-amber-950/80 border border-amber-500/40 px-1 py-0.2 rounded text-amber-400 uppercase font-black shrink-0 tracking-wider">
-                                <i class="fas fa-globe-americas text-[7px] mr-0.5"></i>Main/Ext:
-                            </span>
-                            <span class="truncate font-semibold text-amber-200" title="Cuenta Main o en otra región: ${rMain}">${rMain}</span>
-                            ${t.opggMain ? `
-                            <a href="${t.opggMain}" target="_blank" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 ml-auto shrink-0 text-[9px] flex items-center gap-0.5 hover:underline" title="Ver OP.GG Main">
-                                <i class="fas fa-external-link-alt text-[8px]"></i> OP.GG
+                        <div class="flex items-center justify-between gap-1.5 pl-8 pr-1 py-0.5 mt-0.5 bg-amber-500/[0.04] rounded-md border border-amber-500/15 text-[10px] font-mono">
+                            <div class="flex items-center gap-1.5 min-w-0 truncate">
+                                <i class="fas fa-globe-americas text-[8px] text-amber-400 shrink-0"></i>
+                                <span class="text-[8px] font-bold uppercase text-amber-400 tracking-wider shrink-0">Ext:</span>
+                                <span class="font-semibold text-amber-200 truncate" title="Cuenta en otra región: ${rMain}">${rMain}</span>
+                            </div>
+                            ${opggMainLink ? `
+                            <a href="${opggMainLink}" target="_blank" onclick="event.stopPropagation()" class="text-sky-400 hover:text-sky-300 ml-auto shrink-0 text-[9px] font-bold flex items-center gap-1 hover:underline transition-colors" title="Ver OP.GG Main">
+                                <i class="fas fa-external-link-alt text-[7px]"></i> OP.GG
                             </a>` : ''}
                         </div>` : ''}
                     </div>
                     `;
-                }).join('') || '<p class="text-gray-600 text-xs italic">Sin jugadores registrados</p>';
+                }).join('') || '<p class="text-gray-600 text-xs italic py-2 text-center">Sin jugadores registrados</p>';
 
                 const capTel = eq.capitan?.telefono || '';
                 const waNumber = capTel.replace(/[^0-9]/g, '');
                 const waBtn = waNumber ? `
-                    <a href="https://wa.me/${waNumber}" target="_blank" class="px-2 py-0.5 rounded bg-green-600/30 hover:bg-green-600 text-green-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all border border-green-500/30" title="Contactar Capitán">
+                    <a href="https://wa.me/${waNumber}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-green-500/10 hover:bg-green-600 text-green-400 hover:text-white text-[10px] font-bold flex items-center gap-1.5 transition-all border border-green-500/30 shrink-0 shadow-sm" title="Contactar Capitán por WhatsApp (+${waNumber})">
                         <i class="fab fa-whatsapp"></i> Chat
                     </a>` : '';
 
                 return `
-                    <div class="glass-panel p-4 rounded-2xl border border-gray-800 hover:border-emerald-500/50 transition-all flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group">
+                    <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group">
                         <div>
                             <!-- Header de Tarjeta -->
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <img src="${logoSrc}" onerror="this.src='${fallbackLogo}'" class="w-10 h-10 rounded-xl bg-black object-contain border border-gray-800 shrink-0">
+                                    <img src="${logoSrc}" onerror="this.src='${fallbackLogo}'" class="w-11 h-11 rounded-xl bg-black/60 object-contain border border-gray-800 shrink-0 p-1 group-hover:border-emerald-500/30 transition-colors">
                                     <div class="min-w-0">
-                                        <h4 class="font-black text-white text-sm truncate uppercase group-hover:text-emerald-400 transition-colors">${eq.nombre}</h4>
-                                        <p class="text-[10px] text-gray-400 flex items-center gap-1.5 font-mono">
-                                            <span class="text-emerald-400 font-bold">[${eq.tag || 'S/T'}]</span>
-                                            <span>&bull;</span>
-                                            <span class="truncate">${eq.procedencia || 'Sin ciudad'}</span>
+                                        <h4 class="font-black text-white text-sm sm:text-base truncate uppercase group-hover:text-emerald-400 transition-colors tracking-wide">${eq.nombre}</h4>
+                                        <p class="text-[10px] sm:text-[11px] text-gray-400 flex items-center gap-1.5 font-mono mt-0.5" title="${eq.procedencia || 'Sin procedencia'}">
+                                            <span class="text-emerald-400 font-bold tracking-wider">[${eq.tag || 'S/T'}]</span>
+                                            <span class="text-gray-600">&bull;</span>
+                                            <span class="truncate text-gray-300 font-sans">${procCorta}</span>
                                         </p>
                                     </div>
                                 </div>
-                                <div class="flex flex-col items-end gap-1 shrink-0">
+                                <div class="flex flex-col items-end gap-1.5 shrink-0">
                                     <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeCls}">
                                         ${estado}
                                     </span>
                                     ${tieneCuentasExt ? `
-                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-500/40" title="Contiene jugadores con cuenta main o en otra región">
-                                        <i class="fas fa-globe-americas mr-0.5"></i> Cuentas Ext.
+                                    <span class="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-sm" title="Contiene jugadores con cuenta main o en otra región">
+                                        <i class="fas fa-globe text-[7px]"></i> Ext. Region
                                     </span>` : ''}
                                 </div>
                             </div>
 
                             <!-- Capitán -->
-                            <div class="py-2.5 flex items-center justify-between border-b border-gray-800/40 text-xs">
-                                <div>
-                                    <span class="text-[9px] uppercase font-bold text-gray-500 block">Capitán</span>
-                                    <span class="text-white font-bold truncate block max-w-[170px]" title="${eq.capitan?.nombreCi || ''}">${eq.capitan?.nombreCi || 'Sin capitán'}</span>
+                            <div class="py-2.5 flex items-center justify-between gap-2 border-b border-gray-800/40 text-xs">
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[9px] uppercase font-bold text-gray-500 block tracking-wider">Capitán</span>
+                                    <span class="text-gray-200 font-semibold truncate block text-xs" title="${eq.capitan?.nombreCi || ''}">${eq.capitan?.nombreCi || 'Sin capitán'}</span>
                                 </div>
                                 ${waBtn}
                             </div>
 
                             <!-- Resumen Roster -->
-                            <div class="py-2.5">
+                            <div class="py-2.5 flex-1 flex flex-col justify-between">
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <span class="text-[9px] uppercase font-black text-gray-500 block">Roster Titular</span>
-                                    ${tieneCuentasExt ? '<span class="text-[9px] font-bold text-amber-400 flex items-center gap-1"><i class="fas fa-info-circle"></i> Región Ext. Detectada</span>' : ''}
+                                    <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Roster Titular</span>
+                                    ${eq.suplentes && eq.suplentes.length > 0 ? `
+                                    <span class="text-[9px] text-gray-400 font-mono bg-gray-900/60 border border-gray-800/80 px-1.5 py-0.5 rounded" title="${eq.suplentes.length} jugador(es) suplente(s)">
+                                        +${eq.suplentes.length} suplente${eq.suplentes.length > 1 ? 's' : ''}
+                                    </span>` : ''}
                                 </div>
-                                <div class="bg-black/40 p-2 rounded-xl border border-gray-800/60 space-y-0.5">
+                                <div class="bg-black/35 p-2.5 rounded-xl border border-gray-800/60 divide-y divide-gray-800/30 space-y-0.5">
                                     ${titularesHTML}
                                 </div>
                             </div>
                         </div>
 
                         <!-- Footer con botón de acción -->
-                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2">
-                            <span class="text-[10px] text-gray-500 font-mono">Fila ${eq.rowId || '-'}</span>
-                            <button onclick="abrirModalDetalle(${eq.rowId})" class="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
-                                <i class="fas fa-eye"></i> Revisar Ficha
+                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2 mt-auto">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] text-gray-500 font-mono">Fila ${eq.rowId || '-'}</span>
+                                ${eq.notasStaff && eq.notasStaff.trim() ? `
+                                <span class="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1" title="Notas del Staff: ${eq.notasStaff.replace(/"/g, '&quot;')}">
+                                    <i class="fas fa-comment-dots text-[7px]"></i> Nota
+                                </span>` : ''}
+                            </div>
+                            <button onclick="abrirModalDetalle(${eq.rowId})" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm">
+                                <i class="fas fa-id-card text-xs"></i> Revisar Ficha
                             </button>
                         </div>
                     </div>
@@ -2094,9 +2157,10 @@
                 ? `<a href="${opggUrl}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-chart-line"></i> OP.GG LAS</a>` 
                 : '';
 
-            const tieneMain = j.riotIdMain && j.riotIdMain.trim();
-            const opggMainLink = j.opggMain ? `
-                <a href="${j.opggMain}" target="_blank" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : '';
+            const tieneMain = esCuentaExtDistinta(j.riotIdMain, j.riotIdLas);
+            const opggMainUrl = j.opggMain ? (j.opggMain.startsWith('http') ? j.opggMain : `https://${j.opggMain}`) : null;
+            const opggMainLink = opggMainUrl ? `
+                <a href="${opggMainUrl}" target="_blank" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : '';
 
             const posColorMap = {
                 'TOP': { badge: 'text-blue-400 border-blue-500/30 bg-blue-950/40', icon: 'fas fa-shield-alt text-blue-400' },
