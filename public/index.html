@@ -467,12 +467,13 @@
                 playsinline 
                 preload="auto"
                 poster="assets/BARON.webp"
-                class="w-full h-full object-cover filter blur-[5px] brightness-[0.32] contrast-[1.18] saturate-[0.55] scale-105">
+                class="w-full h-full object-cover filter blur-[2px] brightness-[0.70] contrast-[1.12] saturate-[0.88] scale-105">
                 <source src="assets/hero-bg2.mp4" type="video/mp4">
             </video>
-            <!-- Overlays de oscurecimiento y viñeta para contraste cinematográfico -->
-            <div class="absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/50 to-[#020202]/80"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#020202_90%)]"></div>
+            <!-- Overlays de oscurecimiento equilibrado: deja respirar el video al centro y lo funde a negro en los bordes -->
+            <div class="absolute inset-0 bg-[#020202]/35"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#020202_88%)]"></div>
+            <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#020202] to-transparent"></div>
         </div>
 
         <!-- Luz focal ambiental azul centrado -->
