@@ -519,7 +519,7 @@
 
             <!-- Indicador sutil de scroll al siguiente afiche (visible en pantalla) -->
             <div class="fade-in-up mt-4 md:mt-6 flex justify-center" style="animation-delay: 0.6s;">
-                <a href="#clasificaciones" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-300 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Clasificaciones">
+                <a onclick="scrollToSection('clasificaciones')" role="button" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-300 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Clasificaciones">
                     <span>Explora la Liga</span>
                     <i class="fas fa-chevron-down text-xs text-cyan-400 group-hover:translate-y-1 transition-transform duration-300"></i>
                 </a>
@@ -573,6 +573,14 @@
                         <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
                 </div>
+            </div>
+
+            <!-- Indicador sutil de scroll al siguiente afiche -->
+            <div class="fade-in-up mt-6 md:mt-8 flex justify-center">
+                <a onclick="scrollToSection('circuito')" role="button" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-yellow-400 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Circuito Competitivo">
+                    <span>Circuito Oficial</span>
+                    <i class="fas fa-chevron-down text-xs text-yellow-400 group-hover:translate-y-1 transition-transform duration-300"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -651,6 +659,14 @@
                     </p>
                 </a>
             </div>
+
+            <!-- Indicador sutil de scroll al siguiente afiche -->
+            <div class="fade-in-up mt-6 md:mt-7 flex justify-center">
+                <a onclick="scrollToSection('sponsors')" role="button" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-300 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Sponsors">
+                    <span>Nuestros Sponsors</span>
+                    <i class="fas fa-chevron-down text-xs text-cyan-400 group-hover:translate-y-1 transition-transform duration-300"></i>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -684,6 +700,14 @@
                 <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-5 md:mt-6 pointer-events-none max-w-3xl mx-auto">
                     <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
                 </div>
+            </div>
+
+            <!-- Indicador sutil de scroll al siguiente afiche -->
+            <div class="fade-in-up mt-5 md:mt-6 flex justify-center">
+                <a onclick="scrollToSection('staff')" role="button" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-purple-400 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Staff">
+                    <span>Directiva & Staff</span>
+                    <i class="fas fa-chevron-down text-xs text-purple-400 group-hover:translate-y-1 transition-transform duration-300"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -721,6 +745,14 @@
                     </p>
                 </div>
 
+            </div>
+
+            <!-- Indicador sutil de scroll: Volver al inicio -->
+            <div class="fade-in-up mt-5 md:mt-6 flex justify-center">
+                <a onclick="scrollToSection('hero')" role="button" class="inline-flex flex-col items-center gap-1.5 text-slate-500 hover:text-blue-400 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Volver al Inicio">
+                    <span>Volver al Inicio</span>
+                    <i class="fas fa-chevron-up text-xs text-blue-400 group-hover:-translate-y-1 transition-transform duration-300"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -795,6 +827,14 @@
     </div>
 
     <script>
+        // Navegación suave por secciones sin alterar la URL (evita hashes como #clasificaciones)
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function abrirAdvertencia() {
             const modal = document.getElementById('scouting-modal');
             modal.classList.remove('hidden');
