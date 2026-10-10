@@ -457,7 +457,24 @@
     <!-- ====================================================================
          AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
          ==================================================================== -->
-    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10">
+    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden">
+        <!-- CAPA DE VIDEO CINEMATOGRÁFICO DE FONDO -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+            <video 
+                autoplay 
+                muted 
+                loop 
+                playsinline 
+                preload="auto"
+                poster="assets/BARON.webp"
+                class="w-full h-full object-cover filter blur-[5px] brightness-[0.32] contrast-[1.18] saturate-[0.55] scale-105">
+                <source src="assets/hero-bg2.mp4" type="video/mp4">
+            </video>
+            <!-- Overlays de oscurecimiento y viñeta para contraste cinematográfico -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/50 to-[#020202]/80"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#020202_90%)]"></div>
+        </div>
+
         <!-- Luz focal ambiental azul centrado -->
         <div class="glow-spot-ambient glow-cyan"></div>
         
