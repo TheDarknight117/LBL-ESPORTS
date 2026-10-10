@@ -673,7 +673,26 @@
     <!-- ====================================================================
          AFICHE 4: PARTNERS & SPONSORS OFICIALES
          ==================================================================== -->
-    <section id="sponsors" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center">
+    <section id="sponsors" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center overflow-hidden">
+        <!-- Fondo Atmosférico: Patrón geométrico sutil de panal/hexágonos oscuros con reflejos metálicos mínimos -->
+        <div class="bg-sponsors-honeycomb">
+            <!-- Malla Vectorial Hexagonal / Honeycomb Seamless -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern)"/>
+            </svg>
+
+            <!-- Capa de Reflejos Metálicos Mínimos -->
+            <div class="metallic-reflection-layer"></div>
+
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
+        </div>
+
         <!-- Luz focal ambiental cian -->
         <div class="glow-spot-ambient glow-cyan"></div>
 
