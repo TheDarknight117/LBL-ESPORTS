@@ -457,7 +457,7 @@
     <!-- ====================================================================
          AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
          ==================================================================== -->
-    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden">
+    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden !py-4 md:!py-6 lg:!py-8">
         <!-- CAPA DE VIDEO CINEMATOGRÁFICO DE FONDO -->
         <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
             <video 
@@ -479,8 +479,8 @@
         <!-- Luz focal ambiental azul centrado -->
         <div class="glow-spot-ambient glow-cyan"></div>
         
-        <div class="max-w-5xl mx-auto w-full relative z-10 flex flex-col items-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-6 md:mb-8 fade-in-up" style="animation-delay: 0.1s;">
+        <div class="max-w-6xl mx-auto w-full relative z-10 flex flex-col items-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-3 md:mb-4 fade-in-up" style="animation-delay: 0.1s;">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
@@ -488,24 +488,24 @@
                 Temporada Oficial 2026
             </div>
 
-            <div class="relative mb-6 md:mb-8 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
+            <div class="relative mb-3 md:mb-4 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
                 <div class="hero-halo-light"></div>
-                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-44 sm:h-52 md:h-64 w-auto object-contain" alt="Logo LBL Central">
+                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-32 sm:h-36 md:h-44 lg:h-48 w-auto object-contain" alt="Logo LBL Central">
             </div>
 
-            <!-- TÍTULO EN 2 LÍNEAS EXACTAS (PROTEGIDO CONTRA CORTE DE FUENTE ITÁLICA) -->
-            <h1 class="text-[7.2vw] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.2rem] font-black uppercase italic tracking-tighter mb-4 md:mb-6 fade-in-up glow-text leading-[1.08]" style="animation-delay: 0.3s;">
+            <!-- TÍTULO EN 2 LÍNEAS EXACTAS (+20% DE TAMAÑO, PROTEGIDO CONTRA CORTE DE FUENTE ITÁLICA) -->
+            <h1 class="text-[8.5vw] sm:text-6xl md:text-6xl lg:text-[5.2rem] xl:text-[6.2rem] font-black uppercase italic tracking-tighter mb-3 md:mb-4 fade-in-up glow-text leading-[1.04]" style="animation-delay: 0.3s;">
                 <span class="block">LIGA BOLIVIANA</span>
                 <span class="block whitespace-nowrap">DE <span class="text-gradient-blue inline-block pr-[0.25em] -mr-[0.25em]">LEAGUE OF LEGENDS</span></span>
             </h1>
             
-            <p class="text-gray-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] max-w-2xl mx-auto text-sm md:text-lg mb-8 md:mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
+            <p class="text-gray-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] max-w-2xl mx-auto text-xs sm:text-sm md:text-base mb-5 md:mb-6 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
                 El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
             </p>
 
             <div class="w-full px-2 z-10 relative">
                 
-                <div class="flex flex-col sm:flex-row justify-center gap-3.5 sm:gap-4 fade-in-up mb-4 flex-wrap" style="animation-delay: 0.5s;">
+                <div class="flex flex-col sm:flex-row justify-center gap-3.5 sm:gap-4 fade-in-up mb-2 flex-wrap" style="animation-delay: 0.5s;">
                     <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-7 md:px-8 py-3.5 md:py-4 rounded-2xl font-black text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer border border-blue-400/40">
                         <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
                         <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
@@ -521,11 +521,11 @@
                 </div>
             </div>
 
-            <!-- Indicador sutil de scroll al siguiente afiche -->
-            <div class="fade-in-up mt-8 md:mt-12 flex justify-center" style="animation-delay: 0.6s;">
-                <a href="#clasificaciones" class="inline-flex flex-col items-center gap-1.5 text-slate-500 hover:text-cyan-400 text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Clasificaciones">
+            <!-- Indicador sutil de scroll al siguiente afiche (visible en pantalla) -->
+            <div class="fade-in-up mt-4 md:mt-6 flex justify-center" style="animation-delay: 0.6s;">
+                <a href="#clasificaciones" class="inline-flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-300 text-[11px] font-extrabold uppercase tracking-widest transition-colors duration-300 group cursor-pointer" aria-label="Ir a Clasificaciones">
                     <span>Explora la Liga</span>
-                    <i class="fas fa-chevron-down text-xs group-hover:translate-y-1 transition-transform duration-300"></i>
+                    <i class="fas fa-chevron-down text-xs text-cyan-400 group-hover:translate-y-1 transition-transform duration-300"></i>
                 </a>
             </div>
         </div>
