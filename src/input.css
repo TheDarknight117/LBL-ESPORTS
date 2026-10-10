@@ -72,7 +72,7 @@
     align-items: center;
     gap: 2rem;
     width: 100%;
-    min-height: 420px;
+    min-height: auto;
 }
 @media (min-width: 1024px) {
     .staff-section-layout {
@@ -86,7 +86,7 @@
     flex-direction: row;
     align-items: stretch;
     gap: 0.75rem;
-    height: 400px;
+    height: 360px;
     width: auto;
     flex-shrink: 0;
     justify-content: center;
@@ -94,7 +94,7 @@
 @media (min-width: 1024px) {
     .staff-accordion-wrap {
         justify-content: flex-start;
-        height: 420px;
+        height: clamp(340px, 44vh, 390px);
     }
 }
 @media (max-width: 768px) {
@@ -305,17 +305,18 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: clamp(48px, 8vh, 96px);
-    padding-bottom: clamp(48px, 8vh, 96px);
+    padding-top: clamp(24px, 4.5vh, 56px);
+    padding-bottom: clamp(24px, 4.5vh, 56px);
     scroll-margin-top: 68px;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
     .section-afiche {
         min-height: auto;
-        padding-top: clamp(40px, 6vh, 64px);
-        padding-bottom: clamp(40px, 6vh, 64px);
+        padding-top: clamp(32px, 5vh, 52px);
+        padding-bottom: clamp(32px, 5vh, 52px);
     }
 }
 
