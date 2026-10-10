@@ -34,6 +34,35 @@
     font-family: 'CustomFont', sans-serif !important;
 }
 
+/* Gradientes con protección contra cortes en glifos itálicos */
+.text-gradient-blue {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+.text-gradient-gold {
+    background: linear-gradient(to right, #eab308, #facc15);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+.text-gradient-cyan {
+    background: linear-gradient(to right, #22d3ee, #0891b2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+
 
 
 /* Estilos de Trapecio e Interactividad de la Directiva */

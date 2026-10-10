@@ -123,11 +123,11 @@
             border: 1px solid rgba(255, 255, 255, 0.05); 
         }
         
-        /* Textos Brillantes y Gradientes */
+        /* Textos Brillantes y Gradientes (con padding para evitar cortes en fuentes itálicas) */
         .glow-text { text-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
-        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
+        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
+        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
         
         /* Animaciones Épicas */
         .float-anim { animation: float 6s ease-in-out infinite; }
@@ -467,19 +467,19 @@
                 playsinline 
                 preload="auto"
                 poster="assets/BARON.webp"
-                class="w-full h-full object-cover filter blur-[1.5px] brightness-[0.92]">
+                class="w-full h-full object-cover filter blur-[0.5px] brightness-[0.92]">
                 <source src="assets/hero-bg2.mp4" type="video/mp4">
             </video>
-            <!-- Overlays calibrados para laptops: máxima visibilidad del video al centro y fundido suave en los bordes -->
-            <div class="absolute inset-0 bg-[#020202]/15"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,#020202_82%)]"></div>
-            <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#020202] to-transparent"></div>
+            <!-- Overlays con radio de filtro reducido: máxima apertura visual del video, solo viñeta sutil en los extremos -->
+            <div class="absolute inset-0 bg-[#020202]/5"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_70%,#020202_98%)]"></div>
+            <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#020202] to-transparent"></div>
         </div>
 
         <!-- Luz focal ambiental azul centrado -->
         <div class="glow-spot-ambient glow-cyan"></div>
         
-        <div class="max-w-4xl mx-auto w-full relative z-10 flex flex-col items-center">
+        <div class="max-w-5xl mx-auto w-full relative z-10 flex flex-col items-center">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-6 md:mb-8 fade-in-up" style="animation-delay: 0.1s;">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -493,9 +493,10 @@
                 <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-44 sm:h-52 md:h-64 w-auto object-contain" alt="Logo LBL Central">
             </div>
 
-            <!-- TÍTULO ORIGINAL CON GLOW-TEXT INTACTO -->
-            <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-4 md:mb-6 fade-in-up glow-text leading-[1.08]" style="animation-delay: 0.3s;">
-                LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
+            <!-- TÍTULO EN 2 LÍNEAS EXACTAS (PROTEGIDO CONTRA CORTE DE FUENTE ITÁLICA) -->
+            <h1 class="text-[7.2vw] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.2rem] font-black uppercase italic tracking-tighter mb-4 md:mb-6 fade-in-up glow-text leading-[1.08]" style="animation-delay: 0.3s;">
+                <span class="block">LIGA BOLIVIANA</span>
+                <span class="block whitespace-nowrap">DE <span class="text-gradient-blue inline-block pr-[0.25em] -mr-[0.25em]">LEAGUE OF LEGENDS</span></span>
             </h1>
             
             <p class="text-gray-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] max-w-2xl mx-auto text-sm md:text-lg mb-8 md:mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
