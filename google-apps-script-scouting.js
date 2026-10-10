@@ -382,6 +382,8 @@ function doPost(e) {
               if (t.discord !== undefined) sheet.getRange(rowId, b + 3).setValue(t.discord);
               if (t.riotIdLas !== undefined) sheet.getRange(rowId, b + 4).setValue(t.riotIdLas);
               if (t.opggLas !== undefined) sheet.getRange(rowId, b + 5).setValue(t.opggLas);
+              if (t.riotIdMain !== undefined) sheet.getRange(rowId, b + 6).setValue(t.riotIdMain);
+              if (t.opggMain !== undefined) sheet.getRange(rowId, b + 7).setValue(t.opggMain);
               if (t.rolSecundario !== undefined) sheet.getRange(rowId, b + 8).setValue(t.rolSecundario);
               if (t.rangoSoloQ !== undefined) sheet.getRange(rowId, b + 9).setValue(t.rangoSoloQ);
               if (t.rangoFlex !== undefined) sheet.getRange(rowId, b + 10).setValue(t.rangoFlex);

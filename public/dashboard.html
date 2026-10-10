@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=196">
+    <link rel="stylesheet" href="/dist/output.css?v=197">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -284,7 +284,7 @@
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
 
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#020202] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#020202] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] hidden">
         <div class="glass-panel p-8 rounded-3xl max-w-md w-full border-t-4 border-red-600 shadow-[0_0_50px_rgba(239,68,68,0.15)] relative overflow-hidden">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-red-600/20 rounded-full blur-[50px]"></div>
             <div class="text-center mb-8">
@@ -848,7 +848,7 @@
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
         import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js";
-        import "/app-version.js?v=196";
+        import "/app-version.js?v=197";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1665,10 +1665,8 @@
             }
         };
 
-        const estaSesionActiva = () => sessionStorage.getItem('lbl_staff_session_active') === 'true';
-
         onAuthStateChanged(auth, (user) => {
-            if (user && estaSesionActiva()) {
+            if (user) {
                 // Si venía redirigido desde Scouting T3 u otra sección protegida, enviarlo allí directamente
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirectTo = urlParams.get('redirect');
@@ -1695,10 +1693,6 @@
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 iniciarSuscripcionEnTiempoReal();
             } else {
-                // Si no hay sesión explícita en esta sesión de navegador, cerrar y exigir inicio
-                if (user && !estaSesionActiva()) {
-                    signOut(auth);
-                }
                 if (unsubscribeSnapshot) {
                     unsubscribeSnapshot();
                     unsubscribeSnapshot = null;
@@ -1707,7 +1701,6 @@
                 dashboardContent.classList.add('hidden');
                 dashboardContent.classList.remove('flex');
                 localStorage.removeItem('lbl_staff_logged_in');
-                sessionStorage.removeItem('lbl_staff_session_active');
             }
         });
 
@@ -1719,11 +1712,9 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> VERIFICANDO...';
             errorMsg.classList.add('hidden');
             try {
-                sessionStorage.setItem('lbl_staff_session_active', 'true');
                 await signInWithEmailAndPassword(auth, mail, pass);
                 btn.innerHTML = 'INICIAR SESIÓN';
             } catch (error) {
-                sessionStorage.removeItem('lbl_staff_session_active');
                 console.error("Firebase Auth Error:", error);
                 let mensaje = 'Credenciales incorrectas.';
                 if (error.code === 'auth/unauthorized-domain') {
@@ -1744,7 +1735,7 @@
         });
 
         window.cerrarSesion = () => {
-            sessionStorage.removeItem('lbl_staff_session_active');
+            localStorage.removeItem('lbl_staff_logged_in');
             signOut(auth);
         };
 

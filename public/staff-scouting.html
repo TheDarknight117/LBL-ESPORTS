@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=196">
+    <link rel="stylesheet" href="/dist/output.css?v=197">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -68,6 +68,18 @@
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- PANTALLA DE CARGA / VERIFICACIÓN DE SESIÓN STAFF -->
+    <div id="scouting-auth-loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#020202] text-white">
+        <div class="flex flex-col items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                <i class="fas fa-binoculars text-emerald-400 text-xl animate-pulse"></i>
+            </div>
+            <p class="text-xs text-gray-400 font-mono tracking-widest uppercase flex items-center gap-2">
+                <i class="fas fa-spinner fa-spin text-emerald-400"></i> Verificando Sesión Staff...
+            </p>
+        </div>
+    </div>
 
     <!-- CONTENIDO PRINCIPAL DEL DASHBOARD (PROTEGIDO POR SESIÓN STAFF) -->
     <div id="dashboard-content" class="flex flex-col min-h-screen hidden">
@@ -1313,7 +1325,7 @@
         import { auth } from "/firebase-config.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=196";
+        import "/app-version.js?v=197";
 
         // URL por defecto oficial de la API de Google Apps Script (Scouting T3)
         const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxbFYMNG8XBK9dlScH7QNc9I3el7NK2VHAtTeNCrn18q6ymNefx2G3Z20N1EGaL9Mdo/exec";
@@ -1550,9 +1562,9 @@
                     finesDeSemana: "Sábados y Domingos a partir de las 16:00"
                 },
                 titulares: [
-                    { posicion: "TOP", numero: 1, nombreCi: "Alexis Nelson Gutierrez 44877986", ciudad: "Jujuy", telefono: "+54 9 3885089206", discord: "fordyon", riotIdLas: "Fordyon#420", opggLas: "https://www.op.gg/summoners/las/Fordyon-420", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Esmeralda / Platino", rangoFlex: "Oro" },
+                    { posicion: "TOP", numero: 1, nombreCi: "Alexis Nelson Gutierrez 44877986", ciudad: "Jujuy", telefono: "+54 9 3885089206", discord: "fordyon", riotIdLas: "Fordyon#420", opggLas: "https://www.op.gg/summoners/las/Fordyon-420", riotIdMain: "Fordyon#BR", opggMain: "https://www.op.gg/summoners/br/Fordyon-BR", rolSecundario: "MID", rangoSoloQ: "Esmeralda / Platino", rangoFlex: "Oro" },
                     { posicion: "JG", numero: 2, nombreCi: "Ignacio Lisandro Valdez 47241323", ciudad: "Jujuy", telefono: "+54 9 3885089206", discord: "arthickd", riotIdLas: "Arthick#LAS", opggLas: "https://www.op.gg/summoners/las/Arthick-LAS", riotIdMain: "", opggMain: "", rolSecundario: "TOP", rangoSoloQ: "Diamante IV", rangoFlex: "Platino" },
-                    { posicion: "MID", numero: 3, nombreCi: "Joaquín Ramiro Torres 46812039", ciudad: "Salta", telefono: "+54 9 3874102938", discord: "joacot", riotIdLas: "Shadow#ARG", opggLas: "https://www.op.gg/summoners/las/Shadow-ARG", riotIdMain: "", opggMain: "", rolSecundario: "ADC", rangoSoloQ: "Master", rangoFlex: "Diamante" },
+                    { posicion: "MID", numero: 3, nombreCi: "Joaquín Ramiro Torres 46812039", ciudad: "Salta", telefono: "+54 9 3874102938", discord: "joacot", riotIdLas: "Shadow#ARG", opggLas: "https://www.op.gg/summoners/las/Shadow-ARG", riotIdMain: "Shadow#LAN", opggMain: "https://www.op.gg/summoners/lan/Shadow-LAN", rolSecundario: "ADC", rangoSoloQ: "Master", rangoFlex: "Diamante" },
                     { posicion: "ADC", numero: 4, nombreCi: "Santiago Benítez 48192019", ciudad: "Tucumán", telefono: "+54 9 3815920192", discord: "santix", riotIdLas: "Arrow#LAS", opggLas: "https://www.op.gg/summoners/las/Arrow-LAS", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Esmeralda I", rangoFlex: "Esmeralda" },
                     { posicion: "SUPP", numero: 5, nombreCi: "Lucas Agustín Flores 45192039", ciudad: "Jujuy", telefono: "+54 9 3884920193", discord: "lucasf", riotIdLas: "Shield#LAS", opggLas: "https://www.op.gg/summoners/las/Shield-LAS", riotIdMain: "", opggMain: "", rolSecundario: "JG", rangoSoloQ: "Platino II", rangoFlex: "Platino" }
                 ],
@@ -1570,13 +1582,15 @@
             }
         ];
 
-        // 1. Control de Autenticación Centralizado (Ligado a Sesión Staff de Dashboard)
+        // 1. Control de Autenticación Centralizado (Ligado a Sesión Staff de Firebase)
         const dashboardContent = document.getElementById('dashboard-content');
+        const authLoading = document.getElementById('scouting-auth-loading');
 
         onAuthStateChanged(auth, (user) => {
-            const sesionStaffActiva = sessionStorage.getItem('lbl_staff_session_active') === 'true';
-            if (user && sesionStaffActiva) {
-                // Sesión de Staff válida y activa
+            if (authLoading) authLoading.classList.add('hidden');
+
+            if (user) {
+                // Sesión de Staff válida y activa en Firebase
                 dashboardContent.classList.remove('hidden');
                 staffNickActual = getStaffNick(user.email || user.displayName);
                 document.getElementById('user-display').textContent = `Sesión: ${staffNickActual}`;
@@ -1588,7 +1602,6 @@
         });
 
         window.cerrarSesionStaff = async () => {
-            sessionStorage.removeItem('lbl_staff_session_active');
             try {
                 await signOut(auth);
             } catch (err) {
@@ -1687,13 +1700,13 @@
                 // Titulares
                 if (Array.isArray(eq.titulares)) {
                     for (const t of eq.titulares) {
-                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.discord) || matchText(t.ciudad)) return true;
+                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.riotIdMain) || matchText(t.discord) || matchText(t.ciudad)) return true;
                     }
                 }
                 // Suplentes
                 if (Array.isArray(eq.suplentes)) {
                     for (const s of eq.suplentes) {
-                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.discord) || matchText(s.ciudad)) return true;
+                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.riotIdMain) || matchText(s.discord) || matchText(s.ciudad)) return true;
                     }
                 }
 
@@ -1714,14 +1727,33 @@
                 const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
                 const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo) || fallbackLogo;
 
-                // Roster compacto (5 titulares)
-                const titularesHTML = (eq.titulares || []).map(t => `
-                    <div class="flex items-center justify-between text-[11px] py-1 border-b border-gray-800/40 last:border-0">
-                        <span class="text-emerald-400 font-mono font-bold w-10">${t.posicion}</span>
-                        <span class="text-white font-medium truncate flex-1 px-1" title="${t.nombreCi}">${t.riotIdLas || t.nombreCi}</span>
-                        <span class="text-gray-400 font-mono text-[10px] shrink-0">${t.rangoSoloQ || '-'}</span>
+                const tieneCuentasExt = (eq.titulares || []).some(t => t.riotIdMain && t.riotIdMain.trim()) ||
+                                        (eq.suplentes || []).some(s => s.riotIdMain && s.riotIdMain.trim());
+
+                // Roster compacto (5 titulares con cuenta LAS y cuenta Main/Ext si existe)
+                const titularesHTML = (eq.titulares || []).map(t => {
+                    const rMain = t.riotIdMain && t.riotIdMain.trim() ? t.riotIdMain.trim() : '';
+                    return `
+                    <div class="py-1 border-b border-gray-800/40 last:border-0">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="text-emerald-400 font-mono font-bold w-9 shrink-0">${t.posicion}</span>
+                            <span class="text-white font-medium truncate flex-1 px-1" title="${t.nombreCi}">${t.riotIdLas || t.nombreCi}</span>
+                            <span class="text-gray-400 font-mono text-[10px] shrink-0">${t.rangoSoloQ || '-'}</span>
+                        </div>
+                        ${rMain ? `
+                        <div class="flex items-center gap-1.5 pl-9 pr-1 text-[10px] text-amber-300 font-mono mt-0.5">
+                            <span class="text-[8px] bg-amber-950/80 border border-amber-500/40 px-1 py-0.2 rounded text-amber-400 uppercase font-black shrink-0 tracking-wider">
+                                <i class="fas fa-globe-americas text-[7px] mr-0.5"></i>Main/Ext:
+                            </span>
+                            <span class="truncate font-semibold text-amber-200" title="Cuenta Main o en otra región: ${rMain}">${rMain}</span>
+                            ${t.opggMain ? `
+                            <a href="${t.opggMain}" target="_blank" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 ml-auto shrink-0 text-[9px] flex items-center gap-0.5 hover:underline" title="Ver OP.GG Main">
+                                <i class="fas fa-external-link-alt text-[8px]"></i> OP.GG
+                            </a>` : ''}
+                        </div>` : ''}
                     </div>
-                `).join('') || '<p class="text-gray-600 text-xs italic">Sin jugadores registrados</p>';
+                    `;
+                }).join('') || '<p class="text-gray-600 text-xs italic">Sin jugadores registrados</p>';
 
                 const capTel = eq.capitan?.telefono || '';
                 const waNumber = capTel.replace(/[^0-9]/g, '');
@@ -1746,9 +1778,15 @@
                                         </p>
                                     </div>
                                 </div>
-                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 ${badgeCls}">
-                                    ${estado}
-                                </span>
+                                <div class="flex flex-col items-end gap-1 shrink-0">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeCls}">
+                                        ${estado}
+                                    </span>
+                                    ${tieneCuentasExt ? `
+                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-500/40" title="Contiene jugadores con cuenta main o en otra región">
+                                        <i class="fas fa-globe-americas mr-0.5"></i> Cuentas Ext.
+                                    </span>` : ''}
+                                </div>
                             </div>
 
                             <!-- Capitán -->
@@ -1762,7 +1800,10 @@
 
                             <!-- Resumen Roster -->
                             <div class="py-2.5">
-                                <span class="text-[9px] uppercase font-black text-gray-500 block mb-1.5">Roster Titular</span>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-[9px] uppercase font-black text-gray-500 block">Roster Titular</span>
+                                    ${tieneCuentasExt ? '<span class="text-[9px] font-bold text-amber-400 flex items-center gap-1"><i class="fas fa-info-circle"></i> Región Ext. Detectada</span>' : ''}
+                                </div>
                                 <div class="bg-black/40 p-2 rounded-xl border border-gray-800/60 space-y-0.5">
                                     ${titularesHTML}
                                 </div>
@@ -1976,12 +2017,18 @@
                         </div>
 
                         <!-- Fila 1: Identificación del Jugador -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
                             <div>
                                 <label class="block text-[9px] font-bold text-amber-400 uppercase mb-1">
                                     <i class="fas fa-crosshairs mr-1"></i> Riot ID LAS (#TAG)
                                 </label>
                                 <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Ej: Invoker#LAS" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-amber-300 uppercase mb-1">
+                                    <i class="fas fa-globe-americas mr-1"></i> Main / Otra Región
+                                </label>
+                                <input type="text" id="edit-t-${idx}-riotmain" value="${t.riotIdMain || ''}" placeholder="Ej: Shadow#BR" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-amber-200 font-mono text-xs outline-none focus:border-amber-400">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
@@ -2044,8 +2091,12 @@
         function renderFichaJugador(j, esTitular) {
             const opggUrl = j.opggLas || (j.riotIdLas ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
             const opggLink = opggUrl 
-                ? `<a href="${opggUrl}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-3 py-1 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-chart-line"></i> OP.GG</a>` 
+                ? `<a href="${opggUrl}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-chart-line"></i> OP.GG LAS</a>` 
                 : '';
+
+            const tieneMain = j.riotIdMain && j.riotIdMain.trim();
+            const opggMainLink = j.opggMain ? `
+                <a href="${j.opggMain}" target="_blank" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : '';
 
             const posColorMap = {
                 'TOP': { badge: 'text-blue-400 border-blue-500/30 bg-blue-950/40', icon: 'fas fa-shield-alt text-blue-400' },
@@ -2071,11 +2122,29 @@
                             ${opggLink}
                         </div>
 
-                        <!-- Identidad Riot ID -->
-                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Riot ID LAS</p>
-                        <div class="flex items-center justify-between gap-2 mb-2">
-                            <p class="text-base sm:text-lg font-black text-white font-mono leading-tight break-all">${j.riotIdLas || '--'}</p>
-                            ${j.riotIdLas ? `<button type="button" onclick="copiarTexto('${j.riotIdLas}', 'Riot ID')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID"><i class="fas fa-copy"></i></button>` : ''}
+                        <!-- Identidad Riot ID LAS -->
+                        <div class="mb-2">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Riot ID LAS (Oficial de Juego)</p>
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-base sm:text-lg font-black text-white font-mono leading-tight break-all">${j.riotIdLas || '--'}</p>
+                                ${j.riotIdLas ? `<button type="button" onclick="copiarTexto('${j.riotIdLas}', 'Riot ID LAS')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID LAS"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Cuenta Main / Otra Región (Seguimiento Staff) -->
+                        <div class="p-2.5 rounded-xl ${tieneMain ? 'bg-amber-950/30 border border-amber-500/40' : 'bg-[#080808] border border-gray-800'} mb-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[9px] uppercase font-black ${tieneMain ? 'text-amber-400' : 'text-gray-500'} tracking-wider flex items-center gap-1.5">
+                                    <i class="fas fa-globe-americas"></i> Cuenta Main / Otra Región
+                                </span>
+                                ${opggMainLink}
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-xs sm:text-sm font-black font-mono leading-tight break-all ${tieneMain ? 'text-amber-200' : 'text-gray-500 italic'}">
+                                    ${tieneMain ? j.riotIdMain : 'Sin cuenta externa declarada (juega con LAS)'}
+                                </p>
+                                ${tieneMain ? `<button type="button" onclick="copiarTexto('${j.riotIdMain}', 'Riot ID Main')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID Main"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
                         </div>
 
                         <!-- Sub-panel de Datos -->
@@ -2261,6 +2330,7 @@
             for (let i = 0; i < 5; i++) {
                 const prev = (equipoSeleccionado.titulares && equipoSeleccionado.titulares[i]) ? equipoSeleccionado.titulares[i] : {};
                 const rRiot = document.getElementById(`edit-t-${i}-riot`)?.value.trim() || '';
+                const rRiotMain = document.getElementById(`edit-t-${i}-riotmain`)?.value.trim() || '';
                 const rNom = document.getElementById(`edit-t-${i}-nombre`)?.value.trim() || '';
                 const rCiudad = document.getElementById(`edit-t-${i}-ciudad`)?.value.trim() || '';
                 const rSoloQ = document.getElementById(`edit-t-${i}-soloeo`)?.value.trim() || '';
@@ -2273,13 +2343,15 @@
                     posicion: posNames[i],
                     numero: i + 1,
                     riotIdLas: rRiot,
+                    riotIdMain: rRiotMain,
                     nombreCi: rNom,
                     ciudad: rCiudad || prev.ciudad || '',
                     rangoSoloQ: rSoloQ,
                     rangoFlex: rFlex,
                     rolSecundario: rRolSec,
                     discord: rDisc,
-                    opggLas: rRiot ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(rRiot.replace('#', '-'))}` : prev.opggLas
+                    opggLas: rRiot ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(rRiot.replace('#', '-'))}` : prev.opggLas,
+                    opggMain: prev.opggMain || ''
                 });
             }
 
