@@ -466,8 +466,7 @@
                 loop 
                 playsinline 
                 preload="auto"
-                poster="assets/BARON.webp"
-                class="w-full h-full object-cover">
+                class="w-full h-full object-cover bg-black">
                 <source src="assets/v4Hero.mp4" type="video/mp4">
             </video>
         </div>
@@ -724,12 +723,15 @@
             <!-- Contenedor del Slideshow de Sponsors (+30% Escala, Pre-renderizado para Cero Parpadeos) -->
             <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-2 md:py-4 px-2 md:px-4">
                 <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[360px] md:min-h-[280px]">
-                    <a href="https://www.instagram.com/voltbolivia" target="_blank" rel="noopener noreferrer" class="w-full md:w-[620px] lg:w-[640px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar VOLT">
+                    <a href="https://www.instagram.com/voltbolivia" target="_blank" rel="noopener noreferrer" class="w-full md:w-[520px] lg:w-[560px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar VOLT">
                         <img src="assets/BARON.webp" fetchpriority="high" decoding="async" alt="VOLT" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_14px_32px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='assets/BARON.png'">
                     </a>
                     <div class="text-left w-full min-h-[140px] flex flex-col justify-center">
-                        <p class="text-sm md:text-base font-semibold tracking-wider text-gray-400 mb-2">Barón Nashor traído a ustedes gracias a VOLT...</p>
-                        <h3 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic uppercase leading-none tracking-tighter text-white mb-3 md:mb-4">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span> QUE DEFINE CAMPEONES...</h3>
+                        <p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">Barón Nashor traído a ustedes gracias a VOLT...</p>
+                        <h3 class="text-2xl sm:text-3xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.08] tracking-tighter text-white mb-3 md:mb-4">
+                            <span class="block">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span></span>
+                            <span class="block">QUE DEFINE CAMPEONES...</span>
+                        </h3>
                         <p class="text-xs md:text-sm text-gray-400 font-bold tracking-widest uppercase mb-4 md:mb-5">VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends...</p>
                         <div>
                             <a href="https://www.instagram.com/voltbolivia" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40">
@@ -885,12 +887,6 @@
                 </div>
             </div>
 
-            <!-- Fila Intermedia: Disclaimer Oficial de Riot Games (Norma Internacional) -->
-            <div class="py-6 border-b border-white/10 text-[11px] text-slate-500 leading-relaxed">
-                <p>
-                    <strong class="text-slate-400">Aviso Legal y Comunitario:</strong> La Liga Boliviana de League of Legends (LBL Esports) es una competición organizada de forma autónoma bajo las directrices y políticas de torneos comunitarios de Riot Games, Inc. Este evento no está respaldado, patrocinado ni administrado directamente por Riot Games, Inc. ni por ninguna de sus subsidiarias. <span class="text-slate-400">League of Legends™</span> y <span class="text-slate-400">Riot Games™</span> son marcas comerciales o marcas registradas de Riot Games, Inc. Todos los derechos reservados a sus respectivos propietarios.
-                </p>
-            </div>
 
             <!-- Fila Inferior: Copyright, Créditos y Acceso Staff -->
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
@@ -963,6 +959,11 @@
         window.scrollTo(0, 0);
         window.addEventListener('beforeunload', () => {
             window.scrollTo(0, 0);
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!window.location.hash) {
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            }
         });
 
         // Navegación suave por secciones sin alterar la URL (evita hashes como #clasificaciones)
@@ -1120,7 +1121,7 @@
                 image: "assets/BARON.webp",
                 imageFallback: "assets/BARON.png",
                 sub: "Barón Nashor traído a ustedes gracias a VOLT...",
-                title: 'DESTAPA LA <span class="text-yellow-400">ENERGÍA</span> QUE DEFINE CAMPEONES...',
+                title: '<span class="block">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span></span><span class="block">QUE DEFINE CAMPEONES...</span>',
                 desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends...",
                 barGradient: "linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8)",
                 tabActiveClasses: "border-cyan-400 bg-cyan-500/15 text-white",
@@ -1135,7 +1136,7 @@
                 image: "assets/pentakill.webp",
                 imageFallback: "assets/pentakill.png",
                 sub: "Legion Store presenta el Pentakill en la Grieta...",
-                title: '<span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
+                title: '<span class="block"><span class="text-red-500">PENTAKILL</span> CON EL PODER DE</span><span class="block"><span class="text-cyan-400">LEGION STORE</span>...</span>',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
                 tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
@@ -1150,7 +1151,7 @@
                 image: "assets/legion_store.webp",
                 imageFallback: "assets/legion_store.png",
                 sub: "Legion Store presenta el Exterminio definitivo...",
-                title: '<span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
+                title: '<span class="block"><span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR</span><span class="block"><span class="text-amber-400">EQUIPAMIENTO</span>...</span>',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
                 tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
@@ -1165,7 +1166,7 @@
                 image: "assets/ICONIC3.webp",
                 imageFallback: "assets/ICONIC3.png",
                 sub: "Moda Urbana Oficial de la LBL...",
-                title: 'PARA SER CAMPEÓN TIENES QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
+                title: '<span class="block">PARA SER CAMPEÓN TIENES</span><span class="block">QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span></span>',
                 desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL",
                 barGradient: "linear-gradient(90deg, #94a3b8, #ffffff, #e2e8f0)",
                 tabActiveClasses: "border-white/80 bg-white/15 text-white",
@@ -1180,7 +1181,7 @@
                 image: "assets/AQM.webp",
                 imageFallback: "assets/AQM.png",
                 sub: "Aquí me Quedo 📍 presenta...",
-                title: 'BIENVENIDOS A LA <span class="text-red-500">GRIETA DEL INVOCADOR</span>',
+                title: '<span class="block">BIENVENIDOS A LA</span><span class="block text-red-500">GRIETA DEL INVOCADOR</span>',
                 desc: "Aquí me Quedo LAN CENTER - Patrocinador Oficial de la LBL",
                 barGradient: "linear-gradient(90deg, #be123c, #fb7185, #f43f5e)",
                 tabActiveClasses: "border-rose-400 bg-rose-500/15 text-white",
@@ -1244,17 +1245,17 @@
             
             // Imagen limpia escalada (+30%), con animación hover de zoom suave y enlace oficial
             const imgHTML = `
-                <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="w-full md:w-[620px] lg:w-[640px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar ${data.brand}">
+                <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="w-full md:w-[520px] lg:w-[560px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar ${data.brand}">
                     <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_14px_32px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
                 </a>`;
 
-            const subHTML = data.sub ? `<p class="text-sm md:text-base font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>` : '';
+            const subHTML = data.sub ? `<p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>` : '';
 
             const contentHTML = `
                 ${imgHTML}
                 <div class="text-left w-full min-h-[140px] flex flex-col justify-center">
                     ${subHTML}
-                    <h3 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic uppercase leading-none tracking-tighter text-white mb-3 md:mb-4">${data.title}</h3>
+                    <h3 class="text-2xl sm:text-3xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.08] tracking-tighter text-white mb-3 md:mb-4">${data.title}</h3>
                     <p class="text-xs md:text-sm text-gray-400 font-bold tracking-widest uppercase mb-4 md:mb-5">${data.desc}</p>
                     <div>
                         <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none ${data.ctaClasses}">
