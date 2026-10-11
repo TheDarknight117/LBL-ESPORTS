@@ -396,60 +396,107 @@
     z-index: 0;
 }
 
+/* Matriz táctica de micro-puntos (Dot Grid Blueprint) */
+.hud-dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1.2px, transparent 1.2px);
+    background-size: 36px 36px;
+    opacity: 0.55;
+    mask-image: radial-gradient(ellipse 85% 65% at 50% 50%, black 45%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 65% at 50% 50%, black 45%, transparent 95%);
+    pointer-events: none;
+}
+
 /* Cruces tácticas y miras */
 .hud-crosshair {
     position: absolute;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 13px;
-    font-weight: 300;
-    color: rgba(56, 189, 248, 0.28);
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(56, 189, 248, 0.52);
     user-select: none;
     line-height: 1;
     pointer-events: none;
 }
 
-/* Marcadores angulares de esquina */
+/* Marcadores angulares de esquina más nítidos (+20% opacidad) */
 .hud-bracket {
     position: absolute;
-    width: 14px;
-    height: 14px;
-    border-color: rgba(168, 85, 247, 0.35);
+    width: 22px;
+    height: 22px;
+    border-color: rgba(168, 85, 247, 0.6);
     border-style: solid;
     pointer-events: none;
 }
-.hud-bracket-tl { top: 18px; left: 18px; border-width: 1px 0 0 1px; }
-.hud-bracket-tr { top: 18px; right: 18px; border-width: 1px 1px 0 0; }
-.hud-bracket-bl { bottom: 18px; left: 18px; border-width: 0 0 1px 1px; }
-.hud-bracket-br { bottom: 18px; right: 18px; border-width: 0 1px 1px 0; }
+.hud-bracket-tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+.hud-bracket-tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
+.hud-bracket-bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; }
+.hud-bracket-br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
 
-/* Línea de escaneo radar táctico sutil */
-.hud-radar-scan {
+
+
+/* Micro-marcas técnicas estilo Valorant / Riot Esports */
+.hud-tech-badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    background: rgba(8, 47, 73, 0.45);
+    color: rgba(186, 230, 253, 0.9);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
+}
+
+.hud-tech-badge-purple {
+    border-color: rgba(168, 85, 247, 0.5);
+    background: rgba(59, 7, 100, 0.45);
+    color: rgba(233, 213, 255, 0.9);
+}
+
+/* Reglas milimétricas de escala táctica */
+.hud-tick-ruler {
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.08) 20%, rgba(168, 85, 247, 0.22) 50%, rgba(56, 189, 248, 0.08) 80%, transparent 100%);
-    box-shadow: 0 0 14px rgba(168, 85, 247, 0.2);
-    animation: hudRadarScan 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    user-select: none;
     pointer-events: none;
+    opacity: 0.65;
+}
+.hud-tick {
+    width: 8px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.4);
+}
+.hud-tick-lg {
+    width: 15px;
+    height: 1.5px;
+    background: rgba(56, 189, 248, 0.85);
 }
 
-@keyframes hudRadarScan {
-    0% { top: 6%; opacity: 0; }
-    12% { opacity: 0.85; }
-    50% { opacity: 0.45; }
-    88% { opacity: 0.85; }
-    100% { top: 94%; opacity: 0; }
+/* Micro-radar concéntrico giratorio */
+.hud-spin-reticle {
+    animation: hudSpin 36s linear infinite;
 }
 
-/* Pulso y respiración de telemetría */
+@keyframes hudSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Pulso y respiración de telemetría calibrado (+20% opacidad) */
 .hud-pulse-glow {
     animation: hudPulseGlow 3.5s ease-in-out infinite alternate;
 }
 
 @keyframes hudPulseGlow {
-    0% { opacity: 0.45; }
-    100% { opacity: 0.95; text-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+    0% { opacity: 0.7; }
+    100% { opacity: 1; text-shadow: 0 0 10px rgba(56, 189, 248, 0.55); }
 }
 
 

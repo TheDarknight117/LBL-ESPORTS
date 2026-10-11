@@ -765,54 +765,112 @@
         <!-- Luz focal ambiental violeta/hextech -->
         <div class="glow-spot-ambient glow-purple"></div>
 
-        <!-- FONDO HUD TÁCTICO: TELEMETRÍA, COORDENADAS Y RADAR (ESTILO RIOT BROADCAST) -->
+        <!-- FONDO HUD TÁCTICO: TELEMETRÍA, COORDENADAS Y DETALLES ESTILO VALORANT -->
         <div class="staff-hud-backdrop">
-            <!-- Marcadores angulares de esquina -->
+            <!-- Malla táctica de micro-puntos en todo el fondo (Dot Grid) -->
+            <div class="hud-dot-grid"></div>
+
+            <!-- Marcadores angulares de esquina más nítidos -->
             <div class="hud-bracket hud-bracket-tl"></div>
             <div class="hud-bracket hud-bracket-tr"></div>
             <div class="hud-bracket hud-bracket-bl"></div>
             <div class="hud-bracket hud-bracket-br"></div>
 
-            <!-- Línea de escaneo radar táctico sutil -->
-            <div class="hud-radar-scan"></div>
-
-            <!-- Cruces tácticas de calibración -->
+            <!-- Cruces tácticas de calibración esparcidas -->
             <span class="hud-crosshair top-8 left-12 hidden md:block">+</span>
             <span class="hud-crosshair top-8 right-12 hidden md:block">+</span>
             <span class="hud-crosshair bottom-10 left-12 hidden md:block">+</span>
             <span class="hud-crosshair bottom-10 right-12 hidden md:block">+</span>
+            <span class="hud-crosshair top-1/2 left-16 hidden xl:block opacity-70">+</span>
+            <span class="hud-crosshair top-1/2 right-16 hidden xl:block opacity-70">+</span>
 
-            <!-- Esquina Superior Izquierda: Coordenadas y Ubicación de Bolivia -->
-            <div class="absolute top-4 sm:top-6 left-4 sm:left-7 flex flex-col gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-cyan-400/50 uppercase select-none hud-pulse-glow">
+            <!-- Flechas y coordenadas métricas esparcidas -->
+            <span class="absolute top-16 left-1/3 text-[9px] font-mono text-cyan-400/60 hidden lg:block select-none">▲ [X: 412]</span>
+            <span class="absolute top-16 right-1/3 text-[9px] font-mono text-purple-400/60 hidden lg:block select-none">▼ [Y: 890]</span>
+
+            <!-- Esquina Superior Izquierda: Coordenadas y Ubicación de Bolivia (+20% opacidad) -->
+            <div class="absolute top-4 sm:top-6 left-4 sm:left-7 flex flex-col gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-cyan-400/70 uppercase select-none hud-pulse-glow">
                 <div class="flex items-center gap-2">
                     <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
                     </span>
                     <span>LOC // 16.5000° S, 68.1500° W</span>
                 </div>
-                <span class="text-[8px] sm:text-[9px] text-slate-400/40 pl-4">REGION // LATAM-SOUTH · BOLIVIA</span>
+                <span class="text-[8px] sm:text-[9px] text-slate-400/60 pl-4">REGION // LATAM-SOUTH · BOLIVIA</span>
             </div>
 
-            <!-- Esquina Superior Derecha: Índice de Sección y Estado de Gobernanza -->
-            <div class="absolute top-4 sm:top-6 right-4 sm:right-7 flex flex-col items-end gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-purple-400/50 uppercase select-none hud-pulse-glow">
+            <!-- Centro Superior Izquierdo: Badges técnicos estilo Valorant -->
+            <div class="absolute top-6 left-[28%] hidden xl:flex items-center gap-2 select-none">
+                <span class="hud-tech-badge">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>CALIB: 99.8%</span>
+                </span>
+                <span class="text-[8px] font-mono text-slate-400/55">SEC_05A</span>
+            </div>
+
+            <!-- Centro Superior Derecho: Badges de Gobernanza estilo Valorant -->
+            <div class="absolute top-6 right-[28%] hidden xl:flex items-center gap-2 select-none">
+                <span class="text-[8px] font-mono text-purple-400/70">SEC // CORE</span>
+                <span class="hud-tech-badge-purple">
+                    <i class="fas fa-shield-alt text-[8px]"></i>
+                    <span>BOARD_ACTIVE</span>
+                </span>
+            </div>
+
+            <!-- Esquina Superior Derecha: Índice de Sección y Estado de Gobernanza (+20% opacidad) -->
+            <div class="absolute top-4 sm:top-6 right-4 sm:right-7 flex flex-col items-end gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-purple-400/75 uppercase select-none hud-pulse-glow">
                 <span class="flex items-center gap-1.5">
                     <span>SEC.05 // MANAGEMENT & DIRECTORS</span>
-                    <span class="w-1.5 h-1.5 rounded-sm bg-purple-400/60 animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-sm bg-purple-400 animate-pulse"></span>
                 </span>
-                <span class="text-[8px] sm:text-[9px] text-slate-400/40">STATUS // ACTIVE GOVERNANCE</span>
+                <span class="text-[8px] sm:text-[9px] text-slate-400/60">STATUS // ACTIVE GOVERNANCE</span>
             </div>
 
-            <!-- Esquina Inferior Izquierda: Telemetría de Operaciones (Visible en Desktop/Tablet) -->
-            <div class="absolute bottom-5 left-7 hidden md:flex flex-col gap-0.5 text-[9px] font-mono tracking-widest text-slate-400/35 uppercase select-none">
+            <!-- Lateral Izquierdo (Centro): Regla táctica milimétrica vertical -->
+            <div class="hud-tick-ruler left-4 sm:left-6 top-1/2 -translate-y-1/2 hidden lg:flex">
+                <span class="hud-tick-lg"></span>
+                <span class="hud-tick"></span>
+                <span class="hud-tick"></span>
+                <span class="hud-tick-lg"></span>
+                <span class="hud-tick"></span>
+                <span class="hud-tick"></span>
+                <span class="hud-tick-lg"></span>
+                <span class="text-[8px] font-mono text-cyan-400/70 mt-1 pl-0.5">AXIS_Y</span>
+            </div>
+
+            <!-- Lateral Derecho (Centro): Micro-radar concéntrico giratorio estilo Champions -->
+            <div class="absolute top-1/2 -translate-y-1/2 right-6 hidden lg:flex flex-col items-center gap-1.5 opacity-80 select-none">
+                <svg class="w-7 h-7 text-purple-400 hud-spin-reticle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                    <circle cx="12" cy="12" r="10" stroke-opacity="0.45" stroke-dasharray="2 3"/>
+                    <circle cx="12" cy="12" r="5" stroke-opacity="0.75"/>
+                    <line x1="12" y1="2" x2="12" y2="7"/>
+                    <line x1="12" y1="17" x2="12" y2="22"/>
+                    <line x1="2" y1="12" x2="7" y2="12"/>
+                    <line x1="17" y1="12" x2="22" y2="12"/>
+                </svg>
+                <span class="text-[7.5px] font-mono tracking-widest text-purple-300/80 uppercase">RADAR // 24Hz</span>
+            </div>
+
+            <!-- Esquina Inferior Izquierda: Telemetría de Operaciones (+20% opacidad) -->
+            <div class="absolute bottom-5 left-7 hidden md:flex flex-col gap-0.5 text-[9px] font-mono tracking-widest text-slate-400/55 uppercase select-none">
                 <span>DIR.OPS // LBL_EXEC_BOARD</span>
                 <span>COMMISSION // PROTOCOL VER.2026</span>
             </div>
 
-            <!-- Esquina Inferior Derecha: Matriz de Retícula (Visible en Desktop/Tablet) -->
-            <div class="absolute bottom-5 right-7 hidden md:flex items-center gap-2 text-[9px] font-mono tracking-wider text-slate-400/35 uppercase select-none">
+            <!-- Barra de Telemetría Inferior Central (Estilo Valorant HUD) -->
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 hidden md:flex items-center gap-4 text-[8px] sm:text-[9px] font-mono tracking-wider text-slate-400/60 uppercase select-none">
+                <span>SIG: ■■■■□</span>
+                <span class="text-cyan-400/50">•</span>
+                <span>CHAMPIONSHIP CIRCUIT 2026</span>
+                <span class="text-cyan-400/50">•</span>
+                <span>PKT_STREAM: OK</span>
+            </div>
+
+            <!-- Esquina Inferior Derecha: Matriz de Retícula (+20% opacidad) -->
+            <div class="absolute bottom-5 right-7 hidden md:flex items-center gap-2 text-[9px] font-mono tracking-wider text-slate-400/55 uppercase select-none">
                 <span>GRID.REF // 84-77-ALPHA</span>
-                <span class="text-cyan-400/40 font-bold">+</span>
+                <span class="text-cyan-400/60 font-bold">+</span>
             </div>
         </div>
 
