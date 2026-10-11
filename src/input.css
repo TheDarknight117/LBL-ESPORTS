@@ -299,24 +299,37 @@
    ESTRUCTURA DE AFICHE POR SECCIONES (FULL-VIEWPORT POSTER SECTIONS)
    ========================================================================== */
 .section-afiche {
-    min-height: calc(100svh - 68px);
+    min-height: calc(100svh - 60px);
+    min-height: calc(100dvh - 60px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: clamp(24px, 4.5vh, 48px);
-    padding-bottom: clamp(24px, 4.5vh, 48px);
-    scroll-margin-top: 68px;
+    padding-top: clamp(14px, 2.5vh, 28px);
+    padding-bottom: clamp(14px, 2.5vh, 28px);
+    scroll-margin-top: 60px;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
     box-sizing: border-box;
 }
 
+@media (min-width: 768px) {
+    .section-afiche {
+        min-height: calc(100vh - 68px);
+        min-height: calc(100dvh - 68px);
+        scroll-margin-top: 68px;
+        padding-top: clamp(20px, 3.5vh, 40px);
+        padding-bottom: clamp(20px, 3.5vh, 40px);
+    }
+}
+
 @media (max-width: 768px) {
     .section-afiche {
-        min-height: auto;
-        padding-top: clamp(28px, 5vh, 48px);
-        padding-bottom: clamp(28px, 5vh, 48px);
+        min-height: calc(100svh - 60px);
+        min-height: calc(100dvh - 60px);
+        padding-top: clamp(12px, 2vh, 22px);
+        padding-bottom: clamp(12px, 2vh, 22px);
+        justify-content: center;
     }
 }
 

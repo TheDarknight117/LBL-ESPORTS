@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=191">
-    <script type="module" src="/app-version.js?v=191"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=192">
+    <script type="module" src="/app-version.js?v=192"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -174,23 +174,35 @@
             scroll-behavior: smooth;
         }
         .section-afiche {
-            min-height: calc(100svh - 68px);
+            min-height: calc(100svh - 60px);
+            min-height: calc(100dvh - 60px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
-            padding-top: clamp(24px, 4.5vh, 48px);
-            padding-bottom: clamp(24px, 4.5vh, 48px);
-            scroll-margin-top: 68px;
+            padding-top: clamp(14px, 2.5vh, 28px);
+            padding-bottom: clamp(14px, 2.5vh, 28px);
+            scroll-margin-top: 60px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             box-sizing: border-box;
         }
+        @media (min-width: 768px) {
+            .section-afiche {
+                min-height: calc(100vh - 68px);
+                min-height: calc(100dvh - 68px);
+                scroll-margin-top: 68px;
+                padding-top: clamp(20px, 3.5vh, 40px);
+                padding-bottom: clamp(20px, 3.5vh, 40px);
+            }
+        }
         @media (max-width: 768px) {
             .section-afiche {
-                min-height: auto;
-                padding-top: clamp(28px, 5vh, 48px);
-                padding-bottom: clamp(28px, 5vh, 48px);
+                min-height: calc(100svh - 60px);
+                min-height: calc(100dvh - 60px);
+                padding-top: clamp(12px, 2vh, 22px);
+                padding-bottom: clamp(12px, 2vh, 22px);
+                justify-content: center;
             }
         }
         /* Botón indicador de navegación entre afiches (centrado, protegido contra solapamiento) */
@@ -293,8 +305,8 @@
             .staff-accordion-wrap {
                 width: 100% !important;
                 max-width: 100% !important;
-                height: 280px !important;
-                gap: 0.35rem !important;
+                height: clamp(200px, 30vh, 230px) !important;
+                gap: 0.3rem !important;
                 padding: 0 4px;
                 touch-action: manipulation;
             }
@@ -468,7 +480,7 @@
     <!-- ====================================================================
          AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
          ==================================================================== -->
-    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden !py-4 md:!py-6 lg:!py-8">
+    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden">
         <!-- CAPA DE VIDEO CINEMATOGRÁFICO DE FONDO -->
         <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
             <video 
@@ -485,17 +497,14 @@
         <!-- Luz focal ambiental azul centrado -->
         <div class="glow-spot-ambient glow-cyan"></div>
         
-        <div class="max-w-6xl mx-auto w-full relative z-10 flex flex-col items-center">
-            <!-- Espacio en blanco reservado para preservar alineación del Hero en desktop -->
-            <div class="hidden sm:block h-6 md:h-8 mb-2 md:mb-4 pointer-events-none select-none" aria-hidden="true"></div>
-
+        <div class="max-w-5xl mx-auto w-full relative z-10 flex flex-col items-center">
             <div class="relative mb-2 sm:mb-3 md:mb-4 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
                 <div class="hero-halo-light"></div>
-                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-20 sm:h-28 md:h-40 lg:h-48 w-auto object-contain" alt="Logo LBL Central">
+                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-20 xs:h-24 sm:h-28 md:h-36 lg:h-44 w-auto object-contain" alt="Logo LBL Central">
             </div>
 
             <!-- TÍTULO EN 2 LÍNEAS EXACTAS (RESPONSIVE MOBILE FIRST) -->
-            <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-[5.2rem] xl:text-[6.2rem] font-black uppercase italic tracking-tighter mb-2 sm:mb-3 md:mb-4 fade-in-up glow-text leading-[1.04]" style="animation-delay: 0.3s;">
+            <h1 class="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[5.2rem] xl:text-[6rem] font-black uppercase italic tracking-tighter mb-2 sm:mb-3 md:mb-4 fade-in-up glow-text leading-[1.04]" style="animation-delay: 0.3s;">
                 <span class="block">LIGA BOLIVIANA</span>
                 <span class="block whitespace-nowrap">DE <span class="text-gradient-blue inline-block pr-[0.25em] -mr-[0.25em]">LEAGUE OF LEGENDS</span></span>
             </h1>
@@ -505,26 +514,27 @@
             </p>
 
             <div class="w-full px-2 z-10 relative">
-                
-                <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3.5 md:gap-4 fade-in-up mb-2 w-full max-w-xs sm:max-w-none mx-auto" style="animation-delay: 0.5s;">
-                    <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 sm:px-7 md:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-2.5 sm:gap-3 relative overflow-hidden group cursor-pointer border border-blue-400/40">
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-2.5 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto mb-2 sm:mb-3 fade-in-up" style="animation-delay: 0.5s;">
+                    <button onclick="abrirAdvertencia()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 flex items-center justify-center gap-2.5 relative overflow-hidden group cursor-pointer border border-blue-400/40">
                         <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
                         <i class="fas fa-ticket-alt text-xs sm:text-sm"></i> INSCRIBIR EQUIPO
                     </button>
-                    <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:brightness-110 px-5 sm:px-7 md:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-2.5 sm:gap-3 relative overflow-hidden group cursor-pointer border border-white/10">
-                        <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                        <i class="fas fa-users text-xs sm:text-sm"></i> VER ROSTERS
-                    </a>
-                    <a href="torneos" class="px-5 sm:px-7 md:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-2.5 sm:gap-3 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
-                        <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                        <i class="fas fa-trophy text-xs sm:text-sm" style="color: #000000 !important;"></i> 
-                        <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
-                    </a>
+                    <div class="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:gap-4">
+                        <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:brightness-110 px-4 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2.5 relative overflow-hidden group cursor-pointer border border-white/10">
+                            <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                            <i class="fas fa-users text-xs sm:text-sm"></i> VER ROSTERS
+                        </a>
+                        <a href="torneos" class="px-4 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2.5 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
+                            <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                            <i class="fas fa-trophy text-xs sm:text-sm" style="color: #000000 !important;"></i> 
+                            <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
-            <div class="afiche-scroll-wrap fade-in-up mt-2 sm:mt-4 md:mt-6" style="animation-delay: 0.6s;">
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6" style="animation-delay: 0.6s;">
                 <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
                     <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
                         Explora la Liga
@@ -703,17 +713,16 @@
         </div>
 
         <!-- CONTENIDO PRINCIPAL EN PLANO SUPERIOR (Z-20) POR ENCIMA DE BRACKETS Y FONDO -->
-        <div class="max-w-5xl mx-auto w-full relative z-20">
-            <div class="text-center mb-4 sm:mb-6 md:mb-8">
-                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-2 sm:mb-3">
+        <div class="max-w-5xl mx-auto w-full relative z-20 flex flex-col items-center">
+            <div class="text-center mb-3 sm:mb-5 md:mb-7">
+                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2">
                     <i class="fas fa-trophy text-[9px]"></i> TORNEOS DE CLASIFICACIÓN
                 </div>
-                <h2 class="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-2 sm:mb-3">
+                <h2 class="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-1.5 sm:mb-2">
                     NUESTRAS <span class="text-gradient-cyan">CLASIFICACIONES</span>
                 </h2>
-                <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-                    ¿Quieres buscar equipo o algún jugador?<br class="hidden sm:inline">
-                    Accede a la información de nuestros torneos clasificatorios oficiales.
+                <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed px-2">
+                    ¿Quieres buscar equipo o algún jugador? Accede a la información de nuestros torneos clasificatorios oficiales.
                 </p>
             </div>
             
@@ -721,53 +730,53 @@
             <div class="relative w-full overflow-hidden mask-gradient py-1 sm:py-2">
                 <div id="marquee-track" class="flex flex-row gap-4 sm:gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-3 sm:pb-4 pt-1 sm:pt-2 touch-pan-y overscroll-x-contain">
                     <!-- Set 1 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
-                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                     
                     <!-- Set 2 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
-                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
 
                     <!-- Set 3 (Amplitud para monitores Ultra-Wide) -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
-                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
 
                     <!-- Set 4 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-48 sm:w-64 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
-                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-8 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                 </div>
             </div>
 
             <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
-            <div class="afiche-scroll-wrap fade-in-up mt-2 sm:mt-4 md:mt-6">
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
                 <a onclick="scrollToSection('circuito')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Circuito Competitivo">
                     <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
                         Circuito Oficial
@@ -856,7 +865,7 @@
             </div>
 
             <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
-            <div class="afiche-scroll-wrap fade-in-up mt-2 sm:mt-4 md:mt-6">
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
                 <a onclick="scrollToSection('sponsors')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Sponsors">
                     <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
                         Nuestros Sponsors
@@ -937,7 +946,7 @@
             </div>
 
             <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
-            <div class="afiche-scroll-wrap fade-in-up mt-2 sm:mt-4 md:mt-6">
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
                 <a onclick="scrollToSection('staff')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Staff">
                     <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
                         Directiva & Staff
@@ -1095,7 +1104,7 @@
             </div>
 
             <!-- Indicador de scroll: Volver al inicio (Centrado, ordenado y sin solapamiento) -->
-            <div class="afiche-scroll-wrap fade-in-up mt-2 sm:mt-4 md:mt-6">
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
                 <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-blue-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
                     <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-blue-300 transition-colors">
                         Volver al Inicio
