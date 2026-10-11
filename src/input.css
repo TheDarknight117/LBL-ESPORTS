@@ -385,5 +385,73 @@
     background: linear-gradient(180deg, #030712 0%, transparent 16%, transparent 84%, #030712 100%);
 }
 
+/* ==========================================================================
+   ELEMENTOS DE FONDO HUD Y TELEMETRÍA TÁCTICA (SECCIÓN STAFF)
+   ========================================================================== */
+.staff-hud-backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* Cruces tácticas y miras */
+.hud-crosshair {
+    position: absolute;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(56, 189, 248, 0.28);
+    user-select: none;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Marcadores angulares de esquina */
+.hud-bracket {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(168, 85, 247, 0.35);
+    border-style: solid;
+    pointer-events: none;
+}
+.hud-bracket-tl { top: 18px; left: 18px; border-width: 1px 0 0 1px; }
+.hud-bracket-tr { top: 18px; right: 18px; border-width: 1px 1px 0 0; }
+.hud-bracket-bl { bottom: 18px; left: 18px; border-width: 0 0 1px 1px; }
+.hud-bracket-br { bottom: 18px; right: 18px; border-width: 0 1px 1px 0; }
+
+/* Línea de escaneo radar táctico sutil */
+.hud-radar-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.08) 20%, rgba(168, 85, 247, 0.22) 50%, rgba(56, 189, 248, 0.08) 80%, transparent 100%);
+    box-shadow: 0 0 14px rgba(168, 85, 247, 0.2);
+    animation: hudRadarScan 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+}
+
+@keyframes hudRadarScan {
+    0% { top: 6%; opacity: 0; }
+    12% { opacity: 0.85; }
+    50% { opacity: 0.45; }
+    88% { opacity: 0.85; }
+    100% { top: 94%; opacity: 0; }
+}
+
+/* Pulso y respiración de telemetría */
+.hud-pulse-glow {
+    animation: hudPulseGlow 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes hudPulseGlow {
+    0% { opacity: 0.45; }
+    100% { opacity: 0.95; text-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+}
+
+
 
 

@@ -761,9 +761,60 @@
     <!-- ====================================================================
          AFICHE 5: NUESTRO STAFF & COMUNIDAD
          ==================================================================== -->
-    <section id="staff" class="section-afiche w-full px-4 md:px-6 relative z-10">
+    <section id="staff" class="section-afiche w-full px-4 md:px-6 relative z-10 overflow-hidden">
         <!-- Luz focal ambiental violeta/hextech -->
         <div class="glow-spot-ambient glow-purple"></div>
+
+        <!-- FONDO HUD TÁCTICO: TELEMETRÍA, COORDENADAS Y RADAR (ESTILO RIOT BROADCAST) -->
+        <div class="staff-hud-backdrop">
+            <!-- Marcadores angulares de esquina -->
+            <div class="hud-bracket hud-bracket-tl"></div>
+            <div class="hud-bracket hud-bracket-tr"></div>
+            <div class="hud-bracket hud-bracket-bl"></div>
+            <div class="hud-bracket hud-bracket-br"></div>
+
+            <!-- Línea de escaneo radar táctico sutil -->
+            <div class="hud-radar-scan"></div>
+
+            <!-- Cruces tácticas de calibración -->
+            <span class="hud-crosshair top-8 left-12 hidden md:block">+</span>
+            <span class="hud-crosshair top-8 right-12 hidden md:block">+</span>
+            <span class="hud-crosshair bottom-10 left-12 hidden md:block">+</span>
+            <span class="hud-crosshair bottom-10 right-12 hidden md:block">+</span>
+
+            <!-- Esquina Superior Izquierda: Coordenadas y Ubicación de Bolivia -->
+            <div class="absolute top-4 sm:top-6 left-4 sm:left-7 flex flex-col gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-cyan-400/50 uppercase select-none hud-pulse-glow">
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                    </span>
+                    <span>LOC // 16.5000° S, 68.1500° W</span>
+                </div>
+                <span class="text-[8px] sm:text-[9px] text-slate-400/40 pl-4">REGION // LATAM-SOUTH · BOLIVIA</span>
+            </div>
+
+            <!-- Esquina Superior Derecha: Índice de Sección y Estado de Gobernanza -->
+            <div class="absolute top-4 sm:top-6 right-4 sm:right-7 flex flex-col items-end gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-purple-400/50 uppercase select-none hud-pulse-glow">
+                <span class="flex items-center gap-1.5">
+                    <span>SEC.05 // MANAGEMENT & DIRECTORS</span>
+                    <span class="w-1.5 h-1.5 rounded-sm bg-purple-400/60 animate-pulse"></span>
+                </span>
+                <span class="text-[8px] sm:text-[9px] text-slate-400/40">STATUS // ACTIVE GOVERNANCE</span>
+            </div>
+
+            <!-- Esquina Inferior Izquierda: Telemetría de Operaciones (Visible en Desktop/Tablet) -->
+            <div class="absolute bottom-5 left-7 hidden md:flex flex-col gap-0.5 text-[9px] font-mono tracking-widest text-slate-400/35 uppercase select-none">
+                <span>DIR.OPS // LBL_EXEC_BOARD</span>
+                <span>COMMISSION // PROTOCOL VER.2026</span>
+            </div>
+
+            <!-- Esquina Inferior Derecha: Matriz de Retícula (Visible en Desktop/Tablet) -->
+            <div class="absolute bottom-5 right-7 hidden md:flex items-center gap-2 text-[9px] font-mono tracking-wider text-slate-400/35 uppercase select-none">
+                <span>GRID.REF // 84-77-ALPHA</span>
+                <span class="text-cyan-400/40 font-bold">+</span>
+            </div>
+        </div>
 
         <div class="max-w-6xl mx-auto w-full relative z-10">
             <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha -->
