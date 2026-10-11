@@ -474,13 +474,23 @@
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 pt-10 pb-20">
         
         <div class="text-center mb-8">
-            <div class="inline-block px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-4">
-                <i class="fas fa-search-location mr-1"></i> Base de Datos Oficial
+            <!-- 1. Indicador Oficial Centrado en su Propia Línea Superior -->
+            <div class="flex justify-center mb-3">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/30 text-cyan-400 font-black text-[10px] sm:text-[11px] tracking-widest uppercase shadow-[0_0_15px_rgba(6,182,212,0.15)] select-none">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <i class="fas fa-database text-[10px]"></i>
+                    <span>BASE DE DATOS OFICIAL</span>
+                </div>
             </div>
-            <h1 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTROS TORNEOS...</h1>
-            <p class="text-gray-400 text-sm max-w-2xl mx-auto mb-6">
-                ¿Quieres buscar equipo o algún jugador?<br>
-                Accede a la información de nuestros anteriores torneos
+
+            <!-- Título Principal en Bloque Centrado -->
+            <h1 class="block text-3xl sm:text-4xl md:text-5xl font-black italic tracking-tighter uppercase mb-3 text-white">
+                NUESTROS <span class="text-gradient-cyan">TORNEOS...</span>
+            </h1>
+
+            <p class="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-6">
+                ¿Quieres buscar equipo o algún jugador?<br class="hidden sm:inline">
+                Accede a la información de nuestros anteriores torneos.
             </p>
 
             <!-- 2. Barra de Búsquedas e Indicadores Rápidos -->
