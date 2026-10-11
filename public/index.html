@@ -538,141 +538,136 @@
             <!-- Capa 1: Malla Isométrica / Retícula Técnica Sutil -->
             <div class="clasificaciones-iso-grid"></div>
 
-            <!-- Capa 2: Mural Tipográfico Disperso en Contorno Hueco (Outline) -->
+            <!-- Capa 2: Mural de Telemetría Tipográfica en Fuente Técnica de los Bordes (Typewriter) -->
             <div class="clasificaciones-mural-wrap">
                 <!-- 1. LBL ESPORTS (Superior Izquierda) -->
-                <div class="absolute top-4 sm:top-8 left-3 sm:left-12 lg:left-16 mural-outline-text text-3xl sm:text-5xl lg:text-7xl">
-                    LBL ESPORTS
+                <div class="absolute top-4 sm:top-8 left-3 sm:left-12 lg:left-16 mural-terminal-text text-sm sm:text-lg md:text-xl lg:text-2xl">
+                    <span id="mural-text-1">> LBL ESPORTS</span><span class="mural-cursor">_</span>
                 </div>
 
                 <!-- 2. SCOUTING (Superior Derecha) -->
-                <div class="absolute top-6 sm:top-10 right-3 sm:right-12 lg:right-20 mural-outline-text text-4xl sm:text-6xl lg:text-8xl">
-                    SCOUTING
+                <div class="absolute top-6 sm:top-10 right-3 sm:right-12 lg:right-20 mural-terminal-text text-sm sm:text-lg md:text-xl lg:text-2xl">
+                    <span id="mural-text-2">> SCOUTING</span><span class="mural-cursor">_</span>
                 </div>
 
                 <!-- 3. SOMOS PASIÓN (Flanco Central Izquierdo) -->
-                <div class="absolute top-[44%] -translate-y-1/2 left-2 sm:left-8 lg:left-14 mural-outline-text text-2xl sm:text-4xl lg:text-5xl">
-                    SOMOS PASIÓN
+                <div class="absolute top-[44%] -translate-y-1/2 left-2 sm:left-8 lg:left-14 mural-terminal-text text-xs sm:text-base md:text-lg lg:text-xl">
+                    <span id="mural-text-3">// SOMOS PASIÓN</span><span class="mural-cursor">_</span>
                 </div>
 
                 <!-- 4. SOMOS COMPETICIÓN (Flanco Central Derecho) -->
-                <div class="absolute top-[46%] -translate-y-1/2 right-2 sm:right-8 lg:right-14 mural-outline-text text-2xl sm:text-4xl lg:text-5xl">
-                    SOMOS COMPETICIÓN
+                <div class="absolute top-[46%] -translate-y-1/2 right-2 sm:right-8 lg:right-14 mural-terminal-text text-xs sm:text-base md:text-lg lg:text-xl">
+                    <span id="mural-text-4">// SOMOS COMPETICIÓN</span><span class="mural-cursor">_</span>
                 </div>
 
                 <!-- 5. SOMOS LBL (Zona Inferior Central) -->
-                <div class="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 mural-outline-text text-3xl sm:text-5xl lg:text-7xl">
-                    SOMOS LBL
+                <div class="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 mural-terminal-text text-sm sm:text-xl md:text-2xl lg:text-3xl">
+                    <span id="mural-text-5">// SOMOS LBL</span><span class="mural-cursor">_</span>
                 </div>
             </div>
 
-            <!-- Capa 3: Esquema Vectorial Refinado de Brackets Playoffs (Inspirado en torneos.html) -->
+            <!-- Capa 3: Esquema Vectorial Asimétrico (Izquierda: Bracket con flujo punteado | Derecha: Radar y Telemetría HUD) -->
             <svg class="clasificaciones-brackets-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- ══════════════════════════════════════════════
-                     FLANCO IZQUIERDO: CUADRANTE DE PLAYOFFS UPPER/RO8
-                     ══════════════════════════════════════════════ -->
+                <!-- ══════════════════════════════════════════════════════
+                     FLANCO IZQUIERDO: BRACKET CON CONECTORES PUNTEADOS ANIMADOS
+                     ══════════════════════════════════════════════════════ -->
                 <g class="bracket-playoffs-left">
                     <!-- Tarjeta Match 01 (RO8 - Superior) -->
-                    <rect x="30" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <rect x="30" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
                     <line x1="30" y1="153" x2="150" y2="153" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="146" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 01 // RO8</text>
-                    <text x="38" y="169" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED A vs SEED B</text>
+                    <text x="38" y="146" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 01 // RO8</text>
+                    <text x="38" y="169" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED A vs SEED B</text>
 
                     <!-- Tarjeta Match 02 (RO8 - Inferior) -->
-                    <rect x="30" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <rect x="30" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
                     <line x1="30" y1="233" x2="150" y2="233" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="226" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 02 // RO8</text>
-                    <text x="38" y="249" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED C vs SEED D</text>
+                    <text x="38" y="226" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 02 // RO8</text>
+                    <text x="38" y="249" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED C vs SEED D</text>
 
-                    <!-- Conectores Escalonados 90° Estilo torneos.html (Match 01 & 02 -> Semifinales) -->
-                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 150 233 H 195 V 193" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="195" cy="193" r="3" fill="#06b6d4"/>
+                    <!-- Conector Base Sutil (Match 01 & 02 -> Semifinales) -->
+                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 150 233 H 195 V 193" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-                    <!-- Tarjeta Match Semifinales -->
-                    <rect x="230" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <!-- Conector Punteado Animado (Indica la ruta del flujo hacia la box de Semifinales) -->
+                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <path d="M 150 233 H 195 V 193" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <circle cx="195" cy="193" r="3.5" fill="#38bdf8"/>
+
+                    <!-- Tarjeta Match Semifinales A -->
+                    <rect x="230" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.75)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
                     <line x1="230" y1="193" x2="360" y2="193" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="238" y="186" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="238" y="209" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+                    <text x="238" y="186" fill="rgba(56, 189, 248, 0.9)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="238" y="209" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
 
-                    <!-- Tarjeta Match 03 (Lower Bracket o RO8 B) -->
-                    <rect x="30" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <!-- Tarjeta Match 03 (RO8 B - Superior) -->
+                    <rect x="30" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
                     <line x1="30" y1="363" x2="150" y2="363" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="356" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 03 // RO8</text>
-                    <text x="38" y="379" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED E vs SEED F</text>
+                    <text x="38" y="356" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 03 // RO8</text>
+                    <text x="38" y="379" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED E vs SEED F</text>
 
-                    <!-- Tarjeta Match 04 (Lower Bracket o RO8 B) -->
-                    <rect x="30" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <!-- Tarjeta Match 04 (RO8 B - Inferior) -->
+                    <rect x="30" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
                     <line x1="30" y1="443" x2="150" y2="443" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="436" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 04 // RO8</text>
-                    <text x="38" y="459" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED G vs SEED H</text>
+                    <text x="38" y="436" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 04 // RO8</text>
+                    <text x="38" y="459" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED G vs SEED H</text>
 
-                    <!-- Conectores Escalonados Match 03 & 04 -> Semifinal B -->
-                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 150 443 H 195 V 403" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="195" cy="403" r="3" fill="#06b6d4"/>
+                    <!-- Conectores Base Sutiles (Match 03 & 04 -> Semifinal B) -->
+                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 150 443 H 195 V 403" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-                    <rect x="230" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <!-- Conectores Punteados Animados Semifinal B -->
+                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <path d="M 150 443 H 195 V 403" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <circle cx="195" cy="403" r="3.5" fill="#38bdf8"/>
+
+                    <!-- Tarjeta Semifinales B -->
+                    <rect x="230" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.75)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
                     <line x1="230" y1="403" x2="360" y2="403" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="238" y="396" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="238" y="419" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+                    <text x="238" y="396" fill="rgba(56, 189, 248, 0.9)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="238" y="419" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
 
-                    <!-- Conectores de Semifinales -> Final de Conferencia Izquierda -->
-                    <path d="M 360 193 H 405 V 298 H 440" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 360 403 H 405 V 298" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="405" cy="298" r="4" fill="#38bdf8"/>
+                    <!-- Conector de Semifinales -> Gran Final -->
+                    <path d="M 360 193 H 415 V 298 H 455" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 360 403 H 415 V 298" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 360 193 H 415 V 298 H 455" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <path d="M 360 403 H 415 V 298" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <circle cx="415" cy="298" r="4.5" fill="#38bdf8"/>
                 </g>
 
-                <!-- ══════════════════════════════════════════════
-                     FLANCO DERECHO: CUADRANTE DE PLAYOFFS SIMÉTRICO
-                     ══════════════════════════════════════════════ -->
-                <g class="bracket-playoffs-right">
-                    <!-- Tarjeta Match 05 (RO8 - Superior) -->
-                    <rect x="1290" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="1290" y1="153" x2="1410" y2="153" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="1298" y="146" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 05 // RO8</text>
-                    <text x="1298" y="169" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED I vs SEED J</text>
+                <!-- ══════════════════════════════════════════════════════
+                     FLANCO DERECHO: RADAR TÁCTICO & TELEMETRÍA HUD ESPORTS
+                     ══════════════════════════════════════════════════════ -->
+                <g class="radar-telemetry-right">
+                    <!-- Anillos Concéntricos de Radar -->
+                    <circle cx="1240" cy="240" r="105" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1.2" stroke-dasharray="4 4"/>
+                    <circle cx="1240" cy="240" r="75" stroke="rgba(6, 182, 212, 0.35)" stroke-width="1.3"/>
+                    <circle cx="1240" cy="240" r="45" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" stroke-dasharray="2 3"/>
+                    <circle cx="1240" cy="240" r="15" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.4"/>
+                    <circle cx="1240" cy="240" r="3" fill="#38bdf8"/>
 
-                    <!-- Tarjeta Match 06 (RO8 - Inferior) -->
-                    <rect x="1290" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="1290" y1="233" x2="1410" y2="233" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="1298" y="226" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 06 // RO8</text>
-                    <text x="1298" y="249" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED K vs SEED L</text>
+                    <!-- Retícula Cruzada de Ejes X e Y -->
+                    <line x1="1120" y1="240" x2="1360" y2="240" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1"/>
+                    <line x1="1240" y1="120" x2="1240" y2="360" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1"/>
 
-                    <!-- Conectores Escalonados (Match 05 & 06 -> Semifinal) -->
-                    <path d="M 1290 153 H 1245 V 193 H 1210" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 1290 233 H 1245 V 193" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="1245" cy="193" r="3" fill="#06b6d4"/>
+                    <!-- Haz Giratorio de Radar Animado -->
+                    <line x1="1240" y1="240" x2="1340" y2="200" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" class="radar-sweep-anim"/>
 
-                    <rect x="1080" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
-                    <line x1="1080" y1="193" x2="1210" y2="193" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="1088" y="186" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="1088" y="209" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+                    <!-- Puntos de Detección en el Radar -->
+                    <circle cx="1210" cy="190" r="3" fill="#06b6d4"/>
+                    <circle cx="1275" cy="285" r="3" fill="#38bdf8"/>
+                    <circle cx="1185" cy="265" r="2.5" fill="#22c55e"/>
 
-                    <!-- Tarjetas Match 07 y 08 -->
-                    <rect x="1290" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="1290" y1="363" x2="1410" y2="363" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="1298" y="356" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 07 // RO8</text>
-                    <text x="1298" y="379" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED M vs SEED N</text>
+                    <!-- Panel HUD de Telemetría Inferior -->
+                    <rect x="1110" y="380" width="260" height="90" rx="8" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.3)" stroke-width="1.2"/>
+                    <line x1="1110" y1="405" x2="1370" y2="405" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="1122" y="398" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">CIRCUIT MATRIX // LIVE TELEMETRY</text>
+                    <text x="1122" y="423" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">ACTIVE SEEDS: 16 TEAMS [QUALIFIED]</text>
+                    <text x="1122" y="440" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5">STATUS: SCANNING TALENT DATASTREAM</text>
+                    <text x="1122" y="457" fill="rgba(34, 197, 94, 0.85)" font-family="ui-monospace, monospace" font-size="7.5">SYSTEM HEALTH: 100% // NO ANOMALIES</text>
 
-                    <rect x="1290" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="1290" y1="443" x2="1410" y2="443" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="1298" y="436" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 08 // RO8</text>
-                    <text x="1298" y="459" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED O vs SEED P</text>
-
-                    <path d="M 1290 363 H 1245 V 403 H 1210" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 1290 443 H 1245 V 403" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="1245" cy="403" r="3" fill="#06b6d4"/>
-
-                    <rect x="1080" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
-                    <line x1="1080" y1="403" x2="1210" y2="403" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="1088" y="396" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="1088" y="419" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
-
-                    <!-- Conectores de Semifinales -> Final de Conferencia Derecha -->
-                    <path d="M 1080 193 H 1035 V 298 H 1000" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 1080 403 H 1035 V 298" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="1035" cy="298" r="4" fill="#38bdf8"/>
+                    <!-- Conector Punteado hacia el Centro -->
+                    <path d="M 1110 425 H 1050 V 300 H 1010" fill="none" stroke="#06b6d4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
+                    <circle cx="1050" cy="300" r="3.5" fill="#38bdf8"/>
                 </g>
             </svg>
 
@@ -696,7 +691,8 @@
             </div>
         </div>
 
-        <div class="max-w-5xl mx-auto w-full relative z-10">
+        <!-- CONTENIDO PRINCIPAL EN PLANO SUPERIOR (Z-20) POR ENCIMA DE BRACKETS Y FONDO -->
+        <div class="max-w-5xl mx-auto w-full relative z-20">
             <div class="text-center mb-6 md:mb-8">
                 <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
                     <i class="fas fa-trophy text-[9px]"></i> TORNEOS DE CLASIFICACIÓN
@@ -714,24 +710,46 @@
             <div class="relative w-full overflow-hidden mask-gradient py-2">
                 <div id="marquee-track" class="flex flex-row gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-4 pt-2 touch-pan-y overscroll-x-contain">
                     <!-- Set 1 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
                         <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
                     
-                    <!-- Set 2 (Duplicado para loop infinito) -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <!-- Set 2 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-black/50 hover:bg-[#070707]/80 hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+
+                    <!-- Set 3 (Amplitud para monitores Ultra-Wide) -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+
+                    <!-- Set 4 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
                         <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
                     </a>
                 </div>
@@ -1302,21 +1320,25 @@
             const marquee = document.getElementById('marquee-track');
             if (!marquee) return;
 
-            let scrollSpeed = 0.45; // Velocidad de auto-desplazamiento suave y pausada
+            let currentScrollPos = marquee.scrollLeft;
+            let scrollSpeed = 0.70; // Desplazamiento visible, continuo y fluido (evita truncado de subpíxeles)
             let isDown = false;
-            let startX;
-            let scrollLeft;
+            let startX = 0;
+            let scrollLeft = 0;
             let isHovered = false;
 
             function step() {
                 if (!isDown && !isHovered) {
-                    marquee.scrollLeft += scrollSpeed;
+                    currentScrollPos += scrollSpeed;
                     
-                    // Si nos pasamos de la mitad de la anchura total (que contiene los elementos duplicados)
-                    // volvemos al inicio para hacer un loop sin fin
-                    if (marquee.scrollLeft >= (marquee.scrollWidth / 2)) {
-                        marquee.scrollLeft -= (marquee.scrollWidth / 2);
+                    // Si nos pasamos de la mitad de la anchura total volvemos al inicio para un loop continuo
+                    const loopBoundary = marquee.scrollWidth / 2;
+                    if (loopBoundary > 0 && currentScrollPos >= loopBoundary) {
+                        currentScrollPos -= loopBoundary;
                     }
+                    marquee.scrollLeft = Math.round(currentScrollPos);
+                } else {
+                    currentScrollPos = marquee.scrollLeft;
                 }
                 requestAnimationFrame(step);
             }
@@ -1329,6 +1351,7 @@
                 isDown = true;
                 startX = e.pageX - marquee.offsetLeft;
                 scrollLeft = marquee.scrollLeft;
+                currentScrollPos = marquee.scrollLeft;
             });
 
             marquee.addEventListener('mouseleave', () => {
@@ -1345,6 +1368,7 @@
                 const x = e.pageX - marquee.offsetLeft;
                 const walk = (x - startX) * 1.5; // Ajustar velocidad de arrastre
                 marquee.scrollLeft = scrollLeft - walk;
+                currentScrollPos = marquee.scrollLeft;
             });
 
             // Eventos táctiles (Swipe en móvil)
@@ -1352,6 +1376,7 @@
                 isDown = true;
                 startX = e.touches[0].pageX - marquee.offsetLeft;
                 scrollLeft = marquee.scrollLeft;
+                currentScrollPos = marquee.scrollLeft;
             }, { passive: true });
 
             marquee.addEventListener('touchend', () => {
@@ -1363,6 +1388,7 @@
                 const x = e.touches[0].pageX - marquee.offsetLeft;
                 const walk = (x - startX) * 1.5;
                 marquee.scrollLeft = scrollLeft - walk;
+                currentScrollPos = marquee.scrollLeft;
             }, { passive: true });
 
             // Pausar ligeramente en Hover (1 segundo) y luego reanudar automáticamente
@@ -1378,7 +1404,59 @@
                 clearTimeout(marqueeHoverTimeout);
                 isHovered = false;
             });
+
+            // Iniciar animación de telemetría de teletipo para el mural técnico
+            initMuralTypewriters();
         });
+
+        // Telemetría Typewriter: Animación de escritura letra por letra para el mural de Clasificaciones
+        function initMuralTypewriters() {
+            const muralItems = [
+                { id: 'mural-text-1', fullText: 'LBL ESPORTS', prefix: '> ' },
+                { id: 'mural-text-2', fullText: 'SCOUTING', prefix: '> ' },
+                { id: 'mural-text-3', fullText: 'SOMOS PASIÓN', prefix: '// ' },
+                { id: 'mural-text-4', fullText: 'SOMOS COMPETICIÓN', prefix: '// ' },
+                { id: 'mural-text-5', fullText: 'SOMOS LBL', prefix: '// ' }
+            ];
+
+            muralItems.forEach((item, index) => {
+                const el = document.getElementById(item.id);
+                if (!el) return;
+
+                let charIndex = 0;
+                let isDeleting = false;
+                const total = item.fullText.length;
+
+                function typeStep() {
+                    try {
+                        if (!isDeleting) {
+                            charIndex++;
+                            el.textContent = item.prefix + item.fullText.substring(0, charIndex);
+                            if (charIndex === total) {
+                                isDeleting = true;
+                                setTimeout(typeStep, 3400 + (index * 400));
+                                return;
+                            }
+                            setTimeout(typeStep, 75 + Math.random() * 35);
+                        } else {
+                            charIndex--;
+                            el.textContent = item.prefix + item.fullText.substring(0, charIndex);
+                            if (charIndex === 0) {
+                                isDeleting = false;
+                                setTimeout(typeStep, 1000 + (index * 300));
+                                return;
+                            }
+                            setTimeout(typeStep, 35);
+                        }
+                    } catch (e) {
+                        console.warn('[LBL Mural] Error en typeStep:', e);
+                    }
+                }
+
+                // Iniciar desfasados para generar ritmo orgánico de consola
+                setTimeout(typeStep, index * 650);
+            });
+        }
 
         // Script del Carrusel y Módulo Interactivo de Sponsors LBL
         const sponsorsData = [

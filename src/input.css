@@ -500,7 +500,7 @@
 }
 
 /* ==========================================================================
-   FONDO SECCIÓN CLASIFICACIONES: MURAL TIPOGRÁFICO DISPERSO + BRACKETS PLAYOFFS
+   FONDO SECCIÓN CLASIFICACIONES: TELEMETRÍA TYPEWRITER, BRACKETS Y RADAR HUD
    ========================================================================== */
 .clasificaciones-backdrop {
     position: absolute;
@@ -516,15 +516,15 @@
     inset: 0;
     background-size: 60px 60px;
     background-image: 
-        linear-gradient(30deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
-        linear-gradient(150deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+        linear-gradient(30deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+        linear-gradient(150deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
     mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
-    opacity: 0.7;
+    opacity: 0.6;
     pointer-events: none;
 }
 
-/* Mural Tipográfico Disperso en Contorno Hueco */
+/* Mural de Textos en Tipografía Técnica de los Bordes (Typewriter) */
 .clasificaciones-mural-wrap {
     position: absolute;
     inset: 0;
@@ -534,23 +534,34 @@
     overflow: hidden;
 }
 
-.mural-outline-text {
-    font-weight: 900;
-    font-style: italic;
+.mural-terminal-text {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: -0.03em;
-    line-height: 0.9;
-    color: transparent;
-    -webkit-text-stroke: 1.3px rgba(6, 182, 212, 0.22);
-    text-stroke: 1.3px rgba(6, 182, 212, 0.22);
+    letter-spacing: 0.16em;
+    color: rgba(6, 182, 212, 0.42);
+    text-shadow: 0 0 16px rgba(6, 182, 212, 0.22);
     user-select: none;
     pointer-events: none;
     white-space: nowrap;
-    text-shadow: 0 0 35px rgba(6, 182, 212, 0.10);
-    transition: opacity 0.3s ease;
+    display: inline-flex;
+    align-items: center;
 }
 
-/* Brackets Vectoriales SVG */
+.mural-cursor {
+    display: inline-block;
+    color: #38bdf8;
+    font-weight: 900;
+    margin-left: 2px;
+    animation: muralCursorBlink 0.75s step-end infinite;
+}
+
+@keyframes muralCursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Brackets Vectoriales SVG (Baja Opacidad y Plano Inferior) */
 .clasificaciones-brackets-svg {
     position: absolute;
     inset: 0;
@@ -558,8 +569,40 @@
     height: 100%;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.85;
+    opacity: 0.30; /* Opacidad sutil reducida para no competir con el carrusel */
+    transition: opacity 0.3s ease;
 }
+
+/* Animación de líneas punteadas que indican la ruta de flujo en los conectores del bracket */
+.bracket-flow-dash {
+    stroke-dasharray: 6 7;
+    animation: bracketFlowDash 1.4s linear infinite;
+}
+
+@keyframes bracketFlowDash {
+    from {
+        stroke-dashoffset: 26;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Barrido rotativo para el radar del cuadrante derecho */
+.radar-sweep-anim {
+    transform-origin: 1240px 240px;
+    animation: radarSweepRotate 6s linear infinite;
+}
+
+@keyframes radarSweepRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 
 
 
