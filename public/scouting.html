@@ -488,27 +488,11 @@
                 NUESTROS <span class="text-gradient-cyan">TORNEOS...</span>
             </h1>
 
-            <p class="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-6">
+            <p class="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-8">
                 ¿Quieres buscar equipo o algún jugador?<br class="hidden sm:inline">
                 Accede a la información de nuestros anteriores torneos.
             </p>
 
-            <!-- 2. Barra de Búsquedas e Indicadores Rápidos -->
-            <div id="search-bar-container" class="max-w-2xl mx-auto mb-3 relative">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
-                <input type="text" id="searchInput" class="search-box !pl-12" placeholder="Buscar por Nombre, TAG, Rango, Sancionados...">
-            </div>
-
-            <!-- Indicadores Esenciales: High Elo y Jugadores Baneados -->
-            <div id="filter-chips-container" class="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-8 px-2">
-                <button type="button" id="chip-high-elo" class="chip-filter filter-toprank" onclick="toggleFiltro('high_elo')" title="Filtrar por equipos con talentos de alto elo">
-                    <i class="fas fa-crown mr-1.5 text-[10px]"></i> High Elo <span class="chip-count" id="count-chip-top">0</span>
-                </button>
-                <button type="button" id="chip-banned" class="chip-filter filter-banned" onclick="toggleFiltro('banned')" title="Ver equipos con jugadores o sanciones oficiales">
-                    <i class="fas fa-ban mr-1.5 text-[10px]"></i> Jugadores Baneados <span class="chip-count" id="count-chip-banned">0</span>
-                </button>
-            </div>
-            
             <!-- Selector de Torneo (Botones con Logos Normalizados) -->
             <div class="flex flex-row overflow-x-auto md:overflow-x-visible justify-center items-center gap-3 md:gap-6 max-w-3xl mx-auto mb-8 no-scrollbar pb-2 px-4 w-full">
                 <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2">
@@ -550,6 +534,22 @@
             <div class="shrink-0 flex items-center justify-center">
                 <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier Logo" class="h-16 w-auto object-contain">
             </div>
+        </div>
+
+        <!-- Barra de Búsquedas e Indicadores Rápidos -->
+        <div id="search-bar-container" class="max-w-2xl mx-auto mb-4 relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+            <input type="text" id="searchInput" class="search-box !pl-12" placeholder="Buscar por Nombre, TAG, Rango, Sancionados...">
+        </div>
+
+        <!-- Indicadores Esenciales: High Elo y Jugadores Baneados -->
+        <div id="filter-chips-container" class="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-4 px-2">
+            <button type="button" id="chip-high-elo" class="chip-filter filter-toprank" onclick="toggleFiltro('high_elo')" title="Filtrar por equipos con talentos de alto elo">
+                <i class="fas fa-crown mr-1.5 text-[10px]"></i> High Elo <span class="chip-count" id="count-chip-top">0</span>
+            </button>
+            <button type="button" id="chip-banned" class="chip-filter filter-banned" onclick="toggleFiltro('banned')" title="Ver equipos con jugadores o sanciones oficiales">
+                <i class="fas fa-ban mr-1.5 text-[10px]"></i> Jugadores Baneados <span class="chip-count" id="count-chip-banned">0</span>
+            </button>
         </div>
 
         <!-- Barra de Resultados (Alineada a la Izquierda y 30% más grande) -->
