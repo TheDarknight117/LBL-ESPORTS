@@ -305,8 +305,8 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: clamp(24px, 4.5vh, 56px);
-    padding-bottom: clamp(64px, 9vh, 85px);
+    padding-top: clamp(24px, 4.5vh, 48px);
+    padding-bottom: clamp(24px, 4.5vh, 48px);
     scroll-margin-top: 68px;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
     box-sizing: border-box;
@@ -315,30 +315,20 @@
 @media (max-width: 768px) {
     .section-afiche {
         min-height: auto;
-        padding-top: clamp(32px, 5vh, 52px);
-        padding-bottom: clamp(32px, 5vh, 52px);
+        padding-top: clamp(28px, 5vh, 48px);
+        padding-bottom: clamp(28px, 5vh, 48px);
     }
 }
 
-/* Botón indicador de navegación entre afiches (anclado a la misma altura exacta) */
-.afiche-scroll-btn {
-    position: absolute;
-    bottom: clamp(14px, 2.5vh, 24px);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 25;
-    pointer-events: auto;
-}
-
-@media (max-width: 768px) {
-    .afiche-scroll-btn {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        transform: none;
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
+/* Botón indicador de navegación entre afiches (centrado, protegido contra solapamiento) */
+.afiche-scroll-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+    margin-top: clamp(1.25rem, 2.5vh, 2rem);
 }
 
 /* Luces focales ambientales por sección */

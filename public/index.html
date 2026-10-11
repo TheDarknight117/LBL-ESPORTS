@@ -180,8 +180,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding-top: clamp(24px, 4.5vh, 56px);
-            padding-bottom: clamp(64px, 9vh, 85px);
+            padding-top: clamp(24px, 4.5vh, 48px);
+            padding-bottom: clamp(24px, 4.5vh, 48px);
             scroll-margin-top: 68px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             box-sizing: border-box;
@@ -189,28 +189,19 @@
         @media (max-width: 768px) {
             .section-afiche {
                 min-height: auto;
-                padding-top: clamp(32px, 5vh, 52px);
-                padding-bottom: clamp(32px, 5vh, 52px);
+                padding-top: clamp(28px, 5vh, 48px);
+                padding-bottom: clamp(28px, 5vh, 48px);
             }
         }
-        /* Botón indicador de navegación entre afiches (anclado a la misma altura exacta) */
-        .afiche-scroll-btn {
-            position: absolute;
-            bottom: clamp(14px, 2.5vh, 24px);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 25;
-            pointer-events: auto;
-        }
-        @media (max-width: 768px) {
-            .afiche-scroll-btn {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                margin-top: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
+        /* Botón indicador de navegación entre afiches (centrado, protegido contra solapamiento) */
+        .afiche-scroll-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            margin-top: clamp(1.25rem, 2.5vh, 2rem);
         }
         .glow-spot-ambient {
             position: absolute;
@@ -527,21 +518,20 @@
                     <a href="torneos" class="px-7 md:px-8 py-3.5 md:py-4 rounded-2xl font-black text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
                         <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
                         <i class="fas fa-trophy" style="color: #000000 !important;"></i> 
-                        <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
-                    </a>
+                </div>
             </div>
-        </div>
 
-        <!-- Indicador de scroll al siguiente afiche (Misma altura fija en todos los afiches) -->
-        <div class="afiche-scroll-btn fade-in-up flex justify-center" style="animation-delay: 0.6s;">
-            <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
-                <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
-                    Explora la Liga
-                </span>
-                <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
-                    <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
-                </span>
-            </a>
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up" style="animation-delay: 0.6s;">
+                <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
+                        Explora la Liga
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </main>
 
@@ -579,8 +569,8 @@
                     <span id="mural-text-4">// SOMOS COMPETICIÓN</span><span class="mural-cursor">_</span>
                 </div>
 
-                <!-- 5. SOMOS LBL (Zona Inferior Central) -->
-                <div class="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 mural-terminal-text text-sm sm:text-xl md:text-2xl lg:text-3xl">
+                <!-- 5. SOMOS LBL (Zona Inferior Izquierda para liberar el centro) -->
+                <div class="absolute bottom-6 sm:bottom-10 left-3 sm:left-12 lg:left-16 mural-terminal-text text-xs sm:text-base md:text-lg">
                     <span id="mural-text-5">// SOMOS LBL</span><span class="mural-cursor">_</span>
                 </div>
             </div>
@@ -770,21 +760,20 @@
                     </a>
                     <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
                         <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Indicador de scroll al siguiente afiche (Misma altura fija en todos los afiches) -->
-        <div class="afiche-scroll-btn fade-in-up flex justify-center">
-            <a onclick="scrollToSection('circuito')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Circuito Competitivo">
-                <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
-                    Circuito Oficial
-                </span>
-                <span class="w-6 h-6 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/30 border border-yellow-400/40 flex items-center justify-center transition-all">
-                    <i class="fas fa-chevron-down text-[11px] text-yellow-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
-                </span>
-            </a>
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up">
+                <a onclick="scrollToSection('circuito')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Circuito Competitivo">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
+                        Circuito Oficial
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/30 border border-yellow-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-yellow-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -862,18 +851,18 @@
                     </p>
                 </a>
             </div>
-        </div>
 
-        <!-- Indicador de scroll al siguiente afiche (Misma altura fija en todos los afiches) -->
-        <div class="afiche-scroll-btn fade-in-up flex justify-center">
-            <a onclick="scrollToSection('sponsors')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Sponsors">
-                <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
-                    Nuestros Sponsors
-                </span>
-                <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
-                    <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
-                </span>
-            </a>
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up">
+                <a onclick="scrollToSection('sponsors')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Sponsors">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
+                        Nuestros Sponsors
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -943,18 +932,18 @@
                     <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- Indicador de scroll al siguiente afiche (Misma altura fija en todos los afiches) -->
-        <div class="afiche-scroll-btn fade-in-up flex justify-center">
-            <a onclick="scrollToSection('staff')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Staff">
-                <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
-                    Directiva & Staff
-                </span>
-                <span class="w-6 h-6 rounded-full bg-purple-500/20 group-hover:bg-purple-500/30 border border-purple-400/40 flex items-center justify-center transition-all">
-                    <i class="fas fa-chevron-down text-[11px] text-purple-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
-                </span>
-            </a>
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up">
+                <a onclick="scrollToSection('staff')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Staff">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
+                        Directiva & Staff
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-purple-500/20 group-hover:bg-purple-500/30 border border-purple-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-purple-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -1102,18 +1091,17 @@
 
             </div>
 
-        </div>
-
-        <!-- Indicador de scroll: Volver al inicio (Misma altura fija en todos los afiches) -->
-        <div class="afiche-scroll-btn fade-in-up flex justify-center">
-            <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-blue-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
-                <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-blue-300 transition-colors">
-                    Volver al Inicio
-                </span>
-                <span class="w-6 h-6 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 border border-blue-400/40 flex items-center justify-center transition-all">
-                    <i class="fas fa-chevron-up text-[11px] text-blue-400 group-hover:-translate-y-0.5 transition-transform duration-300"></i>
-                </span>
-            </a>
+            <!-- Indicador de scroll: Volver al inicio (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up">
+                <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-blue-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-blue-300 transition-colors">
+                        Volver al Inicio
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 border border-blue-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-up text-[11px] text-blue-400 group-hover:-translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </section>
 
