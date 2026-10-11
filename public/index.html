@@ -533,47 +533,153 @@
         <!-- Luz focal ambiental cian centrado -->
         <div class="glow-spot-ambient glow-cyan"></div>
 
-        <!-- FONDO COMBINADO: TIPOGRAFÍA MONUMENTAL EN OUTLINE + BRACKETS DE TORNEO (OPCIÓN 2 + 3) -->
+        <!-- FONDO COMBINADO: MURAL TIPOGRÁFICO DISPERSO + BRACKETS PLAYOFFS -->
         <div class="clasificaciones-backdrop">
             <!-- Capa 1: Malla Isométrica / Retícula Técnica Sutil -->
             <div class="clasificaciones-iso-grid"></div>
 
-            <!-- Capa 2: Tipografía Monumental "QUALIFIERS" en Outline Hueco -->
-            <div class="clasificaciones-watermark-wrap">
-                <span class="clasificaciones-watermark-text">QUALIFIERS</span>
-                <span class="clasificaciones-watermark-sub">HISTORICAL SCOUTING ARCHIVE</span>
+            <!-- Capa 2: Mural Tipográfico Disperso en Contorno Hueco (Outline) -->
+            <div class="clasificaciones-mural-wrap">
+                <!-- 1. LBL ESPORTS (Superior Izquierda) -->
+                <div class="absolute top-4 sm:top-8 left-3 sm:left-12 lg:left-16 mural-outline-text text-3xl sm:text-5xl lg:text-7xl">
+                    LBL ESPORTS
+                </div>
+
+                <!-- 2. SCOUTING (Superior Derecha) -->
+                <div class="absolute top-6 sm:top-10 right-3 sm:right-12 lg:right-20 mural-outline-text text-4xl sm:text-6xl lg:text-8xl">
+                    SCOUTING
+                </div>
+
+                <!-- 3. SOMOS PASIÓN (Flanco Central Izquierdo) -->
+                <div class="absolute top-[44%] -translate-y-1/2 left-2 sm:left-8 lg:left-14 mural-outline-text text-2xl sm:text-4xl lg:text-5xl">
+                    SOMOS PASIÓN
+                </div>
+
+                <!-- 4. SOMOS COMPETICIÓN (Flanco Central Derecho) -->
+                <div class="absolute top-[46%] -translate-y-1/2 right-2 sm:right-8 lg:right-14 mural-outline-text text-2xl sm:text-4xl lg:text-5xl">
+                    SOMOS COMPETICIÓN
+                </div>
+
+                <!-- 5. SOMOS LBL (Zona Inferior Central) -->
+                <div class="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 mural-outline-text text-3xl sm:text-5xl lg:text-7xl">
+                    SOMOS LBL
+                </div>
             </div>
 
-            <!-- Capa 3: Esquema Vectorial de Brackets de Eliminatoria (Flancos Izquierdo y Derecho) -->
+            <!-- Capa 3: Esquema Vectorial Refinado de Brackets Playoffs (Inspirado en torneos.html) -->
             <svg class="clasificaciones-brackets-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Bracket Flanco Izquierdo -->
-                <g class="bracket-branch" stroke="rgba(6, 182, 212, 0.35)" stroke-width="1.3">
-                    <path d="M 30 160 H 110 V 250 H 190" stroke-dasharray="4 2"/>
-                    <path d="M 30 340 H 110 V 250" stroke-dasharray="4 2"/>
-                    <path d="M 190 250 H 260 V 380 H 330"/>
-                    <path d="M 190 510 H 260 V 380"/>
-                    <!-- Nodos luminosos -->
-                    <circle cx="110" cy="250" r="3.5" fill="rgba(6, 182, 212, 0.8)"/>
-                    <circle cx="260" cy="380" r="4" fill="rgba(6, 182, 212, 0.9)"/>
-                    <circle cx="330" cy="380" r="4.5" fill="rgba(56, 189, 248, 1)"/>
+                <!-- ══════════════════════════════════════════════
+                     FLANCO IZQUIERDO: CUADRANTE DE PLAYOFFS UPPER/RO8
+                     ══════════════════════════════════════════════ -->
+                <g class="bracket-playoffs-left">
+                    <!-- Tarjeta Match 01 (RO8 - Superior) -->
+                    <rect x="30" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="30" y1="153" x2="150" y2="153" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="38" y="146" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 01 // RO8</text>
+                    <text x="38" y="169" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED A vs SEED B</text>
+
+                    <!-- Tarjeta Match 02 (RO8 - Inferior) -->
+                    <rect x="30" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="30" y1="233" x2="150" y2="233" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="38" y="226" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 02 // RO8</text>
+                    <text x="38" y="249" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED C vs SEED D</text>
+
+                    <!-- Conectores Escalonados 90° Estilo torneos.html (Match 01 & 02 -> Semifinales) -->
+                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 150 233 H 195 V 193" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="195" cy="193" r="3" fill="#06b6d4"/>
+
+                    <!-- Tarjeta Match Semifinales -->
+                    <rect x="230" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <line x1="230" y1="193" x2="360" y2="193" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
+                    <text x="238" y="186" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="238" y="209" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+
+                    <!-- Tarjeta Match 03 (Lower Bracket o RO8 B) -->
+                    <rect x="30" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="30" y1="363" x2="150" y2="363" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="38" y="356" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 03 // RO8</text>
+                    <text x="38" y="379" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED E vs SEED F</text>
+
+                    <!-- Tarjeta Match 04 (Lower Bracket o RO8 B) -->
+                    <rect x="30" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="30" y1="443" x2="150" y2="443" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="38" y="436" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 04 // RO8</text>
+                    <text x="38" y="459" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED G vs SEED H</text>
+
+                    <!-- Conectores Escalonados Match 03 & 04 -> Semifinal B -->
+                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 150 443 H 195 V 403" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="195" cy="403" r="3" fill="#06b6d4"/>
+
+                    <rect x="230" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <line x1="230" y1="403" x2="360" y2="403" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
+                    <text x="238" y="396" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="238" y="419" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+
+                    <!-- Conectores de Semifinales -> Final de Conferencia Izquierda -->
+                    <path d="M 360 193 H 405 V 298 H 440" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 360 403 H 405 V 298" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="405" cy="298" r="4" fill="#38bdf8"/>
                 </g>
 
-                <!-- Bracket Flanco Derecho (Simétrico) -->
-                <g class="bracket-branch" stroke="rgba(6, 182, 212, 0.35)" stroke-width="1.3">
-                    <path d="M 1410 160 H 1330 V 250 H 1250" stroke-dasharray="4 2"/>
-                    <path d="M 1410 340 H 1330 V 250" stroke-dasharray="4 2"/>
-                    <path d="M 1250 250 H 1180 V 380 H 1110"/>
-                    <path d="M 1250 510 H 1180 V 380"/>
-                    <circle cx="1330" cy="250" r="3.5" fill="rgba(6, 182, 212, 0.8)"/>
-                    <circle cx="1180" cy="380" r="4" fill="rgba(6, 182, 212, 0.9)"/>
-                    <circle cx="1110" cy="380" r="4.5" fill="rgba(56, 189, 248, 1)"/>
+                <!-- ══════════════════════════════════════════════
+                     FLANCO DERECHO: CUADRANTE DE PLAYOFFS SIMÉTRICO
+                     ══════════════════════════════════════════════ -->
+                <g class="bracket-playoffs-right">
+                    <!-- Tarjeta Match 05 (RO8 - Superior) -->
+                    <rect x="1290" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="1290" y1="153" x2="1410" y2="153" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="1298" y="146" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 05 // RO8</text>
+                    <text x="1298" y="169" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED I vs SEED J</text>
+
+                    <!-- Tarjeta Match 06 (RO8 - Inferior) -->
+                    <rect x="1290" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="1290" y1="233" x2="1410" y2="233" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="1298" y="226" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 06 // RO8</text>
+                    <text x="1298" y="249" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED K vs SEED L</text>
+
+                    <!-- Conectores Escalonados (Match 05 & 06 -> Semifinal) -->
+                    <path d="M 1290 153 H 1245 V 193 H 1210" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 1290 233 H 1245 V 193" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="1245" cy="193" r="3" fill="#06b6d4"/>
+
+                    <rect x="1080" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <line x1="1080" y1="193" x2="1210" y2="193" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
+                    <text x="1088" y="186" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="1088" y="209" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+
+                    <!-- Tarjetas Match 07 y 08 -->
+                    <rect x="1290" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="1290" y1="363" x2="1410" y2="363" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="1298" y="356" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 07 // RO8</text>
+                    <text x="1298" y="379" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED M vs SEED N</text>
+
+                    <rect x="1290" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.55)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
+                    <line x1="1290" y1="443" x2="1410" y2="443" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
+                    <text x="1298" y="436" fill="rgba(6, 182, 212, 0.6)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 08 // RO8</text>
+                    <text x="1298" y="459" fill="rgba(255, 255, 255, 0.45)" font-family="ui-monospace, monospace" font-size="7.5">SEED O vs SEED P</text>
+
+                    <path d="M 1290 363 H 1245 V 403 H 1210" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 1290 443 H 1245 V 403" fill="none" stroke="rgba(6, 182, 212, 0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="1245" cy="403" r="3" fill="#06b6d4"/>
+
+                    <rect x="1080" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
+                    <line x1="1080" y1="403" x2="1210" y2="403" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
+                    <text x="1088" y="396" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
+                    <text x="1088" y="419" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
+
+                    <!-- Conectores de Semifinales -> Final de Conferencia Derecha -->
+                    <path d="M 1080 193 H 1035 V 298 H 1000" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 1080 403 H 1035 V 298" fill="none" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="1035" cy="298" r="4" fill="#38bdf8"/>
                 </g>
             </svg>
 
             <!-- Micro-etiquetas de Bracket y Telemetría Histórica -->
             <div class="absolute top-7 left-6 md:left-10 flex items-center gap-2 font-mono text-[9px] md:text-[10px] text-cyan-400/70 uppercase select-none tracking-wider">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span>BRACKET.STAGE // ELIMINATION_RO16</span>
+                <span>BRACKET.STAGE // PLAYOFFS_DOUBLE_ELIM</span>
             </div>
 
             <div class="absolute top-7 right-6 md:right-10 flex items-center gap-2 font-mono text-[9px] md:text-[10px] text-cyan-400/70 uppercase select-none tracking-wider">
@@ -582,7 +688,7 @@
             </div>
 
             <div class="absolute bottom-6 left-6 md:left-10 hidden md:flex items-center gap-2 font-mono text-[9px] text-slate-400/60 uppercase select-none tracking-widest">
-                <span>STAGE: [RO16 ──► QF ──► SF ──► FINALS]</span>
+                <span>PLAYOFFS: [RO8 ──► SEMIFINALS ──► GRAND FINALS]</span>
             </div>
 
             <div class="absolute bottom-6 right-6 md:right-10 hidden md:flex items-center gap-2 font-mono text-[9px] text-slate-400/60 uppercase select-none tracking-widest">
@@ -592,8 +698,8 @@
 
         <div class="max-w-5xl mx-auto w-full relative z-10">
             <div class="text-center mb-6 md:mb-8">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
-                    <i class="fas fa-trophy text-[9px]"></i> CLASIFICATORIOS HISTÓRICOS
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
+                    <i class="fas fa-trophy text-[9px]"></i> TORNEOS DE CLASIFICACIÓN
                 </div>
                 <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-3">
                     NUESTRAS <span class="text-gradient-cyan">CLASIFICACIONES</span>
@@ -1196,7 +1302,7 @@
             const marquee = document.getElementById('marquee-track');
             if (!marquee) return;
 
-            let scrollSpeed = 0.8; // Velocidad de auto-desplazamiento
+            let scrollSpeed = 0.45; // Velocidad de auto-desplazamiento suave y pausada
             let isDown = false;
             let startX;
             let scrollLeft;
