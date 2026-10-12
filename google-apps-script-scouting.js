@@ -56,8 +56,49 @@ function formatearUrlDrive(url) {
 }
 
 /**
+ * Mapeo inteligente y dinámico de columnas por encabezados (Tolerante a cambios en Forms y Excel)
+ */
+function construirMapaIndices(headers) {
+  const norm = headers.map(h => String(h || "").toLowerCase().trim());
+  
+  const findCol = (predicate, fallback) => {
+    const idx = norm.findIndex(predicate);
+    return idx !== -1 ? idx : fallback;
+  };
+
+  return {
+    // Control Staff
+    colIdxEstado: headers.indexOf("[STAFF] Estado"),
+    colIdxNotas: headers.indexOf("[STAFF] Notas / Observaciones"),
+    colIdxRevisor: headers.indexOf("[STAFF] Revisor"),
+    colIdxFecha: headers.indexOf("[STAFF] Última Modificación"),
+
+    // Suplente 1 (en Excel de 125 cols: base 75, Rol Principal 83, Rol Secundario 84)
+    s1_base: findCol(h => h.includes("nombre") && (h.includes("6") || h.includes("suplente 1")), 75),
+    s1_rolPrincipal: findCol(h => h.includes("rol principal 1") || (h.includes("rol principal") && h.includes("1")), 83),
+    s1_rolSecundario: findCol(h => h.includes("rol secundario 1") || (h.includes("rol secundario") && h.includes("1")), 84),
+
+    // Suplente 2 (en Excel de 125 cols: base 89, Rol Principal 97, Rol Secundario 98)
+    s2_base: findCol(h => h.includes("nombre") && (h.includes("7") || h.includes("suplente 2")), 89),
+    s2_rolPrincipal: findCol(h => h.includes("rol principal 2") || (h.includes("rol principal") && h.includes("2")), 97),
+    s2_rolSecundario: findCol(h => h.includes("rol secundario 2") || (h.includes("rol secundario") && h.includes("2")), 98),
+
+    // Suplente 3 (en Excel de 125 cols: base 103, Rol Principal 111, Rol Secundario 112)
+    s3_base: findCol(h => h.includes("nombre") && (h.includes("8") || h.includes("suplente 3")), 103),
+    s3_rolPrincipal: findCol(h => h.includes("rol principal 3") || (h.includes("rol principal") && h.includes("3")), 111),
+    s3_rolSecundario: findCol(h => h.includes("rol secundario 3") || (h.includes("rol secundario") && h.includes("3")), 112),
+
+    // Pago y Aceptación (en Excel de 125 cols: 116, 117, 118, 119)
+    pago_modalidad: findCol(h => h.includes("modalidad y m") || (h.includes("modalidad") && h.includes("pago")), 116),
+    pago_comprobanteQR: findCol(h => h.includes("codigo qr") || (h.includes("qr") && h.includes("cancelar")), 117),
+    pago_referencia: findCol(h => h.includes("referencia o transacci") || h.includes("transaccion bancaria"), 118),
+    pago_comprobanteBinance: findCol(h => h.includes("binance") || (h.includes("captura") && h.includes("transferencia")), 119)
+  };
+}
+
+/**
  * ==============================================================================
- * 1. READ (doGet): Lee todas las filas del Google Sheet
+ * 1. READ (doGet): Lee todas las filas del Google Sheet con resolución dinámica
  * ==============================================================================
  */
 function doGet(e) {
@@ -75,15 +116,12 @@ function doGet(e) {
     }
 
     const headers = asegurarColumnasStaff(sheet);
+    const mapa = construirMapaIndices(headers);
     const numRows = sheet.getLastRow() - 1;
     const numCols = headers.length;
     const values = sheet.getRange(2, 1, numRows, numCols).getValues();
 
-    const colIdxEstado = headers.indexOf("[STAFF] Estado");
-    const colIdxNotas = headers.indexOf("[STAFF] Notas / Observaciones");
-    const colIdxRevisor = headers.indexOf("[STAFF] Revisor");
-    const colIdxFecha = headers.indexOf("[STAFF] Última Modificación");
-
+    const colIdxEstado = mapa.colIdxEstado;
     const equipos = [];
 
     for (let i = 0; i < values.length; i++) {
@@ -95,7 +133,7 @@ function doGet(e) {
 
       const estadoActual = (colIdxEstado > -1 && row[colIdxEstado]) ? String(row[colIdxEstado]) : "Pendiente";
 
-      // Titulares (5 jugadores)
+      // Titulares (5 jugadores fijos)
       const titulares = [];
       const rolesSugeridos = ["TOP", "JG", "MID", "ADC", "SUPP"];
       const baseIndicesTitulares = [19, 30, 41, 52, 63];
@@ -124,15 +162,24 @@ function doGet(e) {
         }
       }
 
-      // Suplentes (hasta 3)
+      // Suplentes (hasta 3 jugadores con detección de Rol Principal)
       const suplentes = [];
-      const baseIndicesSuplentes = [75, 88, 101];
+      const configSuplentes = [
+        { base: mapa.s1_base, rolP: mapa.s1_rolPrincipal, rolS: mapa.s1_rolSecundario },
+        { base: mapa.s2_base, rolP: mapa.s2_rolPrincipal, rolS: mapa.s2_rolSecundario },
+        { base: mapa.s3_base, rolP: mapa.s3_rolPrincipal, rolS: mapa.s3_rolSecundario }
+      ];
+
       for (let s = 0; s < 3; s++) {
-        const b = baseIndicesSuplentes[s];
+        const cfg = configSuplentes[s];
+        const b = cfg.base;
         const sNombre = row[b] || "";
         const sRiot = row[b + 4] || "";
         if (sNombre || sRiot) {
+          const rolPrinc = String(row[cfg.rolP] || "").trim();
+          const rolSec = String(row[cfg.rolS] || "").trim();
           suplentes.push({
+            posicion: rolPrinc || "Suplente",
             numero: s + 1,
             nombreCi: String(sNombre),
             ciudad: String(row[b + 1] || ""),
@@ -142,57 +189,29 @@ function doGet(e) {
             opggLas: String(row[b + 5] || ""),
             riotIdMain: String(row[b + 6] || ""),
             opggMain: String(row[b + 7] || ""),
-            rolSecundario: String(row[b + 8] || ""),
-            rangoSoloQ: String(row[b + 9] || ""),
-            rangoFlex: String(row[b + 10] || "")
+            rolPrincipal: rolPrinc,
+            rolSecundario: rolSec,
+            rangoSoloQ: String(row[b + 10] || row[cfg.rolS + 1] || ""),
+            rangoFlex: String(row[b + 11] || row[cfg.rolS + 2] || "")
           });
         }
       }
 
       // -------------------------------------------------------------
-      // PAGO: Detección profunda de columnas para QR Nacional y Binance Internacional
+      // PAGO: Detección precisa con índices del nuevo Excel (116-119)
       // -------------------------------------------------------------
-      const modalidadVal = String(row[113] || "");
+      const modalidadVal = String(row[mapa.pago_modalidad] || "");
       const esBoliviaMod = modalidadVal.toLowerCase().includes("bolivia") || modalidadVal.toLowerCase().includes("qr");
       const esInterMod = modalidadVal.toLowerCase().includes("internacional") || modalidadVal.toLowerCase().includes("binance");
 
-      let compQR = "";
-      let refQR = "";
-      let compBinance = "";
-      let refBinance = "";
+      let compQR = String(row[mapa.pago_comprobanteQR] || "").trim();
+      let refQR = String(row[mapa.pago_referencia] || "").trim();
+      let compBinance = String(row[mapa.pago_comprobanteBinance] || "").trim();
+      let refBinance = refQR;
 
-      // En el formulario de Google Sheets:
-      // Las columnas 114 a 122 contienen las respuestas de las bifurcaciones de pago.
-      for (let c = 113; c <= 122 && c < row.length; c++) {
-        const val = String(row[c] || "").trim();
-        if (!val || c === 113) continue;
-
-        const esDrive = val.includes("drive.google.com") || val.includes("http://") || val.includes("https://");
-
-        const esConsentimiento = val.toLowerCase().includes("acepto") || val.toLowerCase().includes("cláusula") || val.toLowerCase().includes("clausula") || val.toLowerCase().includes("reglamento");
-        if (esConsentimiento) continue;
-
-        // Columnas asociadas a la sección Bolivia (QR Nacional): usualmente 114 y 115
-        if (c === 114 || c === 115) {
-          if (esDrive && !compQR) {
-            compQR = val;
-          } else if (!esDrive && !refQR && val.length > 2) {
-            refQR = val;
-          }
-        }
-        // Columnas asociadas a la sección Internacional (Binance): usualmente 116 y 117
-        else if (c === 116 || c === 117 || c === 118) {
-          if (esDrive && !compBinance) {
-            compBinance = val;
-          } else if (!esDrive && !refBinance && val.length > 2) {
-            refBinance = val;
-          }
-        }
-      }
-
-      // Fallback de rescate si alguna celda contiene Drive en cualquier columna de pago:
+      // Fallback de rescate si alguna celda contiene enlace de Drive en columnas adyacentes
       if (!compQR && !compBinance) {
-        for (let c = 113; c <= 122 && c < row.length; c++) {
+        for (let c = mapa.pago_modalidad; c <= mapa.pago_modalidad + 5 && c < row.length; c++) {
           const val = String(row[c] || "").trim();
           if (val.includes("drive.google.com") || val.includes("http://") || val.includes("https://")) {
             if (esBoliviaMod) compQR = val;
@@ -202,15 +221,8 @@ function doGet(e) {
         }
       }
 
-      if (!refQR && esBoliviaMod && row[115]) {
-        refQR = String(row[115]);
-      }
-      if (!refBinance && esInterMod && (row[117] || row[115])) {
-        refBinance = String(row[117] || row[115] || "");
-      }
-
       const compPrincipal = esBoliviaMod ? (compQR || compBinance) : (compBinance || compQR);
-      const refPrincipal = esBoliviaMod ? (refQR || refBinance || String(row[115] || "")) : (refBinance || refQR || String(row[115] || ""));
+      const refPrincipal = refQR;
 
       equipos.push({
         rowId: rowIndex,
@@ -307,12 +319,13 @@ function doPost(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
     const headers = asegurarColumnasStaff(sheet);
+    const mapa = construirMapaIndices(headers);
     const fechaStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "dd/MM/yyyy HH:mm:ss");
 
-    const colIdxEstado = headers.indexOf("[STAFF] Estado") + 1;
-    const colIdxNotas = headers.indexOf("[STAFF] Notas / Observaciones") + 1;
-    const colIdxRevisor = headers.indexOf("[STAFF] Revisor") + 1;
-    const colIdxFecha = headers.indexOf("[STAFF] Última Modificación") + 1;
+    const colIdxEstado = mapa.colIdxEstado + 1;
+    const colIdxNotas = mapa.colIdxNotas + 1;
+    const colIdxRevisor = mapa.colIdxRevisor + 1;
+    const colIdxFecha = mapa.colIdxFecha + 1;
 
     // -------------------------------------------------------------
     // OPERACIÓN: CREATE (C) -> Inscribir nuevo equipo manualmente
@@ -367,10 +380,38 @@ function doPost(e) {
         });
       }
 
-      // Pago (índices 113, 115, 116)
-      newRow[113] = eq.pago?.modalidad || "Directo / Manual";
-      newRow[115] = eq.pago?.referencia || "MANUAL-" + Date.now();
-      newRow[116] = eq.pago?.comprobante || "";
+      // Suplentes (indices dinámicos)
+      if (Array.isArray(eq.suplentes)) {
+        const configSuplentes = [
+          { base: mapa.s1_base, rolP: mapa.s1_rolPrincipal, rolS: mapa.s1_rolSecundario },
+          { base: mapa.s2_base, rolP: mapa.s2_rolPrincipal, rolS: mapa.s2_rolSecundario },
+          { base: mapa.s3_base, rolP: mapa.s3_rolPrincipal, rolS: mapa.s3_rolSecundario }
+        ];
+        eq.suplentes.forEach((s, idx) => {
+          if (idx < 3) {
+            const cfg = configSuplentes[idx];
+            const b = cfg.base;
+            newRow[b] = s.nombreCi || "";
+            newRow[b + 1] = s.ciudad || "";
+            newRow[b + 2] = s.telefono || "";
+            newRow[b + 3] = s.discord || "";
+            newRow[b + 4] = s.riotIdLas || "";
+            newRow[b + 5] = s.opggLas || "";
+            newRow[b + 6] = s.riotIdMain || "";
+            newRow[b + 7] = s.opggMain || "";
+            if (cfg.rolP >= 0) newRow[cfg.rolP] = s.rolPrincipal || s.posicion || "";
+            if (cfg.rolS >= 0) newRow[cfg.rolS] = s.rolSecundario || "";
+            newRow[cfg.rolS + 1] = s.rangoSoloQ || "";
+            newRow[cfg.rolS + 2] = s.rangoFlex || "";
+          }
+        });
+      }
+
+      // Pago (índices resueltos por mapa)
+      if (mapa.pago_modalidad >= 0) newRow[mapa.pago_modalidad] = eq.pago?.modalidad || "Directo / Manual";
+      if (mapa.pago_referencia >= 0) newRow[mapa.pago_referencia] = eq.pago?.referencia || "MANUAL-" + Date.now();
+      if (mapa.pago_comprobanteQR >= 0) newRow[mapa.pago_comprobanteQR] = eq.pago?.comprobanteQR || eq.pago?.comprobante || "";
+      if (mapa.pago_comprobanteBinance >= 0) newRow[mapa.pago_comprobanteBinance] = eq.pago?.comprobanteBinance || "";
 
       // Columnas Staff
       if (colIdxEstado > 0) newRow[colIdxEstado - 1] = eq.estado || "Pendiente";
@@ -464,15 +505,39 @@ function doPost(e) {
           });
         }
 
-        // Pago
+        // Suplentes (búsqueda dinámica de columnas 1-based con Rol Principal)
+        if (Array.isArray(eq.suplentes)) {
+          const configSuplentesCols = [
+            { base: mapa.s1_base + 1, colP: mapa.s1_rolPrincipal + 1, colS: mapa.s1_rolSecundario + 1 },
+            { base: mapa.s2_base + 1, colP: mapa.s2_rolPrincipal + 1, colS: mapa.s2_rolSecundario + 1 },
+            { base: mapa.s3_base + 1, colP: mapa.s3_rolPrincipal + 1, colS: mapa.s3_rolSecundario + 1 }
+          ];
+          eq.suplentes.forEach((s, idx) => {
+            if (idx < 3) {
+              const cfg = configSuplentesCols[idx];
+              const b = cfg.base;
+              if (s.nombreCi !== undefined) sheet.getRange(rowId, b).setValue(s.nombreCi);
+              if (s.ciudad !== undefined) sheet.getRange(rowId, b + 1).setValue(s.ciudad);
+              if (s.telefono !== undefined) sheet.getRange(rowId, b + 2).setValue(s.telefono);
+              if (s.discord !== undefined) sheet.getRange(rowId, b + 3).setValue(s.discord);
+              if (s.riotIdLas !== undefined) sheet.getRange(rowId, b + 4).setValue(s.riotIdLas);
+              if (s.opggLas !== undefined) sheet.getRange(rowId, b + 5).setValue(s.opggLas);
+              if (s.riotIdMain !== undefined) sheet.getRange(rowId, b + 6).setValue(s.riotIdMain);
+              if (s.opggMain !== undefined) sheet.getRange(rowId, b + 7).setValue(s.opggMain);
+              if (s.rolPrincipal !== undefined && cfg.colP > 0) sheet.getRange(rowId, cfg.colP).setValue(s.rolPrincipal);
+              if (s.rolSecundario !== undefined && cfg.colS > 0) sheet.getRange(rowId, cfg.colS).setValue(s.rolSecundario);
+              if (s.rangoSoloQ !== undefined) sheet.getRange(rowId, cfg.colS + 1).setValue(s.rangoSoloQ);
+              if (s.rangoFlex !== undefined) sheet.getRange(rowId, cfg.colS + 2).setValue(s.rangoFlex);
+            }
+          });
+        }
+
+        // Pago (índices resueltos por mapa en base 1)
         if (eq.pago) {
-          if (eq.pago.modalidad !== undefined) sheet.getRange(rowId, 114).setValue(eq.pago.modalidad);
-          if (eq.pago.referencia !== undefined) sheet.getRange(rowId, 116).setValue(eq.pago.referencia);
-          if (eq.pago.comprobante !== undefined) sheet.getRange(rowId, 117).setValue(eq.pago.comprobante);
-          if (eq.pago.comprobanteQR !== undefined && eq.pago.comprobanteQR) sheet.getRange(rowId, 115).setValue(eq.pago.comprobanteQR);
-          if (eq.pago.referenciaQR !== undefined && eq.pago.referenciaQR) sheet.getRange(rowId, 116).setValue(eq.pago.referenciaQR);
-          if (eq.pago.comprobanteBinance !== undefined && eq.pago.comprobanteBinance) sheet.getRange(rowId, 117).setValue(eq.pago.comprobanteBinance);
-          if (eq.pago.referenciaBinance !== undefined && eq.pago.referenciaBinance) sheet.getRange(rowId, 118).setValue(eq.pago.referenciaBinance);
+          if (eq.pago.modalidad !== undefined && mapa.pago_modalidad >= 0) sheet.getRange(rowId, mapa.pago_modalidad + 1).setValue(eq.pago.modalidad);
+          if (eq.pago.referencia !== undefined && mapa.pago_referencia >= 0) sheet.getRange(rowId, mapa.pago_referencia + 1).setValue(eq.pago.referencia);
+          if (eq.pago.comprobanteQR !== undefined && mapa.pago_comprobanteQR >= 0) sheet.getRange(rowId, mapa.pago_comprobanteQR + 1).setValue(eq.pago.comprobanteQR);
+          if (eq.pago.comprobanteBinance !== undefined && mapa.pago_comprobanteBinance >= 0) sheet.getRange(rowId, mapa.pago_comprobanteBinance + 1).setValue(eq.pago.comprobanteBinance);
         }
       }
 

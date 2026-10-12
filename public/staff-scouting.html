@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=202">
+    <link rel="stylesheet" href="/dist/output.css?v=203">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -813,6 +813,14 @@
                             </div>
                         </div>
 
+                        <!-- Suplentes (Hasta 3 Jugadores) -->
+                        <div class="pt-2 border-t border-gray-800/60 space-y-2">
+                            <h5 class="text-[10px] font-black uppercase text-purple-400">Riot IDs, Rol Principal & Secundario (Hasta 3 Suplentes)</h5>
+                            <div id="contenedor-inputs-suplentes" class="space-y-2">
+                                <!-- Generado dinámicamente con desplegables -->
+                            </div>
+                        </div>
+
                         <!-- Pago Referencia y Comprobante -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-800/60">
                             <div>
@@ -1427,7 +1435,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=202";
+        import "/app-version.js?v=203";
 
         // ==============================================================
         // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
@@ -2640,6 +2648,104 @@
                         `;
                     }).join('');
                 }
+
+                const contEditSuplentes = document.getElementById('contenedor-inputs-suplentes');
+                if (contEditSuplentes) {
+                    const suplentesList = (eq.suplentes && eq.suplentes.length > 0) ? eq.suplentes : [{}, {}, {}];
+                    const tresSuplentes = [0, 1, 2].map(i => suplentesList[i] || {});
+                    
+                    contEditSuplentes.innerHTML = tresSuplentes.map((s, idx) => {
+                        const optSoloQ = OPCIONES_SOLOQ.map(opt => `<option value="${opt}" ${String(s.rangoSoloQ || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                        const optRolPrinc = OPCIONES_ROL_SECUNDARIO.map(opt => `<option value="${opt}" ${String(s.rolPrincipal || s.posicion || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                        const optRolSec = OPCIONES_ROL_SECUNDARIO.map(opt => `<option value="${opt}" ${String(s.rolSecundario || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                        const optFlex = OPCIONES_FLEX.map(opt => `<option value="${opt}" ${String(s.rangoFlex || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+
+                        return `
+                            <div class="bg-[#111] p-4 rounded-xl border border-gray-800 space-y-2.5 text-xs">
+                                <div class="flex items-center justify-between pb-1.5 border-b border-gray-800">
+                                    <span class="text-xs font-black uppercase text-purple-400 flex items-center gap-1.5">
+                                        <span class="bg-purple-950/80 px-2 py-0.5 rounded border border-purple-500/40 text-[10px] font-mono">[SUP ${idx + 1}]</span>
+                                        Suplente ${idx + 1}
+                                    </span>
+                                </div>
+
+                                <!-- Fila 1: Identificación del Jugador -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-cyan-400 uppercase mb-1">
+                                            <i class="fas fa-crosshairs mr-1"></i> Riot ID LAS (#TAG)
+                                        </label>
+                                        <input type="text" id="edit-s-${idx}-riot" value="${s.riotIdLas || ''}" placeholder="Ej: Player#LAS" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-purple-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-amber-300 uppercase mb-1">
+                                            <i class="fas fa-globe-americas mr-1"></i> Main / Otra Región
+                                        </label>
+                                        <input type="text" id="edit-s-${idx}-riotmain" value="${s.riotIdMain || ''}" placeholder="Ej: Main#BR" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-amber-200 font-mono text-xs outline-none focus:border-amber-400">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
+                                            <i class="fas fa-id-card mr-1"></i> Nombre Completo & CI
+                                        </label>
+                                        <input type="text" id="edit-s-${idx}-nombre" value="${s.nombreCi || ''}" placeholder="Ej: Nombre y CI" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-gray-200 text-xs outline-none focus:border-purple-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
+                                            <i class="fas fa-map-marker-alt mr-1"></i> Residencia / Ciudad
+                                        </label>
+                                        <input type="text" id="edit-s-${idx}-ciudad" value="${s.ciudad || ''}" placeholder="Ej: La Paz" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-indigo-400 uppercase mb-1">
+                                            <i class="fab fa-discord mr-1"></i> Usuario Discord
+                                        </label>
+                                        <input type="text" id="edit-s-${idx}-discord" value="${s.discord || ''}" placeholder="Ej: usuario#0000" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs font-mono outline-none focus:border-indigo-500">
+                                    </div>
+                                </div>
+
+                                <!-- Fila 2: Roles (Principal & Secundario) y Rangos -->
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-gray-800/60">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-purple-400 uppercase mb-1">
+                                            <i class="fas fa-chess-knight mr-1"></i> Rol Principal:
+                                        </label>
+                                        <select id="edit-s-${idx}-rolprinc" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
+                                            <option value="">-- Rol Principal --</option>
+                                            ${optRolPrinc}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-purple-300 uppercase mb-1">
+                                            <i class="fas fa-random mr-1"></i> Rol Secundario:
+                                        </label>
+                                        <select id="edit-s-${idx}-rolsec" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
+                                            <option value="">-- Rol Secundario --</option>
+                                            ${optRolSec}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
+                                            <i class="fas fa-trophy mr-1"></i> Solo/Dúo:
+                                        </label>
+                                        <select id="edit-s-${idx}-soloeo" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
+                                            <option value="">-- SoloQ --</option>
+                                            ${optSoloQ}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-cyan-400 uppercase mb-1">
+                                            <i class="fas fa-layer-group mr-1"></i> Flex 5v5:
+                                        </label>
+                                        <select id="edit-s-${idx}-flex" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs outline-none focus:border-cyan-500">
+                                            <option value="">-- Flex --</option>
+                                            ${optFlex}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             } catch (err) {
                 console.error("Error abriendo modal de detalle:", err);
             } finally {
@@ -2679,8 +2785,20 @@
                 'SUPP': { badge: 'text-teal-400 border-teal-500/30 bg-teal-950/40', icon: 'fas fa-hand-holding-heart text-teal-400' }
             };
 
-            const posTheme = posColorMap[j.posicion] || { badge: 'text-gray-400 border-gray-700 bg-gray-900', icon: 'fas fa-user text-gray-400' };
-            const rolEtiqueta = esTitular ? `[${j.posicion || 'ROL'}] Titular ${j.numero}` : `Suplente ${j.numero}`;
+            const normalizarRolKey = (pos) => {
+                if (!pos || typeof pos !== 'string') return '';
+                const p = pos.toUpperCase();
+                if (p.includes('TOP') || p.includes('SUPERIOR')) return 'TOP';
+                if (p.includes('JG') || p.includes('JUNGLA')) return 'JG';
+                if (p.includes('MID') || p.includes('MEDIO')) return 'MID';
+                if (p.includes('ADC') || p.includes('TIRADOR')) return 'ADC';
+                if (p.includes('SUP') || p.includes('SOPORTE')) return 'SUPP';
+                return '';
+            };
+
+            const rolKey = normalizarRolKey(j.posicion || j.rolPrincipal);
+            const posTheme = (rolKey && posColorMap[rolKey]) ? posColorMap[rolKey] : (posColorMap[j.posicion] || { badge: 'text-gray-400 border-gray-700 bg-gray-900', icon: 'fas fa-user text-gray-400' });
+            const rolEtiqueta = esTitular ? `[${rolKey || j.posicion || 'ROL'}] Titular ${j.numero}` : (rolKey ? `[${rolKey}] Suplente ${j.numero}` : `Suplente ${j.numero}`);
 
             const infoGeo = analizarYNormalizarResidencia(j.ciudad);
             const parsed = separarNombreYCi(j.nombreCi, j.ci);
@@ -2763,6 +2881,11 @@
                                 <span class="text-cyan-400 font-bold text-xs">${j.rangoFlex || 'Sin rango'}</span>
                             </div>
 
+                            ${!esTitular && (j.rolPrincipal || rolKey) ? `
+                            <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
+                                <span class="text-[9px] uppercase text-gray-500 font-bold">Rol Principal</span>
+                                <span class="text-amber-400 font-bold text-xs">${j.rolPrincipal || rolKey}</span>
+                            </div>` : ''}
                             <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
                                 <span class="text-[9px] uppercase text-gray-500 font-bold">Rol Secundario</span>
                                 <span class="text-purple-400 font-bold text-xs">${j.rolSecundario || 'Ninguno'}</span>
@@ -2968,6 +3091,40 @@
                 });
             }
 
+            const suplentesActualizados = [];
+            for (let i = 0; i < 3; i++) {
+                const prev = (equipoSeleccionado.suplentes && equipoSeleccionado.suplentes[i]) ? equipoSeleccionado.suplentes[i] : {};
+                const sRiot = document.getElementById(`edit-s-${i}-riot`)?.value.trim() || '';
+                const sRiotMain = document.getElementById(`edit-s-${i}-riotmain`)?.value.trim() || '';
+                const sNom = document.getElementById(`edit-s-${i}-nombre`)?.value.trim() || '';
+                const sCiudad = document.getElementById(`edit-s-${i}-ciudad`)?.value.trim() || '';
+                const sDisc = document.getElementById(`edit-s-${i}-discord`)?.value.trim() || '';
+                const sRolPrinc = document.getElementById(`edit-s-${i}-rolprinc`)?.value.trim() || '';
+                const sRolSec = document.getElementById(`edit-s-${i}-rolsec`)?.value.trim() || '';
+                const sSoloQ = document.getElementById(`edit-s-${i}-soloeo`)?.value.trim() || '';
+                const sFlex = document.getElementById(`edit-s-${i}-flex`)?.value.trim() || '';
+
+                if (sNom || sRiot || sRolPrinc || prev.nombreCi || prev.riotIdLas) {
+                    suplentesActualizados.push({
+                        ...prev,
+                        numero: i + 1,
+                        posicion: sRolPrinc || prev.posicion || 'Suplente',
+                        rolPrincipal: sRolPrinc,
+                        rolSecundario: sRolSec,
+                        riotIdLas: sRiot,
+                        riotIdMain: sRiotMain,
+                        nombreCi: sNom,
+                        ciudad: sCiudad || prev.ciudad || '',
+                        telefono: prev.telefono || '',
+                        discord: sDisc,
+                        rangoSoloQ: sSoloQ,
+                        rangoFlex: sFlex,
+                        opggLas: sRiot ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(sRiot.replace('#', '-'))}` : prev.opggLas,
+                        opggMain: prev.opggMain || ''
+                    });
+                }
+            }
+
             const equipoModificado = {
                 nombre: editNombre || equipoSeleccionado.nombre,
                 tag: editTag || equipoSeleccionado.tag,
@@ -2991,6 +3148,7 @@
                     discord: editSubDiscord
                 },
                 titulares: titularesActualizados,
+                suplentes: suplentesActualizados,
                 pago: {
                     ...equipoSeleccionado.pago,
                     modalidad: editPagoModalidad,
