@@ -50,7 +50,7 @@ function formatearUrlDrive(url) {
   const str = url.trim();
   const idMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (idMatch && idMatch[1]) {
-    return "https://drive.google.com/uc?export=view&id=" + idMatch[1];
+    return "https://drive.usercontent.google.com/download?id=" + idMatch[1] + "&export=view&authuser=0";
   }
   return str;
 }
@@ -149,6 +149,69 @@ function doGet(e) {
         }
       }
 
+      // -------------------------------------------------------------
+      // PAGO: Detección profunda de columnas para QR Nacional y Binance Internacional
+      // -------------------------------------------------------------
+      const modalidadVal = String(row[113] || "");
+      const esBoliviaMod = modalidadVal.toLowerCase().includes("bolivia") || modalidadVal.toLowerCase().includes("qr");
+      const esInterMod = modalidadVal.toLowerCase().includes("internacional") || modalidadVal.toLowerCase().includes("binance");
+
+      let compQR = "";
+      let refQR = "";
+      let compBinance = "";
+      let refBinance = "";
+
+      // En el formulario de Google Sheets:
+      // Las columnas 114 a 122 contienen las respuestas de las bifurcaciones de pago.
+      for (let c = 113; c <= 122 && c < row.length; c++) {
+        const val = String(row[c] || "").trim();
+        if (!val || c === 113) continue;
+
+        const esDrive = val.includes("drive.google.com") || val.includes("http://") || val.includes("https://");
+
+        const esConsentimiento = val.toLowerCase().includes("acepto") || val.toLowerCase().includes("cláusula") || val.toLowerCase().includes("clausula") || val.toLowerCase().includes("reglamento");
+        if (esConsentimiento) continue;
+
+        // Columnas asociadas a la sección Bolivia (QR Nacional): usualmente 114 y 115
+        if (c === 114 || c === 115) {
+          if (esDrive && !compQR) {
+            compQR = val;
+          } else if (!esDrive && !refQR && val.length > 2) {
+            refQR = val;
+          }
+        }
+        // Columnas asociadas a la sección Internacional (Binance): usualmente 116 y 117
+        else if (c === 116 || c === 117 || c === 118) {
+          if (esDrive && !compBinance) {
+            compBinance = val;
+          } else if (!esDrive && !refBinance && val.length > 2) {
+            refBinance = val;
+          }
+        }
+      }
+
+      // Fallback de rescate si alguna celda contiene Drive en cualquier columna de pago:
+      if (!compQR && !compBinance) {
+        for (let c = 113; c <= 122 && c < row.length; c++) {
+          const val = String(row[c] || "").trim();
+          if (val.includes("drive.google.com") || val.includes("http://") || val.includes("https://")) {
+            if (esBoliviaMod) compQR = val;
+            else compBinance = val;
+            break;
+          }
+        }
+      }
+
+      if (!refQR && esBoliviaMod && row[115]) {
+        refQR = String(row[115]);
+      }
+      if (!refBinance && esInterMod && (row[117] || row[115])) {
+        refBinance = String(row[117] || row[115] || "");
+      }
+
+      const compPrincipal = esBoliviaMod ? (compQR || compBinance) : (compBinance || compQR);
+      const refPrincipal = esBoliviaMod ? (refQR || refBinance || String(row[115] || "")) : (refBinance || refQR || String(row[115] || ""));
+
       equipos.push({
         rowId: rowIndex,
         timestamp: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss") : "",
@@ -181,10 +244,20 @@ function doGet(e) {
         suplentes: suplentes,
 
         pago: {
-          modalidad: String(row[113] || ""),
-          referencia: String(row[115] || ""),
-          comprobante: formatearUrlDrive(row[116] || ""),
-          comprobanteRaw: String(row[116] || "")
+          modalidad: modalidadVal,
+          referencia: refPrincipal,
+          comprobante: formatearUrlDrive(compPrincipal),
+          comprobanteRaw: compPrincipal,
+
+          // QR Nacional (Bolivia)
+          comprobanteQR: formatearUrlDrive(compQR),
+          comprobanteQRRaw: compQR,
+          referenciaQR: refQR,
+
+          // Binance Internacional
+          comprobanteBinance: formatearUrlDrive(compBinance),
+          comprobanteBinanceRaw: compBinance,
+          referenciaBinance: refBinance
         },
 
         estado: estadoActual,
@@ -395,6 +468,11 @@ function doPost(e) {
         if (eq.pago) {
           if (eq.pago.modalidad !== undefined) sheet.getRange(rowId, 114).setValue(eq.pago.modalidad);
           if (eq.pago.referencia !== undefined) sheet.getRange(rowId, 116).setValue(eq.pago.referencia);
+          if (eq.pago.comprobante !== undefined) sheet.getRange(rowId, 117).setValue(eq.pago.comprobante);
+          if (eq.pago.comprobanteQR !== undefined && eq.pago.comprobanteQR) sheet.getRange(rowId, 115).setValue(eq.pago.comprobanteQR);
+          if (eq.pago.referenciaQR !== undefined && eq.pago.referenciaQR) sheet.getRange(rowId, 116).setValue(eq.pago.referenciaQR);
+          if (eq.pago.comprobanteBinance !== undefined && eq.pago.comprobanteBinance) sheet.getRange(rowId, 117).setValue(eq.pago.comprobanteBinance);
+          if (eq.pago.referenciaBinance !== undefined && eq.pago.referenciaBinance) sheet.getRange(rowId, 118).setValue(eq.pago.referenciaBinance);
         }
       }
 

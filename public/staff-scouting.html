@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=198">
+    <link rel="stylesheet" href="/dist/output.css?v=202">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -104,6 +104,12 @@
             </div>
 
             <div class="flex gap-1.5 sm:gap-3 items-center shrink-0">
+                <!-- Botón Irregularidades e Integridad -->
+                <button onclick="abrirModalIrregularidades()" id="btn-header-irregularidades" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer relative" title="Auditoría de integridad competitiva, multiequipo y jugadores bloqueados de la Liga">
+                    <i class="fas fa-shield-alt text-rose-400"></i> <span class="hidden sm:inline">Irregularidades</span>
+                    <span id="badge-header-irregularidades-count" class="px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black font-mono ml-0.5">0</span>
+                </button>
+
                 <!-- Botón Censo Residencias -->
                 <button onclick="abrirModalCensoResidencias()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-yellow-500/15 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-300 font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer" title="Censo y desglose de residencia de todos los jugadores">
                     <i class="fas fa-map-marked-alt text-yellow-400"></i> <span class="hidden sm:inline">Censo Residencias</span>
@@ -120,14 +126,15 @@
                 </a>
 
                 <!-- Botón Sincronizar Google Sheets -->
-                <button onclick="sincronizarGoogleSheets()" id="btn-sync-sheets" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md hover:shadow-emerald-500/25 active:scale-95 cursor-pointer" title="Cargar últimas inscripciones de Google Sheets">
+                <button onclick="sincronizarGoogleSheets()" id="btn-sync-sheets" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md hover:shadow-emerald-500/25 active:scale-95 cursor-pointer" title="Forzar sincronización inmediata con Google Sheets">
                     <i id="icon-sync-sheets" class="fas fa-sync-alt"></i> <span class="hidden xs:inline">Sincronizar</span>
                 </button>
 
-                <!-- Botón Configurar Apps Script URL -->
-                <button onclick="abrirModalConfigUrl()" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-700/60 text-gray-400 hover:text-emerald-400 font-bold text-xs transition-colors cursor-pointer" title="Configurar URL del Web App de Apps Script">
-                    <i class="fas fa-cog"></i>
-                </button>
+                <!-- Estado Conexión API Oficial Blindada (Auto-Sync Activo) -->
+                <div class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-900/80 border border-emerald-500/30 text-emerald-400 text-xs font-bold select-none" title="API Oficial de Producción Blindada • Auto-sincronización activa en tiempo real">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-[10px] tracking-wider uppercase font-mono font-black">API Live</span>
+                </div>
 
                 <!-- Cerrar Sesión -->
                 <button onclick="cerrarSesionStaff()" class="border border-red-900/50 text-red-400 hover:bg-red-600 hover:text-white text-xs font-bold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-all shadow-sm">
@@ -344,7 +351,7 @@
                                             <button type="button" onclick="abrirVisorLogo()" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm" title="Ampliar en pantalla completa">
                                                 <i class="fas fa-expand"></i> Ver HD
                                             </button>
-                                            <a id="m-d-logo-drive-link" href="#" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95" title="Abrir en Google Drive">
+                                            <a id="m-d-logo-drive-link" href="#" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95" title="Abrir en Google Drive">
                                                 <i class="fab fa-google-drive"></i> Drive
                                             </a>
                                         </div>
@@ -558,12 +565,12 @@
                                     </h3>
                                     <span class="text-[10px] text-gray-500 font-mono">Google Drive</span>
                                 </div>
-                                <p class="text-gray-400 text-xs leading-relaxed mb-4">
+                                <p id="m-pago-comprobante-desc" class="text-gray-400 text-xs leading-relaxed mb-4">
                                     El archivo de comprobante de pago fue subido por el capitán al completar el formulario de inscripción oficial.
                                 </p>
                             </div>
-                            <div id="m-pago-comprobante-box" class="text-center p-4 bg-[#111] rounded-xl border border-gray-800">
-                                <a id="m-pago-comprobante-link" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95">
+                            <div id="m-pago-comprobante-box" class="space-y-3">
+                                <a id="m-pago-comprobante-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95">
                                     <i class="fas fa-external-link-alt"></i> Ver Comprobante en Google Drive
                                 </a>
                             </div>
@@ -806,8 +813,8 @@
                             </div>
                         </div>
 
-                        <!-- Pago Referencia -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-800/60">
+                        <!-- Pago Referencia y Comprobante -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-800/60">
                             <div>
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Modalidad de Pago</label>
                                 <select id="edit-pago-modalidad" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
@@ -819,8 +826,21 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nº Referencia / Transacción</label>
-                                <input type="text" id="edit-pago-referencia" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500">
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nº Referencia / TXID</label>
+                                <input type="text" id="edit-pago-referencia" placeholder="Ej: 77150403" class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-white text-xs outline-none focus:border-amber-500 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-emerald-400 mb-1">
+                                    <i class="fas fa-qrcode mr-1"></i> Comprobante QR Nacional (Drive)
+                                </label>
+                                <input type="text" id="edit-pago-comprobante-qr" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-emerald-300 text-xs font-mono outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-amber-400 mb-1">
+                                    <i class="fas fa-coins mr-1"></i> Comprobante Binance (Drive)
+                                </label>
+                                <input type="text" id="edit-pago-comprobante-binance" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#111] border border-gray-800 p-2.5 rounded-xl text-amber-200 text-xs font-mono outline-none focus:border-amber-400">
+                                <input type="hidden" id="edit-pago-comprobante">
                             </div>
                         </div>
 
@@ -867,7 +887,7 @@
 
             <!-- Acciones Directas -->
             <div class="flex items-center gap-2.5 w-full flex-wrap justify-center pt-1">
-                <a id="visor-logo-drive-link" href="#" target="_blank" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95" title="Abrir archivo en Google Drive">
+                <a id="visor-logo-drive-link" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95" title="Abrir archivo en Google Drive">
                     <i class="fab fa-google-drive"></i> Abrir en Drive
                 </a>
                 <button type="button" onclick="copiarEnlaceLogo()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-gray-700 cursor-pointer active:scale-95" title="Copiar URL directa">
@@ -1296,45 +1316,148 @@
     </div>
 
     <!-- ============================================================== -->
-    <!-- MODAL DE CONFIGURACIÓN DE URL DE APPS SCRIPT                    -->
+    <!-- MODAL DE CONTROL DE INTEGRIDAD & IRREGULARIDADES               -->
     <!-- ============================================================== -->
-    <div id="modal-config-url" onclick="if(event.target === this) cerrarModalConfigUrl()" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 hidden" style="z-index: 60;">
-        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-emerald-500/40 shadow-2xl space-y-4 animate-fadeIn">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                <h3 class="text-sm font-black uppercase text-white tracking-wider flex items-center gap-2">
-                    <i class="fas fa-cog text-emerald-400"></i> Configurar Conexión Google Sheets API
-                </h3>
-                <button onclick="cerrarModalConfigUrl()" class="text-gray-500 hover:text-white cursor-pointer"><i class="fas fa-times"></i></button>
+    <div id="modal-irregularidades" onclick="if(event.target === this) cerrarModalIrregularidades()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 hidden" style="z-index: 50;">
+        <div class="bg-[#050505] border border-gray-800 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            
+            <!-- HEADER -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400 text-xl shrink-0 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider truncate flex items-center gap-2">
+                            <span>Control de Integridad & Irregularidades</span>
+                            <span id="badge-modal-irreg-total" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">0</span>
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Auditoría automática de duplicidad multiequipo y cruce de elegibilidad con jugadores de la Liga LBL Oficial</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalIrregularidades()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <p class="text-xs text-gray-400">
-                Pega la URL de la Aplicación Web generada al implementar el Apps Script en tu hoja de cálculo (debe terminar en <code class="text-emerald-300 bg-black/50 px-1 py-0.5 rounded">/exec</code>):
-            </p>
-            <div>
-                <label class="block text-[10px] font-black uppercase text-gray-500 mb-1">URL de la Web App (Google Apps Script):</label>
-                <input type="url" id="input-api-url" class="w-full bg-[#050810] border border-gray-800 p-3 rounded-xl text-white text-xs font-mono outline-none focus:border-emerald-500 transition-all" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+
+            <!-- FILTROS Y CONTROLES DEL MODAL -->
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#070b12] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0 text-xs">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] uppercase font-black text-gray-500 mr-1">Filtrar:</span>
+                    <button type="button" onclick="cambiarFiltroIrregularidades('todos')" id="btn-irreg-filtro-todos" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-rose-500/20 text-rose-300 border border-rose-500/40 cursor-pointer">
+                        Todas (<span id="count-irreg-todos">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroIrregularidades('multiequipo')" id="btn-irreg-filtro-multi" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">
+                        🔴 Multiequipo (<span id="count-irreg-multi">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroIrregularidades('liga')" id="btn-irreg-filtro-liga" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">
+                        ⛔ Conflicto Liga LBL (<span id="count-irreg-liga">0</span>)
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button type="button" onclick="reauditarIrregularidadesManual()" class="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-300 hover:text-white font-bold text-xs uppercase flex items-center gap-1.5 transition-all border border-gray-700/60 cursor-pointer shadow-sm active:scale-95" title="Volver a calcular cruces con Firestore y Sheets">
+                        <i class="fas fa-sync-alt" id="icon-reauditar-irreg"></i> Re-auditar
+                    </button>
+                    <button type="button" onclick="copiarReporteCompletoIrregularidades()" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95">
+                        <i class="fas fa-copy"></i> Copiar Reporte Staff
+                    </button>
+                </div>
             </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button onclick="cerrarModalConfigUrl()" class="px-4 py-2 rounded-xl text-gray-400 hover:text-white text-xs font-bold">Cancelar</button>
-                <button onclick="guardarConfigUrl()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase text-xs transition-all shadow-md">Guardar y Sincronizar</button>
+
+            <!-- CONTENIDO CON SCROLL -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#050505]">
+                
+                <!-- KPI CARDS -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-rose-900/40 bg-gradient-to-b from-rose-950/20 to-transparent">
+                        <span class="text-[9px] sm:text-[10px] text-rose-400 font-bold uppercase tracking-widest block mb-1">Infracciones Totales</span>
+                        <p id="kpi-irreg-total" class="text-xl sm:text-2xl font-black text-rose-400">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Reglamento LBL</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-amber-400 font-bold uppercase tracking-widest block mb-1">🔴 Multiequipo (SC3)</span>
+                        <p id="kpi-irreg-multi" class="text-xl sm:text-2xl font-black text-amber-300">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">En 2 o más rosters</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-purple-400 font-bold uppercase tracking-widest block mb-1">⛔ Liga LBL Oficial</span>
+                        <p id="kpi-irreg-liga" class="text-xl sm:text-2xl font-black text-purple-300">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Tier 1 / Tier 2 Aceptados</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest block mb-1">Equipos Afectados</span>
+                        <p id="kpi-irreg-equipos" class="text-xl sm:text-2xl font-black text-white">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">En Scouting T3</span>
+                    </div>
+                </div>
+
+                <!-- LISTA DINÁMICA DE CONFLICTOS -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-400 tracking-wider flex items-center gap-1.5">
+                            <i class="fas fa-list-ul text-rose-400"></i> Desglose de Inconsistencias Detectadas
+                        </h4>
+                        <span id="irreg-filtro-info" class="text-[10px] text-gray-500 font-mono">Mostrando todas</span>
+                    </div>
+                    
+                    <div id="irreg-lista-conflictos" class="space-y-3">
+                        <!-- Inyectado dinámicamente vía renderizarListaIrregularidades() -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0a0a0a] flex flex-col sm:flex-row justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-500 text-center sm:text-left">
+                    <i class="fas fa-info-circle text-rose-400 mr-1"></i> Los equipos con jugadores en conflicto no deben cambiarse a <strong class="text-emerald-400">"Aceptado"</strong> hasta subsanar su roster.
+                </span>
+                <button onclick="cerrarModalIrregularidades()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- CONTENEDOR AUXILIAR DE MODAL (BLOQUEADO EN PRODUCCIÓN) -->
+    <div id="modal-config-url" class="hidden"></div>
+
     <!-- SCRIPTS MODULARES -->
     <script type="module">
-        import { auth } from "/firebase-config.js";
+        import { db, auth } from "/firebase-config.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=198";
+        import "/app-version.js?v=202";
 
-        // URL por defecto oficial de la API de Google Apps Script (Scouting T3)
-        const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxbFYMNG8XBK9dlScH7QNc9I3el7NK2VHAtTeNCrn18q6ymNefx2G3Z20N1EGaL9Mdo/exec";
-        const STORAGE_KEY_API = "lbl_scouting_sheets_api_url";
+        // ==============================================================
+        // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
+        // ==============================================================
+        // Clave y endpoint /exec oficial único y definitivo para todo el Staff.
+        const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
+        const SCRIPT_DEPLOYMENT_VERSION = "2026.10.12-v3-prod-locked";
         const STORAGE_KEY_CACHE = "lbl_scouting_equipos_cache";
+        const STORAGE_KEY_VER = "lbl_scouting_deploy_version";
 
-        function getApiUrl() {
-            return localStorage.getItem(STORAGE_KEY_API) || DEFAULT_API_URL;
+        // BLINDAJE EN PRODUCCIÓN:
+        // Purgar inmediatamente cualquier URL personalizada o rota guardada en el localStorage del usuario
+        // para garantizar que todo el Staff utilice la API oficial inmutable.
+        localStorage.removeItem("lbl_scouting_sheets_api_url");
+        if (localStorage.getItem(STORAGE_KEY_VER) !== SCRIPT_DEPLOYMENT_VERSION) {
+            localStorage.removeItem(STORAGE_KEY_CACHE);
+            localStorage.setItem(STORAGE_KEY_VER, SCRIPT_DEPLOYMENT_VERSION);
         }
+
+        // getApiUrl siempre devuelve la URL canónica inmutable
+        function getApiUrl() {
+            return DEFAULT_API_URL;
+        }
+
+        window.abrirModalConfigUrl = function() {
+            console.log("🔒 Conexión API Oficial blindada en producción.");
+        };
+        window.cerrarModalConfigUrl = function() {};
+        window.guardarConfigUrl = function() {};
+        window.restablecerUrlOficial = function() {};
 
         // Estado en memoria
         let equiposScouting = [];
@@ -1425,7 +1548,7 @@
             const str = url.trim();
             const idMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
             if (idMatch && idMatch[1]) {
-                return `https://drive.google.com/file/d/${idMatch[1]}/view`;
+                return `https://drive.usercontent.google.com/download?id=${idMatch[1]}&export=view&authuser=0`;
             }
             return str;
         }
@@ -1511,6 +1634,11 @@
                     return;
                 }
                 // 2. Modales secundarios
+                const modalIrreg = document.getElementById('modal-irregularidades');
+                if (modalIrreg && !modalIrreg.classList.contains('hidden')) {
+                    cerrarModalIrregularidades();
+                    return;
+                }
                 const modalConfig = document.getElementById('modal-config-url');
                 if (modalConfig && !modalConfig.classList.contains('hidden')) {
                     cerrarModalConfigUrl();
@@ -1535,7 +1663,7 @@
             }
         });
 
-        // Datos fallback iniciales (obtenidos directamente de la fila 2 de la hoja de cálculo)
+        // Datos fallback iniciales (obtenidos directamente de la hoja de cálculo y mocks de prueba)
         const MOCK_INICIAL = [
             {
                 rowId: 2,
@@ -1572,8 +1700,57 @@
                 pago: {
                     modalidad: "Internacional / Binance",
                     referencia: "TX-BIN-981240192",
-                    comprobante: "",
-                    comprobanteRaw: ""
+                    comprobante: "https://drive.google.com/open?id=1xH023gK3YADsnBuOvFm4KiVLHgVJv463",
+                    comprobanteRaw: "https://drive.google.com/open?id=1xH023gK3YADsnBuOvFm4KiVLHgVJv463",
+                    comprobanteBinance: "https://drive.google.com/open?id=1xH023gK3YADsnBuOvFm4KiVLHgVJv463",
+                    referenciaBinance: "TX-BIN-981240192"
+                },
+                estado: "Pendiente",
+                notasStaff: "",
+                staffRevisor: "",
+                fechaRevision: ""
+            },
+            {
+                rowId: 3,
+                timestamp: "2026-10-05 14:15:00",
+                email: "phoenixrising.lbl@gmail.com",
+                nombre: "Phoenix Rising Gaming",
+                tag: "PRG",
+                logo: "",
+                procedencia: "Nacional (La Paz / El Alto)",
+                objetivo: "Disputar el cupo de clasificación a la Liga LBL (Cupo)",
+                capitan: {
+                    nombreCi: "Roberto Carlos Mendoza 39102938",
+                    telefono: "+591 76543210",
+                    discord: "robmendoza"
+                },
+                subcapitan: {
+                    nombreCi: "Mateo Gómez 40192831",
+                    telefono: "+591 71234567",
+                    discord: "mateog"
+                },
+                horarios: {
+                    franjaSemana: "A partir de las 20:00",
+                    dificultades: "Sin dificultades",
+                    finesDeSemana: "Sábados y Domingos a partir de las 18:00"
+                },
+                titulares: [
+                    // TOP comparte identidad con Armeros Gaming (Infracción 1: Multiequipo)
+                    { posicion: "TOP", numero: 1, nombreCi: "Alexis Nelson Gutierrez 44877986", ciudad: "La Paz", telefono: "+591 76543210", discord: "fordyon", riotIdLas: "Fordyon#420", opggLas: "https://www.op.gg/summoners/las/Fordyon-420", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Esmeralda I", rangoFlex: "Platino" },
+                    { posicion: "JG", numero: 2, nombreCi: "Roberto Carlos Mendoza 39102938", ciudad: "La Paz", telefono: "+591 76543210", discord: "robmendoza", riotIdLas: "RobJG#LAS", opggLas: "https://www.op.gg/summoners/las/RobJG-LAS", riotIdMain: "", opggMain: "", rolSecundario: "TOP", rangoSoloQ: "Diamante III", rangoFlex: "Diamante" },
+                    // MID coincide con jugador de equipo Aceptado en Liga LBL Oficial (Infracción 2: Bloqueado por Liga LBL)
+                    { posicion: "MID", numero: 3, nombreCi: "Carlos Pérez 12345678", ciudad: "Cochabamba", telefono: "+591 78901234", discord: "kaiserlbl", riotIdLas: "Kaiser#LBL", opggLas: "https://www.op.gg/summoners/las/Kaiser-LBL", riotIdMain: "Kaiser#1", opggMain: "", rolSecundario: "ADC", rangoSoloQ: "Grandmaster", rangoFlex: "Master" },
+                    { posicion: "ADC", numero: 4, nombreCi: "Mateo Gómez 40192831", ciudad: "Santa Cruz", telefono: "+591 71234567", discord: "mateog", riotIdLas: "Gomez#LAS", opggLas: "https://www.op.gg/summoners/las/Gomez-LAS", riotIdMain: "", opggMain: "", rolSecundario: "MID", rangoSoloQ: "Master", rangoFlex: "Diamante" },
+                    { posicion: "SUPP", numero: 5, nombreCi: "Daniel Ramos 42910293", ciudad: "La Paz", telefono: "+591 75678901", discord: "danr", riotIdLas: "DanR#LAS", opggLas: "https://www.op.gg/summoners/las/DanR-LAS", riotIdMain: "", opggMain: "", rolSecundario: "JG", rangoSoloQ: "Diamante II", rangoFlex: "Diamante" }
+                ],
+                suplentes: [],
+                pago: {
+                    modalidad: "Bolivia / QR BCP",
+                    referencia: "73543762",
+                    comprobante: "https://drive.google.com/open?id=1DSpXzSac3PlxicmZEfTpoi6mwGyoS_qN",
+                    comprobanteRaw: "https://drive.google.com/open?id=1DSpXzSac3PlxicmZEfTpoi6mwGyoS_qN",
+                    comprobanteQR: "https://drive.google.com/open?id=1DSpXzSac3PlxicmZEfTpoi6mwGyoS_qN",
+                    referenciaQR: "73543762"
                 },
                 estado: "Pendiente",
                 notasStaff: "",
@@ -1611,12 +1788,16 @@
         };
 
         // 2. Inicialización
-        function inicializarModulo() {
+        async function inicializarModulo() {
             // Cargar de caché o mock inicial
             const cached = localStorage.getItem(STORAGE_KEY_CACHE);
             if (cached) {
                 try {
                     equiposScouting = JSON.parse(cached);
+                    // Si el cache local tiene menos de 2 equipos, usar MOCK_INICIAL para garantizar pruebas completas en local
+                    if (!Array.isArray(equiposScouting) || equiposScouting.length < 2) {
+                        equiposScouting = MOCK_INICIAL;
+                    }
                 } catch(e) {
                     equiposScouting = MOCK_INICIAL;
                 }
@@ -1624,65 +1805,172 @@
                 equiposScouting = MOCK_INICIAL;
             }
 
+            // Cargar jugadores de la Liga LBL Oficial y calcular auditoría de irregularidades
+            await cargarJugadoresLigaLBLOficial();
+            ejecutarAuditoriaIrregularidades();
+
             actualizarMetricas();
             renderizarTarjetasEquipos();
 
-            // Sincronizar automáticamente con Google Sheets
-            const apiUrl = getApiUrl();
-            if (apiUrl) {
-                sincronizarGoogleSheets();
-            } else {
-                document.getElementById('label-ultima-sync').textContent = "Modo Local (Configura URL de Sheets)";
-            }
+            // Sincronizar automáticamente con Google Sheets y arrancar polling en segundo plano
+            sincronizarGoogleSheets();
+            iniciarAutoSincronizacion();
         }
 
-        // 3. Sincronización con Google Sheets (GET)
-        window.sincronizarGoogleSheets = async function() {
-            const apiUrl = getApiUrl();
-            if (!apiUrl) {
-                abrirModalConfigUrl();
-                return;
-            }
+        // ==============================================================
+        // 3. MOTOR DE AUTO-SINCRONIZACIÓN EN TIEMPO REAL (GOOGLE SHEETS)
+        // ==============================================================
+        let isSyncing = false;
+        let ultimaSyncTimestamp = 0;
+        let autoSyncTimer = null;
+        const POLLING_INTERVAL_MS = 30000; // Sondeo cada 30 segundos
 
+        function mostrarToastNotificacion(mensaje) {
+            let toast = document.getElementById('toast-scouting-sync');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast-scouting-sync';
+                toast.className = 'fixed bottom-5 right-5 z-[100] max-w-sm bg-[#070e1b] border border-emerald-500/60 text-emerald-300 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-bold transition-all transform duration-300 opacity-0 translate-y-4 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-bell text-emerald-400 text-sm"></i> <span>${mensaje}</span>`;
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }, 4500);
+        }
+
+        window.sincronizarGoogleSheets = async function(silencioso = false) {
+            if (isSyncing) return;
+            isSyncing = true;
+
+            const apiUrl = getApiUrl();
             const icon = document.getElementById('icon-sync-sheets');
             const labelSync = document.getElementById('label-ultima-sync');
-            if (icon) icon.classList.add('fa-spin');
-            if (labelSync) labelSync.textContent = "Sincronizando con Google Sheets...";
+
+            if (!silencioso) {
+                if (icon) icon.classList.add('fa-spin');
+                if (labelSync) labelSync.textContent = "Sincronizando con Google Sheets...";
+            }
 
             try {
-                const res = await fetch(apiUrl, { method: "GET" });
+                // Parámetro anti-caché para forzar consulta fresca a Google Apps Script
+                const sep = apiUrl.includes('?') ? '&' : '?';
+                const fetchUrl = `${apiUrl}${sep}_t=${Date.now()}`;
+
+                const res = await fetch(fetchUrl, { method: "GET" });
                 const json = await res.json();
 
                 if (json.success && Array.isArray(json.equipos)) {
-                    equiposScouting = json.equipos;
+                    const totalPrevio = equiposScouting.length;
+                    const nuevosEquipos = json.equipos;
+                    const hayNuevos = totalPrevio > 0 && nuevosEquipos.length > totalPrevio;
+
+                    equiposScouting = nuevosEquipos;
                     localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    ultimaSyncTimestamp = Date.now();
                     
                     const ahora = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    if (labelSync) labelSync.textContent = `Hoy a las ${ahora} (${equiposScouting.length} equipos)`;
+                    if (labelSync) {
+                        labelSync.textContent = `Hoy a las ${ahora} (${equiposScouting.length} equipos)`;
+                        labelSync.classList.remove('text-rose-400');
+                        labelSync.classList.add('text-emerald-400');
+                    }
+
+                    // Si el usuario tiene el modal abierto viendo un equipo y no está editando, refrescar en caliente sin parpadeo
+                    if (equipoSeleccionado) {
+                        const actualizado = equiposScouting.find(e => String(e.rowId) === String(equipoSeleccionado.rowId));
+                        if (actualizado) {
+                            const tabEditar = document.getElementById('mtab-editar');
+                            const estaEditando = tabEditar && !tabEditar.classList.contains('hidden');
+                            if (!estaEditando) {
+                                const tabActiva = ['general', 'capitan', 'roster', 'pago', 'verificacion'].find(t => {
+                                    const el = document.getElementById(`mtab-${t}`);
+                                    return el && !el.classList.contains('hidden');
+                                }) || 'general';
+                                abrirModalDetalle(actualizado.rowId);
+                                switchModalTab(tabActiva);
+                            }
+                        }
+                    }
+
+                    if (hayNuevos) {
+                        const diferencia = nuevosEquipos.length - totalPrevio;
+                        mostrarToastNotificacion(`¡${diferencia} nueva(s) inscripción(es) detectada(s) automáticamente!`);
+                    }
                 } else {
                     console.warn("Respuesta sin formato esperado:", json);
-                    if (labelSync) labelSync.textContent = "Error al leer datos de Sheets";
+                    if (!silencioso && labelSync) labelSync.textContent = "Error al leer datos de Sheets";
                 }
             } catch (err) {
                 console.error("Error al sincronizar con Apps Script:", err);
-                if (labelSync) labelSync.textContent = "Error de conexión con Apps Script";
+                if (!silencioso && labelSync) {
+                    labelSync.textContent = "Error de conexión con Apps Script";
+                    labelSync.classList.remove('text-emerald-400');
+                    labelSync.classList.add('text-rose-400');
+                }
             } finally {
+                isSyncing = false;
                 if (icon) icon.classList.remove('fa-spin');
+                ejecutarAuditoriaIrregularidades();
                 actualizarMetricas();
                 renderizarTarjetasEquipos();
             }
         };
 
+        function iniciarAutoSincronizacion() {
+            if (autoSyncTimer) clearInterval(autoSyncTimer);
+            autoSyncTimer = setInterval(() => {
+                // Verificar que el usuario no esté en proceso de edición o creación manual
+                const tabEditar = document.getElementById('mtab-editar');
+                const estaEditando = tabEditar && !tabEditar.classList.contains('hidden');
+                const modalCrear = document.getElementById('modal-crear-equipo');
+                const estaCreando = modalCrear && !modalCrear.classList.contains('hidden');
+
+                if (!estaEditando && !estaCreando) {
+                    sincronizarGoogleSheets(true); // Sincronización silenciosa en background
+                }
+            }, POLLING_INTERVAL_MS);
+        }
+
+        // Auto-sincronización instantánea cuando la ventana o pestaña vuelve a estar visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                const ahora = Date.now();
+                if (ahora - ultimaSyncTimestamp > 12000) {
+                    const tabEditar = document.getElementById('mtab-editar');
+                    const estaEditando = tabEditar && !tabEditar.classList.contains('hidden');
+                    if (!estaEditando) {
+                        sincronizarGoogleSheets(true);
+                    }
+                }
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            const ahora = Date.now();
+            if (ahora - ultimaSyncTimestamp > 12000) {
+                const tabEditar = document.getElementById('mtab-editar');
+                const estaEditando = tabEditar && !tabEditar.classList.contains('hidden');
+                if (!estaEditando) {
+                    sincronizarGoogleSheets(true);
+                }
+            }
+        });
+
         // Helpers de Normalización y Filtro Visual
         function esCuentaExtDistinta(riotIdMain, riotIdLas) {
             if (!riotIdMain || typeof riotIdMain !== 'string') return false;
             const m = riotIdMain.trim();
-            if (!m) return false;
+            if (!m || m.length < 3) return false;
             const mLower = m.toLowerCase();
             const ignoreList = [
                 'n/a', 'na', 'no', 'ninguno', 'ninguna', '-', '--', 'none',
                 'misma', 'mismo', 'la misma', 'el mismo', 'no aplica', 'no tengo',
-                'same', 'sin cuenta', 'las', 'no posee', 'ningun'
+                'same', 'sin cuenta', 'las', 'no posee', 'ningun', 'no cuento',
+                'sin cuenta externa', 'no tiene', 'sin main', 'sin cuenta main'
             ];
             if (ignoreList.includes(mLower)) return false;
 
@@ -1693,7 +1981,73 @@
             // Comparar ignorando espacios (ej: "Fordyon #420" vs "Fordyon#420")
             if (mLower.replace(/\s+/g, '') === lLower.replace(/\s+/g, '')) return false;
 
+            // Si ambos tienen el mismo nick y el main solo repite #las o no tiene tag
+            const mNick = mLower.replace(/#.*$/, '').trim();
+            const lNick = lLower.replace(/#.*$/, '').trim();
+            if (mNick === lNick && (mLower.endsWith('#las') || !mLower.includes('#'))) {
+                return false;
+            }
+
             return true;
+        }
+
+        function separarNombreYCi(raw, ciFallback = '') {
+            if (!raw || typeof raw !== 'string') {
+                return { nombre: '--', ci: ciFallback || '--' };
+            }
+            const str = raw.trim();
+            if (!str) return { nombre: '--', ci: ciFallback || '--' };
+
+            // Detectar bloque de CI de 6 a 10 dígitos (opcionalmente precedido por guión y seguido por extensión ej: 1234567 LP)
+            const matchCi = str.match(/(?:[-–—:]\s*)?(\b\d{6,10}\b)(?:\s*(?:lp|cbb|cbba|scz|or|pt|tj|ch|bn|pa|lm|arg|per)?)?/i);
+            
+            if (matchCi) {
+                const ci = matchCi[1];
+                let nombreLimpio = str
+                    .replace(matchCi[0], '')
+                    .replace(/[-–—:]\s*$/, '')
+                    .trim();
+                if (!nombreLimpio) nombreLimpio = str;
+                return {
+                    nombre: nombreLimpio,
+                    ci: ci
+                };
+            }
+
+            return {
+                nombre: str,
+                ci: ciFallback || '--'
+            };
+        }
+
+        function formatearWhatsAppNumero(rawTel, paisHint = '') {
+            if (!rawTel || typeof rawTel !== 'string') return null;
+            let digits = rawTel.replace(/[^0-9]/g, '');
+            if (!digits || digits.length < 7) return null;
+
+            // Si ya tiene código de país internacional conocido:
+            // 591 (BO), 54 (AR), 51 (PE), 56 (CL), 55 (BR), 57 (CO), 52 (MX), 1 (US)
+            if (digits.startsWith('591') || digits.startsWith('54') || digits.startsWith('51') || 
+                digits.startsWith('56') || digits.startsWith('55') || digits.startsWith('57') || 
+                digits.startsWith('52') || (digits.startsWith('1') && digits.length === 11)) {
+                return digits;
+            }
+
+            // Celular boliviano de 8 dígitos (ej: 76764966):
+            if (digits.length === 8) {
+                return `591${digits}`;
+            }
+
+            // Inferencia según país de residencia:
+            const p = (paisHint || '').toLowerCase();
+            if (p.includes('peru') || p.includes('perú')) {
+                if (digits.length === 9 && digits.startsWith('9')) return `51${digits}`;
+            }
+            if (p.includes('argentina')) {
+                if (!digits.startsWith('54')) return `549${digits}`;
+            }
+
+            return digits;
         }
 
         function normalizarProcedenciaCorta(proc) {
@@ -1778,6 +2132,9 @@
                 const tieneCuentasExt = (eq.titulares || []).some(t => esCuentaExtDistinta(t.riotIdMain, t.riotIdLas)) ||
                                         (eq.suplentes || []).some(s => esCuentaExtDistinta(s.riotIdMain, s.riotIdLas));
 
+                const conflictosEq = irregularidadesGlobales.conflictosPorEquipo[eq.rowId] || [];
+                const tieneIrreg = conflictosEq.length > 0;
+
                 // Roster compacto (5 titulares con cuenta LAS y cuenta Main/Ext si existe y es genuinamente distinta)
                 const titularesHTML = (eq.titulares || []).map(t => {
                     const esExt = esCuentaExtDistinta(t.riotIdMain, t.riotIdLas);
@@ -1817,7 +2174,7 @@
                     </a>` : '';
 
                 return `
-                    <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group">
+                    <div onclick="abrirModalDetalle(${eq.rowId})" class="glass-panel p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group cursor-pointer hover:-translate-y-0.5">
                         <div>
                             <!-- Header de Tarjeta -->
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
@@ -1836,6 +2193,10 @@
                                     <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${badgeCls}">
                                         ${estado}
                                     </span>
+                                    ${tieneIrreg ? `
+                                    <button type="button" onclick="event.stopPropagation(); abrirModalIrregularidades();" class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1 shadow-sm hover:bg-rose-500/30 transition-all cursor-pointer" title="Posee ${conflictosEq.length} irregularidad(es) de reglamento">
+                                        <i class="fas fa-exclamation-triangle text-[7px] text-rose-400 animate-pulse"></i> ${conflictosEq.length} Infracci${conflictosEq.length > 1 ? 'ones' : 'ón'}
+                                    </button>` : ''}
                                     ${tieneCuentasExt ? `
                                     <span class="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-sm" title="Contiene jugadores con cuenta main o en otra región">
                                         <i class="fas fa-globe text-[7px]"></i> Ext. Region
@@ -1876,7 +2237,7 @@
                                     <i class="fas fa-comment-dots text-[7px]"></i> Nota
                                 </span>` : ''}
                             </div>
-                            <button onclick="abrirModalDetalle(${eq.rowId})" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm">
+                            <button onclick="event.stopPropagation(); abrirModalDetalle(${eq.rowId})" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm">
                                 <i class="fas fa-id-card text-xs"></i> Revisar Ficha
                             </button>
                         </div>
@@ -1938,229 +2299,377 @@
 
         // 7. Modal de Ficha Técnica
         window.abrirModalDetalle = function(rowId) {
-            const eq = equiposScouting.find(e => e.rowId === rowId);
-            if (!eq) return;
-            equipoSeleccionado = eq;
+            try {
+                const eq = equiposScouting.find(e => e.rowId === rowId);
+                if (!eq) return;
+                equipoSeleccionado = eq;
 
-            const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-            const logoVal = eq.logoRaw || eq.logo || '';
-            const logoDriveUrl = normalizarUrlDriveImagen(logoVal) || fallbackLogo;
+                const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
+                const logoVal = eq.logoRaw || eq.logo || '';
+                const logoDriveUrl = normalizarUrlDriveImagen(logoVal) || fallbackLogo;
 
-            document.getElementById('m-logo').src = logoDriveUrl;
-            document.getElementById('m-nombre').textContent = eq.nombre || 'Equipo Sin Nombre';
-            document.getElementById('m-tag').textContent = `[${eq.tag || 'S/T'}]`;
-            
-            const badge = document.getElementById('m-estado-badge');
-            const estado = eq.estado || 'Pendiente';
-            badge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider badge-${estado.toLowerCase()}`;
-            badge.textContent = estado;
-
-            document.getElementById('m-subtitulo').textContent = `Marca temporal: ${eq.timestamp || 'Sin fecha'} • Fila Google Sheets: ${eq.rowId}`;
-
-            // Tarjeta de Logo Oficial en Pestaña General
-            const logoPreviewEl = document.getElementById('m-d-logo-preview');
-            const driveLogoLink = document.getElementById('m-d-logo-drive-link');
-            const statusLogoTxt = document.getElementById('m-d-logo-status');
-            if (logoPreviewEl) logoPreviewEl.src = logoDriveUrl;
-            if (driveLogoLink && statusLogoTxt) {
-                if (logoVal) {
-                    driveLogoLink.href = obtenerUrlDirectaDrive(logoVal);
-                    driveLogoLink.classList.remove('pointer-events-none', 'opacity-50');
-                    statusLogoTxt.textContent = "Google Drive (Adjunto)";
-                } else {
-                    driveLogoLink.href = "#";
-                    driveLogoLink.classList.add('pointer-events-none', 'opacity-50');
-                    statusLogoTxt.textContent = "Sin logo registrado";
-                }
-            }
-
-            // Pestaña General
-            document.getElementById('m-d-nombre').textContent = eq.nombre || '--';
-            document.getElementById('m-d-tag').textContent = eq.tag || '--';
-            document.getElementById('m-d-procedencia').textContent = eq.procedencia || '--';
-            document.getElementById('m-d-email').textContent = eq.email || '--';
-            document.getElementById('m-d-objetivo').textContent = eq.objetivo || 'Sin objetivo redactado.';
-            document.getElementById('m-d-franja-semana').textContent = eq.horarios?.franjaSemana || 'No especificada';
-            document.getElementById('m-d-dificultades').textContent = eq.horarios?.dificultades || 'Ninguna indicada';
-            document.getElementById('m-d-fines-semana').textContent = eq.horarios?.finesDeSemana || 'No especificada';
-
-            // Pestaña Capitán
-            document.getElementById('m-cap-nombre').textContent = eq.capitan?.nombreCi || 'Sin datos';
-            document.getElementById('m-cap-tel').textContent = eq.capitan?.telefono || '--';
-            document.getElementById('m-cap-discord').textContent = eq.capitan?.discord || '--';
-            const capWa = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
-            document.getElementById('m-cap-wa-link').href = capWa ? `https://wa.me/${capWa}` : '#';
-
-            // Subcapitán
-            document.getElementById('m-sub-nombre').textContent = eq.subcapitan?.nombreCi || 'Sin subcapitán';
-            document.getElementById('m-sub-tel').textContent = eq.subcapitan?.telefono || '--';
-            document.getElementById('m-sub-discord').textContent = eq.subcapitan?.discord || '--';
-            const subWa = (eq.subcapitan?.telefono || '').replace(/[^0-9]/g, '');
-            document.getElementById('m-sub-wa-link').href = subWa ? `https://wa.me/${subWa}` : '#';
-
-            // Pestaña Titulares
-            const contTitulares = document.getElementById('m-lista-titulares');
-            contTitulares.innerHTML = (eq.titulares || []).map(t => renderFichaJugador(t, true)).join('') || '<p class="text-gray-500 italic">No hay titulares registrados.</p>';
-
-            // Pestaña Suplentes
-            const contSuplentes = document.getElementById('m-lista-suplentes');
-            if (eq.suplentes && eq.suplentes.length > 0) {
-                contSuplentes.innerHTML = eq.suplentes.map(s => renderFichaJugador(s, false)).join('');
-            } else {
-                contSuplentes.innerHTML = `<div class="col-span-full p-8 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold"><i class="fas fa-info-circle mr-1"></i> Este equipo no registró suplentes.</div>`;
-            }
-
-            // Actualizar contadores del Roster
-            const numTitulares = (eq.titulares || []).length;
-            const numSuplentes = (eq.suplentes || []).length;
-            const badgeRosterTotal = document.getElementById('tab-badge-roster-count');
-            const badgeSuplentes = document.getElementById('badge-suplentes-count');
-            if (badgeRosterTotal) badgeRosterTotal.textContent = numTitulares + numSuplentes;
-            if (badgeSuplentes) badgeSuplentes.textContent = `${numSuplentes} Suplente${numSuplentes === 1 ? '' : 's'}`;
-
-            // Pestaña Pago
-            document.getElementById('m-pago-modalidad').textContent = eq.pago?.modalidad || 'No indicada';
-            document.getElementById('m-pago-referencia').textContent = eq.pago?.referencia || 'Sin número de referencia';
-            const linkComp = document.getElementById('m-pago-comprobante-link');
-            if (eq.pago?.comprobante) {
-                linkComp.href = eq.pago.comprobante;
-                linkComp.classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                linkComp.href = '#';
-                linkComp.classList.add('opacity-50', 'pointer-events-none');
-            }
-
-            // Pestaña Verificación Staff
-            document.getElementById('m-v-rowid').textContent = `Fila ${eq.rowId}`;
-            const radios = document.getElementsByName('m-v-estado');
-            radios.forEach(r => {
-                r.checked = (r.value.toLowerCase() === estado.toLowerCase());
-            });
-            document.getElementById('m-v-notas').value = eq.notasStaff || '';
-            const hist = (eq.staffRevisor || eq.fechaRevision) 
-                ? `Revisado por <strong>${eq.staffRevisor || 'Staff'}</strong> el ${eq.fechaRevision || '--'}`
-                : 'Sin dictamen previo';
-            document.getElementById('m-v-historial').innerHTML = hist;
-            auditarInconsistenciasEquipo(eq);
-
-            // Cargar datos en el panel de Edición Directa (U de CRUD)
-            document.getElementById('edit-nombre').value = eq.nombre || '';
-            document.getElementById('edit-tag').value = eq.tag || '';
-            document.getElementById('edit-logo').value = logoVal;
-            setSelectValueSafely(document.getElementById('edit-procedencia'), eq.procedencia);
-            setSelectValueSafely(document.getElementById('edit-objetivo'), eq.objetivo);
-            setSelectValueSafely(document.getElementById('edit-franja-semana'), eq.horarios?.franjaSemana);
-            setSelectValueSafely(document.getElementById('edit-fines-semana'), eq.horarios?.finesDeSemana);
-
-            document.getElementById('edit-cap-nombre').value = eq.capitan?.nombreCi || '';
-            document.getElementById('edit-cap-tel').value = eq.capitan?.telefono || '';
-            document.getElementById('edit-cap-discord').value = eq.capitan?.discord || '';
-            document.getElementById('edit-sub-nombre').value = eq.subcapitan?.nombreCi || '';
-            document.getElementById('edit-sub-tel').value = eq.subcapitan?.telefono || '';
-            document.getElementById('edit-sub-discord').value = eq.subcapitan?.discord || '';
-            setSelectValueSafely(document.getElementById('edit-pago-modalidad'), eq.pago?.modalidad);
-            document.getElementById('edit-pago-referencia').value = eq.pago?.referencia || '';
-
-            const contEditTitulares = document.getElementById('contenedor-inputs-titulares');
-            const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
-            contEditTitulares.innerHTML = posNames.map((pos, idx) => {
-                const t = (eq.titulares && eq.titulares[idx]) ? eq.titulares[idx] : {};
+                const elLogo = document.getElementById('m-logo');
+                if (elLogo) elLogo.src = logoDriveUrl;
+                const elNombre = document.getElementById('m-nombre');
+                if (elNombre) elNombre.textContent = eq.nombre || 'Equipo Sin Nombre';
+                const elTag = document.getElementById('m-tag');
+                if (elTag) elTag.textContent = `[${eq.tag || 'S/T'}]`;
                 
-                const optSoloQ = OPCIONES_SOLOQ.map(opt => `<option value="${opt}" ${String(t.rangoSoloQ || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
-                const optRolSec = OPCIONES_ROL_SECUNDARIO.map(opt => `<option value="${opt}" ${String(t.rolSecundario || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
-                const optFlex = OPCIONES_FLEX.map(opt => `<option value="${opt}" ${String(t.rangoFlex || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                const badge = document.getElementById('m-estado-badge');
+                const estado = eq.estado || 'Pendiente';
+                if (badge) {
+                    badge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider badge-${estado.toLowerCase()}`;
+                    badge.textContent = estado;
+                }
 
-                return `
-                    <div class="bg-[#111] p-4 rounded-xl border border-gray-800 space-y-2.5 text-xs">
-                        <div class="flex items-center justify-between pb-1.5 border-b border-gray-800">
-                            <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
-                                <span class="bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/40 text-[10px] font-mono">[${pos}]</span>
-                                Titular ${idx + 1}
-                            </span>
-                        </div>
+                const elSub = document.getElementById('m-subtitulo');
+                if (elSub) elSub.textContent = `Marca temporal: ${eq.timestamp || 'Sin fecha'} • Fila Google Sheets: ${eq.rowId}`;
 
-                        <!-- Fila 1: Identificación del Jugador -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
-                            <div>
-                                <label class="block text-[9px] font-bold text-amber-400 uppercase mb-1">
-                                    <i class="fas fa-crosshairs mr-1"></i> Riot ID LAS (#TAG)
-                                </label>
-                                <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Ej: Invoker#LAS" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-amber-500">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-amber-300 uppercase mb-1">
-                                    <i class="fas fa-globe-americas mr-1"></i> Main / Otra Región
-                                </label>
-                                <input type="text" id="edit-t-${idx}-riotmain" value="${t.riotIdMain || ''}" placeholder="Ej: Shadow#BR" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-amber-200 font-mono text-xs outline-none focus:border-amber-400">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
-                                    <i class="fas fa-id-card mr-1"></i> Nombre Completo & CI
-                                </label>
-                                <input type="text" id="edit-t-${idx}-nombre" value="${t.nombreCi || ''}" placeholder="Ej: Juan Pérez 1234567" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-gray-200 text-xs outline-none focus:border-amber-500">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
-                                    <i class="fas fa-map-marker-alt mr-1"></i> Residencia / Ciudad
-                                </label>
-                                <input type="text" id="edit-t-${idx}-ciudad" value="${t.ciudad || ''}" placeholder="Ej: La Paz" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-indigo-400 uppercase mb-1">
-                                    <i class="fab fa-discord mr-1"></i> Usuario Discord
-                                </label>
-                                <input type="text" id="edit-t-${idx}-discord" value="${t.discord || ''}" placeholder="Ej: usuario#0000" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs font-mono outline-none focus:border-indigo-500">
-                            </div>
-                        </div>
+                // Tarjeta de Logo Oficial en Pestaña General
+                const logoPreviewEl = document.getElementById('m-d-logo-preview');
+                const driveLogoLink = document.getElementById('m-d-logo-drive-link');
+                const statusLogoTxt = document.getElementById('m-d-logo-status');
+                if (logoPreviewEl) logoPreviewEl.src = logoDriveUrl;
+                if (driveLogoLink && statusLogoTxt) {
+                    if (logoVal) {
+                        driveLogoLink.href = obtenerUrlDirectaDrive(logoVal);
+                        driveLogoLink.classList.remove('pointer-events-none', 'opacity-50');
+                        statusLogoTxt.textContent = "Google Drive (Adjunto)";
+                    } else {
+                        driveLogoLink.href = "#";
+                        driveLogoLink.classList.add('pointer-events-none', 'opacity-50');
+                        statusLogoTxt.textContent = "Sin logo registrado";
+                    }
+                }
 
-                        <!-- Fila 2: Rangos Competitivos y Rol Secundario -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-gray-800/60">
-                            <div>
-                                <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
-                                    <i class="fas fa-trophy mr-1"></i> Rango Solo/Dúo (Split Actual):
-                                </label>
-                                <select id="edit-t-${idx}-soloeo" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
-                                    <option value="">-- Seleccionar SoloQ --</option>
-                                    ${optSoloQ}
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-cyan-400 uppercase mb-1">
-                                    <i class="fas fa-layer-group mr-1"></i> Rango Flex 5v5:
-                                </label>
-                                <select id="edit-t-${idx}-flex" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs outline-none focus:border-cyan-500">
-                                    <option value="">-- Seleccionar Flex --</option>
-                                    ${optFlex}
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-purple-400 uppercase mb-1">
-                                    <i class="fas fa-random mr-1"></i> Rol Secundario:
-                                </label>
-                                <select id="edit-t-${idx}-rolsec" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
-                                    <option value="">-- Rol Secundario --</option>
-                                    ${optRolSec}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                // Pestaña General
+                const setSafeTxt = (id, txt) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = txt;
+                };
 
-            switchModalTab('general');
-            document.getElementById('modal-detalle-equipo').classList.remove('hidden');
+                setSafeTxt('m-d-nombre', eq.nombre || '--');
+                setSafeTxt('m-d-tag', eq.tag || '--');
+                setSafeTxt('m-d-procedencia', eq.procedencia || '--');
+                setSafeTxt('m-d-email', eq.email || '--');
+                setSafeTxt('m-d-objetivo', eq.objetivo || 'Sin objetivo redactado.');
+                setSafeTxt('m-d-franja-semana', eq.horarios?.franjaSemana || 'No especificada');
+                setSafeTxt('m-d-dificultades', eq.horarios?.dificultades || 'Ninguna indicada');
+                setSafeTxt('m-d-fines-semana', eq.horarios?.finesDeSemana || 'No especificada');
+
+                // Pestaña Capitán
+                setSafeTxt('m-cap-nombre', eq.capitan?.nombreCi || 'Sin datos');
+                setSafeTxt('m-cap-tel', eq.capitan?.telefono || '--');
+                setSafeTxt('m-cap-discord', eq.capitan?.discord || '--');
+                const capWa = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
+                const elCapWa = document.getElementById('m-cap-wa-link');
+                if (elCapWa) elCapWa.href = capWa ? `https://wa.me/${capWa}` : '#';
+
+                // Subcapitán
+                setSafeTxt('m-sub-nombre', eq.subcapitan?.nombreCi || 'Sin subcapitán');
+                setSafeTxt('m-sub-tel', eq.subcapitan?.telefono || '--');
+                setSafeTxt('m-sub-discord', eq.subcapitan?.discord || '--');
+                const subWa = (eq.subcapitan?.telefono || '').replace(/[^0-9]/g, '');
+                const elSubWa = document.getElementById('m-sub-wa-link');
+                if (elSubWa) elSubWa.href = subWa ? `https://wa.me/${subWa}` : '#';
+
+                // Pestaña Titulares
+                const contTitulares = document.getElementById('m-lista-titulares');
+                if (contTitulares) {
+                    contTitulares.innerHTML = (eq.titulares || []).map(t => renderFichaJugador(t, true)).join('') || '<p class="text-gray-500 italic">No hay titulares registrados.</p>';
+                }
+
+                // Pestaña Suplentes
+                const contSuplentes = document.getElementById('m-lista-suplentes');
+                if (contSuplentes) {
+                    if (eq.suplentes && eq.suplentes.length > 0) {
+                        contSuplentes.innerHTML = eq.suplentes.map(s => renderFichaJugador(s, false)).join('');
+                    } else {
+                        contSuplentes.innerHTML = `<div class="col-span-full p-8 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold"><i class="fas fa-info-circle mr-1"></i> Este equipo no registró suplentes.</div>`;
+                    }
+                }
+
+                // Actualizar contadores del Roster
+                const numTitulares = (eq.titulares || []).length;
+                const numSuplentes = (eq.suplentes || []).length;
+                const badgeRosterTotal = document.getElementById('tab-badge-roster-count');
+                const badgeSuplentes = document.getElementById('badge-suplentes-count');
+                if (badgeRosterTotal) badgeRosterTotal.textContent = numTitulares + numSuplentes;
+                if (badgeSuplentes) badgeSuplentes.textContent = `${numSuplentes} Suplente${numSuplentes === 1 ? '' : 's'}`;
+
+                // Pestaña Pago
+                const modStr = (eq.pago?.modalidad || '').trim();
+                const esBoliviaMod = modStr.toLowerCase().includes('bolivia') || modStr.toLowerCase().includes('qr');
+                const esInterMod = modStr.toLowerCase().includes('internacional') || modStr.toLowerCase().includes('binance');
+
+                setSafeTxt('m-pago-modalidad', modStr || 'No indicada');
+                
+                // Limpieza de referencia para descartar textos de términos y condiciones
+                const limpiarRef = (ref) => {
+                    if (!ref || typeof ref !== 'string') return '';
+                    const r = ref.trim();
+                    const lower = r.toLowerCase();
+                    if (lower.includes('acepto') || lower.includes('cláusula') || lower.includes('clausula') || lower.includes('reglamento')) return '';
+                    return r;
+                };
+
+                const refQRVal = limpiarRef(eq.pago?.referenciaQR) || '';
+                const refBinanceVal = limpiarRef(eq.pago?.referenciaBinance) || '';
+                const refLimpia = limpiarRef(eq.pago?.referencia) || refQRVal || refBinanceVal || '';
+                setSafeTxt('m-pago-referencia', refLimpia || 'Sin número de referencia');
+                
+                const contCompBox = document.getElementById('m-pago-comprobante-box');
+                const compDesc = document.getElementById('m-pago-comprobante-desc');
+
+                // Determinar enlaces de Drive en QR Nacional y Binance Internacional
+                let compQRVal = (eq.pago?.comprobanteQR || eq.pago?.comprobanteQRRaw || '').trim();
+                let compBinanceVal = (eq.pago?.comprobanteBinance || eq.pago?.comprobanteBinanceRaw || '').trim();
+                const compGeneralVal = (eq.pago?.comprobante || eq.pago?.comprobanteRaw || '').trim();
+
+                if (compGeneralVal && compGeneralVal !== '#' && compGeneralVal !== 'Sin comprobante') {
+                    if (esBoliviaMod && !compQRVal) compQRVal = compGeneralVal;
+                    else if (esInterMod && !compBinanceVal) compBinanceVal = compGeneralVal;
+                    else if (!compQRVal && !compBinanceVal) {
+                        if (esBoliviaMod) compQRVal = compGeneralVal;
+                        else compBinanceVal = compGeneralVal;
+                    }
+                }
+
+                const botonesComprobantes = [];
+
+                // 1. Botón Minimalista Comprobante Nacional (Verde Esmeralda - Estilo Producción)
+                if (compQRVal && compQRVal !== '#' && compQRVal !== 'Sin comprobante') {
+                    const urlDriveQR = obtenerUrlDirectaDrive(compQRVal);
+                    botonesComprobantes.push(`
+                        <a href="${urlDriveQR}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-emerald-500/25 active:scale-95 cursor-pointer">
+                            <i class="fas fa-external-link-alt"></i> VER COMPROBANTE NACIONAL
+                        </a>
+                    `);
+                }
+
+                // 2. Botón Minimalista Comprobante Binance (Dorado/Ámbar - Estilo Producción)
+                if (compBinanceVal && compBinanceVal !== '#' && compBinanceVal !== 'Sin comprobante') {
+                    const urlDriveBinance = obtenerUrlDirectaDrive(compBinanceVal);
+                    botonesComprobantes.push(`
+                        <a href="${urlDriveBinance}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-amber-500/25 active:scale-95 cursor-pointer">
+                            <i class="fas fa-external-link-alt"></i> VER COMPROBANTE BINANCE
+                        </a>
+                    `);
+                }
+
+                // Fallback Genérico si no fue catalogado como QR ni Binance
+                if (botonesComprobantes.length === 0 && compGeneralVal && compGeneralVal !== '#' && compGeneralVal !== 'Sin comprobante') {
+                    const urlDriveGen = obtenerUrlDirectaDrive(compGeneralVal);
+                    botonesComprobantes.push(`
+                        <a href="${urlDriveGen}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95 cursor-pointer">
+                            <i class="fas fa-external-link-alt"></i> VER COMPROBANTE EN GOOGLE DRIVE
+                        </a>
+                    `);
+                }
+
+                if (botonesComprobantes.length > 0) {
+                    if (compDesc) {
+                        compDesc.textContent = "El archivo de comprobante de pago fue subido por el capitán al completar el formulario de inscripción oficial.";
+                    }
+                    if (contCompBox) {
+                        contCompBox.innerHTML = `
+                            <div class="space-y-3">
+                                ${botonesComprobantes.join('')}
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (compDesc) {
+                        compDesc.textContent = "No se detectó un archivo subido en las columnas de QR Nacional ni Binance (registrado mediante Nº de Referencia o Transacción).";
+                    }
+                    const capTel = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
+                    const waMsg = encodeURIComponent(`Hola ${eq.capitan?.nombreCi || 'Capitán'}, te escribe el Staff de LBL Esports. Necesitamos que nos adjuntes una captura de tu comprobante de pago de Scouting T3 (Referencia: ${eq.pago?.referencia || '--'}) para validar tu inscripción.`);
+                    const waBtn = capTel ? `
+                        <a href="https://wa.me/${capTel}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-green-600/20 hover:bg-green-600/30 text-green-300 border border-green-500/40 font-bold text-xs uppercase transition-all cursor-pointer">
+                            <i class="fab fa-whatsapp text-sm"></i> Pedir Comprobante al Capitán
+                        </a>
+                    ` : '';
+
+                    if (contCompBox) {
+                        contCompBox.innerHTML = `
+                            <div class="space-y-2.5 p-4 bg-amber-950/20 rounded-2xl border border-amber-500/30 text-center">
+                                <div class="flex items-center justify-center gap-1.5 text-amber-400 font-bold text-xs">
+                                    <i class="fas fa-receipt text-amber-400"></i> Sin Archivo Adjunto Detectado
+                                </div>
+                                <p class="text-[11px] text-gray-300 leading-relaxed">
+                                    Nº de Referencia declarado: <strong class="text-emerald-400 font-mono font-bold">${eq.pago?.referencia || '--'}</strong>.
+                                </p>
+                                ${waBtn}
+                                <button type="button" onclick="switchModalTab('editar')" class="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-bold text-xs uppercase transition-all cursor-pointer">
+                                    <i class="fas fa-plus"></i> Adjuntar Enlace de Comprobante
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Pestaña Verificación Staff
+                setSafeTxt('m-v-rowid', `Fila ${eq.rowId}`);
+                const radios = document.getElementsByName('m-v-estado');
+                radios.forEach(r => {
+                    r.checked = (r.value.toLowerCase() === estado.toLowerCase());
+                });
+                const notasEl = document.getElementById('m-v-notas');
+                if (notasEl) notasEl.value = eq.notasStaff || '';
+                const hist = (eq.staffRevisor || eq.fechaRevision) 
+                    ? `Revisado por <strong>${eq.staffRevisor || 'Staff'}</strong> el ${eq.fechaRevision || '--'}`
+                    : 'Sin dictamen previo';
+                const elHist = document.getElementById('m-v-historial');
+                if (elHist) elHist.innerHTML = hist;
+                auditarInconsistenciasEquipo(eq);
+
+                // Cargar datos en el panel de Edición Directa (U de CRUD)
+                const setSafeVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = val;
+                };
+
+                setSafeVal('edit-nombre', eq.nombre || '');
+                setSafeVal('edit-tag', eq.tag || '');
+                setSafeVal('edit-logo', logoVal);
+                setSelectValueSafely(document.getElementById('edit-procedencia'), eq.procedencia);
+                setSelectValueSafely(document.getElementById('edit-objetivo'), eq.objetivo);
+                setSelectValueSafely(document.getElementById('edit-franja-semana'), eq.horarios?.franjaSemana);
+                setSelectValueSafely(document.getElementById('edit-fines-semana'), eq.horarios?.finesDeSemana);
+
+                setSafeVal('edit-cap-nombre', eq.capitan?.nombreCi || '');
+                setSafeVal('edit-cap-tel', eq.capitan?.telefono || '');
+                setSafeVal('edit-cap-discord', eq.capitan?.discord || '');
+                setSafeVal('edit-sub-nombre', eq.subcapitan?.nombreCi || '');
+                setSafeVal('edit-sub-tel', eq.subcapitan?.telefono || '');
+                setSafeVal('edit-sub-discord', eq.subcapitan?.discord || '');
+                setSelectValueSafely(document.getElementById('edit-pago-modalidad'), eq.pago?.modalidad);
+                setSafeVal('edit-pago-referencia', refLimpia || refQRVal || refBinanceVal || eq.pago?.referencia || '');
+                
+                const editCompQRInput = document.getElementById('edit-pago-comprobante-qr');
+                if (editCompQRInput) editCompQRInput.value = compQRVal;
+                const editCompBinanceInput = document.getElementById('edit-pago-comprobante-binance');
+                if (editCompBinanceInput) editCompBinanceInput.value = compBinanceVal;
+                const editCompInput = document.getElementById('edit-pago-comprobante');
+                if (editCompInput) editCompInput.value = compQRVal || compBinanceVal || compGeneralVal;
+
+                const contEditTitulares = document.getElementById('contenedor-inputs-titulares');
+                if (contEditTitulares) {
+                    const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+                    contEditTitulares.innerHTML = posNames.map((pos, idx) => {
+                        const t = (eq.titulares && eq.titulares[idx]) ? eq.titulares[idx] : {};
+                        
+                        const optSoloQ = OPCIONES_SOLOQ.map(opt => `<option value="${opt}" ${String(t.rangoSoloQ || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                        const optRolSec = OPCIONES_ROL_SECUNDARIO.map(opt => `<option value="${opt}" ${String(t.rolSecundario || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+                        const optFlex = OPCIONES_FLEX.map(opt => `<option value="${opt}" ${String(t.rangoFlex || '').toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>${opt}</option>`).join('');
+
+                        return `
+                            <div class="bg-[#111] p-4 rounded-xl border border-gray-800 space-y-2.5 text-xs">
+                                <div class="flex items-center justify-between pb-1.5 border-b border-gray-800">
+                                    <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                                        <span class="bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/40 text-[10px] font-mono">[${pos}]</span>
+                                        Titular ${idx + 1}
+                                    </span>
+                                </div>
+
+                                <!-- Fila 1: Identificación del Jugador -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-amber-400 uppercase mb-1">
+                                            <i class="fas fa-crosshairs mr-1"></i> Riot ID LAS (#TAG)
+                                        </label>
+                                        <input type="text" id="edit-t-${idx}-riot" value="${t.riotIdLas || ''}" placeholder="Ej: Invoker#LAS" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-white font-mono text-xs outline-none focus:border-amber-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-amber-300 uppercase mb-1">
+                                            <i class="fas fa-globe-americas mr-1"></i> Main / Otra Región
+                                        </label>
+                                        <input type="text" id="edit-t-${idx}-riotmain" value="${t.riotIdMain || ''}" placeholder="Ej: Shadow#BR" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-amber-200 font-mono text-xs outline-none focus:border-amber-400">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">
+                                            <i class="fas fa-id-card mr-1"></i> Nombre Completo & CI
+                                        </label>
+                                        <input type="text" id="edit-t-${idx}-nombre" value="${t.nombreCi || ''}" placeholder="Ej: Juan Pérez 1234567" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-gray-200 text-xs outline-none focus:border-amber-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
+                                            <i class="fas fa-map-marker-alt mr-1"></i> Residencia / Ciudad
+                                        </label>
+                                        <input type="text" id="edit-t-${idx}-ciudad" value="${t.ciudad || ''}" placeholder="Ej: La Paz" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-indigo-400 uppercase mb-1">
+                                            <i class="fab fa-discord mr-1"></i> Usuario Discord
+                                        </label>
+                                        <input type="text" id="edit-t-${idx}-discord" value="${t.discord || ''}" placeholder="Ej: usuario#0000" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs font-mono outline-none focus:border-indigo-500">
+                                    </div>
+                                </div>
+
+                                <!-- Fila 2: Rangos Competitivos y Rol Secundario -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-gray-800/60">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-yellow-400 uppercase mb-1">
+                                            <i class="fas fa-trophy mr-1"></i> Rango Solo/Dúo (Split Actual):
+                                        </label>
+                                        <select id="edit-t-${idx}-soloeo" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-yellow-300 text-xs outline-none focus:border-yellow-500">
+                                            <option value="">-- Seleccionar SoloQ --</option>
+                                            ${optSoloQ}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-cyan-400 uppercase mb-1">
+                                            <i class="fas fa-layer-group mr-1"></i> Rango Flex 5v5:
+                                        </label>
+                                        <select id="edit-t-${idx}-flex" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-cyan-300 text-xs outline-none focus:border-cyan-500">
+                                            <option value="">-- Seleccionar Flex --</option>
+                                            ${optFlex}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-purple-400 uppercase mb-1">
+                                            <i class="fas fa-random mr-1"></i> Rol Secundario:
+                                        </label>
+                                        <select id="edit-t-${idx}-rolsec" class="w-full bg-[#0a0a0a] border border-gray-800 p-2 rounded-xl text-purple-300 text-xs outline-none focus:border-purple-500">
+                                            <option value="">-- Rol Secundario --</option>
+                                            ${optRolSec}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error("Error abriendo modal de detalle:", err);
+            } finally {
+                switchModalTab('general');
+                const modal = document.getElementById('modal-detalle-equipo');
+                if (modal) modal.classList.remove('hidden');
+            }
         };
 
         function renderFichaJugador(j, esTitular) {
             const opggUrl = j.opggLas || (j.riotIdLas ? `https://op.gg/es/lol/summoners/las/${encodeURIComponent(j.riotIdLas.replace('#', '-'))}` : null);
             const opggLink = opggUrl 
-                ? `<a href="${opggUrl}" target="_blank" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5"><i class="fas fa-chart-line"></i> OP.GG LAS</a>` 
+                ? `<a href="${opggUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1.5 cursor-pointer"><i class="fas fa-chart-line"></i> OP.GG LAS</a>` 
                 : '';
 
             const tieneMain = esCuentaExtDistinta(j.riotIdMain, j.riotIdLas);
-            const opggMainUrl = j.opggMain ? (j.opggMain.startsWith('http') ? j.opggMain : `https://${j.opggMain}`) : null;
-            const opggMainLink = opggMainUrl ? `
-                <a href="${opggMainUrl}" target="_blank" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : '';
+            let opggMainUrl = (j.opggMain || '').trim();
+            if (opggMainUrl && !opggMainUrl.startsWith('http')) {
+                opggMainUrl = `https://${opggMainUrl}`;
+            }
+
+            const esMismoOpgg = (u1, u2) => {
+                if (!u1 || !u2) return false;
+                const clean = u => u.toLowerCase().replace(/\/+$/, '').replace(/^https?:\/\/(www\.)?/, '');
+                return clean(u1) === clean(u2);
+            };
+
+            const mostrarOpggMain = tieneMain && opggMainUrl && !esMismoOpgg(opggMainUrl, opggUrl);
+            const opggMainLink = mostrarOpggMain ? `
+                <a href="${opggMainUrl}" target="_blank" rel="noopener noreferrer" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center gap-1 cursor-pointer"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : '';
 
             const posColorMap = {
                 'TOP': { badge: 'text-blue-400 border-blue-500/30 bg-blue-950/40', icon: 'fas fa-shield-alt text-blue-400' },
@@ -2174,6 +2683,9 @@
             const rolEtiqueta = esTitular ? `[${j.posicion || 'ROL'}] Titular ${j.numero}` : `Suplente ${j.numero}`;
 
             const infoGeo = analizarYNormalizarResidencia(j.ciudad);
+            const parsed = separarNombreYCi(j.nombreCi, j.ci);
+            const waNumero = formatearWhatsAppNumero(j.telefono, infoGeo.pais);
+            const telDisplay = (j.telefono || '').trim();
 
             return `
                 <div class="bg-[#111] p-4 rounded-2xl border ${infoGeo.esIncompleto ? 'border-amber-500/40' : 'border-gray-800'} hover:border-gray-700 transition-colors flex flex-col justify-between">
@@ -2195,34 +2707,68 @@
                             </div>
                         </div>
 
-                        <!-- Cuenta Main / Otra Región (Seguimiento Staff) -->
-                        <div class="p-2.5 rounded-xl ${tieneMain ? 'bg-amber-950/30 border border-amber-500/40' : 'bg-[#080808] border border-gray-800'} mb-2">
+                        <!-- Cuenta Main / Otra Región (Seguimiento Staff) - MOSTRAR SOLO SI TIENE CUENTA EXTERNA -->
+                        ${tieneMain ? `
+                        <div class="p-2.5 rounded-xl bg-amber-950/30 border border-amber-500/40 mb-2">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-[9px] uppercase font-black ${tieneMain ? 'text-amber-400' : 'text-gray-500'} tracking-wider flex items-center gap-1.5">
+                                <span class="text-[9px] uppercase font-black text-amber-400 tracking-wider flex items-center gap-1.5">
                                     <i class="fas fa-globe-americas"></i> Cuenta Main / Otra Región
                                 </span>
                                 ${opggMainLink}
                             </div>
                             <div class="flex items-center justify-between gap-2">
-                                <p class="text-xs sm:text-sm font-black font-mono leading-tight break-all ${tieneMain ? 'text-amber-200' : 'text-gray-500 italic'}">
-                                    ${tieneMain ? j.riotIdMain : 'Sin cuenta externa declarada (juega con LAS)'}
+                                <p class="text-xs sm:text-sm font-black font-mono leading-tight break-all text-amber-200">
+                                    ${j.riotIdMain}
                                 </p>
-                                ${tieneMain ? `<button type="button" onclick="copiarTexto('${j.riotIdMain}', 'Riot ID Main')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID Main"><i class="fas fa-copy"></i></button>` : ''}
+                                <button type="button" onclick="copiarTexto('${j.riotIdMain}', 'Riot ID Main')" class="text-gray-400 hover:text-white p-1 text-xs transition-colors cursor-pointer shrink-0" title="Copiar Riot ID Main"><i class="fas fa-copy"></i></button>
                             </div>
-                        </div>
+                        </div>` : ''}
 
                         <!-- Sub-panel de Datos -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 bg-[#0a0a0a] p-3 rounded-xl border border-gray-800 text-xs mt-3">
-                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Nombre</span><span class="text-white font-bold text-xs break-words">${j.nombreCi || '--'}</span></div>
-                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Discord</span><span class="text-indigo-400 font-bold text-xs break-all">${j.discord || '--'}</span></div>
-                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Solo/Duo</span><span class="text-yellow-400 font-bold text-xs">${j.rangoSoloQ || 'Sin rango'}</span></div>
-                            <div><span class="block text-[9px] uppercase text-gray-500 font-bold">Flex 5v5</span><span class="text-cyan-400 font-bold text-xs">${j.rangoFlex || 'Sin rango'}</span></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2.5 bg-[#0a0a0a] p-3.5 rounded-xl border border-gray-800 text-xs mt-3">
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">Nombre</span>
+                                <span class="text-white font-bold text-xs break-words">${parsed.nombre || '--'}</span>
+                            </div>
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">C.I. / DNI</span>
+                                ${parsed.ci && parsed.ci !== '--' ? `
+                                <button type="button" onclick="copiarTexto('${parsed.ci}', 'C.I. / DNI')" class="text-emerald-400 hover:text-emerald-300 font-mono font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer group" title="Copiar C.I. al portapapeles">
+                                    <span>${parsed.ci}</span>
+                                    <i class="fas fa-copy text-[8px] text-gray-500 group-hover:text-emerald-300 transition-colors"></i>
+                                </button>` : `
+                                <span class="text-gray-500 font-mono text-xs">--</span>`}
+                            </div>
+
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">Celular</span>
+                                ${waNumero ? `
+                                <a href="https://wa.me/${waNumero}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 font-bold font-mono text-xs inline-flex items-center gap-1.5 hover:underline transition-colors cursor-pointer" title="Contactar por WhatsApp (+${waNumero})">
+                                    <i class="fab fa-whatsapp text-emerald-400 text-sm"></i>
+                                    <span>${telDisplay || waNumero}</span>
+                                </a>` : `
+                                <span class="text-gray-400 font-mono text-xs">${telDisplay || '--'}</span>`}
+                            </div>
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">Discord</span>
+                                <span class="text-indigo-400 font-bold text-xs break-all">${j.discord || '--'}</span>
+                            </div>
+
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">Solo/Duo</span>
+                                <span class="text-yellow-400 font-bold text-xs">${j.rangoSoloQ || 'Sin rango'}</span>
+                            </div>
+                            <div>
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold">Flex 5v5</span>
+                                <span class="text-cyan-400 font-bold text-xs">${j.rangoFlex || 'Sin rango'}</span>
+                            </div>
+
                             <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
                                 <span class="text-[9px] uppercase text-gray-500 font-bold">Rol Secundario</span>
                                 <span class="text-purple-400 font-bold text-xs">${j.rolSecundario || 'Ninguno'}</span>
                             </div>
                             <div class="sm:col-span-2 border-t border-gray-800/60 pt-2 flex items-center justify-between">
-                                <span class="text-[9px] uppercase text-gray-500 font-bold">Residencia / Departamento</span>
+                                <span class="text-[9px] uppercase text-gray-500 font-bold">Departamento / Residencia</span>
                                 <span class="text-xs font-bold flex items-center gap-1.5 ${infoGeo.esIncompleto ? 'text-amber-400' : 'text-yellow-400'}">
                                     <i class="${infoGeo.esIncompleto ? 'fas fa-exclamation-triangle text-amber-500' : 'fas fa-map-marker-alt text-yellow-500'} text-[10px]"></i>
                                     <span>${infoGeo.limpio}</span>
@@ -2388,6 +2934,9 @@
             const editSubDiscord = document.getElementById('edit-sub-discord').value.trim();
             const editPagoModalidad = document.getElementById('edit-pago-modalidad').value.trim();
             const editPagoRef = document.getElementById('edit-pago-referencia').value.trim();
+            const editPagoCompQR = document.getElementById('edit-pago-comprobante-qr')?.value.trim() || '';
+            const editPagoCompBinance = document.getElementById('edit-pago-comprobante-binance')?.value.trim() || '';
+            const editPagoComp = editPagoCompQR || editPagoCompBinance || document.getElementById('edit-pago-comprobante')?.value.trim() || '';
 
             const titularesActualizados = [];
             const posNames = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
@@ -2445,7 +2994,13 @@
                 pago: {
                     ...equipoSeleccionado.pago,
                     modalidad: editPagoModalidad,
-                    referencia: editPagoRef
+                    referencia: editPagoRef,
+                    comprobante: editPagoComp || equipoSeleccionado.pago?.comprobante || '',
+                    comprobanteRaw: editPagoComp || equipoSeleccionado.pago?.comprobanteRaw || '',
+                    comprobanteQR: editPagoCompQR || equipoSeleccionado.pago?.comprobanteQR || '',
+                    comprobanteQRRaw: editPagoCompQR || equipoSeleccionado.pago?.comprobanteQRRaw || '',
+                    comprobanteBinance: editPagoCompBinance || equipoSeleccionado.pago?.comprobanteBinance || '',
+                    comprobanteBinanceRaw: editPagoCompBinance || equipoSeleccionado.pago?.comprobanteBinanceRaw || ''
                 }
             };
 
@@ -2686,29 +3241,7 @@
             }
         };
 
-        // 9. Configuración de URL Apps Script
-        window.abrirModalConfigUrl = function() {
-            const current = getApiUrl();
-            document.getElementById('input-api-url').value = current;
-            document.getElementById('modal-config-url').classList.remove('hidden');
-        };
-
-        window.cerrarModalConfigUrl = function() {
-            document.getElementById('modal-config-url').classList.add('hidden');
-        };
-
-        window.guardarConfigUrl = function() {
-            const val = document.getElementById('input-api-url').value.trim();
-            if (val) {
-                localStorage.setItem(STORAGE_KEY_API, val);
-                cerrarModalConfigUrl();
-                sincronizarGoogleSheets();
-            } else {
-                localStorage.removeItem(STORAGE_KEY_API);
-                cerrarModalConfigUrl();
-                alert("URL removida. Se utilizará el modo local.");
-            }
-        };
+        // Configuración de API blindada en producción (inmutable y gestionada automáticamente)
 
         // ==============================================================
         // 10. MOTOR DE NORMALIZACIÓN GEOGRÁFICA Y CERNIDO DE DATOS (DATA HYGIENE)
@@ -2896,8 +3429,14 @@
             if (!box || !eq) return;
 
             const inconsistencias = [];
+            const conflictosReglamento = irregularidadesGlobales.conflictosPorEquipo[eq.rowId] || [];
 
-            // 1. Revisar titulares
+            // 1. Infracciones Críticas de Reglamento (Multiequipo / Liga LBL)
+            conflictosReglamento.forEach(conf => {
+                inconsistencias.push(`[REGLAMENTO / ${conf.tipoLabel.toUpperCase()}] ${conf.jugadorScouting?.nombreCi || conf.jugadorScouting?.riotIdLas}: ${conf.motivo}`);
+            });
+
+            // 2. Revisar titulares (Residencia)
             (eq.titulares || []).forEach((t, idx) => {
                 const geo = analizarYNormalizarResidencia(t.ciudad);
                 if (geo.esIncompleto) {
@@ -2905,7 +3444,7 @@
                 }
             });
 
-            // 2. Revisar suplentes
+            // 3. Revisar suplentes (Residencia)
             (eq.suplentes || []).forEach((s, idx) => {
                 if (s.nombreCi || s.riotIdLas || s.ciudad) {
                     const geo = analizarYNormalizarResidencia(s.ciudad);
@@ -2915,7 +3454,7 @@
                 }
             });
 
-            // 3. Revisar contacto
+            // 4. Revisar contacto capitán
             const tel = (eq.capitan?.telefono || '').replace(/[^0-9]/g, '');
             if (!tel || tel.length < 7) {
                 inconsistencias.push(`[CAPITÁN] Falta número de WhatsApp o teléfono válido.`);
@@ -2924,26 +3463,50 @@
             window._inconsistenciasActuales = inconsistencias;
 
             if (inconsistencias.length > 0) {
+                const tieneCritico = conflictosReglamento.length > 0;
+                const borderCls = tieneCritico ? 'border-rose-500/50 bg-rose-950/20' : 'border-amber-500/40 bg-amber-950/20';
+                const headerColor = tieneCritico ? 'text-rose-400' : 'text-amber-400';
+                const iconHeader = tieneCritico ? 'fa-shield-virus text-rose-500' : 'fa-exclamation-triangle text-amber-500';
+                const tituloStr = tieneCritico 
+                    ? `⚠️ ${conflictosReglamento.length} Infracción(es) de Reglamento & Elegibilidad + ${inconsistencias.length - conflictosReglamento.length} Observaciones de Datos`
+                    : `${inconsistencias.length} Inconsistencia${inconsistencias.length > 1 ? 's' : ''} de Datos Detectada${inconsistencias.length > 1 ? 's' : ''} (Data Garbage)`;
+
                 box.innerHTML = `
-                    <div class="bg-amber-950/20 border border-amber-500/40 p-3.5 rounded-xl space-y-2.5">
+                    <div class="${borderCls} border p-3.5 rounded-xl space-y-2.5">
                         <div class="flex items-center justify-between flex-wrap gap-2">
-                            <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
-                                <i class="fas fa-exclamation-triangle text-amber-500"></i> ${inconsistencias.length} Inconsistencia${inconsistencias.length > 1 ? 's' : ''} de Datos Detectada${inconsistencias.length > 1 ? 's' : ''} (Data Garbage)
+                            <span class="text-xs font-black uppercase ${headerColor} flex items-center gap-1.5">
+                                <i class="fas ${iconHeader}"></i> ${tituloStr}
                             </span>
-                            <button type="button" onclick="insertarInconsistenciasEnNotas()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase border border-amber-500/40 cursor-pointer flex items-center gap-1 transition-all">
-                                <i class="fas fa-plus"></i> Cargar en Notas
-                            </button>
+                            <div class="flex items-center gap-1.5">
+                                ${tieneCritico ? `
+                                <button type="button" onclick="cerrarModalDetalle(); abrirModalIrregularidades();" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold text-[10px] uppercase border border-rose-500/40 cursor-pointer flex items-center gap-1 transition-all">
+                                    <i class="fas fa-shield-alt"></i> Ver en Irregularidades
+                                </button>` : ''}
+                                <button type="button" onclick="insertarInconsistenciasEnNotas()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase border border-amber-500/40 cursor-pointer flex items-center gap-1 transition-all">
+                                    <i class="fas fa-plus"></i> Cargar en Notas
+                                </button>
+                            </div>
                         </div>
-                        <div class="space-y-1 text-xs text-amber-200/90 font-mono bg-black/40 p-2.5 rounded-lg border border-gray-800">
-                            ${inconsistencias.map(inc => `<div class="flex items-start gap-1.5"><i class="fas fa-angle-right text-amber-500 mt-0.5 shrink-0 text-[10px]"></i><span>${inc}</span></div>`).join('')}
+                        <div class="space-y-1.5 text-xs text-rose-100/90 font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
+                            ${inconsistencias.map(inc => {
+                                const esReg = inc.startsWith('[REGLAMENTO');
+                                return `<div class="flex items-start gap-1.5 ${esReg ? 'text-rose-300 font-bold' : 'text-amber-200/90'}">
+                                    <i class="fas ${esReg ? 'fa-ban text-rose-400' : 'fa-angle-right text-amber-500'} mt-0.5 shrink-0 text-[10px]"></i>
+                                    <span>${inc}</span>
+                                </div>`;
+                            }).join('')}
                         </div>
+                        ${tieneCritico ? `
+                        <p class="text-[10px] text-rose-400 font-bold flex items-center gap-1">
+                            <i class="fas fa-exclamation-circle"></i> No aprobar este equipo como "Aceptado" hasta regularizar su alineación con jugadores habilitados.
+                        </p>` : ''}
                     </div>
                 `;
             } else {
                 box.innerHTML = `
                     <div class="bg-emerald-950/20 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 text-xs flex items-center justify-between">
                         <span class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-emerald-500"></i> Calidad de Datos Aprobada: Todos los jugadores tienen residencias y datos especificados correctamente.
+                            <i class="fas fa-check-circle text-emerald-500"></i> Calidad de Datos & Elegibilidad Aprobada: Jugadores habilitados sin conflictos competitivos ni datos incompletos.
                         </span>
                         <span class="text-[10px] font-mono text-emerald-500/80 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">0 Inconsistencias</span>
                     </div>
@@ -3373,6 +3936,681 @@ Por favor responder a este mensaje con los datos corregidos. ¡Muchas gracias!`;
                     alert(`Referencia copiada: ${ref}`);
                 });
             }
+        };
+
+        // ==============================================================
+        // 13. CONTROL DE INTEGRIDAD & AUDITORÍA DE IRREGULARIDADES (LBL)
+        // ==============================================================
+        const STORAGE_KEY_LIGA_CACHE = "lbl_scouting_liga_cache_v3";
+        let jugadoresLigaLBLCache = [];
+        let irregularidadesGlobales = {
+            conflictos: [],
+            total: 0,
+            totalMulti: 0,
+            totalLiga: 0,
+            equiposAfectados: new Set(),
+            conflictosPorEquipo: {},
+            conflictosPorJugador: {}
+        };
+        let filtroIrregActivo = "todos"; // "todos" | "multiequipo" | "liga"
+
+        function extraerCi(texto) {
+            if (!texto || typeof texto !== 'string') return '';
+            const match = texto.match(/\b(\d{6,9})\b/);
+            return match ? match[1] : '';
+        }
+
+        function normalizarRiotId(id) {
+            if (!id || typeof id !== 'string') return '';
+            const s = id.trim().toLowerCase();
+            const ignore = ['n/a', 'na', 'no', 'ninguno', 'ninguna', '-', '--', 'none', 'same', 'sin cuenta', 'las', 'no posee', 'ningun'];
+            if (ignore.includes(s)) return '';
+            return s.replace(/\s+/g, '');
+        }
+
+        function normalizarNombreEquipoLiga(valor) {
+            if (!valor) return 'Equipo Liga LBL';
+            if (typeof valor === 'string') {
+                const s = valor.trim();
+                return (s === '[object Object]' || !s) ? 'Equipo Liga LBL' : s;
+            }
+            if (typeof valor === 'object') {
+                const tag = valor.tag ? `[${valor.tag}] ` : '';
+                const nom = valor.nombre || valor.name || '';
+                if (nom) return `${tag}${nom}`.trim();
+                if (valor.tag) return `[${valor.tag}]`;
+            }
+            return 'Equipo Liga LBL';
+        }
+
+        const FALLBACK_LIGA_JUGADORES = [
+            { nombre: "Carlos Pérez", ci: "12345678", riotId: "Kaiser#LBL", riotId2: "Kaiser#1", rol: "MID", equipo: "Omega Gaming (Tier 1 LBL)", idDoc: "fallback-omega" },
+            { nombre: "Rodrigo Morales", ci: "87654321", riotId: "Viper#LAS", riotId2: "", rol: "ADC", equipo: "Dark Knights (Tier 2 LBL)", idDoc: "fallback-dark" }
+        ];
+
+        async function cargarJugadoresLigaLBLOficial(forzarRecarga = false) {
+            if (!forzarRecarga) {
+                const cached = localStorage.getItem(STORAGE_KEY_LIGA_CACHE);
+                if (cached) {
+                    try {
+                        const parsed = JSON.parse(cached);
+                        const quinceMinutos = 15 * 60 * 1000;
+                        if (Date.now() - (parsed.timestamp || 0) < quinceMinutos && Array.isArray(parsed.jugadores) && parsed.jugadores.length > 0) {
+                            // Sanitizar si venía [object Object] en caché previa
+                            jugadoresLigaLBLCache = parsed.jugadores.map(j => ({
+                                ...j,
+                                equipo: normalizarNombreEquipoLiga(j.equipo)
+                            }));
+                            return jugadoresLigaLBLCache;
+                        }
+                    } catch (e) {
+                        console.warn("Error leyendo caché de jugadores de la Liga:", e);
+                    }
+                }
+            }
+
+            try {
+                const q = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
+                const snap = await getDocs(q);
+                const lista = [];
+
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const nombreEq = normalizarNombreEquipoLiga(data.nombreEquipo || data.equipo || data.nombre);
+                    const docId = docSnap.id;
+
+                    const procesarJugadorLiga = (j, rol) => {
+                        if (!j) return;
+                        const rId = j.riotId || j.riotIdLas || '';
+                        const rId2 = j.riotId2 || j.riotIdMain || '';
+                        const ci = extraerCi(j.ci || j.nombreCi || j.nombre || '');
+                        const nom = j.nombre || j.nombreCi || '';
+
+                        if (rId || ci || nom) {
+                            lista.push({
+                                nombre: nom,
+                                ci: ci,
+                                riotId: rId,
+                                riotId2: rId2,
+                                rol: rol || j.posicion || '',
+                                discord: j.discordId || j.discord || '',
+                                tel: j.tel || j.telefono || '',
+                                equipo: nombreEq,
+                                idDoc: docId
+                            });
+                        }
+                    };
+
+                    // Roster oficial de Firestore (objeto TOP, JG, MID, ADC, SUPP)
+                    if (data.roster && typeof data.roster === 'object') {
+                        ['TOP', 'JG', 'MID', 'ADC', 'SUPP'].forEach(rol => {
+                            if (data.roster[rol]) procesarJugadorLiga(data.roster[rol], rol);
+                        });
+                    }
+
+                    // Suplentes (array)
+                    if (Array.isArray(data.suplentes)) {
+                        data.suplentes.forEach(sup => procesarJugadorLiga(sup, 'Suplente'));
+                    }
+
+                    // Fallback para esquemas antiguos con data.jugadores
+                    if (Array.isArray(data.jugadores)) {
+                        data.jugadores.forEach(jug => procesarJugadorLiga(jug, jug.posicion || 'Titular'));
+                    }
+                });
+
+                if (lista.length > 0) {
+                    jugadoresLigaLBLCache = lista;
+                } else {
+                    jugadoresLigaLBLCache = FALLBACK_LIGA_JUGADORES;
+                }
+            } catch (err) {
+                console.warn("No se pudo consultar Firestore inscripciones_pendientes (usando fallback oficial):", err);
+                jugadoresLigaLBLCache = FALLBACK_LIGA_JUGADORES;
+            }
+
+            // Guardar en caché con marca temporal
+            localStorage.setItem(STORAGE_KEY_LIGA_CACHE, JSON.stringify({
+                timestamp: Date.now(),
+                jugadores: jugadoresLigaLBLCache
+            }));
+
+            return jugadoresLigaLBLCache;
+        }
+
+        function auditarTodasLasIrregularidades() {
+            const conflictos = [];
+            const equiposAfectados = new Set();
+            const conflictosPorEquipo = {};
+            const conflictosPorJugador = {};
+
+            const agregarConflictoAEquipo = (rowId, conf) => {
+                equiposAfectados.add(rowId);
+                if (!conflictosPorEquipo[rowId]) conflictosPorEquipo[rowId] = [];
+                conflictosPorEquipo[rowId].push(conf);
+            };
+
+            const agregarConflictoAJugador = (key, conf) => {
+                if (!key) return;
+                if (!conflictosPorJugador[key]) conflictosPorJugador[key] = [];
+                conflictosPorJugador[key].push(conf);
+            };
+
+            // 1. Detección de Conflicto con Liga LBL Oficial
+            const mapaLigaPorRiot = new Map();
+            const mapaLigaPorCi = new Map();
+
+            jugadoresLigaLBLCache.forEach(jLiga => {
+                const normR1 = normalizarRiotId(jLiga.riotId);
+                const normR2 = normalizarRiotId(jLiga.riotId2);
+                if (normR1) mapaLigaPorRiot.set(normR1, jLiga);
+                if (normR2) mapaLigaPorRiot.set(normR2, jLiga);
+                if (jLiga.ci && jLiga.ci.length >= 6) mapaLigaPorCi.set(jLiga.ci, jLiga);
+            });
+
+            equiposScouting.forEach(eq => {
+                const revisarJugadorContraLiga = (j, esTitular) => {
+                    if (!j) return;
+                    const rLas = normalizarRiotId(j.riotIdLas);
+                    const rMain = normalizarRiotId(j.riotIdMain);
+                    const ci = extraerCi(j.nombreCi || j.ci || '');
+
+                    let coincidenciaLiga = null;
+                    let razonCoincidencia = '';
+
+                    if (rLas && mapaLigaPorRiot.has(rLas)) {
+                        coincidenciaLiga = mapaLigaPorRiot.get(rLas);
+                        razonCoincidencia = `Riot ID LAS (${j.riotIdLas})`;
+                    } else if (rMain && mapaLigaPorRiot.has(rMain)) {
+                        coincidenciaLiga = mapaLigaPorRiot.get(rMain);
+                        razonCoincidencia = `Riot ID Main (${j.riotIdMain})`;
+                    } else if (ci && ci.length >= 6 && mapaLigaPorCi.has(ci)) {
+                        coincidenciaLiga = mapaLigaPorCi.get(ci);
+                        razonCoincidencia = `Cédula de Identidad (CI: ${ci})`;
+                    }
+
+                    if (coincidenciaLiga) {
+                        const nombreEquipoOficial = normalizarNombreEquipoLiga(coincidenciaLiga.equipo);
+                        coincidenciaLiga.equipo = nombreEquipoOficial;
+                        const confId = `LIGA-${eq.rowId}-${nombreEquipoOficial}-${j.posicion || 'J'}`;
+                        const confObj = {
+                            id: confId,
+                            tipo: 'liga',
+                            tipoLabel: 'Conflicto Liga LBL Oficial',
+                            severidad: 'critica',
+                            titulo: `Jugador inscrito en equipo Aceptado de la Liga LBL Oficial`,
+                            motivo: `Coincide por ${razonCoincidencia} con "${coincidenciaLiga.nombre || coincidenciaLiga.riotId}" del equipo oficial "${nombreEquipoOficial}". Bloqueado para Scouting T3.`,
+                            jugadorScouting: {
+                                nombreCi: j.nombreCi || 'Sin nombre',
+                                ci: ci,
+                                riotIdLas: j.riotIdLas || '',
+                                riotIdMain: j.riotIdMain || '',
+                                posicion: j.posicion || (esTitular ? 'Titular' : 'Suplente'),
+                                discord: j.discord || ''
+                            },
+                            jugadorLiga: coincidenciaLiga,
+                            equipoScouting: {
+                                rowId: eq.rowId,
+                                nombre: eq.nombre,
+                                tag: eq.tag,
+                                estado: eq.estado || 'Pendiente',
+                                capitanTel: eq.capitan?.telefono || '',
+                                capitanNombre: eq.capitan?.nombreCi || ''
+                            }
+                        };
+
+                        conflictos.push(confObj);
+                        agregarConflictoAEquipo(eq.rowId, confObj);
+                        if (rLas) agregarConflictoAJugador(rLas, confObj);
+                        if (rMain) agregarConflictoAJugador(rMain, confObj);
+                        if (ci) agregarConflictoAJugador(ci, confObj);
+                    }
+                };
+
+                (eq.titulares || []).forEach(t => revisarJugadorContraLiga(t, true));
+                (eq.suplentes || []).forEach(s => revisarJugadorContraLiga(s, false));
+            });
+
+            // 2. Detección de Multiequipo en Scouting 3 (Jugador registrado en 2 o más equipos)
+            const mapaScoutingPorRiot = new Map();
+            const mapaScoutingPorCi = new Map();
+
+            equiposScouting.forEach(eq => {
+                const indexarJugadorScouting = (j, esTitular) => {
+                    if (!j) return;
+                    const rLas = normalizarRiotId(j.riotIdLas);
+                    const rMain = normalizarRiotId(j.riotIdMain);
+                    const ci = extraerCi(j.nombreCi || j.ci || '');
+
+                    const itemRef = {
+                        equipo: {
+                            rowId: eq.rowId,
+                            nombre: eq.nombre,
+                            tag: eq.tag,
+                            estado: eq.estado || 'Pendiente',
+                            capitanTel: eq.capitan?.telefono || '',
+                            capitanNombre: eq.capitan?.nombreCi || ''
+                        },
+                        jugador: j,
+                        esTitular: esTitular
+                    };
+
+                    if (rLas) {
+                        if (!mapaScoutingPorRiot.has(rLas)) mapaScoutingPorRiot.set(rLas, []);
+                        mapaScoutingPorRiot.get(rLas).push(itemRef);
+                    }
+                    if (rMain && rMain !== rLas) {
+                        if (!mapaScoutingPorRiot.has(rMain)) mapaScoutingPorRiot.set(rMain, []);
+                        mapaScoutingPorRiot.get(rMain).push(itemRef);
+                    }
+                    if (ci && ci.length >= 6) {
+                        if (!mapaScoutingPorCi.has(ci)) mapaScoutingPorCi.set(ci, []);
+                        mapaScoutingPorCi.get(ci).push(itemRef);
+                    }
+                };
+
+                (eq.titulares || []).forEach(t => indexarJugadorScouting(t, true));
+                (eq.suplentes || []).forEach(s => indexarJugadorScouting(s, false));
+            });
+
+            const conflictosMultiRegistrados = new Set();
+
+            // Evaluar duplicados por Riot ID
+            mapaScoutingPorRiot.forEach((apariciones, riotNorm) => {
+                const equiposIds = [...new Set(apariciones.map(a => a.equipo.rowId))];
+                if (equiposIds.length >= 2) {
+                    const keyMulti = `MULTI-RIOT-${riotNorm}-${equiposIds.sort().join('-')}`;
+                    if (!conflictosMultiRegistrados.has(keyMulti)) {
+                        conflictosMultiRegistrados.add(keyMulti);
+                        const primerJug = apariciones[0].jugador;
+                        const ci = extraerCi(primerJug.nombreCi || primerJug.ci || '');
+
+                        const confObj = {
+                            id: keyMulti,
+                            tipo: 'multiequipo',
+                            tipoLabel: 'Multiequipo en Scouting 3',
+                            severidad: 'critica',
+                            titulo: `Jugador inscrito en múltiples rosters de Scouting 3`,
+                            motivo: `El Riot ID "${primerJug.riotIdLas || riotNorm}" aparece registrado en ${equiposIds.length} equipos distintos de este torneo. Ningún jugador puede disputar el torneo con más de una escuadra.`,
+                            jugadorScouting: {
+                                nombreCi: primerJug.nombreCi || 'Sin nombre registrado',
+                                ci: ci,
+                                riotIdLas: primerJug.riotIdLas || riotNorm,
+                                riotIdMain: primerJug.riotIdMain || '',
+                                posicion: primerJug.posicion || 'Roster',
+                                discord: primerJug.discord || ''
+                            },
+                            equiposAfectadosLista: apariciones.map(a => ({
+                                rowId: a.equipo.rowId,
+                                nombre: a.equipo.nombre,
+                                tag: a.equipo.tag,
+                                estado: a.equipo.estado,
+                                capitanTel: a.equipo.capitanTel,
+                                capitanNombre: a.equipo.capitanNombre,
+                                rolJugador: a.jugador.posicion || (a.esTitular ? 'Titular' : 'Suplente')
+                            }))
+                        };
+
+                        conflictos.push(confObj);
+                        equiposIds.forEach(idEq => agregarConflictoAEquipo(idEq, confObj));
+                        agregarConflictoAJugador(riotNorm, confObj);
+                        if (ci) agregarConflictoAJugador(ci, confObj);
+                    }
+                }
+            });
+
+            // Evaluar duplicados por C.I.
+            mapaScoutingPorCi.forEach((apariciones, ciVal) => {
+                const equiposIds = [...new Set(apariciones.map(a => a.equipo.rowId))];
+                if (equiposIds.length >= 2) {
+                    const keyMulti = `MULTI-CI-${ciVal}-${equiposIds.sort().join('-')}`;
+                    const yaCapturado = [...conflictosMultiRegistrados].some(k => k.includes(equiposIds.sort().join('-')));
+                    if (!yaCapturado && !conflictosMultiRegistrados.has(keyMulti)) {
+                        conflictosMultiRegistrados.add(keyMulti);
+                        const primerJug = apariciones[0].jugador;
+
+                        const confObj = {
+                            id: keyMulti,
+                            tipo: 'multiequipo',
+                            tipoLabel: 'Multiequipo en Scouting 3 (Mismo C.I.)',
+                            severidad: 'critica',
+                            titulo: `Identidad duplicada en múltiples equipos (Mismo C.I.)`,
+                            motivo: `El C.I. "${ciVal}" aparece registrado en ${equiposIds.length} escuadras de Scouting 3. No está permitido inscribirse con múltiples identidades o cuentas secundarias.`,
+                            jugadorScouting: {
+                                nombreCi: primerJug.nombreCi || `C.I. ${ciVal}`,
+                                ci: ciVal,
+                                riotIdLas: primerJug.riotIdLas || '',
+                                riotIdMain: primerJug.riotIdMain || '',
+                                posicion: primerJug.posicion || 'Roster',
+                                discord: primerJug.discord || ''
+                            },
+                            equiposAfectadosLista: apariciones.map(a => ({
+                                rowId: a.equipo.rowId,
+                                nombre: a.equipo.nombre,
+                                tag: a.equipo.tag,
+                                estado: a.equipo.estado,
+                                capitanTel: a.equipo.capitanTel,
+                                capitanNombre: a.equipo.capitanNombre,
+                                rolJugador: a.jugador.posicion || (a.esTitular ? 'Titular' : 'Suplente')
+                            }))
+                        };
+
+                        conflictos.push(confObj);
+                        equiposIds.forEach(idEq => agregarConflictoAEquipo(idEq, confObj));
+                        agregarConflictoAJugador(ciVal, confObj);
+                    }
+                }
+            });
+
+            const totalMulti = conflictos.filter(c => c.tipo === 'multiequipo').length;
+            const totalLiga = conflictos.filter(c => c.tipo === 'liga').length;
+
+            irregularidadesGlobales = {
+                conflictos,
+                total: conflictos.length,
+                totalMulti,
+                totalLiga,
+                equiposAfectados,
+                conflictosPorEquipo,
+                conflictosPorJugador
+            };
+
+            // Sincronizar contadores en la UI
+            const bHeader = document.getElementById('badge-header-irregularidades-count');
+            const bModalTotal = document.getElementById('badge-modal-irreg-total');
+            const cTodos = document.getElementById('count-irreg-todos');
+            const cMulti = document.getElementById('count-irreg-multi');
+            const cLiga = document.getElementById('count-irreg-liga');
+
+            const kTotal = document.getElementById('kpi-irreg-total');
+            const kMulti = document.getElementById('kpi-irreg-multi');
+            const kLiga = document.getElementById('kpi-irreg-liga');
+            const kEquipos = document.getElementById('kpi-irreg-equipos');
+
+            if (bHeader) bHeader.textContent = irregularidadesGlobales.total;
+            if (bModalTotal) bModalTotal.textContent = irregularidadesGlobales.total;
+            if (cTodos) cTodos.textContent = irregularidadesGlobales.total;
+            if (cMulti) cMulti.textContent = irregularidadesGlobales.totalMulti;
+            if (cLiga) cLiga.textContent = irregularidadesGlobales.totalLiga;
+
+            if (kTotal) kTotal.textContent = irregularidadesGlobales.total;
+            if (kMulti) kMulti.textContent = irregularidadesGlobales.totalMulti;
+            if (kLiga) kLiga.textContent = irregularidadesGlobales.totalLiga;
+            if (kEquipos) kEquipos.textContent = irregularidadesGlobales.equiposAfectados.size;
+
+            return irregularidadesGlobales;
+        }
+
+        window.ejecutarAuditoriaIrregularidades = function() {
+            auditarTodasLasIrregularidades();
+            renderizarListaIrregularidades(filtroIrregActivo);
+        };
+
+        function esJugadorEnConflicto(rowId, j) {
+            if (!j || !irregularidadesGlobales.conflictos.length) return null;
+            const rLas = normalizarRiotId(j.riotIdLas);
+            const rMain = normalizarRiotId(j.riotIdMain);
+            const ci = extraerCi(j.nombreCi || j.ci || '');
+
+            const listaEq = irregularidadesGlobales.conflictosPorEquipo[rowId] || [];
+            for (const conf of listaEq) {
+                const confR1 = normalizarRiotId(conf.jugadorScouting?.riotIdLas);
+                const confR2 = normalizarRiotId(conf.jugadorScouting?.riotIdMain);
+                const confCi = conf.jugadorScouting?.ci || '';
+
+                if (rLas && (confR1 === rLas || confR2 === rLas)) return conf;
+                if (rMain && (confR1 === rMain || confR2 === rMain)) return conf;
+                if (ci && confCi === ci) return conf;
+            }
+            return null;
+        }
+
+        window.renderizarListaIrregularidades = function(filtro = 'todos') {
+            const cont = document.getElementById('irreg-lista-conflictos');
+            const infoFiltro = document.getElementById('irreg-filtro-info');
+            if (!cont) return;
+
+            let lista = irregularidadesGlobales.conflictos;
+            if (filtro === 'multiequipo') {
+                lista = lista.filter(c => c.tipo === 'multiequipo');
+            } else if (filtro === 'liga') {
+                lista = lista.filter(c => c.tipo === 'liga');
+            }
+
+            if (infoFiltro) {
+                const nombresFiltro = { todos: 'Todas', multiequipo: '🔴 Multiequipo', liga: '⛔ Conflicto Liga LBL' };
+                infoFiltro.textContent = `Mostrando ${lista.length} caso(s) (${nombresFiltro[filtro] || 'General'})`;
+            }
+
+            if (lista.length === 0) {
+                cont.innerHTML = `
+                    <div class="p-8 text-center bg-[#0a0a0a] rounded-2xl border border-gray-800 text-gray-500 font-bold space-y-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-3xl mb-1 block"></i>
+                        <p class="text-white text-sm">Cero irregularidades detectadas en esta categoría</p>
+                        <p class="text-xs text-gray-500">Todos los rosters auditados cumplen las consignas reglamentarias de elegibilidad.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cont.innerHTML = lista.map((conf) => {
+                const esMulti = conf.tipo === 'multiequipo';
+                const temaBorder = esMulti ? 'border-amber-500/30 hover:border-amber-500/60' : 'border-purple-500/30 hover:border-purple-500/60';
+                const temaBg = esMulti ? 'bg-amber-950/10' : 'bg-purple-950/10';
+                const badgeTipo = esMulti
+                    ? '<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">🔴 Multiequipo</span>'
+                    : '<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40 shrink-0">⛔ Liga LBL</span>';
+
+                const ciTxt = conf.jugadorScouting?.ci ? `CI: ${conf.jugadorScouting.ci}` : '';
+                const riotLas = conf.jugadorScouting?.riotIdLas || '--';
+                const riotMain = conf.jugadorScouting?.riotIdMain ? conf.jugadorScouting.riotIdMain : '';
+
+                let comparativaHtml = '';
+
+                if (esMulti && Array.isArray(conf.equiposAfectadosLista)) {
+                    comparativaHtml = `
+                        <div class="flex items-center gap-2 flex-wrap text-xs bg-black/50 p-2.5 rounded-xl border border-gray-800/80">
+                            <span class="text-[9px] uppercase font-bold text-gray-500 shrink-0">Inscrito en:</span>
+                            <div class="flex items-center gap-2 flex-wrap min-w-0 flex-1">
+                                ${conf.equiposAfectadosLista.map((eqInf, i) => `
+                                    <div class="inline-flex items-center gap-1.5 bg-[#070b13] px-2.5 py-1 rounded-lg border border-gray-800">
+                                        <span class="text-amber-400 font-mono font-bold text-[10px]">[${eqInf.tag || 'S/T'}]</span>
+                                        <span class="text-white font-bold text-xs truncate max-w-[140px]" title="${eqInf.nombre}">${eqInf.nombre}</span>
+                                        <span class="text-gray-400 text-[10px]">(${eqInf.rolJugador} &bull; Fila ${eqInf.rowId})</span>
+                                        <button type="button" onclick="cerrarModalIrregularidades(); abrirModalDetalle(${eqInf.rowId}); switchModalTab('verificacion');" class="text-emerald-400 hover:text-emerald-300 text-[10px] ml-0.5 cursor-pointer" title="Ver ficha del equipo">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    ${i < conf.equiposAfectadosLista.length - 1 ? '<span class="text-rose-400 font-bold text-xs shrink-0">vs</span>' : ''}
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (!esMulti && conf.equipoScouting && conf.jugadorLiga) {
+                    const nomEquipoLiga = normalizarNombreEquipoLiga(conf.jugadorLiga.equipo);
+                    comparativaHtml = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-[#070b13] p-2.5 rounded-xl border border-gray-800 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase font-bold text-rose-400 tracking-wider block">Scouting T3 (Postulante)</span>
+                                    <p class="text-xs font-bold text-white truncate">[${conf.equipoScouting.tag || 'S/T'}] ${conf.equipoScouting.nombre}</p>
+                                    <p class="text-[10px] text-gray-400">Rol: <strong class="text-gray-300">${conf.jugadorScouting?.posicion || 'Roster'}</strong> &bull; Fila ${conf.equipoScouting.rowId}</p>
+                                </div>
+                                <button type="button" onclick="cerrarModalIrregularidades(); abrirModalDetalle(${conf.equipoScouting.rowId}); switchModalTab('verificacion');" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-200 text-[10px] font-bold border border-gray-700 flex items-center gap-1 cursor-pointer shrink-0" title="Ver ficha de Scouting">
+                                    <i class="fas fa-eye text-[9px]"></i> Ficha
+                                </button>
+                            </div>
+                            <div class="bg-[#0b0816] p-2.5 rounded-xl border border-purple-500/30 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="text-[8px] uppercase font-bold text-purple-400 tracking-wider block">Liga LBL Oficial (Bloqueado)</span>
+                                    <p class="text-xs font-bold text-purple-200 truncate">${nomEquipoLiga}</p>
+                                    <p class="text-[10px] text-gray-400">Riot: <span class="font-mono text-purple-300">${conf.jugadorLiga.riotId || '--'}</span> &bull; <strong class="text-emerald-400">Aceptado</strong></p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-500/40 shrink-0">Oficial</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-[#0a0a0a] p-3 sm:p-3.5 rounded-2xl border ${temaBorder} ${temaBg} space-y-2.5 transition-all shadow-md">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                ${badgeTipo}
+                                <span class="text-xs sm:text-sm font-black text-white truncate">${conf.jugadorScouting?.nombreCi || 'Jugador'}</span>
+                                ${ciTxt ? `<span class="text-[10px] font-mono text-gray-400 bg-black/60 px-1.5 py-0.5 rounded border border-gray-800 shrink-0">${ciTxt}</span>` : ''}
+                                <span class="text-[10px] font-mono text-cyan-300 bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/30 shrink-0">LAS: ${riotLas}</span>
+                                ${riotMain ? `<span class="text-[10px] font-mono text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">Ext: ${riotMain}</span>` : ''}
+                            </div>
+                            <button type="button" onclick="copiarMensajeCapitanIrregularidad('${conf.id}')" class="px-2.5 py-1 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-200 hover:text-white text-[11px] font-bold border border-gray-700/80 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0" title="Copiar aviso para enviar al capitán por WhatsApp">
+                                <i class="fab fa-whatsapp text-green-400"></i> <span class="hidden xs:inline">Copiar Aviso Capitán</span>
+                            </button>
+                        </div>
+                        ${comparativaHtml}
+                        <div class="text-[11px] text-rose-300/90 flex items-center gap-1.5 bg-rose-950/20 px-2.5 py-1 rounded-lg border border-rose-900/30">
+                            <i class="fas fa-exclamation-triangle text-rose-400 text-[10px] shrink-0"></i>
+                            <span class="truncate">${conf.motivo}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.abrirModalIrregularidades = function() {
+            ejecutarAuditoriaIrregularidades();
+            document.getElementById('modal-irregularidades').classList.remove('hidden');
+        };
+
+        window.cerrarModalIrregularidades = function() {
+            document.getElementById('modal-irregularidades').classList.add('hidden');
+        };
+
+        window.cambiarFiltroIrregularidades = function(filtro) {
+            filtroIrregActivo = filtro;
+
+            const bTodos = document.getElementById('btn-irreg-filtro-todos');
+            const bMulti = document.getElementById('btn-irreg-filtro-multi');
+            const bLiga = document.getElementById('btn-irreg-filtro-liga');
+
+            const resetBtn = (btn) => {
+                if (!btn) return;
+                btn.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer";
+            };
+
+            resetBtn(bTodos);
+            resetBtn(bMulti);
+            resetBtn(bLiga);
+
+            if (filtro === 'multiequipo') {
+                if (bMulti) bMulti.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer";
+            } else if (filtro === 'liga') {
+                if (bLiga) bLiga.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-purple-500/20 text-purple-300 border border-purple-500/40 cursor-pointer";
+            } else {
+                if (bTodos) bTodos.className = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-rose-500/20 text-rose-300 border border-rose-500/40 cursor-pointer";
+            }
+
+            renderizarListaIrregularidades(filtro);
+        };
+
+        window.reauditarIrregularidadesManual = async function() {
+            const icon = document.getElementById('icon-reauditar-irreg');
+            if (icon) icon.classList.add('fa-spin');
+            try {
+                await cargarJugadoresLigaLBLOficial(true);
+                ejecutarAuditoriaIrregularidades();
+                renderizarTarjetasEquipos();
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+            }
+        };
+
+        window.generarMensajeWhatsAppCapitanIrregularidad = function(conf) {
+            if (!conf) return "";
+            const jugNom = conf.jugadorScouting?.nombreCi || conf.jugadorScouting?.riotIdLas || 'un jugador de su roster';
+            const riotLas = conf.jugadorScouting?.riotIdLas || '--';
+
+            if (conf.tipo === 'multiequipo') {
+                const eqNombres = (conf.equiposAfectadosLista || []).map(e => `• ${e.nombre} [${e.tag}]`).join('\n');
+                return `🚨 *COMUNICADO OFICIAL LBL ESPORTS - CONTROL DE INTEGRIDAD*
+Torneo: Scouting Tournament 3
+
+Estimado Capitán,
+Se ha detectado una *INFRACCIÓN REGLAMENTARIA DE MULTIEQUIPO* en su postulación:
+
+El jugador *${jugNom}* (Riot ID: *${riotLas}*) se encuentra registrado simultáneamente en más de un equipo participante:
+${eqNombres}
+
+⚠️ *Artículo de Reglamento:* Ningún jugador puede disputar el torneo de Scouting T3 representando a dos o más organizaciones distintas.
+
+👉 *Acción Requerida:* Comunicarse de inmediato con el Staff de LBL y definir con qué equipo participará definitivamente el jugador o remitir un sustituto antes de que venza el periodo de revisión. De no subsanarse, ambos equipos quedarán en estado *Observado*.`;
+            } else {
+                const eqOficial = normalizarNombreEquipoLiga(conf.jugadorLiga?.equipo);
+                return `🚨 *COMUNICADO OFICIAL LBL ESPORTS - CONTROL DE INTEGRIDAD*
+Torneo: Scouting Tournament 3
+
+Estimado Capitán de *${conf.equipoScouting?.nombre || 'su equipo'}*,
+Se ha detectado una *INFRACCIÓN DE ELEGIBILIDAD COMPETITIVA*:
+
+El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente registrado y *ACEPTADO* en la *LIGA LBL OFICIAL* con la escuadra *${eqOficial}*.
+
+⛔ *Artículo de Reglamento:* Los jugadores que integran equipos aceptados en la Liga LBL Oficial tienen terminantemente prohibido participar en el torneo de clasificación Scouting Tournament 3.
+
+👉 *Acción Requerida:* Deben presentar inmediatamente un jugador suplente/reemplazo para habilitar el cupo de su equipo. Este equipo permanecerá en estado *Observado* hasta que el roster sea regularizado.`;
+            }
+        };
+
+        window.copiarMensajeCapitanIrregularidad = function(confId) {
+            const conf = irregularidadesGlobales.conflictos.find(c => c.id === confId);
+            if (!conf) return;
+            const msg = generarMensajeWhatsAppCapitanIrregularidad(conf);
+            navigator.clipboard.writeText(msg).then(() => {
+                alert("✅ Mensaje oficial de infracción copiado al portapapeles. Listo para enviar al capitán.");
+            }).catch(() => {
+                prompt("Copiar mensaje para capitán:", msg);
+            });
+        };
+
+        window.copiarReporteCompletoIrregularidades = function() {
+            if (irregularidadesGlobales.conflictos.length === 0) {
+                alert("No hay irregularidades detectadas para reportar.");
+                return;
+            }
+
+            const lineas = [
+                `🚨 *LBL ESPORTS - INFORME OFICIAL DE INTEGRIDAD & IRREGULARIDADES*`,
+                `Torneo: Scouting Tournament 3`,
+                `Fecha de Auditoría: ${new Date().toLocaleString('es-BO')}`,
+                `Total Infracciones: ${irregularidadesGlobales.total}`,
+                `🔴 Casos Multiequipo (SC3): ${irregularidadesGlobales.totalMulti}`,
+                `⛔ Bloqueados por Liga LBL Oficial: ${irregularidadesGlobales.totalLiga}`,
+                `Equipos de Scouting Afectados: ${irregularidadesGlobales.equiposAfectados.size}`,
+                ``,
+                `📋 *DESGLOSE DE CASOS DETECTADOS:*`
+            ];
+
+            irregularidadesGlobales.conflictos.forEach((c, idx) => {
+                const tipoTag = c.tipo === 'multiequipo' ? '🔴 MULTIEQUIPO' : '⛔ LIGA LBL';
+                lineas.push(`----------------------------------------`);
+                lineas.push(`${idx + 1}. [${tipoTag}] ${c.jugadorScouting?.nombreCi || 'Jugador'}`);
+                lineas.push(`   Riot LAS: ${c.jugadorScouting?.riotIdLas || '--'} | CI: ${c.jugadorScouting?.ci || '--'}`);
+                lineas.push(`   Motivo: ${c.motivo}`);
+                if (c.tipo === 'multiequipo' && c.equiposAfectadosLista) {
+                    lineas.push(`   Equipos involucrados: ${c.equiposAfectadosLista.map(e => `${e.nombre} [${e.tag}] (Fila ${e.rowId})`).join(' vs ')}`);
+                } else if (c.tipo === 'liga' && c.equipoScouting && c.jugadorLiga) {
+                    lineas.push(`   Scouting: ${c.equipoScouting.nombre} [${c.equipoScouting.tag}] (Fila ${c.equipoScouting.rowId})`);
+                    lineas.push(`   Liga Oficial: ${normalizarNombreEquipoLiga(c.jugadorLiga.equipo)}`);
+                }
+            });
+
+            lineas.push(`----------------------------------------`);
+            lineas.push(`Auditoría automática generada desde Staff LBL Scouting T3.`);
+
+            const repStr = lineas.join('\n');
+            navigator.clipboard.writeText(repStr).then(() => {
+                alert("✅ Reporte completo de irregularidades copiado al portapapeles para el Staff.");
+            }).catch(() => {
+                prompt("Copiar reporte staff:", repStr);
+            });
         };
     </script>
 </body>

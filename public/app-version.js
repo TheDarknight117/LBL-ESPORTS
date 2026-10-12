@@ -5,7 +5,7 @@
  * y limpie automáticamente CacheStorage y localStorage sin requerir que el usuario borre datos de navegación.
  */
 
-export const APP_BUILD_VERSION = 'lbl-v2026.10.09-198';
+export const APP_BUILD_VERSION = 'lbl-v2026.10.12-202';
 
 export function inicializarControlDeVersiones() {
     try {
@@ -13,11 +13,14 @@ export function inicializarControlDeVersiones() {
         if (versionGuardada && versionGuardada !== APP_BUILD_VERSION) {
             console.log(`[LBL Version Control] 🔄 Nueva versión detectada: ${APP_BUILD_VERSION} (anterior: ${versionGuardada}). Purgando cachés antiguas...`);
             
-            // 1. Limpiar datos viejos de equipos y torneos de localStorage
+            // 1. Limpiar datos viejos de equipos, torneos y scouting de localStorage
             localStorage.removeItem('lbl_equipos_aceptados_cache');
             localStorage.removeItem('lbl_torneos_cache');
             localStorage.removeItem('lbl_torneo_seleccionado');
             localStorage.removeItem('lbl_torneos_data_fingerprint');
+            localStorage.removeItem('lbl_scouting_liga_cache_v2');
+            localStorage.removeItem('lbl_scouting_equipos_cache');
+            localStorage.removeItem('lbl_scouting_sheets_api_url');
 
             // 2. Purgar CacheStorage del navegador (todos los buckets de Service Worker)
             if ('caches' in window) {

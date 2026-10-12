@@ -48,10 +48,19 @@ function fetchDriveImage(id, size, callback) {
         return callback(null, driveImageCache.get(id));
     }
 
+    let called = false;
+    const safeCallback = (err, item) => {
+        if (!called) {
+            called = true;
+            callback(err, item);
+        }
+    };
+
     const primaryUrl = `https://lh3.googleusercontent.com/d/${id}=${size || 's800'}`;
     const fallbackUrl = `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
 
     function doRequest(url, isFallback = false) {
+        if (called) return;
         const req = https.get(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -59,6 +68,7 @@ function fetchDriveImage(id, size, callback) {
             },
             timeout: 10000
         }, (res) => {
+            if (called) return;
             if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
                 return doRequest(res.headers.location, isFallback);
             }
@@ -73,29 +83,31 @@ function fetchDriveImage(id, size, callback) {
                         contentType: res.headers['content-type'] || 'image/jpeg'
                     };
                     driveImageCache.set(id, item);
-                    callback(null, item);
+                    safeCallback(null, item);
                 });
             } else if (!isFallback) {
                 setTimeout(() => doRequest(fallbackUrl, true), 300);
             } else {
-                callback(new Error(`Status ${res.statusCode}`));
+                safeCallback(new Error(`Status ${res.statusCode}`));
             }
         });
 
         req.on('error', (err) => {
+            if (called) return;
             if (!isFallback) {
                 setTimeout(() => doRequest(fallbackUrl, true), 300);
             } else {
-                callback(err);
+                safeCallback(err);
             }
         });
 
         req.on('timeout', () => {
             req.destroy();
+            if (called) return;
             if (!isFallback) {
                 doRequest(fallbackUrl, true);
             } else {
-                callback(new Error('Timeout'));
+                safeCallback(new Error('Timeout'));
             }
         });
     }
@@ -128,6 +140,7 @@ const server = http.createServer((req, res) => {
         }
 
         fetchDriveImage(id, size, (err, item) => {
+            if (res.headersSent || res.writableEnded) return;
             if (err || !item) {
                 res.writeHead(302, { 'Location': `https://lh3.googleusercontent.com/d/${id}=${size}` });
                 return res.end();
@@ -180,12 +193,14 @@ const server = http.createServer((req, res) => {
             });
 
             proxyReq.on('error', (err) => {
+                if (res.headersSent || res.writableEnded) return;
                 res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
                 res.end(JSON.stringify({ error: 'Error al conectar con Challonge: ' + err.message }));
             });
 
             proxyReq.on('timeout', () => {
                 proxyReq.destroy();
+                if (res.headersSent || res.writableEnded) return;
                 res.writeHead(504, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
                 res.end(JSON.stringify({ error: 'Timeout al conectar con Challonge' }));
             });
