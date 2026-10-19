@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=193">
+    <link rel="stylesheet" href="/dist/output.css?v=206">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -454,7 +454,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=193";
+        import "/app-version.js?v=206";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -1060,8 +1060,10 @@
             for (const t of listaTorneosRegistrados) {
                 const hasMatches = Array.isArray(t.matches) && t.matches.length > 0;
                 const hasChallongeMatches = t.datosChallonge && Array.isArray(t.datosChallonge.matches) && t.datosChallonge.matches.length > 0;
+                const est = (t.estado || t.datosChallonge?.estado || '').toLowerCase();
+                const isPending = est === 'proximamente' || est === 'pending';
 
-                if (!hasMatches && !hasChallongeMatches && !t._cargandoChallonge) {
+                if (!hasMatches && !hasChallongeMatches && !isPending && !t._cargandoChallonge && !t._sinPartidasVerificado) {
                     try {
                         const slugOrId = t.challongeId || t.slug || t.id;
                         const res = await procesarTorneoChallonge(slugOrId, null, listaEquiposAceptadosCache, t.division || 'Tier 1');
@@ -1080,8 +1082,11 @@
                                 listaTorneosRegistrados[idx] = { ...t };
                             }
                             localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                        } else {
+                            t._sinPartidasVerificado = true;
                         }
                     } catch (e) {
+                        t._sinPartidasVerificado = true;
                         console.warn("[Prefetch] Torneo " + t.id + ":", e.message);
                     }
                     // Breve pausa para no saturar conexiones
@@ -2103,26 +2108,36 @@
 
             // Sincronización bajo demanda si el torneo no tiene partidas en caché ni memoria
             const tienePartidasCargadas = (Array.isArray(torneo.matches) && torneo.matches.length > 0);
+            const chStateActual = (torneo.estado || docTorneo.estado || '').toLowerCase();
+            const esPorIniciar = chStateActual === 'pending' || chStateActual === 'proximamente';
 
             if (!tienePartidasCargadas) {
-                if (countText) countText.innerText = 'Cargando partidas...';
+                if (countText) countText.innerText = esPorIniciar ? 'Torneo por iniciar' : 'Sincronizando...';
                 if (feedSection) feedSection.style.display = 'none';
 
-                if (mainContainer && !docTorneo._cargandoChallonge) {
+                // Si el torneo está marcado como "Por Iniciar" o ya fue verificado en esta sesión sin partidas,
+                // mostrar de inmediato la Sala de Espera Oficial sin bloquear la interfaz con un spinner infinito.
+                if (mainContainer && (esPorIniciar || docTorneo._sinPartidasVerificado)) {
+                    mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
+                } else if (mainContainer && !docTorneo._cargandoChallonge) {
                     mainContainer.innerHTML = `
                         <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-4">
                             <div class="inline-block w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                            <p class="text-white text-sm font-black">Cargando datos del torneo...</p>
-                            <span class="text-[11px] text-gray-500 block">Sincronizando información oficial y posiciones</span>
+                            <p class="text-white text-sm font-black">Sincronizando datos del torneo...</p>
+                            <span class="text-[11px] text-gray-500 block">Conectando con el servidor oficial de competencias LBL</span>
                         </div>`;
                 }
 
-                if (!docTorneo._cargandoChallonge) {
+                if (!docTorneo._cargandoChallonge && !docTorneo._sinPartidasVerificado) {
                     docTorneo._cargandoChallonge = true;
                     const slugOrId = docTorneo.challongeId || docTorneo.slug || docTorneo.id;
                     
                     procesarTorneoChallonge(slugOrId, null, listaEquiposAceptadosCache, docTorneo.division || 'Tier 1')
                         .then(res => {
+                            if (res && Array.isArray(res.participantes) && res.participantes.length > 0) {
+                                docTorneo.participantes = res.participantes;
+                                docTorneo.datosChallonge = { ...(docTorneo.datosChallonge || {}), ...res };
+                            }
                             if (res && res.matches && res.matches.length > 0) {
                                 docTorneo.datosChallonge = res;
                                 docTorneo.matches = res.matches;
@@ -2132,6 +2147,7 @@
                                 docTorneo.grupos = res.grupos;
                                 docTorneo.tipoFormat = res.tipoFormat;
                                 if (res.estado) docTorneo.estado = res.estado;
+                                docTorneo._sinPartidasVerificado = false;
 
                                 const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
                                 if (idx !== -1) {
@@ -2141,25 +2157,17 @@
                                 renderizarTorneoDetalle(false);
                                 regularAlturaTorneo(false);
                             } else {
-                                if (mainContainer) {
-                                    mainContainer.innerHTML = `
-                                        <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
-                                            <i class="fas fa-diagram-project text-4xl text-cyan-400 block mb-2"></i>
-                                            <p class="text-white text-sm font-black">Este torneo aún no ha sido sincronizado con Challonge.</p>
-                                            <span class="text-[11px] text-gray-500 block">Slug asignado: <strong>${docTorneo.slug || docTorneo.id}</strong></span>
-                                        </div>`;
+                                docTorneo._sinPartidasVerificado = true;
+                                if (mainContainer && torneoSeleccionadoId === docTorneo.id) {
+                                    mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
                                 }
                             }
                         })
                         .catch(err => {
-                            console.warn("Error cargando torneo bajo demanda:", err);
-                            if (mainContainer) {
-                                mainContainer.innerHTML = `
-                                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
-                                        <i class="fas fa-exclamation-triangle text-4xl text-amber-400 block mb-2"></i>
-                                        <p class="text-white text-sm font-black">Error de conexión al cargar los datos del torneo.</p>
-                                        <button onclick="renderizarTorneoDetalle(true)" class="mt-2 px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase cursor-pointer">Reintentar</button>
-                                    </div>`;
+                            console.warn("Torneo en espera de inicio / sincronización:", err.message);
+                            docTorneo._sinPartidasVerificado = true;
+                            if (mainContainer && torneoSeleccionadoId === docTorneo.id) {
+                                mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
                             }
                         })
                         .finally(() => {
@@ -2213,6 +2221,51 @@
             } else if (etapaActiva === 'llave') {
                 renderizarChallongeEmbed(docTorneo, mainContainer);
             }
+        }
+
+        // --- VISTA PRELIMINAR PARA TORNEOS POR INICIAR (ANTES DE SINCRONIZAR DATOS EN CURSO) ---
+        function renderizarPantallaEsperaTorneo(docTorneo, torneo, etapa = 'resumen') {
+            const nombreTorneo = docTorneo?.nombre || torneo?.nombre || 'Torneo Oficial LBL';
+
+            let tituloEstado = 'Torneo Por Iniciar';
+            let descEtapa = 'El torneo se encuentra actualmente en fase previa de verificación e inscripciones. Las llaves, el cronograma de partidas y las estadísticas oficiales se sincronizarán automáticamente en esta sección tan pronto como el torneo esté en curso.';
+            let iconoEtapa = 'fa-hourglass-half';
+
+            if (etapa === 'cronograma') {
+                tituloEstado = 'Torneo Por Iniciar';
+                descEtapa = 'Los horarios oficiales y cruces de las jornadas se sincronizarán automáticamente aquí en cuanto inicie la competencia.';
+                iconoEtapa = 'fa-calendar-alt';
+            } else if (etapa === 'grupos' || etapa === 'playoffs') {
+                tituloEstado = 'Torneo Por Iniciar';
+                descEtapa = 'El registro de victorias/derrotas (W - L) y el avance de rondas se habilitarán en tiempo real cuando el torneo esté en curso.';
+                iconoEtapa = 'fa-list-ol';
+            } else if (etapa === 'llave') {
+                tituloEstado = 'Torneo Por Iniciar';
+                descEtapa = 'El bracket oficial se sincronizará y mostrará automáticamente en esta vista una vez que comience el torneo.';
+                iconoEtapa = 'fa-sitemap';
+            }
+
+            return `
+                <div class="glass-panel py-12 px-6 sm:px-10 md:px-14 rounded-3xl border border-gray-800 bg-[#070c14] shadow-2xl relative overflow-hidden">
+                    <div class="max-w-2xl mx-auto text-center space-y-5">
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-cyan-500/20 to-amber-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_25px_rgba(6,182,212,0.15)]">
+                            <i class="fas ${iconoEtapa}"></i>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <p class="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-cyan-400">
+                                ${nombreTorneo}
+                            </p>
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase italic tracking-tight">
+                                ${tituloEstado}
+                            </h3>
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-gray-400 leading-relaxed max-w-xl mx-auto font-medium">
+                            ${descEtapa}
+                        </p>
+                    </div>
+                </div>`;
         }
 
         // --- RENDERIZADOR DE LA ETAPA "RESUMEN" (ESTILO LOL ESPORTS OVERVIEW) ---
@@ -3213,6 +3266,18 @@
         // ══════════════════════════════════════════════════════════════════
         //  MOTOR DINÁMICO Y MODULAR DE BRACKETS (DATA-DRIVEN DESDE CHALLONGE)
         // ══════════════════════════════════════════════════════════════════
+        window.filtroFasePlayoffsMasivo = 'fase_final'; // 'fase_final' | 'rondas_previas' | 'completo'
+        window.cambiarFaseBracketMasivo = function(fase) {
+            window.filtroFasePlayoffsMasivo = fase;
+            renderizarTorneoDetalle(false);
+            setTimeout(() => {
+                const canvas = document.getElementById('bracket-canvas');
+                if (canvas && window._currentPlayoffMatches) {
+                    conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
+                }
+            }, 60);
+        };
+
         function construirLayoutPlayoffsModular(playoffMatches, docTorneo) {
             if (!Array.isArray(playoffMatches) || playoffMatches.length === 0) {
                 return `
@@ -3238,6 +3303,41 @@
             // 2. Detección de Doble Eliminación vs Simple Eliminación
             const isDoubleElim = regularMatches.some(m => m.round < 0);
 
+            // 3. Detección de Bracket Masivo (> 16 equipos / > 31 partidas, ej. +48 equipos con BYEs en Ronda 1)
+            const numEquiposEst = docTorneo?.totalEquipos || docTorneo?.participantes?.length || docTorneo?.datosChallonge?.totalEquipos || 0;
+            const esBracketMasivo = numEquiposEst > 16 || regularMatches.length > 31;
+            const faseActiva = esBracketMasivo ? (window.filtroFasePlayoffsMasivo || 'fase_final') : 'completo';
+
+            let selectorBracketMasivoHTML = '';
+            if (esBracketMasivo) {
+                selectorBracketMasivoHTML = `
+                    <div class="mb-5 p-3 sm:p-4 rounded-2xl bg-[#040812] border border-cyan-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 shadow-lg">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                                <i class="fas fa-sitemap text-xs"></i>
+                            </span>
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 block">Navegación Inteligente • Torneo Masivo (${numEquiposEst || '+32'} Equipos)</span>
+                                <p class="text-[11px] text-gray-400">Selecciona la etapa del cuadrante para visualizar cruces con máxima legibilidad o abre el mapa completo con zoom.</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 bg-[#02050b] p-1.5 rounded-xl border border-gray-800 shrink-0 w-full lg:w-auto">
+                            <button type="button" onclick="cambiarFaseBracketMasivo('fase_final')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'fase_final' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                🏆 Fase Final (Top 8)
+                            </button>
+                            <button type="button" onclick="cambiarFaseBracketMasivo('rondas_previas')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'rondas_previas' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                ⚔️ Rondas Iniciales & BYEs
+                            </button>
+                            <button type="button" onclick="cambiarFaseBracketMasivo('completo')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'completo' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                📋 Todas las Rondas
+                            </button>
+                            <button type="button" onclick="cambiarEtapa('llave')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition-all cursor-pointer flex items-center gap-1">
+                                <i class="fas fa-expand-arrows-alt text-[10px]"></i> Mapa Zoom
+                            </button>
+                        </div>
+                    </div>`;
+            }
+
             let bracketHTML = '';
 
             if (isDoubleElim) {
@@ -3248,7 +3348,7 @@
                 const negativeMatches = regularMatches.filter(m => m.round < 0).sort((a, b) => (b.round - a.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id))); // -1, -2, -3...
 
                 const distinctPosRounds = [...new Set(positiveMatches.map(m => m.round))].sort((a, b) => a - b);
-                const distinctNegRounds = [...new Set(negativeMatches.map(m => m.round))].sort((a, b) => b.round - a.round); // -1, -2, -3...
+                const distinctNegRounds = [...new Set(negativeMatches.map(m => m.round))].sort((a, b) => b - a); // -1, -2, -3...
 
                 // Identificar Gran Final y posible Bracket Reset
                 const maxPosRound = distinctPosRounds[distinctPosRounds.length - 1];
@@ -3267,13 +3367,29 @@
                 }
 
                 // Rondas de Winners (excluyendo la ronda de Gran Final)
-                const upperRounds = distinctPosRounds.filter(r => r !== maxPosRound);
+                const allUpperRounds = distinctPosRounds.filter(r => r !== maxPosRound);
+                let upperRounds = allUpperRounds;
+                let lowerRounds = distinctNegRounds;
+                let mostrarGrandFinal = true;
+
+                if (esBracketMasivo && faseActiva === 'fase_final') {
+                    // Últimas 3 rondas de Winners (Cuartos, Semis, Final Winners) y últimas 4 de Losers
+                    upperRounds = allUpperRounds.slice(-3);
+                    lowerRounds = distinctNegRounds.slice(-4);
+                    mostrarGrandFinal = true;
+                } else if (esBracketMasivo && faseActiva === 'rondas_previas') {
+                    // Primeras rondas clasificatorias antes del Top 8
+                    upperRounds = allUpperRounds.length > 3 ? allUpperRounds.slice(0, -2) : allUpperRounds;
+                    lowerRounds = distinctNegRounds.length > 4 ? distinctNegRounds.slice(0, -3) : distinctNegRounds;
+                    mostrarGrandFinal = false;
+                }
 
                 // Función auxiliar para títulos dinámicos de Winners
-                const getUpperRoundHeader = (r, idx, total) => {
-                    const distFromEnd = total - 1 - idx;
+                const getUpperRoundHeader = (r) => {
+                    const globalIdx = allUpperRounds.indexOf(r);
+                    const distFromEnd = allUpperRounds.length - 1 - globalIdx;
                     let title = `Ronda ${r} Winners`;
-                    let sub = `Partidas Bo3`;
+                    let sub = `Partidas Eliminatorias`;
                     if (distFromEnd === 0) {
                         title = `<i class="fas fa-trophy text-[10px] text-cyan-400"></i> Final de Ganadores`;
                         sub = `Partida Bo5 • Pase a Gran Final`;
@@ -3288,10 +3404,11 @@
                 };
 
                 // Función auxiliar para títulos dinámicos de Losers
-                const getLowerRoundHeader = (r, idx, total) => {
-                    const distFromEnd = total - 1 - idx;
+                const getLowerRoundHeader = (r) => {
+                    const globalIdx = distinctNegRounds.indexOf(r);
+                    const distFromEnd = distinctNegRounds.length - 1 - globalIdx;
                     let title = `Ronda ${Math.abs(r)} Perdedores`;
-                    let sub = `Partidas Bo3`;
+                    let sub = `Partidas Eliminatorias`;
                     if (distFromEnd === 0) {
                         title = `<i class="fas fa-trophy text-[10px] text-rose-400"></i> Final de Perdedores`;
                         sub = `Partida Bo5 • Pase a Gran Final`;
@@ -3300,7 +3417,7 @@
                         sub = `Partida Bo3`;
                     } else {
                         title = `<i class="fas fa-shield-halved text-[10px] text-rose-400"></i> Ronda ${Math.abs(r)} Perdedores`;
-                        sub = `Partidas Bo3`;
+                        sub = `Llave Inferior`;
                     }
                     return { title, sub };
                 };
@@ -3309,15 +3426,15 @@
                 let upperColsHTML = '';
                 upperRounds.forEach((r, idx) => {
                     const rMatches = positiveMatches.filter(m => m.round === r);
-                    const head = getUpperRoundHeader(r, idx, upperRounds.length);
-                    const isLastUpper = (idx === upperRounds.length - 1);
+                    const head = getUpperRoundHeader(r);
+                    const isLastUpper = (r === allUpperRounds[allUpperRounds.length - 1]);
                     upperColsHTML += `
                         <div class="flex flex-col shrink-0 w-[255px]">
                             <div class="mb-3.5 rounded-xl py-2 px-3 text-center border border-cyan-500/30 bg-[#060d1b] shadow-[0_0_15px_rgba(6,182,212,0.12)]">
                                 <h4 class="text-xs font-black text-cyan-300 uppercase tracking-widest flex items-center justify-center gap-1.5">
                                     ${head.title}
                                 </h4>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub} (${rMatches.length})</span>
                             </div>
                             <div class="flex flex-col justify-around flex-1 py-1 gap-5 ${isLastUpper ? 'pt-[50px]' : ''}">
                                 ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
@@ -3327,11 +3444,11 @@
 
                 // Columnas de Lower Bracket
                 let lowerColsHTML = '';
-                distinctNegRounds.forEach((r, idx) => {
+                lowerRounds.forEach((r, idx) => {
                     const rMatches = negativeMatches.filter(m => m.round === r);
-                    const head = getLowerRoundHeader(r, idx, distinctNegRounds.length);
-                    const isLastLower = (idx === distinctNegRounds.length - 1);
-                    const isSecondToLast = (idx === distinctNegRounds.length - 2);
+                    const head = getLowerRoundHeader(r);
+                    const isLastLower = (r === distinctNegRounds[distinctNegRounds.length - 1]);
+                    const isSecondToLast = (r === distinctNegRounds[distinctNegRounds.length - 2]);
                     const ptClass = (isLastLower || isSecondToLast) && rMatches.length === 1 ? 'pt-[50px]' : '';
                     lowerColsHTML += `
                         <div class="flex flex-col shrink-0 w-[255px]">
@@ -3339,7 +3456,7 @@
                                 <h4 class="text-xs font-black text-rose-300 uppercase tracking-widest flex items-center justify-center gap-1.5">
                                     ${head.title}
                                 </h4>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub} (${rMatches.length})</span>
                             </div>
                             <div class="flex flex-col justify-around flex-1 py-1 gap-5 ${ptClass}">
                                 ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
@@ -3349,7 +3466,7 @@
 
                 // Columna de Gran Final
                 let grandFinalColHTML = '';
-                if (grandFinalMatch) {
+                if (grandFinalMatch && mostrarGrandFinal) {
                     const isResetActive = bracketResetMatch && (bracketResetMatch.state === 'open' || bracketResetMatch.state === 'underway' || bracketResetMatch.state === 'live' || bracketResetMatch.state === 'complete' || bracketResetMatch.state === 'completed');
                     grandFinalColHTML = `
                         <div class="flex flex-col shrink-0 w-[255px]">
@@ -3392,12 +3509,19 @@
                 // ═══════════════════════════════════════════
                 //  FORMATO: SIMPLE ELIMINACIÓN
                 // ═══════════════════════════════════════════
-                const rounds = [...new Set(regularMatches.map(m => m.round))].sort((a, b) => a - b);
+                const allRounds = [...new Set(regularMatches.map(m => m.round))].sort((a, b) => a - b);
+                let rounds = allRounds;
+                if (esBracketMasivo && faseActiva === 'fase_final') {
+                    rounds = allRounds.slice(-4);
+                } else if (esBracketMasivo && faseActiva === 'rondas_previas') {
+                    rounds = allRounds.length > 4 ? allRounds.slice(0, -3) : allRounds;
+                }
                 let colsHTML = '';
 
-                rounds.forEach((r, idx) => {
+                rounds.forEach((r) => {
                     const rMatches = regularMatches.filter(m => m.round === r).sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id));
-                    const distFromEnd = rounds.length - 1 - idx;
+                    const globalIdx = allRounds.indexOf(r);
+                    const distFromEnd = allRounds.length - 1 - globalIdx;
                     let title = `Ronda ${r}`;
                     let sub = `Partidas Eliminatorias`;
                     let isFinal = false;
@@ -3427,7 +3551,7 @@
                                 <h4 class="text-xs font-black ${isFinal ? 'text-yellow-300' : 'text-cyan-300'} uppercase tracking-widest flex items-center justify-center gap-1.5">
                                     ${title}
                                 </h4>
-                                <span class="text-[9px] font-bold ${isFinal ? 'text-yellow-400/80' : 'text-slate-400'} uppercase block mt-0.5">${sub}</span>
+                                <span class="text-[9px] font-bold ${isFinal ? 'text-yellow-400/80' : 'text-slate-400'} uppercase block mt-0.5">${sub} (${rMatches.length})</span>
                             </div>
                             <div class="flex flex-col justify-around flex-1 py-1 gap-5">
                                 ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
@@ -3455,6 +3579,7 @@
 
             return `
                 <div class="w-full">
+                    ${selectorBracketMasivoHTML}
                     <!-- CONTENEDOR DEL BRACKET LIBRE Y RESPONSIVO -->
                     <div id="bracket-scroll-container" class="w-full overflow-x-auto pb-6 scrollbar-none xl:flex xl:justify-center" style="scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;">
                         <div id="bracket-canvas" class="relative inline-block min-w-max py-2 px-1 sm:px-2">
@@ -3633,12 +3758,9 @@
                 return;
             }
 
-            // B) TORNEO PURO DE ELIMINATORIAS (Sin grupos)
-            // Si el torneo ya concluyó, mostrar directamente la tabla de posiciones en orden y no el bracket
-            if (ciclo.esPuroBracket && !isCompleted) {
-                renderizarEtapaPlayoffs(torneo, container);
-                return;
-            }
+            // B) TORNEO PURO DE ELIMINATORIAS (Sin grupos):
+            // Mostrar tanto el acordeón de Playoffs arriba (si está en curso) como la Tabla General de Posiciones (W - L) debajo
+            const playoffsPureBracketHTML = (ciclo.esPuroBracket && !isCompleted) ? `<div class="mb-6">${generarPlayoffsAccordionHTML(torneo)}</div>` : '';
 
             // Standings oficiales de Challonge
             let standings = [];
@@ -3927,15 +4049,16 @@
             });
 
             container.innerHTML = `
+                ${playoffsPureBracketHTML}
                 <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-6 shadow-2xl">
                     <!-- ENCABEZADO Y GUÍA DE INDICATIVOS -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4">
                         <div>
                             <h3 class="text-2xl md:text-3xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
-                                <i class="fas fa-list-ol text-cyan-400"></i> Tabla de Posiciones Finales
+                                <i class="fas fa-list-ol text-cyan-400"></i> ${isCompleted ? 'Tabla de Posiciones Finales' : 'Tabla de Posiciones & Récord (En Vivo)'}
                             </h3>
                             <p class="text-xs md:text-sm text-gray-400 font-medium mt-0.5">
-                                Clasificación oficial definitiva del torneo e historial completo de enfrentamientos.
+                                ${isCompleted ? 'Clasificación oficial definitiva del torneo e historial completo de enfrentamientos.' : 'Seguimiento en vivo de victorias, derrotas e historial de series por equipo.'}
                             </p>
                         </div>
 
@@ -3973,6 +4096,13 @@
                         </table>
                     </div>
                 </div>`;
+
+            if (ciclo.esPuroBracket && !isCompleted && gruposDesplegados.has('playoffs')) {
+                const canvas = document.getElementById('bracket-canvas');
+                if (canvas && window._currentPlayoffMatches) {
+                    conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
+                }
+            }
         }
 
         // --- FUNCIÓN ADAPTATIVA SEGÚN FORMATO DETECTADO POR LA API ---
@@ -3981,12 +4111,7 @@
             const matches = torneo.matches || [];
 
             if (!matches || matches.length === 0) {
-                container.innerHTML = `
-                    <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-3">
-                        <i class="fas fa-clock text-4xl text-amber-400 block mb-2"></i>
-                        <p class="text-white text-sm font-black">Torneo Programado — Partidas por Iniciar</p>
-                        <span class="text-[11px] text-gray-500 block">El cuadrante de eliminatoria se activará automáticamente tan pronto como comiencen los partidos en Challonge.</span>
-                    </div>`;
+                container.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, 'llave');
                 return;
             }
 
@@ -4023,7 +4148,7 @@
             return clean;
         }
 
-        // --- VISOR DE EMBED OFICIAL DE CHALLONGE (INTERACTIVO Y ADAPTADO) ---
+        // --- VISOR DE EMBED OFICIAL DE CHALLONGE (INTERACTIVO Y ADAPTADO A BRACKETS MASIVOS +48 EQUIPOS) ---
         function renderizarChallongeEmbed(docTorneo, container) {
             const torneo = docTorneo.datosChallonge || docTorneo;
             const rawSlug = docTorneo.slug || torneo.public_slug || torneo.slug || torneo.url || torneo.id;
@@ -4033,17 +4158,27 @@
             }
 
             const cleanSlug = resolverPublicChallongeSlug(rawSlug);
-            // URL limpia para fijar la navegación interactiva en Challonge
-            const embedUrl = `https://challonge.com/${cleanSlug}/module?multiplier=1.0&match_width_multiplier=1.2&scale_to_fit=1&show_final_results=1&show_tournament_name=0&show_live_status=0&tab=group_stage&subtab=standings`;
+            const ciclo = escanearCicloDeVidaTorneo(docTorneo);
+            const numEquipos = torneo.totalEquipos || torneo.participantes?.length || docTorneo.totalEquipos || 0;
+            const numMatches = (torneo.matches || docTorneo.matches || []).length;
+            const esBracketMasivo = numEquipos > 16 || numMatches > 31;
+
+            // Para torneos masivos (+16 / +48 equipos), desactivar scale_to_fit=1 para evitar que Challonge encoja los nombres a 3px,
+            // habilitando el desplazamiento y zoom interactivo nativo con legibilidad 100%.
+            const scaleParam = esBracketMasivo ? 'scale_to_fit=0&multiplier=0.95' : 'scale_to_fit=1&multiplier=1.0';
+            const tabParam = ciclo.soloGruposActivos ? '&tab=group_stage&subtab=standings' : '';
+            const embedUrl = `https://challonge.com/${cleanSlug}/module?${scaleParam}&match_width_multiplier=1.2&show_final_results=1&show_tournament_name=0&show_live_status=0${tabParam}`;
 
             const html = `
                 <div class="glass-panel p-5 md:p-8 rounded-3xl border border-gray-800 bg-[#070c14] space-y-5 shadow-2xl overflow-hidden w-full">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-800/80 pb-4">
                         <div>
                             <h4 class="text-base md:text-lg font-black text-white uppercase italic tracking-tight flex items-center gap-2">
-                                <i class="fas fa-sitemap text-cyan-400"></i> Cuadrante Oficial Challonge (${cleanSlug})
+                                <i class="fas fa-sitemap text-cyan-400"></i> Cuadrante Oficial Interactivo (${cleanSlug})
                             </h4>
-                            <span class="text-xs text-gray-400 font-medium block mt-0.5">Visor oficial interactivo sincronizado en vivo.</span>
+                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
+                                ${esBracketMasivo ? 'Mapa completo con soporte de arrastre (drag & pan) para llaves masivas con Upper/Lower Bracket y BYEs.' : 'Visor oficial interactivo sincronizado en vivo.'}
+                            </span>
                         </div>
                         <a href="https://challonge.com/es/${cleanSlug}" target="_blank" class="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 shadow">
                             Abrir en Challonge <i class="fas fa-external-link-alt text-xs"></i>
@@ -4361,6 +4496,16 @@
 
                     const sourceEl = document.getElementById('bracket-match-' + sourceM.id);
                     if (!sourceEl) return;
+
+                    // En brackets masivos no potencia de 2 (ej. +48 equipos con BYEs en R1), si la ronda destino tiene > 4 partidas
+                    // y la ronda origen no tiene el doble exacto de partidas (porque algunos equipos pasaron por BYE directo),
+                    // evitar trazar líneas verticales cruzadas que se superpongan sobre otras tarjetas (la tarjeta ya indica "GANADOR DE MATCH #X").
+                    const srcRoundCount = allMatches.filter(x => x.round === sourceM.round).length;
+                    const tgtRoundCount = allMatches.filter(x => x.round === m.round).length;
+                    if (tgtRoundCount > 4 && m.round > 0 && srcRoundCount < tgtRoundCount * 2) {
+                        return;
+                    }
+
                     const srcPos = getElementOffsetRel(sourceEl, canvas);
 
                     const tgtSlotEl = targetEl.querySelector(`[data-slot="${slotNum}"]`);
