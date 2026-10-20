@@ -5,7 +5,7 @@
  * y limpie automáticamente CacheStorage y localStorage sin requerir que el usuario borre datos de navegación.
  */
 
-export const APP_BUILD_VERSION = 'lbl-v2026.10.20-212';
+export const APP_BUILD_VERSION = 'lbl-v2026.10.20-215';
 
 export function inicializarControlDeVersiones() {
     try {
@@ -22,6 +22,8 @@ export function inicializarControlDeVersiones() {
             localStorage.removeItem('lbl_scouting_liga_cache_v2');
             localStorage.removeItem('lbl_scouting_equipos_cache');
             localStorage.removeItem('lbl_scouting_sheets_api_url');
+            localStorage.removeItem('lbl_scouting3_public_sanitized_v210');
+            localStorage.removeItem('lbl_scouting3_public_sanitized_v213');
 
             // 2. Purgar CacheStorage del navegador (todos los buckets de Service Worker)
             if ('caches' in window) {

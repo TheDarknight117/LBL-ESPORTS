@@ -43,8 +43,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=212">
-    <script type="module" src="/app-version.js?v=212"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=215">
+    <script type="module" src="/app-version.js?v=215"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -59,6 +59,9 @@
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none !important; }
+        .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
 
         .search-box { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px 20px; border-radius: 12px; outline: none; transition: 0.3s; width: 100%; font-weight: bold; }
         .search-box:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
@@ -459,22 +462,22 @@
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 pt-10 pb-20">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-3 sm:px-4 pt-6 sm:pt-8 md:pt-10 pb-16 sm:pb-20">
         
-        <div class="text-center mb-8">
-            <div class="inline-block px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-4">
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="inline-block px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-3 sm:mb-4">
                 <i class="fas fa-search-location mr-1"></i> Base de Datos Oficial
             </div>
-            <h1 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTROS TORNEOS...</h1>
-            <p class="text-gray-400 text-sm max-w-2xl mx-auto mb-8">
-                ¿Quieres buscar equipo o algún jugador?<br>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-2 sm:mb-3">NUESTROS TORNEOS...</h1>
+            <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-5 sm:mb-6 px-2">
+                ¿Quieres buscar equipo o algún jugador?<br class="hidden sm:inline">
                 Accede a la información de nuestros torneos oficiales y scouting en tiempo real
             </p>
             
             <!-- Selector de Torneo (Botones con Logos Normalizados) -->
-            <div class="flex flex-row overflow-x-auto md:overflow-x-visible justify-center items-center gap-2.5 sm:gap-3 md:gap-5 max-w-4xl mx-auto mb-8 no-scrollbar pb-2 px-4 w-full">
-                <button id="btn-scouting3" onclick="cambiarTorneo(4)" class="group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer">
-                    <span class="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[9px] uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.8)] flex items-center gap-1">
+            <div id="tournament-selector" class="flex flex-row overflow-x-auto md:overflow-x-visible justify-start md:justify-center items-center gap-2.5 sm:gap-3 md:gap-4 max-w-4xl mx-auto mb-6 sm:mb-8 no-scrollbar pt-3 pb-2 px-3 sm:px-4 w-full snap-x snap-mandatory">
+                <button id="btn-scouting3" onclick="cambiarTorneo(4)" class="group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer snap-start">
+                    <span class="absolute -top-2.5 right-1 sm:-right-2 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] sm:text-[9px] uppercase tracking-wider sm:tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.8)] flex items-center gap-1 z-10">
                         <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
                     </span>
                     <img src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Copa Legion" class="h-7 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
@@ -483,31 +486,31 @@
                         <span class="block text-xs md:text-sm font-black italic text-white uppercase tracking-tight">Scouting 3</span>
                     </div>
                 </button>
-                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer">
+                <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer snap-start">
                     <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="max-h-7 md:max-h-9 max-w-[85%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer">
+                <button id="btn-scouting2" onclick="cambiarTorneo(2)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer snap-start">
                     <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="max-h-6 md:max-h-8 max-w-[90%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
-                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer">
+                <button id="btn-qualifier" onclick="cambiarTorneo(3)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer snap-start">
                     <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="max-h-7 md:max-h-9 max-w-[85%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
             </div>
         </div>
 
         <!-- Sección de Descripción del Torneo Activo (Con Marco de Logo Normalizado e Indexador de Equipos) -->
-        <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-7xl mx-auto mb-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/5 shadow-lg w-full">
-            <div id="td-logo-container" class="flex items-center justify-center shrink-0 w-full md:w-72 lg:w-80 h-20 md:h-24">
-                <img id="td-logo" src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Torneo Logo" class="max-h-16 md:max-h-20 max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
+        <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto mb-6 sm:mb-8 glass-panel p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-white/5 shadow-lg w-full">
+            <div id="td-logo-container" class="flex items-center justify-center shrink-0 w-full md:w-72 lg:w-80 h-16 sm:h-20 md:h-24">
+                <img id="td-logo" src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Torneo Logo" class="max-h-14 sm:max-h-16 md:max-h-20 max-w-[240px] sm:max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
             </div>
             <div class="text-left w-full space-y-2">
-                <div class="flex flex-wrap items-center gap-3">
-                    <h2 id="td-title" class="text-xl md:text-2xl font-black uppercase italic tracking-tight text-white leading-none">Copa Legion x Torneo Scouting 3</h2>
-                    <span id="td-badge" class="px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between md:justify-start gap-2 sm:gap-3">
+                    <h2 id="td-title" class="text-lg sm:text-xl md:text-2xl font-black uppercase italic tracking-tight text-white leading-tight">Copa Legion x Torneo Scouting 3</h2>
+                    <span id="td-badge" class="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-black text-[11px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)] self-start sm:self-auto shrink-0">
                         <i class="fas fa-users text-[11px]"></i> <span id="td-count-text">Cargando Equipos...</span>
                     </span>
                 </div>
-                <p id="td-text" class="text-gray-300 text-sm md:text-base leading-relaxed font-medium">
+                <p id="td-text" class="text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed font-normal sm:font-medium">
                     Base de datos pública oficial en tiempo real de la Copa Legion x Torneo Scouting 3. Consulta los logos oficiales, nicks de cuenta LAS y cuenta MAIN (OP.GG), junto al contacto directo del representante de cada equipo. Si detectas alguna irregularidad en un OP.GG o cambio de nick, puedes enviar una nota directa al Staff desde la ficha del equipo.
                 </p>
             </div>
@@ -525,28 +528,28 @@
         </div>
 
         <!-- Buscador con icono centrado -->
-        <div id="search-bar-container" class="max-w-2xl mx-auto mb-4 relative">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-            <input type="text" id="searchInput" class="search-box pl-12" placeholder="Buscar por Equipo, TAG, Nick LAS, Cuenta Main, Rango...">
+        <div id="search-bar-container" class="max-w-2xl mx-auto mb-3 sm:mb-4 relative">
+            <i class="fas fa-search absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+            <input type="text" id="searchInput" class="search-box pl-10 sm:pl-12 text-sm sm:text-base py-2.5 sm:py-3" placeholder="Buscar por equipo, TAG, nick o rango...">
         </div>
 
         <!-- Indicadores Esenciales: High Elo, Notas/Observaciones y Jugadores Baneados -->
-        <div id="filter-chips-container" class="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-4 px-2">
+        <div id="filter-chips-container" class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-2xl mx-auto mb-4 px-1 sm:px-2">
             <button type="button" id="chip-high-elo" class="chip-filter filter-toprank" onclick="toggleFiltro('high_elo')" title="Filtrar por equipos con talentos de alto elo">
-                <i class="fas fa-crown mr-1.5 text-[10px]"></i> High Elo <span class="chip-count" id="count-chip-top">0</span>
+                <i class="fas fa-crown mr-1 sm:mr-1.5 text-[10px]"></i> High Elo <span class="chip-count" id="count-chip-top">0</span>
             </button>
             <button type="button" id="chip-notas" class="chip-filter" onclick="toggleFiltro('notas')" title="Filtrar por equipos con notas o reportes de revisión activos">
-                <i class="fas fa-flag mr-1.5 text-[10px] text-amber-400"></i> Con Notas / Observaciones <span class="chip-count" id="count-chip-notas">0</span>
+                <i class="fas fa-flag mr-1 sm:mr-1.5 text-[10px] text-amber-400"></i> Notas / Reportes <span class="chip-count" id="count-chip-notas">0</span>
             </button>
             <button type="button" id="chip-banned" class="chip-filter filter-banned" onclick="toggleFiltro('banned')" title="Ver equipos con jugadores o sanciones oficiales">
-                <i class="fas fa-ban mr-1.5 text-[10px]"></i> Jugadores Baneados <span class="chip-count" id="count-chip-banned">0</span>
+                <i class="fas fa-ban mr-1 sm:mr-1.5 text-[10px]"></i> Baneados <span class="chip-count" id="count-chip-banned">0</span>
             </button>
         </div>
 
         <!-- Barra de Resultados -->
-        <div id="results-bar" class="flex items-center justify-start max-w-7xl mx-auto mb-6 px-4 text-[15px] md:text-base font-bold text-gray-300">
-            <div id="results-counter" class="flex items-center gap-2.5">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.9)]"></span>
+        <div id="results-bar" class="flex items-center justify-between sm:justify-start max-w-7xl mx-auto mb-4 sm:mb-6 px-1 sm:px-4 text-xs sm:text-sm md:text-base font-bold text-gray-300">
+            <div id="results-counter" class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.9)]"></span>
                 <span>Mostrando <b class="text-white font-black" id="visible-count">0</b> de <b class="text-white font-black" id="total-count">0</b> equipos</span>
             </div>
         </div>
@@ -742,7 +745,7 @@
 
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxu9funupVszSkq-kR3czuW_uTDKUjO13-jY3NtQluWG4y7XAeOh5T6qed6YJL5dGL3w/exec";
         const SCOUTING3_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
-        const S3_STORAGE_KEY = 'lbl_scouting3_public_sanitized_v210';
+        const S3_STORAGE_KEY = 'lbl_scouting3_public_sanitized_v214';
 
         let activeTournament = 4; // Por defecto mostrar Scouting 3 (Copa Legion x Torneo Scouting 3)
         let scoutingTeams = [];
@@ -1080,19 +1083,19 @@
             if (activeTournament === 4) {
                 if (tdTitle) tdTitle.textContent = "Copa Legion x Torneo Scouting 3";
                 if (tdCount) tdCount.textContent = `${scouting3Teams.length} Equipos en Competencia`;
-                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]";
+                if (tdBadge) tdBadge.className = "px-2.5 sm:px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-black text-[11px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)] self-start sm:self-auto shrink-0";
             } else if (activeTournament === 1) {
                 if (tdTitle) tdTitle.textContent = "Scouting Tournament 1";
                 if (tdCount) tdCount.textContent = `${scouting1Teams.length} Equipos Registrados`;
-                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)]";
+                if (tdBadge) tdBadge.className = "px-2.5 sm:px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-[11px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)] self-start sm:self-auto shrink-0";
             } else if (activeTournament === 2) {
                 if (tdTitle) tdTitle.textContent = "Scouting Tournament 2";
                 if (tdCount) tdCount.textContent = `${scouting2Teams.length} Equipos Registrados`;
-                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)]";
+                if (tdBadge) tdBadge.className = "px-2.5 sm:px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 font-black text-[11px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)] self-start sm:self-auto shrink-0";
             } else if (activeTournament === 3) {
                 if (tdTitle) tdTitle.textContent = "Open Qualifier LBL";
                 if (tdCount) tdCount.textContent = `${qualifierTeams.length} Equipos Registrados`;
-                if (tdBadge) tdBadge.className = "px-3 py-1 rounded-full bg-rose-950/70 border border-rose-500/40 text-rose-400 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(244,63,94,0.25)]";
+                if (tdBadge) tdBadge.className = "px-2.5 sm:px-3 py-1 rounded-full bg-rose-950/70 border border-rose-500/40 text-rose-400 font-black text-[11px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(244,63,94,0.25)] self-start sm:self-auto shrink-0";
             }
         }
 
@@ -1319,11 +1322,11 @@
                 chipNotas.classList.toggle('hidden', torneoId !== 4);
             }
 
-            const normalClass = "group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer";
-            const activeClass = "group relative flex items-center justify-center rounded-xl border border-cyan-500 bg-[#070707]/80 shadow-[0_0_16px_rgba(6,182,212,0.35)] scale-[1.03] transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shrink-0 px-2 cursor-pointer";
-            const activeQualClass = "group relative flex items-center justify-center rounded-xl border border-rose-500 bg-[#070707]/80 shadow-[0_0_16px_rgba(244,63,94,0.35)] scale-[1.03] transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shrink-0 px-2 cursor-pointer";
-            const normalS3Class = "group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500/25 bg-black/40 hover:bg-[#070707]/70 hover:border-emerald-500/50 transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shadow-md shrink-0 px-3 cursor-pointer";
-            const activeS3Class = "group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer";
+            const normalClass = "group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer snap-start";
+            const activeClass = "group relative flex items-center justify-center rounded-xl border border-cyan-500 bg-[#070707]/80 shadow-[0_0_16px_rgba(6,182,212,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shrink-0 px-2 cursor-pointer snap-start";
+            const activeQualClass = "group relative flex items-center justify-center rounded-xl border border-rose-500 bg-[#070707]/80 shadow-[0_0_16px_rgba(244,63,94,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shrink-0 px-2 cursor-pointer snap-start";
+            const normalS3Class = "group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500/25 bg-black/40 hover:bg-[#070707]/70 hover:border-emerald-500/50 transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shadow-md shrink-0 px-3 cursor-pointer snap-start";
+            const activeS3Class = "group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer snap-start";
 
             if (btn3) btn3.className = normalS3Class;
             if (btn1) btn1.className = normalClass;
@@ -1333,25 +1336,25 @@
             const descripciones = {
                 4: {
                     logo: "/assets/logo%20copa%20Legion.png",
-                    imgClass: "max-h-16 md:max-h-20 max-w-[250px] md:max-w-[270px] w-auto h-auto object-contain",
+                    imgClass: "max-h-14 sm:max-h-16 md:max-h-20 max-w-[220px] sm:max-w-[250px] md:max-w-[270px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_18px_rgba(16,185,129,0.35)]",
                     text: "Base de datos pública oficial en tiempo real de la Copa Legion x Torneo Scouting 3. Consulta los logos oficiales, nicks de cuenta LAS y cuenta MAIN (OP.GG), junto al contacto directo del representante de cada equipo. Si detectas alguna irregularidad en un OP.GG o cambio de nick, puedes enviar una nota directa al Staff desde la ficha del equipo."
                 },
                 1: {
                     logo: "assets/scouting1.webp",
-                    imgClass: "max-h-16 md:max-h-20 max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
+                    imgClass: "max-h-14 sm:max-h-16 md:max-h-20 max-w-[230px] sm:max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]",
                     text: "Fue el primer paso de la Liga Boliviana, esto propuso la antesala para reclutar a los primeros equipos que conformarian nuestra liga, se realizo en Septiembre de 2025, con +50 equipos inscritos y +300 jugadores registrados, de los cuales solo unos pocos fueron invitados por su gran desempeño en la competencia."
                 },
                 2: {
                     logo: "assets/logo2.webp",
-                    imgClass: "max-h-14 md:max-h-[68px] max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain",
+                    imgClass: "max-h-12 sm:max-h-14 md:max-h-[68px] max-w-[240px] sm:max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]",
                     text: "El Scouting Tournament 2 tuvo la maxima cantidad de equipos registrados de entre todos los torneos de clasificacion que tuvimos hasta la fecha, con la gran suma de 87 equipos en competencia con +500 jugadores inscritos... Fue sin duda uno de los Torneos de Scouting mas grandes que hicimos..."
                 },
                 3: {
                     logo: "assets/open_qualifier.webp",
-                    imgClass: "max-h-16 md:max-h-20 max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
+                    imgClass: "max-h-14 sm:max-h-16 md:max-h-20 max-w-[230px] sm:max-w-[260px] md:max-w-[280px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_15px_rgba(244,63,94,0.25)]",
                     text: "El Open Qualifier fue el torneo clasificatorio definitivo donde se definieron los cupos finales para el Tier 1 y Tier 2 de la Liga Boliviana de League of Legends. Equipos de todo el país compitieron intensamente en llaves eliminatorias por el acceso al circuito oficial."
                 }
@@ -1515,20 +1518,20 @@
                 const card = document.createElement('div');
                 
                 if (esBaneado) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
+                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
                 } else if (tieneJugadorBaneado) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
+                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
                 } else if (totalNotasActivas > 0) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim border-amber-500/45 hover:border-amber-400 bg-gradient-to-b from-amber-950/15 to-black/95";
+                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim border-amber-500/45 hover:border-amber-400 bg-gradient-to-b from-amber-950/15 to-black/95";
                 } else if (activeTournament === 4) {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
+                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
                 } else {
-                    card.className = "glass-panel rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
+                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
                 }
                 
                 card.onclick = () => abrirModalSeguro(eq);
 
-                const hasValidLogo = activeTournament === 4 && eq.logo && String(eq.logo).startsWith('http');
+                const hasValidLogo = activeTournament === 4 && eq.logo && (String(eq.logo).startsWith('http') || String(eq.logo).startsWith('/'));
 
                 const shieldHTML = hasValidLogo
                     ? `<div class="w-14 h-14 rounded-2xl bg-[#040812] border ${totalNotasActivas > 0 ? 'border-amber-500/60' : 'border-emerald-500/40 group-hover:border-emerald-400'} flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_18px_rgba(16,185,129,0.18)] relative">
@@ -1893,7 +1896,7 @@
                 const displayTag = equipo.tag ? equipo.tag.substring(0,4).toUpperCase() : (equipo.name ? equipo.name.substring(0,3).toUpperCase() : 'TBD');
                 const modalInitial = document.getElementById('modal-initial');
                 const modalLogoImg = document.getElementById('modal-team-logo');
-                const hasLogo = activeTournament === 4 && equipo.logo && String(equipo.logo).startsWith('http');
+                const hasLogo = activeTournament === 4 && equipo.logo && (String(equipo.logo).startsWith('http') || String(equipo.logo).startsWith('/'));
 
                 if (modalLogoImg && modalInitial) {
                     if (hasLogo) {

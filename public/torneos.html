@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=212">
+    <link rel="stylesheet" href="/dist/output.css?v=215">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -452,9 +452,170 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=212";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=215";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=212";
+        import "/app-version.js?v=215";
+
+        // ══════════════════════════════════════════════════════════════════
+        //  SINCRONIZACIÓN EN TIEMPO REAL: EQUIPOS Y TAGS DE SCOUTING 3
+        //  Conecta con Firestore (torneos_activos/scouting3_live_sync) y
+        //  refleja automáticamente cualquier cambio de TAG hecho en staff-scouting
+        // ══════════════════════════════════════════════════════════════════
+        let scouting3EquiposCache = [];
+        let lastScouting3Hash = '';
+
+        try {
+            const cachedS3 = localStorage.getItem('lbl_scouting3_public_sanitized_v210') || 
+                             localStorage.getItem('lbl_scouting_equipos_cache');
+            if (cachedS3) {
+                const parsed = JSON.parse(cachedS3);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    scouting3EquiposCache = parsed;
+                    lastScouting3Hash = JSON.stringify(parsed.map(e => `${e.nombre}_${e.tag}`));
+                }
+            }
+        } catch(e) {}
+
+        function esTorneoScouting3(torneoOpt) {
+            let t = torneoOpt;
+            if (!t && typeof torneoSeleccionadoId !== 'undefined' && torneoSeleccionadoId) {
+                t = Array.isArray(listaTorneosRegistrados)
+                    ? listaTorneosRegistrados.find(x => x.id === torneoSeleccionadoId || x.slug === torneoSeleccionadoId || String(x.challongeId) === String(torneoSeleccionadoId))
+                    : torneoSeleccionadoId;
+            }
+            if (!t) return false;
+            const str = (typeof t === 'string' ? t : `${t.id || ''} ${t.slug || ''} ${t.nombre || ''} ${t.challongeId || ''}`).toLowerCase();
+            return str.includes('ts3lbl') || str.includes('18498275') || str.includes('scouting 3') || str.includes('scouting3') || str.includes('legion');
+        }
+
+        function normalizarTextoParaMatch(str) {
+            if (!str) return '';
+            return str
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Quitar tildes
+                .replace(/\[[^\]]*\]/g, '') // Quitar tags entre corchetes
+                .replace(/\([^)]*\)/g, '')   // Quitar paréntesis
+                .replace(/[^a-z0-9]/g, ' ')  // Solo alfanuméricos
+                .replace(/\s+/g, ' ')        // Espacios simples
+                .trim();
+        }
+
+        function buscarEquipoScouting3(nombreEquipo, pObj = null) {
+            if (!Array.isArray(scouting3EquiposCache) || scouting3EquiposCache.length === 0) return null;
+            const raw = (nombreEquipo || pObj?.nombre || pObj?.name || pObj?.display_name || '').toString().trim();
+            if (!raw) return null;
+
+            const cleanRaw = raw.toLowerCase();
+            const normRaw = normalizarTextoParaMatch(raw);
+            const rawTag = (pObj?.tag || '').toString().trim().toUpperCase();
+
+            // 1. Coincidencia EXACTA por nombre tal cual
+            let found = scouting3EquiposCache.find(eq => {
+                const nom = (eq.nombre || '').trim();
+                return nom.toLowerCase() === cleanRaw;
+            });
+            if (found) return found;
+
+            // 2. Coincidencia EXACTA normalizada (sin tildes, corchetes ni símbolos)
+            found = scouting3EquiposCache.find(eq => {
+                const nomNorm = normalizarTextoParaMatch(eq.nombre);
+                return nomNorm === normRaw;
+            });
+            if (found) return found;
+
+            // 3. Coincidencia si el nombre contiene [TAG] explícito o si rawTag coincide
+            if (rawTag && rawTag.length >= 2) {
+                found = scouting3EquiposCache.find(eq => (eq.tag || '').trim().toUpperCase() === rawTag);
+                if (found) return found;
+            }
+            const tagMatch = raw.match(/\[([A-Za-z0-9_-]{2,6})\]/);
+            if (tagMatch) {
+                const extractedTag = tagMatch[1].toUpperCase();
+                found = scouting3EquiposCache.find(eq => (eq.tag || '').trim().toUpperCase() === extractedTag);
+                if (found) return found;
+            }
+
+            // 4. Coincidencia de prefijo / sufijo estricta (distinguiendo 'academy', 'alpha', 'omega', 'skyblue')
+            const rawIsAcademy = cleanRaw.includes('academy') || cleanRaw.includes('acad') || cleanRaw.includes('skyblue');
+            const rawIsAlpha = cleanRaw.includes('alpha');
+            const rawIsOmega = cleanRaw.includes('omega');
+
+            found = scouting3EquiposCache.find(eq => {
+                const nom = (eq.nombre || '').toLowerCase();
+                const nomNorm = normalizarTextoParaMatch(eq.nombre);
+                const eqIsAcademy = nom.includes('academy') || nom.includes('acad') || nom.includes('skyblue');
+                const eqIsAlpha = nom.includes('alpha');
+                const eqIsOmega = nom.includes('omega');
+
+                if (rawIsAcademy !== eqIsAcademy) return false;
+                if (rawIsAlpha !== eqIsAlpha || rawIsOmega !== eqIsOmega) return false;
+
+                return nomNorm && (normRaw.startsWith(nomNorm) || nomNorm.startsWith(normRaw));
+            });
+            if (found) return found;
+
+            // 5. Coincidencia por contención (si la longitud es suficiente >= 4 caracteres)
+            if (normRaw.length >= 4) {
+                found = scouting3EquiposCache.find(eq => {
+                    const nom = (eq.nombre || '').toLowerCase();
+                    const nomNorm = normalizarTextoParaMatch(eq.nombre);
+                    if (nomNorm.length < 4) return false;
+                    const eqIsAcademy = nom.includes('academy') || nom.includes('acad') || nom.includes('skyblue');
+                    if (rawIsAcademy !== eqIsAcademy) return false;
+                    return normRaw.includes(nomNorm) || nomNorm.includes(normRaw);
+                });
+                if (found) return found;
+            }
+
+            return null;
+        }
+
+        function iniciarListenerScouting3LiveSync() {
+            try {
+                onSnapshot(doc(db, "torneos_activos", "scouting3_live_sync"), (snap) => {
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        if (Array.isArray(data.equipos) && data.equipos.length > 0) {
+                            const newHash = JSON.stringify(data.equipos.map(e => `${e.nombre}_${e.tag}`));
+                            const cambio = newHash !== lastScouting3Hash;
+                            lastScouting3Hash = newHash;
+                            scouting3EquiposCache = data.equipos;
+                            try {
+                                localStorage.setItem('lbl_scouting3_public_sanitized_v210', JSON.stringify(data.equipos));
+                            } catch(e) {}
+
+                            // Si hubo un cambio real y estamos viendo el torneo Scouting 3, refrescar en vivo
+                            if (cambio && esTorneoScouting3(torneoSeleccionadoId)) {
+                                renderizarTorneoDetalle(false);
+                            }
+                        }
+                    }
+                }, (err) => {
+                    console.warn("Firestore live_sync Scouting 3 aviso:", err);
+                });
+            } catch(e) {
+                console.warn("Error suscribiendo a scouting3_live_sync:", e);
+            }
+
+            // Fallback: Si no había nada en caché, consultar la API oficial en segundo plano
+            if (scouting3EquiposCache.length === 0) {
+                fetch("https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec")
+                    .then(r => r.json())
+                    .then(json => {
+                        if (json.success && Array.isArray(json.equipos) && json.equipos.length > 0) {
+                            scouting3EquiposCache = json.equipos;
+                            lastScouting3Hash = JSON.stringify(json.equipos.map(e => `${e.nombre}_${e.tag}`));
+                            try {
+                                localStorage.setItem('lbl_scouting3_public_sanitized_v210', JSON.stringify(json.equipos));
+                            } catch(e) {}
+                            if (esTorneoScouting3(torneoSeleccionadoId)) {
+                                renderizarTorneoDetalle(false);
+                            }
+                        }
+                    })
+                    .catch(() => {});
+            }
+        }
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -508,9 +669,18 @@
             'nox reign':            'NRE'
         };
 
-        function resolverTag(equipoObj) {
+        function resolverTag(equipoObj, torneoOpt = null) {
             if (!equipoObj) return '';
-            const nombre = (equipoObj.nombre || equipoObj.name || '').trim();
+            const nombre = (equipoObj.nombre || equipoObj.name || equipoObj.display_name || '').trim();
+
+            // 1. PRIORIDAD ABSOLUTA EN SCOUTING 3: Sincronizar directamente con staff-scouting
+            const esS3 = esTorneoScouting3(torneoOpt);
+            if (esS3 && scouting3EquiposCache.length > 0) {
+                const eqS3 = buscarEquipoScouting3(nombre, equipoObj);
+                if (eqS3 && eqS3.tag && eqS3.tag.trim()) {
+                    return eqS3.tag.trim().toUpperCase();
+                }
+            }
             const clean = nombre.toLowerCase();
             
             // 1. Coincidencia EXACTA en tabla de tags oficiales
@@ -527,7 +697,15 @@
                 return 'ATA';
             }
 
-            // 4. Tag propio del participante si está definido y no es un nombre largo
+            // 4. Fallback a Scouting 3 en caso de no haberse detectado el torneo
+            if (!esS3 && scouting3EquiposCache.length > 0) {
+                const eqS3Fallback = buscarEquipoScouting3(nombre, equipoObj);
+                if (eqS3Fallback && eqS3Fallback.tag && eqS3Fallback.tag.trim()) {
+                    return eqS3Fallback.tag.trim().toUpperCase();
+                }
+            }
+
+            // 5. Tag propio del participante si está definido y no es un nombre largo
             if (equipoObj.tag && equipoObj.tag.length <= 4) {
                 return equipoObj.tag.toUpperCase();
             }
@@ -742,6 +920,17 @@
                 formatoLabel: 'Doble Eliminación',
                 estado: 'finalizado',
                 creadoEn: '2025-11-01T00:00:00.000Z'
+            },
+            {
+                id: 'scouting3',
+                nombre: 'COPA LEGION X TORNEO SCOUTING 3',
+                slug: 'TS3LBL',
+                challongeId: '18498275',
+                categoria: 'clasificacion_lbl',
+                division: 'Scouting 3',
+                formatoLabel: 'Doble Eliminación',
+                estado: 'vivo',
+                creadoEn: '2026-10-18T00:00:00.000Z'
             }
         ];
 
@@ -1086,6 +1275,12 @@
 
                 // 2. Sincronización en tiempo real única (WebSockets): 
                 // onSnapshot entrega los datos actuales y escucha cualquier cambio futuro de marcadores
+                // Sincronización en tiempo real de Equipos y TAGS de Scouting 3 (Copa Legion)
+                if (!window._scouting3TagsRealtimeSubscribed) {
+                    window._scouting3TagsRealtimeSubscribed = true;
+                    iniciarListenerScouting3LiveSync();
+                }
+
                 if (!window._torneosRealtimeSubscribed) {
                     window._torneosRealtimeSubscribed = true;
                     onSnapshot(collection(db, 'torneos_registrados'), (snapshot) => {
@@ -4433,9 +4628,25 @@
             const esValido = rawName && rawName.toLowerCase() !== 'tbd' && rawName.toLowerCase() !== 'por definir';
 
             if (esValido) {
-                const tag = (resolverTag(pObj) || pObj.tag || rawName.substring(0, 3)).toUpperCase();
+                const tag = (resolverTag(pObj, tournament) || pObj.tag || rawName.substring(0, 3)).toUpperCase();
                 const esLigaLBL = (tournament?.categoria === 'liga_lbl') || (tournament?.datosChallonge?.categoria === 'liga_lbl');
-                const logo = esLigaLBL ? obtenerLogoEquipo(pObj, rawName, tournament) : '';
+                let logo = '';
+                if (esLigaLBL) {
+                    logo = obtenerLogoEquipo(pObj, rawName, tournament);
+                } else if (esTorneoScouting3(tournament)) {
+                    const eqS3 = buscarEquipoScouting3(rawName, pObj);
+                    if (eqS3 && (eqS3.logo || eqS3.logoRaw)) {
+                        logo = (eqS3.logo || eqS3.logoRaw).trim();
+                        const driveMatch = logo.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || logo.match(/id=([a-zA-Z0-9_-]+)/);
+                        if (driveMatch) {
+                            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                                logo = `/api/drive-proxy?id=${driveMatch[1]}&sz=s200`;
+                            } else {
+                                logo = `https://lh3.googleusercontent.com/d/${driveMatch[1]}=s200`;
+                            }
+                        }
+                    }
+                }
                 const seed = pObj.seed || (isP1 ? m.player1_seed : m.player2_seed) || null;
                 return {
                     isDefined: true,
@@ -4528,13 +4739,13 @@
 
             // Logos / Avatares (Dimensiones fijas bloqueadas a 22x22px)
             const esLigaLBL = (tournament?.categoria === 'liga_lbl') || (tournament?.datosChallonge?.categoria === 'liga_lbl');
-            const p1Avatar = (esLigaLBL && p1.isDefined && p1.logo)
+            const p1Avatar = (p1.isDefined && p1.logo)
                 ? `<img src="${p1.logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p1.name)}';" style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px; object-fit: contain;" class="w-[22px] h-[22px] rounded object-contain bg-black/60 shrink-0 p-0.5 border border-cyan-500/30">`
                 : (p1.isDefined
                     ? `<div style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px;" class="w-[22px] h-[22px] rounded bg-[#070e1a] text-cyan-400/80 flex items-center justify-center shrink-0 border border-slate-800/80"><i class="fas fa-shield-alt text-[9px]"></i></div>`
                     : `<div style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px;" class="w-[22px] h-[22px] rounded bg-[#070e1a] text-slate-600 text-[9px] flex items-center justify-center shrink-0 border border-slate-800"><i class="fas fa-shield-alt text-[9px]"></i></div>`);
 
-            const p2Avatar = (esLigaLBL && p2.isDefined && p2.logo)
+            const p2Avatar = (p2.isDefined && p2.logo)
                 ? `<img src="${p2.logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p2.name)}';" style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px; object-fit: contain;" class="w-[22px] h-[22px] rounded object-contain bg-black/60 shrink-0 p-0.5 border border-cyan-500/30">`
                 : (p2.isDefined
                     ? `<div style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px;" class="w-[22px] h-[22px] rounded bg-[#070e1a] text-cyan-400/80 flex items-center justify-center shrink-0 border border-slate-800/80"><i class="fas fa-shield-alt text-[9px]"></i></div>`

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbl-cache-v212';
+const CACHE_NAME = 'lbl-cache-v215';
 const ASSETS = [
   '/',
   '/torneos',
@@ -132,6 +132,7 @@ self.addEventListener('fetch', (e) => {
 
   // Ignore Firebase SDK & API endpoints
   if (
+    e.request.url.includes('/api/') ||
     e.request.url.includes('firestore.googleapis.com') || 
     e.request.url.includes('identitytoolkit.googleapis.com') ||
     e.request.url.includes('firebasejs') ||
