@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=206">
+    <link rel="stylesheet" href="/dist/output.css?v=207">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -452,9 +452,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo } from "/challonge-core.js";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=207";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=206";
+        import "/app-version.js?v=207";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -532,6 +532,14 @@
                 return equipoObj.tag.toUpperCase();
             }
             return nombre.substring(0, 3).toUpperCase();
+        }
+
+        function esPartidaContraFantasma(m) {
+            if (!m) return false;
+            if (m.isByeMatch) return true;
+            const p1Name = (m.player1?.nombre || m.player1?.name || '').toString().trim();
+            const p2Name = (m.player2?.nombre || m.player2?.name || '').toString().trim();
+            return esEquipoFantasma(m.player1) || esEquipoFantasma(p1Name) || esEquipoFantasma(m.player2) || esEquipoFantasma(p2Name);
         }
 
         // --- CACHÉ DE EQUIPOS ACEPTADOS LBL Y OBTENCIÓN DE LOGOS HD ---
@@ -1241,8 +1249,15 @@
                     ? `<span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider">⚡ LBL Series</span>`
                     : `<span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[10px] font-black uppercase tracking-wider">🌐 Torneo Abierto</span>`;
 
-                const numMatches = datos.matches?.length || 0;
-                const numEquipos = datos.totalEquipos ?? datos.participantes?.length ?? 0;
+                const rawPartsCat = datos.participantes || t.participantes || [];
+                const realPartsCount = Array.isArray(rawPartsCat) && rawPartsCat.length > 0
+                    ? rawPartsCat.filter(p => !esEquipoFantasma(p)).length
+                    : (datos.totalEquipos ?? 0);
+                const rawMatchesCat = datos.matches || t.matches || [];
+                const numMatches = Array.isArray(rawMatchesCat)
+                    ? rawMatchesCat.filter(m => !esPartidaContraFantasma(m)).length
+                    : 0;
+                const numEquipos = realPartsCount;
                 const rawFormato = (t.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop();
                 const formatoLabel = rawFormato || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
 
@@ -2304,12 +2319,12 @@
 
             const isCompleted = isTournamentEnded && !!p1;
 
-            // Extraer participantes únicos para la tarjeta izquierda "Equipos participantes"
+            // Extraer participantes únicos para la tarjeta izquierda "Equipos participantes" (excluyendo cupos fantasmas / BYEs numéricos)
             let rawParticipantes = torneo.participantes || docTorneo.participantes || [];
             const participantesMap = new Map();
             rawParticipantes.forEach(p => {
                 const name = p.lblInfo?.nombre || p.nombre || p.name || p.display_name || '';
-                if (name && name !== 'TBD' && name !== 'Por Definir' && !participantesMap.has(name.toLowerCase().trim())) {
+                if (name && name !== 'TBD' && name !== 'Por Definir' && !esEquipoFantasma(p) && !esEquipoFantasma(name) && !participantesMap.has(name.toLowerCase().trim())) {
                     participantesMap.set(name.toLowerCase().trim(), p);
                 }
             });
@@ -2318,10 +2333,10 @@
                 torneo.matches.forEach(m => {
                     const n1 = m.player1?.nombre || m.player1?.name || m.player1?.display_name || '';
                     const n2 = m.player2?.nombre || m.player2?.name || m.player2?.display_name || '';
-                    if (n1 && n1 !== 'TBD' && n1 !== 'Por Definir' && !participantesMap.has(n1.toLowerCase().trim())) {
+                    if (n1 && n1 !== 'TBD' && n1 !== 'Por Definir' && !esEquipoFantasma(m.player1) && !esEquipoFantasma(n1) && !participantesMap.has(n1.toLowerCase().trim())) {
                         participantesMap.set(n1.toLowerCase().trim(), m.player1);
                     }
-                    if (n2 && n2 !== 'TBD' && n2 !== 'Por Definir' && !participantesMap.has(n2.toLowerCase().trim())) {
+                    if (n2 && n2 !== 'TBD' && n2 !== 'Por Definir' && !esEquipoFantasma(m.player2) && !esEquipoFantasma(n2) && !participantesMap.has(n2.toLowerCase().trim())) {
                         participantesMap.set(n2.toLowerCase().trim(), m.player2);
                     }
                 });
@@ -2629,8 +2644,9 @@
             const rawMatches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
             const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
 
-            // Filtrar partidas opcionales no activadas / no disputadas (Match 2 / Bracket Reset de Gran Final)
+            // Filtrar partidas opcionales no activadas y cruces automáticos contra equipos fantasmas (BYEs)
             const matches = rawMatches.filter(m => {
+                if (esPartidaContraFantasma(m)) return false;
                 const isResetMatch = (m.player1_prereq_match_id && m.player1_prereq_match_id === m.player2_prereq_match_id);
                 const isOptional = !!m.optional || (isResetMatch && !m.winner_id && (!m.player1_id || !m.player2_id));
                 const isCompleted = m.state === 'completed' || m.state === 'complete' || !!m.winner_id;
@@ -3762,11 +3778,12 @@
             // Mostrar tanto el acordeón de Playoffs arriba (si está en curso) como la Tabla General de Posiciones (W - L) debajo
             const playoffsPureBracketHTML = (ciclo.esPuroBracket && !isCompleted) ? `<div class="mb-6">${generarPlayoffsAccordionHTML(torneo)}</div>` : '';
 
-            // Standings oficiales de Challonge
+            // Standings oficiales de Challonge (filtrando equipos fantasmas / BYEs numéricos)
             let standings = [];
             if (Array.isArray(torneo.challongeStandings) && torneo.challongeStandings.length > 0) {
                 const seenStandings = new Set();
                 standings = torneo.challongeStandings.filter(st => {
+                    if (esEquipoFantasma(st.equipo)) return false;
                     const eqKey = (st.equipo?.nombre || st.equipo?.name || st.participant_id || st.equipo_id || '').toLowerCase().trim();
                     if (!eqKey || seenStandings.has(eqKey)) return false;
                     seenStandings.add(eqKey);
@@ -3775,6 +3792,7 @@
             } else if (Array.isArray(torneo.standings) && torneo.standings.length > 0) {
                 const seenStandings = new Set();
                 standings = torneo.standings.filter(st => {
+                    if (esEquipoFantasma(st.equipo)) return false;
                     const eqKey = (st.equipo?.nombre || st.equipo?.name || st.id || '').toLowerCase().trim();
                     if (!eqKey || seenStandings.has(eqKey)) return false;
                     seenStandings.add(eqKey);
@@ -3796,9 +3814,10 @@
 
                 if (Array.isArray(torneo.participantes) && torneo.participantes.length > 0) {
                     torneo.participantes.forEach(p => {
+                        if (esEquipoFantasma(p)) return;
                         const displayName = (p.lblInfo?.nombre) || p.nombre || p.name || p.display_name;
                         const challongeId = p.id;
-                        if (!displayName || displayName === 'TBD') return;
+                        if (!displayName || displayName === 'TBD' || esEquipoFantasma(displayName)) return;
 
                         const eqObj = {
                             id: challongeId,
@@ -3818,8 +3837,9 @@
                 matches.forEach(m => {
                     for (const [side, pid] of [['player1', m.player1_id], ['player2', m.player2_id]]) {
                         const player = m[side];
+                        if (esEquipoFantasma(player)) continue;
                         const displayName = player?.nombre || player?.name;
-                        if (!displayName || displayName === 'TBD' || displayName === 'Por Definir') continue;
+                        if (!displayName || displayName === 'TBD' || displayName === 'Por Definir' || esEquipoFantasma(displayName)) continue;
 
                         const pidStr = (pid !== undefined && pid !== null) ? String(pid) : null;
                         const nameKey = displayName.trim().toLowerCase();
@@ -3852,6 +3872,7 @@
                     const eqNameLower = (eqObj.nombre || '').trim().toLowerCase();
 
                     matches.forEach(m => {
+                        if (esPartidaContraFantasma(m)) return;
                         const isComp = m.state === 'complete' || m.state === 'completed' || !!m.winner_id;
                         if (!isComp) return;
 
@@ -3938,6 +3959,12 @@
                 let lCount = 0;
 
                 const badgedHistory = teamMatches.map(m => {
+                    // Si la partida fue contra un equipo fantasma / BYE numérico, no suma Victoria ni Derrota y muestra badge BYE
+                    if (esPartidaContraFantasma(m)) {
+                        const rondaNum = Math.abs(m.round || 1);
+                        return `<span class="px-2 h-7 sm:h-8 rounded-lg flex items-center justify-center font-black text-[10px] shadow-sm hover:scale-105 transition-all cursor-help shrink-0 select-none tracking-wider" style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px dashed rgba(148,163,184,0.35)" title="Pase directo de ronda (BYE en Ronda ${rondaNum})">BYE</span>`;
+                    }
+
                     const parsed = parseMatchScores(m);
                     const p1IdStr = (m.player1_id !== undefined && m.player1_id !== null) ? String(m.player1_id) : (m.player1?.id ? String(m.player1.id) : '');
                     const p1Name = (m.player1?.nombre || m.player1?.name || '').trim().toLowerCase();
@@ -3984,12 +4011,29 @@
                 }
             });
 
-            const hayPartidasDisputadas = matches.some(m => m.state === 'complete' || m.state === 'completed' || !!m.winner_id);
+            // Ignorar partidas contra fantasmas para determinar si ya se jugaron enfrentamientos reales
+            const hayPartidasDisputadas = matches.some(m => !esPartidaContraFantasma(m) && (m.state === 'complete' || m.state === 'completed' || !!m.winner_id));
 
             if (!hayPartidasDisputadas) {
                 standings.sort((a, b) => {
                     const nameA = (a.equipo?.nombre || a.equipo?.name || '').toLowerCase();
                     const nameB = (b.equipo?.nombre || b.equipo?.name || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+            } else if (!isCompleted) {
+                // Mientras el torneo está en vivo, ordenar por victorias reales y menos derrotas reales
+                // para que los pases directos (BYE) con 0-0 no aparezcan por encima de quienes sí ganaron series reales
+                standings.sort((a, b) => {
+                    const eqA = a.equipo || {};
+                    const eqB = b.equipo || {};
+                    const nameA = (eqA.nombre || eqA.name || '').trim().toLowerCase();
+                    const nameB = (eqB.nombre || eqB.name || '').trim().toLowerCase();
+                    const idA = (a.participant_id || a.equipo_id || eqA.id) ? String(a.participant_id || a.equipo_id || eqA.id) : '';
+                    const idB = (b.participant_id || b.equipo_id || eqB.id) ? String(b.participant_id || b.equipo_id || eqB.id) : '';
+                    const statsA = (nameA && seriesPorEquipo.get(nameA)) || (idA && seriesPorEquipo.get(idA)) || { w: 0, l: 0 };
+                    const statsB = (nameB && seriesPorEquipo.get(nameB)) || (idB && seriesPorEquipo.get(idB)) || { w: 0, l: 0 };
+                    if (statsB.w !== statsA.w) return statsB.w - statsA.w;
+                    if (statsA.l !== statsB.l) return statsA.l - statsB.l;
                     return nameA.localeCompare(nameB);
                 });
             }
@@ -4017,9 +4061,10 @@
                     avatarHTML = `<img src="${logo}" onerror="this.onerror=null; this.src='${getFallbackImage(eqNombre)}';" class="w-8 h-8 md:w-9 md:h-9 object-contain rounded-xl shrink-0 p-0.5 bg-black/40 border border-gray-800" style="width: 32px; height: 32px; min-width: 32px; max-width: 32px; min-height: 32px; max-height: 32px; object-fit: contain;">`;
                 }
 
-                const officialRank = st.rank || (idx + 1);
+                const officialRank = isCompleted ? (st.rank || (idx + 1)) : (idx + 1);
+                const sinPartidasRealesEquipo = (seriesStats.w === 0 && seriesStats.l === 0);
                 let rankHTML = '';
-                if (!hayPartidasDisputadas) {
+                if (!hayPartidasDisputadas || (!isCompleted && sinPartidasRealesEquipo)) {
                     rankHTML = `<span class="font-bold text-gray-600 text-sm md:text-base">—</span>`;
                 } else if (officialRank === 1) {
                     rankHTML = `<span class="text-base md:text-lg font-black text-amber-400 flex items-center justify-center gap-1">1° 🏆</span>`;
@@ -4063,7 +4108,7 @@
                         </div>
 
                         <!-- GUÍA DE INDICATIVOS -->
-                        <div class="flex items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold shrink-0">
+                        <div class="flex flex-wrap items-center gap-3 bg-[#030712] p-2.5 rounded-2xl border border-gray-800 text-[11px] font-bold shrink-0">
                             <div class="flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(20,148,224,0.18);color:#1494E0;border:1px solid rgba(20,148,224,0.4)">W</span>
                                 <span class="text-gray-300">Victoria</span>
@@ -4075,6 +4120,10 @@
                             <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
                                 <span class="w-5 h-5 rounded flex items-center justify-center font-black text-[10px] shrink-0" style="background:rgba(255,255,255,0.12);color:#ffffff;border:1px solid rgba(255,255,255,0.35)">W</span>
                                 <span class="text-gray-300">Walkover</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 border-l border-gray-800 pl-3">
+                                <span class="px-1.5 h-5 rounded flex items-center justify-center font-black text-[9px] shrink-0" style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px dashed rgba(148,163,184,0.35)">BYE</span>
+                                <span class="text-gray-300">Pase Directo</span>
                             </div>
                         </div>
                     </div>
@@ -4251,9 +4300,12 @@
             const isP1 = (slotNum === 1);
             const pObj = isP1 ? m.player1 : m.player2;
             const prereqId = isP1 ? m.player1_prereq_match_id : m.player2_prereq_match_id;
+            const rawName = (pObj?.nombre || pObj?.name || '').trim();
             
-            // Detección robusta de BYE / Pase directo en torneos impares o irregulares
-            const isBye = (slotNum === 2 && !m.player2_id && !m.player2_prereq_match_id && m.player1_id) ||
+            // Detección robusta de BYE / Pase directo en torneos impares, irregulares o contra equipos fantasmas numéricos
+            const isGhostSlot = esEquipoFantasma(pObj) || esEquipoFantasma(rawName);
+            const isBye = isGhostSlot ||
+                          (slotNum === 2 && !m.player2_id && !m.player2_prereq_match_id && m.player1_id) ||
                           (slotNum === 1 && !m.player1_id && !m.player1_prereq_match_id && m.player2_id);
             if (isBye) {
                 return {
@@ -4277,7 +4329,6 @@
                 }
             }
 
-            const rawName = (pObj?.nombre || pObj?.name || '').trim();
             const esValido = rawName && rawName.toLowerCase() !== 'tbd' && rawName.toLowerCase() !== 'por definir';
 
             if (esValido) {

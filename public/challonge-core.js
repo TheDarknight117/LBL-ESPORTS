@@ -129,6 +129,27 @@ export function resolverTag(equipoObj) {
 }
 
 /**
+ * Detecta si un participante o nombre corresponde a un "Equipo Fantasma" / relleno de BYE
+ * (ej. identificadores numéricos "1".."64" usados para completar seeds de 54 a 64, o "BYE").
+ */
+export function esEquipoFantasma(pOrName) {
+    if (!pOrName) return false;
+    if (typeof pOrName === 'object') {
+        if (pOrName.isGhost || pOrName.isBye) return true;
+        const raw = (pOrName.lblInfo?.nombre || pOrName.equipo?.nombre || pOrName.nombre || pOrName.name || pOrName.display_name || pOrName.tag || '').toString().trim();
+        if (!raw) return false;
+        return esEquipoFantasma(raw);
+    }
+    const str = pOrName.toString().trim();
+    if (!str) return false;
+    // Números puros de 1 a 3 dígitos ("1", "2", ..., "64") usados como relleno de seed
+    if (/^\d{1,3}$/.test(str)) return true;
+    // Etiquetas explícitas de BYE / Fantasma
+    if (/^(bye|fantasma|equipo\s*fantasma|free\s*win|slot\s*\d+|vacio|vacío)(\s*#?\d+)?$/i.test(str)) return true;
+    return false;
+}
+
+/**
  * Mapea URLs de logos e identidades conocidas de equipos LBL a WebP local ultra-rápido.
  */
 export function mapearLogoAWebp(url, nameStr = '', tagStr = '') {
@@ -649,13 +670,23 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 4500) {
     }
 }
 
+// Caché en sesión del proxy más rápido para respuesta sub-segundo
+let _preferredProxyId = null;
+
 /**
- * Helper centralizado con Failover automático de Multi-Keys y Proxies rápidos.
+ * Helper centralizado con carrera inteligente de Proxies y detección inmediata de 404/422 de Challonge.
  */
 async function apiCall(endpointPath, preferredApiKey = null) {
     const keysToTry = preferredApiKey 
         ? [preferredApiKey, ...CHALLONGE_API_KEYS.filter(k => k !== preferredApiKey)]
         : [...CHALLONGE_API_KEYS];
+
+    const isLocal = typeof window !== 'undefined' && (
+        ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname) ||
+        window.location.hostname.startsWith('192.168.') ||
+        window.location.hostname.startsWith('10.') ||
+        window.location.hostname.endsWith('.local')
+    );
 
     for (const key of keysToTry) {
         const cleanKey = (key || '').trim();
@@ -665,63 +696,93 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
         const encodedTarget = encodeURIComponent(targetUrl);
 
-        // Detectar si se está ejecutando en entorno local (localhost, 127.0.0.1, o IP de red local 192.168.x.x en laptop o PC)
-        const isLocal = typeof window !== 'undefined' && (
-            ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname) ||
-            window.location.hostname.startsWith('192.168.') ||
-            window.location.hostname.startsWith('10.') ||
-            window.location.hostname.endsWith('.local')
-        );
-
-        const proxyList = [];
-
-        // 1. PRIORIDAD MÁXIMA EN DESARROLLO LOCAL: Proxy nativo de dev-server.js (0 CORS, 0 caídas, respuesta en ms)
+        // 1. PRIORIDAD MÁXIMA EN DESARROLLO LOCAL: Proxy nativo de dev-server.js
         if (isLocal && typeof window !== 'undefined') {
-            proxyList.push({
-                url: `${window.location.origin}/api/challonge-proxy?url=${encodedTarget}`,
-                isWrapper: false
-            });
-        }
-
-        // 2. Cloudflare Worker Dedicado de LBL (100% CORS & Alta Disponibilidad)
-        proxyList.push(
-            { url: `https://lbl-cors-proxy.hill-donkey.workers.dev/?url=${encodedTarget}`, isWrapper: false },
-            { url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false },
-            { url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
-            { url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false },
-            { url: `https://cors.eu.org/${targetUrl}`, isWrapper: false }
-        );
-
-        for (const proxyItem of proxyList) {
             try {
-                const timeoutMs = proxyItem.url.startsWith(window?.location?.origin || '') ? 6000 : 2500;
-                const res = await fetchWithTimeout(proxyItem.url, {}, timeoutMs);
-
-                if (!res || !res.ok) {
-                    // Si un proxy devuelve 429/500/502/403, es problema del proxy -> continuar con el siguiente proxy de la lista
-                    continue;
-                }
-
-                let parsed = null;
-                if (proxyItem.isWrapper) {
-                    const wrapper = await res.json();
-                    if (wrapper && wrapper.contents) {
-                        try {
-                            parsed = JSON.parse(wrapper.contents);
-                        } catch (e) {
-                            parsed = null;
+                const localUrl = `${window.location.origin}/api/challonge-proxy?url=${encodedTarget}`;
+                const res = await fetchWithTimeout(localUrl, {}, 5000);
+                if (res) {
+                    if (res.status === 404 || res.status === 422) {
+                        return null; // El recurso no existe en Challonge (no ciclar llaves ni proxies)
+                    }
+                    if (res.ok) {
+                        const parsed = await res.json();
+                        if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                            return { data: parsed, keyUsed: cleanKey };
                         }
                     }
-                } else {
-                    parsed = await res.json();
                 }
+            } catch (e) {}
+        }
 
-                if (parsed && (parsed.tournament || Array.isArray(parsed))) {
-                    return { data: parsed, keyUsed: cleanKey };
-                }
-            } catch (e) {
-                // Timeout o error en este proxy -> intentar el siguiente sin interrumpir
+        // 2. PROXIES DE PRODUCCIÓN (Sin dominios muertos y con carrera rápida)
+        const baseProxies = [
+            { id: 'codetabs', url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false },
+            { id: 'allorigins_raw', url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false },
+            { id: 'allorigins_get', url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
+            { id: 'corseu', url: `https://cors.eu.org/${targetUrl}`, isWrapper: false }
+        ];
+
+        if (_preferredProxyId) {
+            baseProxies.sort((a, b) => (a.id === _preferredProxyId ? -1 : (b.id === _preferredProxyId ? 1 : 0)));
+        }
+
+        let challongeNotFound = false;
+
+        const trySingleProxy = async (proxyItem, timeoutMs = 3200) => {
+            const res = await fetchWithTimeout(proxyItem.url, {}, timeoutMs);
+            if (!res) throw new Error('Sin respuesta');
+
+            if (res.status === 404 || res.status === 422) {
+                challongeNotFound = true;
+                throw new Error('Challonge 404');
             }
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
+            let parsed = null;
+            if (proxyItem.isWrapper) {
+                const wrapper = await res.json();
+                if (wrapper && wrapper.status && (wrapper.status.http_code === 404 || wrapper.status.http_code === 422)) {
+                    challongeNotFound = true;
+                    throw new Error('Challonge 404 wrapper');
+                }
+                if (wrapper && wrapper.contents) {
+                    parsed = JSON.parse(wrapper.contents);
+                }
+            } else {
+                parsed = await res.json();
+            }
+
+            if (parsed && parsed.errors) {
+                challongeNotFound = true;
+                throw new Error('Challonge API errors');
+            }
+
+            if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                _preferredProxyId = proxyItem.id;
+                return { data: parsed, keyUsed: cleanKey };
+            }
+            throw new Error('Payload inválido');
+        };
+
+        // Lanzar en paralelo los 2 primeros proxies más veloces para respuesta inmediata (< 1s)
+        try {
+            const fastBatch = baseProxies.slice(0, 2).map(p => trySingleProxy(p, 3000));
+            const winner = await Promise.any(fastBatch);
+            if (winner) return winner;
+        } catch (e) {
+            if (challongeNotFound) return null;
+        }
+
+        // Fallback con los proxies restantes si los 2 primeros fallaron por red
+        try {
+            const fallbackBatch = baseProxies.slice(2).map(p => trySingleProxy(p, 3500));
+            const winner = await Promise.any(fallbackBatch);
+            if (winner) return winner;
+        } catch (e) {
+            if (challongeNotFound) return null;
         }
     }
 
@@ -734,7 +795,20 @@ async function apiCall(endpointPath, preferredApiKey = null) {
 export async function obtenerListaTorneosChallonge(apiKey = null) {
     const result = await apiCall('tournaments.json', apiKey);
     if (result && Array.isArray(result.data)) {
-        return result.data.map(item => item.tournament).filter(Boolean);
+        const list = result.data.map(item => item.tournament).filter(Boolean);
+        // Guardar mapeo slug -> numeric ID en memoria y localStorage para futuras consultas en 1 paso
+        try {
+            const stored = JSON.parse(localStorage.getItem('lbl_challonge_slug_id_map') || '{}');
+            list.forEach(t => {
+                if (t && t.id && t.url) {
+                    const k = t.url.toString().trim().toLowerCase();
+                    KNOWN_CHALLONGE_IDS[k] = String(t.id);
+                    stored[k] = String(t.id);
+                }
+            });
+            localStorage.setItem('lbl_challonge_slug_id_map', JSON.stringify(stored));
+        } catch (e) {}
+        return list;
     }
     return [];
 }
@@ -770,6 +844,13 @@ export const KNOWN_CHALLONGE_IDS = {
     'wcup2026lbl':  '16167943'
 };
 
+try {
+    if (typeof localStorage !== 'undefined') {
+        const cachedMap = JSON.parse(localStorage.getItem('lbl_challonge_slug_id_map') || '{}');
+        Object.assign(KNOWN_CHALLONGE_IDS, cachedMap);
+    }
+} catch (e) {}
+
 /**
  * Consulta la API de Challonge v1 y construye la estructura completa en 1 SOLA llamada limpia.
  */
@@ -797,6 +878,13 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
     if (directRes && directRes.data && directRes.data.tournament) {
         payload = directRes.data;
         keyUsada = directRes.keyUsed;
+    } else if (cleanSlug !== lowerSlug) {
+        // Probar en minúsculas si el slug venía en mayúsculas (ej. TS3LBL -> ts3lbl)
+        const lowerRes = await apiCall(`tournaments/${encodeURIComponent(lowerSlug)}.json?include_participants=1&include_matches=1`, apiKey);
+        if (lowerRes && lowerRes.data && lowerRes.data.tournament) {
+            payload = lowerRes.data;
+            keyUsada = lowerRes.keyUsed;
+        }
     }
 
     // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL INTENTO DIRECTO FALLÓ
@@ -819,24 +907,42 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
     }
 
     const tData = payload.tournament;
+    if (tData.id && tData.url) {
+        try {
+            const uKey = tData.url.toString().trim().toLowerCase();
+            KNOWN_CHALLONGE_IDS[uKey] = String(tData.id);
+            KNOWN_CHALLONGE_IDS[lowerSlug] = String(tData.id);
+            const stored = JSON.parse(localStorage.getItem('lbl_challonge_slug_id_map') || '{}');
+            stored[uKey] = String(tData.id);
+            stored[lowerSlug] = String(tData.id);
+            localStorage.setItem('lbl_challonge_slug_id_map', JSON.stringify(stored));
+        } catch (e) {}
+    }
+
     const tournamentType = (tData.tournament_type || 'single_elimination').toLowerCase();
 
-    // 1. Participantes únicos (sin duplicados por group_player_ids)
+    // 1. Participantes únicos (marcando equipos fantasmas / números de relleno para BYEs)
     const listaParticipantesUnicos = Array.isArray(tData.participants)
         ? tData.participants.map(item => {
             const p = item.participant;
-            const pName = p.name || p.display_name || 'Equipo';
+            const pName = (p.name || p.display_name || 'Equipo').toString().trim();
+            const ghost = esEquipoFantasma(pName);
             return {
                 id: p.id,
                 name: pName,
                 seed: p.seed,
+                isGhost: ghost,
                 group_id: p.group_id ?? null,
                 final_rank: (p.final_rank !== null && p.final_rank !== undefined) ? parseInt(p.final_rank) : null,
                 group_player_ids: Array.isArray(p.group_player_ids) ? p.group_player_ids : [],
-                lblInfo: buscarEquipoLBL(pName, equiposLBL)
+                lblInfo: ghost
+                    ? { id: `ghost_${p.id}`, nombre: pName, tag: 'BYE', logo: '', isGhost: true }
+                    : buscarEquipoLBL(pName, equiposLBL)
             };
         })
         : [];
+
+    const listaParticipantesReales = listaParticipantesUnicos.filter(p => !p.isGhost);
 
     // Mapa completo de participantes
     const participantsMap = {};
@@ -847,12 +953,14 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         });
     });
 
-    // 2. Mapear partidas
+    // 2. Mapear partidas (detectando si involucra a un equipo fantasma / BYE)
     const rawMatches = Array.isArray(tData.matches) ? tData.matches : [];
     const matchesProcesadas = rawMatches.map(item => {
         const m = item.match;
         const p1 = participantsMap[m.player1_id] || null;
         const p2 = participantsMap[m.player2_id] || null;
+        const p1Ghost = !!(p1 && p1.isGhost);
+        const p2Ghost = !!(p2 && p2.isGhost);
 
         let estado = 'pending';
         if (m.state === 'complete') estado = 'completed';
@@ -866,6 +974,7 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
             group_id: m.group_id ?? null,
             state: estado,
             optional: !!m.optional,
+            isByeMatch: p1Ghost || p2Ghost,
             scores_csv: m.scores_csv || '0-0',
             winner_id: m.winner_id,
             player1_id: m.player1_id,
@@ -874,8 +983,8 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
             player2_prereq_match_id: m.player2_prereq_match_id || null,
             player1_is_prereq_match_loser: !!m.player1_is_prereq_match_loser,
             player2_is_prereq_match_loser: !!m.player2_is_prereq_match_loser,
-            player1: p1 ? { ...p1.lblInfo, seed: p1.seed } : { nombre: 'TBD', tag: 'TBD', logo: '' },
-            player2: p2 ? { ...p2.lblInfo, seed: p2.seed } : { nombre: 'TBD', tag: 'TBD', logo: '' },
+            player1: p1 ? { ...p1.lblInfo, seed: p1.seed, isGhost: p1Ghost } : { nombre: 'TBD', tag: 'TBD', logo: '' },
+            player2: p2 ? { ...p2.lblInfo, seed: p2.seed, isGhost: p2Ghost } : { nombre: 'TBD', tag: 'TBD', logo: '' },
             scheduled_time: m.scheduled_time || null,
             underway_at: m.underway_at || null,
             completed_at: m.completed_at || null,
@@ -889,12 +998,12 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         tablaStandings = calcularTablaRoundRobin(participantsMap, rawMatches.map(m => m.match));
     }
 
-    // 4. Standings oficiales de Challonge usando final_rank
-    const challongeStandings = listaParticipantesUnicos
+    // 4. Standings oficiales de Challonge usando final_rank (excluyendo equipos fantasmas)
+    const challongeStandings = listaParticipantesReales
         .filter(p => p.final_rank !== null && p.final_rank !== undefined)
         .sort((a, b) => a.final_rank - b.final_rank)
-        .map(p => ({
-            rank: p.final_rank,
+        .map((p, idx) => ({
+            rank: idx + 1,
             equipo: p.lblInfo || { nombre: p.name, tag: p.name, logo: '' },
             equipo_id: p.id,
             participant_id: p.id,
@@ -902,10 +1011,10 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         }));
 
     // 5. Calcular Grupos oficiales con desglose de sets y series
-    const grupos = calcularGruposTorneo(participantsMap, rawMatches, listaParticipantesUnicos, tData);
+    const grupos = calcularGruposTorneo(participantsMap, rawMatches, listaParticipantesReales, tData);
 
     // 6. Calcular Podio oficial
-    const podio = calcularPodio(tData, matchesProcesadas, tablaStandings, participantsMap, listaParticipantesUnicos);
+    const podio = calcularPodio(tData, matchesProcesadas, tablaStandings, participantsMap, listaParticipantesReales);
 
     return {
         id: tData.id,
@@ -914,9 +1023,9 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         tipoFormat: tournamentType,
         tier: tierLabel,
         estado: tData.state,
-        totalEquipos: tData.participants_count || listaParticipantesUnicos.length,
+        totalEquipos: listaParticipantesReales.length || tData.participants_count || 0,
         actualizadoEn: new Date().toISOString(),
-        participantes: listaParticipantesUnicos,
+        participantes: listaParticipantesReales,
         matches: matchesProcesadas,
         standings: tablaStandings,
         challongeStandings: challongeStandings,
@@ -986,6 +1095,7 @@ export async function verificarYAutoSincronizarTorneo(torneoDoc, equiposLBL = []
 
             const torneoActualizado = {
                 ...torneoDoc,
+                challongeId: resultado.id ? String(resultado.id) : (torneoDoc.challongeId || ''),
                 nombre: resultado.nombre || torneoDoc.nombre,
                 estado: autoEstado,
                 datosChallonge: resultado,
