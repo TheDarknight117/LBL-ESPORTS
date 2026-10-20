@@ -715,12 +715,13 @@ async function apiCall(endpointPath, preferredApiKey = null) {
             } catch (e) {}
         }
 
-        // 2. PROXIES DE PRODUCCIÓN (Secuencial inteligente con caché de proxy preferido, sin disparar 429 en paralelo y con 11s de margen para torneos de 64+ equipos)
+        // 2. PROXY PRIMARIO DE PRODUCCIÓN: Cloudflare Worker Dedicado de LBL (100% CORS, ~1.5s, 0 Rate Limits)
+        // Seguido de proxies de respaldo solo en caso de contingencia de red.
         const baseProxies = [
-            { id: 'allorigins_get', url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true, timeout: 11000 },
-            { id: 'codetabs', url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false, timeout: 11000 },
-            { id: 'allorigins_raw', url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false, timeout: 11000 },
-            { id: 'thingproxy', url: `https://thingproxy.freeboard.io/fetch/${targetUrl}`, isWrapper: false, timeout: 10000 }
+            { id: 'cf_worker_lbl', url: `https://lbl-cors-proxy.hill-donkey.workers.dev/?url=${encodedTarget}`, isWrapper: false, timeout: 10000 },
+            { id: 'allorigins_get', url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true, timeout: 8000 },
+            { id: 'codetabs', url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false, timeout: 8000 },
+            { id: 'allorigins_raw', url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false, timeout: 8000 }
         ];
 
         if (_preferredProxyId) {
@@ -815,16 +816,19 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
 }
 
 export const KNOWN_CHALLONGE_IDS = {
-    'ts3lbl':       '18498275',
-    't1clbl2026':   '18378786',
-    't2clbl2026':   '18383807',
-    't1albl2026':   '17573081',
-    't2albl2026':   '17573105',
-    'lbl_oq26':     '17871688',
-    'lblsc2':       '17125906',
-    'lbl_scouting': '16870497',
-    'wintercup':    '16167943',
-    'wcup2026lbl':  '16167943'
+    'ts3lbl':         '18498275',
+    'wcup2026lbl':    '18388155',
+    't1clbl2026':     '18378786',
+    't2clbl2026':     '18383807',
+    't1albl2026':     '17573081',
+    't2albl2026':     '17573105',
+    'lbl_oq26':       '17871688',
+    'lblsc2':         '17125906',
+    'lbl_scouting':   '16870497',
+    'wintervalorant': '16169694',
+    'winterlolcito':  '16167943',
+    'wintercup':      '16167943',
+    'eq07uwm7':       '15062059'
 };
 
 try {
@@ -861,16 +865,9 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
     if (directRes && directRes.data && directRes.data.tournament) {
         payload = directRes.data;
         keyUsada = directRes.keyUsed;
-    } else if (cleanSlug !== lowerSlug) {
-        // Probar en minúsculas si el slug venía en mayúsculas (ej. TS3LBL -> ts3lbl)
-        const lowerRes = await apiCall(`tournaments/${encodeURIComponent(lowerSlug)}.json?include_participants=1&include_matches=1`, apiKey);
-        if (lowerRes && lowerRes.data && lowerRes.data.tournament) {
-            payload = lowerRes.data;
-            keyUsada = lowerRes.keyUsed;
-        }
     }
 
-    // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL SLUG NO ES NUMÉRICO Y EL INTENTO DIRECTO FALLÓ
+    // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL SLUG NO ES NUMÉRICO Y EL INTENTO DIRECTO FALLÓ (ej. Slugs con mayúsculas en Challonge API v1)
     const isNumericId = /^\d+$/.test(cleanSlug);
     if (!payload && !isNumericId) {
         const resolved = await resolverTorneoANumericId(cleanSlug, apiKey);

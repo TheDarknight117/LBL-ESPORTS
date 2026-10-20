@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=208">
+    <link rel="stylesheet" href="/dist/output.css?v=209">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -452,9 +452,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=208";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=209";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=208";
+        import "/app-version.js?v=209";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -4182,11 +4182,15 @@
         }
 
         const CHALLONGE_PUBLIC_SLUG_MAP = {
+            '18498275': 'TS3LBL',
+            '18388155': 'WCUP2026LBL',
             '18378786': 'T1CLBL2026',
             '18383807': 'T2CLBL2026',
             '17573081': 'T1ALBL2026',
             '17573105': 'T2ALBL2026',
             '17871688': 'LBL_OQ26',
+            '17125906': 'LBLSC2',
+            '16870497': 'LBL_Scouting',
             '16167943': 'winterlolcito'
         };
 
