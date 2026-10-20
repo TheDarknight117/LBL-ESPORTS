@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=211">
+    <link rel="stylesheet" href="/dist/output.css?v=212">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -385,7 +385,7 @@
 
                         <!-- ACCIÓN RÁPIDA: BASE DE DATOS DE JUGADORES -->
                         <div class="flex items-center gap-3 shrink-0">
-                            <button onclick="abrirBaseDatosJugadores()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
+                            <button id="btn-detail-base-datos" onclick="abrirBaseDatosJugadores()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg">
                                 <i class="fas fa-users text-cyan-400"></i> Base de Datos de Jugadores
                             </button>
                         </div>
@@ -452,9 +452,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=209";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=212";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=211";
+        import "/app-version.js?v=212";
 
         // ══════════════════════════════════════════════════════════════════
         //  CONFIGURACIÓN DE TAGS PERSONALIZADOS — EDITA AQUÍ DIRECTAMENTE
@@ -720,6 +720,28 @@
                 formatoLabel: 'Doble Eliminación',
                 estado: 'finalizado',
                 creadoEn: '2026-01-05T00:00:00.000Z'
+            },
+            {
+                id: 'scouting1',
+                nombre: 'LBL SCOUTING TOURNAMENT',
+                slug: 'LBL_Scouting',
+                challongeId: '16870497',
+                categoria: 'clasificacion_lbl',
+                division: 'Scouting',
+                formatoLabel: 'Eliminación Directa',
+                estado: 'finalizado',
+                creadoEn: '2025-09-01T00:00:00.000Z'
+            },
+            {
+                id: 'scouting2',
+                nombre: 'SCOUTING TOURNAMENT 2',
+                slug: 'LBLSC2',
+                challongeId: '17125906',
+                categoria: 'clasificacion_lbl',
+                division: 'Scouting',
+                formatoLabel: 'Doble Eliminación',
+                estado: 'finalizado',
+                creadoEn: '2025-11-01T00:00:00.000Z'
             }
         ];
 
@@ -877,8 +899,48 @@
             renderizarTorneoDetalle();
         };
 
-        window.abrirBaseDatosJugadores = () => {
-            window.location.href = '/scouting?torneo=scouting3';
+        window.obtenerRutaScoutingSegunTorneo = (torneoObjOrId) => {
+            if (!torneoObjOrId) return '/scouting?torneo=scouting3';
+            let t = null;
+            if (typeof torneoObjOrId === 'object' && torneoObjOrId !== null) {
+                t = torneoObjOrId;
+            } else if (Array.isArray(listaTorneosRegistrados)) {
+                t = listaTorneosRegistrados.find(item => 
+                    item.id === torneoObjOrId || 
+                    item.slug === torneoObjOrId || 
+                    String(item.challongeId) === String(torneoObjOrId)
+                );
+            }
+            
+            const idStr = String(t?.id || torneoObjOrId || '').toLowerCase().trim();
+            const slugStr = String(t?.slug || '').toLowerCase().trim();
+            const nomStr = String(t?.nombre || '').toLowerCase().trim();
+            const chIdStr = String(t?.challongeId || '').toLowerCase().trim();
+            const allStr = `${idStr} ${slugStr} ${nomStr} ${chIdStr}`;
+
+            // 1. SCOUTING TOURNAMENT 2 -> SCOUTING 2
+            if (allStr.includes('scouting 2') || allStr.includes('scouting2') || allStr.includes('lblsc2') || chIdStr === '17125906' || idStr === 'scouting2') {
+                return '/scouting?torneo=scouting2';
+            }
+            // 2. OPEN QUALIFIER -> OPEN QUALIFIER
+            if (allStr.includes('qualifier') || allStr.includes('open_qualifier') || allStr.includes('lbl_oq26') || chIdStr === '17871688' || idStr === 'open_qualifier' || allStr.includes('oq26')) {
+                return '/scouting?torneo=qualifier';
+            }
+            // 3. SCOUTING TOURNAMENT -> SCOUTING 1
+            if (allStr.includes('scouting 1') || allStr.includes('scouting1') || allStr.includes('lbl_scouting') || chIdStr === '16870497' || idStr === 'scouting1' || (allStr.includes('scouting') && !allStr.includes('3') && !allStr.includes('2') && !allStr.includes('legion'))) {
+                return '/scouting?torneo=scouting1';
+            }
+            // 4. SCOUTING 3 / Copa Legion
+            if (allStr.includes('scouting 3') || allStr.includes('scouting3') || allStr.includes('legion') || allStr.includes('ts3lbl') || chIdStr === '18498275') {
+                return '/scouting?torneo=scouting3';
+            }
+
+            return '/scouting?torneo=scouting3';
+        };
+
+        window.abrirBaseDatosJugadores = (torneoParamId = null) => {
+            const targetId = torneoParamId || torneoSeleccionadoId;
+            window.location.href = window.obtenerRutaScoutingSegunTorneo(targetId);
         };
 
         // --- ENRUTADOR MODULAR Y SEO DINÁMICO (/torneos/:slug/:etapa) ---
@@ -910,6 +972,10 @@
                         found = listaTorneosRegistrados.find(t => t.id === 'tier2') || DEFAULT_TORNEOS_INICIALES[3];
                     } else if (slugUrl.includes('qualifier') || slugUrl.includes('oq') || slugUrl === '17871688') {
                         found = listaTorneosRegistrados.find(t => t.id === 'open_qualifier') || DEFAULT_TORNEOS_INICIALES[4];
+                    } else if (slugUrl.includes('scouting2') || slugUrl.includes('lblsc2') || slugUrl === '17125906') {
+                        found = listaTorneosRegistrados.find(t => t.id === 'scouting2') || DEFAULT_TORNEOS_INICIALES[6];
+                    } else if (slugUrl.includes('scouting1') || slugUrl.includes('lbl_scouting') || slugUrl === '16870497' || slugUrl === 'scouting') {
+                        found = listaTorneosRegistrados.find(t => t.id === 'scouting1') || DEFAULT_TORNEOS_INICIALES[5];
                     } else if (slugUrl.includes('winter') || slugUrl === '16167943') {
                         found = listaTorneosRegistrados.find(t => (t.slug || t.id || t.nombre || '').toLowerCase().includes('winter'));
                     }
@@ -1260,6 +1326,8 @@
                 const numEquipos = realPartsCount;
                 const rawFormato = (t.formatoLabel || '').split(',').map(s => s.trim()).filter(Boolean).pop();
                 const formatoLabel = rawFormato || (datos.tipoFormat === 'double_elimination' ? 'Doble Eliminación' : (datos.tipoFormat || 'Oficial LBL'));
+                const rutaBD = window.obtenerRutaScoutingSegunTorneo(t);
+                const tieneBD = t.categoria === 'clasificacion_lbl' || (t.nombre || '').toLowerCase().includes('scouting') || (t.nombre || '').toLowerCase().includes('qualifier') || String(t.id).includes('scouting') || String(t.id).includes('qualifier');
 
                 const cardAnimClass = animate ? 'match-card-anim' : '';
                 const cardAnimStyle = animate ? `style="animation-delay: ${Math.min(idx * 0.04, 0.24)}s;"` : '';
@@ -1281,11 +1349,18 @@
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-gray-800 flex items-center justify-between">
+                        <div class="pt-4 border-t border-gray-800 flex items-center justify-between gap-2 flex-wrap">
                             <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">${formatoLabel}</span>
-                            <span class="px-4 py-2 rounded-xl bg-cyan-500/20 group-hover:bg-cyan-500 text-cyan-300 group-hover:text-black border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
-                                Ver Torneo <i class="fas fa-arrow-right text-xs"></i>
-                            </span>
+                            <div class="flex items-center gap-2">
+                                ${tieneBD ? `
+                                    <button type="button" onclick="event.stopPropagation(); abrirBaseDatosJugadores('${t.id}')" class="px-3 py-1.5 rounded-xl bg-cyan-950/70 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40 text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow cursor-pointer" title="Ver Base de Datos de Jugadores">
+                                        <i class="fas fa-users text-[10px]"></i> Base de Datos
+                                    </button>
+                                ` : ''}
+                                <span class="px-4 py-2 rounded-xl bg-cyan-500/20 group-hover:bg-cyan-500 text-cyan-300 group-hover:text-black border border-cyan-500/40 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                    Ver Torneo <i class="fas fa-arrow-right text-xs"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>`;
             });
@@ -1743,6 +1818,15 @@
                     <div class="sidebar-item-title text-sm md:text-[15px] ${line2Classes} tracking-tight leading-snug line-clamp-2">
                         ${tituloLimpio}
                     </div>
+
+                    ${isSelected && (t.categoria === 'clasificacion_lbl' || (t.nombre || '').toLowerCase().includes('scouting') || (t.nombre || '').toLowerCase().includes('qualifier') || String(t.id).includes('scouting') || String(t.id).includes('qualifier')) ? `
+                        <div class="pt-1.5 border-t border-white/[0.08] flex items-center justify-between gap-1.5">
+                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">${estadoLabel}</span>
+                            <button type="button" onclick="event.stopPropagation(); abrirBaseDatosJugadores('${t.id}')" class="px-2 py-0.5 rounded bg-cyan-500/20 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-cyan-500/40 text-[9px] font-black uppercase tracking-wider transition-all inline-flex items-center gap-1 shadow cursor-pointer">
+                                <i class="fas fa-users text-[8px]"></i> Ver Base de Datos
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -2107,6 +2191,19 @@
                     statusBadge.innerHTML = `<i class="fas fa-circle text-[8px] mr-1 text-cyan-400 animate-pulse"></i> Torneo en Curso`;
                     statusBadge.className = "px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] md:text-xs font-black uppercase tracking-widest";
                 }
+            }
+
+            // Actualizar botón de Base de Datos de Jugadores según el torneo actual
+            const btnDetailBaseDatos = document.getElementById('btn-detail-base-datos');
+            if (btnDetailBaseDatos) {
+                const rutaBD = window.obtenerRutaScoutingSegunTorneo(docTorneo);
+                let labelBD = 'Base de Datos de Jugadores';
+                if (rutaBD.includes('scouting1')) labelBD = 'Base de Datos: Scouting 1';
+                else if (rutaBD.includes('scouting2')) labelBD = 'Base de Datos: Scouting 2';
+                else if (rutaBD.includes('qualifier')) labelBD = 'Base de Datos: Open Qualifier';
+                else if (rutaBD.includes('scouting3')) labelBD = 'Base de Datos: Scouting 3';
+                btnDetailBaseDatos.innerHTML = `<i class="fas fa-users text-cyan-400"></i> ${labelBD}`;
+                btnDetailBaseDatos.setAttribute('onclick', `abrirBaseDatosJugadores('${docTorneo.id}')`);
             }
 
             // Actualizar selector superior móvil y renderizar lista en el sidebar
