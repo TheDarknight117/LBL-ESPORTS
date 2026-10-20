@@ -43,8 +43,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=210">
-    <script type="module" src="/app-version.js?v=210"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=211">
+    <script type="module" src="/app-version.js?v=211"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -417,20 +417,8 @@
         /* ==========================================================================
            ANIMACIONES FLUIDAS Y RENDIMIENTO DE TARJETAS (120 FPS)
            ========================================================================== */
-        @keyframes cardEntrance {
-            from {
-                opacity: 0;
-                transform: translateY(12px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
         .team-card-anim {
-            animation: cardEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-            content-visibility: auto;
-            contain-intrinsic-size: 0 150px;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
         }
     </style>
 </head>
@@ -487,9 +475,9 @@
             <div class="flex flex-row overflow-x-auto md:overflow-x-visible justify-center items-center gap-2.5 sm:gap-3 md:gap-5 max-w-4xl mx-auto mb-8 no-scrollbar pb-2 px-4 w-full">
                 <button id="btn-scouting3" onclick="cambiarTorneo(4)" class="group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer">
                     <span class="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[9px] uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.8)] flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN VIVO
+                        <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
                     </span>
-                    <img src="assets/legion_store.webp" loading="lazy" decoding="async" onerror="this.src='assets/legion_store.png'" alt="Copa Legion" class="h-6 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <img src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Copa Legion" class="h-7 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                     <div class="text-left leading-tight">
                         <span class="block text-[9px] md:text-[10px] font-black text-emerald-400 uppercase tracking-wider">Copa Legion</span>
                         <span class="block text-xs md:text-sm font-black italic text-white uppercase tracking-tight">Scouting 3</span>
@@ -510,7 +498,7 @@
         <!-- Sección de Descripción del Torneo Activo (Con Marco de Logo Normalizado e Indexador de Equipos) -->
         <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-7xl mx-auto mb-8 glass-panel p-6 md:p-8 rounded-3xl border border-white/5 shadow-lg w-full">
             <div id="td-logo-container" class="flex items-center justify-center shrink-0 w-full md:w-72 lg:w-80 h-20 md:h-24">
-                <img id="td-logo" src="assets/legion_store.webp" loading="lazy" decoding="async" onerror="this.src='assets/legion_store.png'" alt="Torneo Logo" class="max-h-14 md:max-h-[68px] max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
+                <img id="td-logo" src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Torneo Logo" class="max-h-16 md:max-h-20 max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
             </div>
             <div class="text-left w-full space-y-2">
                 <div class="flex flex-wrap items-center gap-3">
@@ -520,7 +508,7 @@
                     </span>
                 </div>
                 <p id="td-text" class="text-gray-300 text-sm md:text-base leading-relaxed font-medium">
-                    <!-- Cargado dinámicamente -->
+                    Base de datos pública oficial en tiempo real de la Copa Legion x Torneo Scouting 3. Consulta los logos oficiales, nicks de cuenta LAS y cuenta MAIN (OP.GG), junto al contacto directo del representante de cada equipo. Si detectas alguna irregularidad en un OP.GG o cambio de nick, puedes enviar una nota directa al Staff desde la ficha del equipo.
                 </p>
             </div>
         </div>
@@ -652,7 +640,7 @@
                                 </span>
                             </div>
                             <div class="flex flex-wrap items-baseline gap-2">
-                                <h2 id="modal-name" class="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tight text-white leading-tight truncate max-w-[230px] sm:max-w-[420px] md:max-w-[520px]">Nombre</h2>
+                                <h2 id="modal-name" class="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tight text-white leading-tight line-clamp-2 break-words">Nombre</h2>
                                 <span id="modal-tag" class="text-emerald-400 font-mono font-black text-base sm:text-xl italic shrink-0"></span>
                             </div>
                         </div>
@@ -789,8 +777,7 @@
             'levius cromwell',
             'aldo luciano heredia arancibia',
             'aldo luciano heredia',
-            'kapriely',
-            'primo123'
+            'kapriely'
         ];
 
         function esEquipoBaneado(nombre, tag) {
@@ -1044,13 +1031,7 @@
                 logo: normalizarUrlDriveImagen(rawLogo, 's800'),
                 logoRaw: rawLogo,
                 estado: estadoEq,
-                notasStaff: notasStaffStr,
-                staffNotes: notasStaffStr,
-                hasStaffNote: Boolean(notasStaffStr),
                 repPhone: String(rawEq.capitan?.telefono || rawEq.repPhone || '').trim(),
-                repDiscord: String(rawEq.capitan?.discord || rawEq.repDiscord || '').trim(),
-                repSubPhone: String(rawEq.subcapitan?.telefono || rawEq.subRepPhone || rawEq.repSubPhone || '').trim(),
-                repSubDiscord: String(rawEq.subcapitan?.discord || rawEq.subRepDiscord || rawEq.repSubDiscord || '').trim(),
                 top,
                 jg,
                 mid,
@@ -1066,7 +1047,9 @@
             const eqRow = String(equipo.rowId || equipo.id || '');
             const eqName = String(equipo.name || '').toLowerCase().trim();
             return reportesComunidadActivos.filter(r => {
-                if (r.estado && r.estado.toLowerCase() === 'resuelto') return false;
+                if (!r) return false;
+                const est = String(r.estado || '').toLowerCase().trim();
+                if (est === 'resuelto') return false;
                 if (eqRow && String(r.rowId || '') === eqRow) return true;
                 if (eqName && String(r.equipoNombre || '').toLowerCase().trim() === eqName) return true;
                 return false;
@@ -1075,7 +1058,7 @@
 
         function equipoTieneNotasActivas(equipo) {
             if (!equipo) return false;
-            if (equipo.isScouting3 && equipo.notasStaff && equipo.notasStaff.trim().length > 0) return true;
+            // Solo muestra notas si hay reportes de irregularidad comunitarios activos (cero exposición de notas internas de Staff)
             return obtenerReportesDeEquipo(equipo).length > 0;
         }
 
@@ -1127,6 +1110,14 @@
             }
         }
 
+        let lastScouting3DataHash = '';
+        let lastReportesDataHash = '';
+
+        function generarHashEquiposScouting3(lista) {
+            if (!Array.isArray(lista)) return '';
+            return lista.map(e => `${e.rowId || e.id}_${e.name}_${e.tag}_${e.logoRaw || e.logo}_${e.repPhone}_${e.top?.name}_${e.jg?.name}_${e.mid?.name}_${e.adc?.name}_${e.supp?.name}`).join('|');
+        }
+
         async function revalidarScouting3EnVivo() {
             try {
                 const sep = SCOUTING3_API_URL.includes('?') ? '&' : '?';
@@ -1141,6 +1132,11 @@
                             json.equipos.map((eq, i) => sanitizarEquipoScouting3(eq, i)).filter(Boolean)
                         );
                         if (sanitized.length > 0) {
+                            const nuevoHash = generarHashEquiposScouting3(sanitized);
+                            if (nuevoHash === lastScouting3DataHash) {
+                                return; // Mismos datos: cero parpadeo
+                            }
+                            lastScouting3DataHash = nuevoHash;
                             scouting3Teams = sanitized;
                             try { localStorage.setItem(S3_STORAGE_KEY, JSON.stringify(sanitized)); } catch (e) {}
                             ocultarSkeletonYMostrarGrilla();
@@ -1164,6 +1160,11 @@
                                 data.equipos.map((eq, i) => sanitizarEquipoScouting3(eq, i)).filter(Boolean)
                             );
                             if (sanitized.length > 0) {
+                                const nuevoHash = generarHashEquiposScouting3(sanitized);
+                                if (nuevoHash === lastScouting3DataHash) {
+                                    return; // Mismos datos: cero parpadeo
+                                }
+                                lastScouting3DataHash = nuevoHash;
                                 scouting3Teams = sanitized;
                                 try { localStorage.setItem(S3_STORAGE_KEY, JSON.stringify(sanitized)); } catch (e) {}
                                 ocultarSkeletonYMostrarGrilla();
@@ -1176,12 +1177,17 @@
                 });
 
                 onSnapshot(doc(db, "torneos_activos", "scouting3_reportes"), (snap) => {
+                    let nuevaLista = [];
                     if (snap.exists()) {
                         const data = snap.data();
-                        reportesComunidadActivos = Array.isArray(data.lista) ? data.lista : [];
-                    } else {
-                        reportesComunidadActivos = [];
+                        nuevaLista = Array.isArray(data.lista) ? data.lista : (Array.isArray(data.items) ? data.items : []);
                     }
+                    const reportesHash = JSON.stringify(nuevaLista.map(r => `${r.id}_${r.estado}_${r.rowId}`));
+                    if (reportesHash === lastReportesDataHash) {
+                        return; // Sin cambios: cero parpadeo
+                    }
+                    lastReportesDataHash = reportesHash;
+                    reportesComunidadActivos = nuevaLista;
                     refrescarVistaScouting3Viva();
                 }, (err) => {
                     console.warn("Firestore reportes listener aviso:", err);
@@ -1326,8 +1332,8 @@
 
             const descripciones = {
                 4: {
-                    logo: "assets/legion_store.webp",
-                    imgClass: "max-h-14 md:max-h-18 max-w-[240px] md:max-w-[260px] w-auto h-auto object-contain",
+                    logo: "/assets/logo%20copa%20Legion.png",
+                    imgClass: "max-h-16 md:max-h-20 max-w-[250px] md:max-w-[270px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_18px_rgba(16,185,129,0.35)]",
                     text: "Base de datos pública oficial en tiempo real de la Copa Legion x Torneo Scouting 3. Consulta los logos oficiales, nicks de cuenta LAS y cuenta MAIN (OP.GG), junto al contacto directo del representante de cada equipo. Si detectas alguna irregularidad en un OP.GG o cambio de nick, puedes enviar una nota directa al Staff desde la ficha del equipo."
                 },
@@ -1504,8 +1510,7 @@
                 const totalPlayersCount = (numTitulares || 5) + (eq.subs ? eq.subs.length : 0);
 
                 const reportesEquipo = activeTournament === 4 ? obtenerReportesDeEquipo(eq) : [];
-                const tieneNotaStaff = activeTournament === 4 && Boolean(eq.notasStaff || eq.staffNotes);
-                const totalNotasActivas = reportesEquipo.length + (tieneNotaStaff ? 1 : 0);
+                const totalNotasActivas = reportesEquipo.length;
 
                 const card = document.createElement('div');
                 
@@ -1577,7 +1582,7 @@
                     <div class="flex items-center gap-3.5 mb-4">
                         ${shieldHTML}
                         <div class="overflow-hidden min-w-0 flex-grow">
-                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tight truncate ${esBaneado ? 'text-red-400' : 'text-white'}">${eq.name}</h3>
+                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tight line-clamp-2 leading-snug break-words ${esBaneado ? 'text-red-400' : 'text-white'}">${eq.name}</h3>
                             ${badgeStatusHTML}
                         </div>
                     </div>
@@ -1922,7 +1927,7 @@
                 const modalName = document.getElementById('modal-name');
                 if (modalName) {
                     modalName.innerText = equipo.name;
-                    modalName.className = `text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tight leading-tight truncate max-w-[230px] sm:max-w-[420px] md:max-w-[520px] ${esBaneado ? 'text-red-400' : 'text-white'}`;
+                    modalName.className = `text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tight leading-tight line-clamp-2 break-words ${esBaneado ? 'text-red-400' : 'text-white'}`;
                 }
                 document.getElementById('modal-tag').innerText = equipo.tag ? `[${equipo.tag}]` : '';
 
@@ -1932,9 +1937,7 @@
                 const notesCountText = document.getElementById('modal-notes-count-text');
 
                 const reportesEquipo = activeTournament === 4 ? obtenerReportesDeEquipo(equipo) : [];
-                const notaStaffTxt = String(equipo.notasStaff || equipo.staffNotes || '').trim();
-                const tieneNotaStaff = activeTournament === 4 && Boolean(notaStaffTxt);
-                const totalNotas = reportesEquipo.length + (tieneNotaStaff ? 1 : 0);
+                const totalNotas = reportesEquipo.length;
 
                 if (notesIndicator && notesCountText) {
                     if (totalNotas > 0) {
@@ -1960,50 +1963,36 @@
                 if (repContactBar) {
                     if (activeTournament === 4) {
                         const repPhone = String(equipo.repPhone || '').trim();
-                        const repSubPhone = String(equipo.repSubPhone || equipo.subRepPhone || '').trim();
-                        const repDiscord = String(equipo.repDiscord || '').trim();
                         const waCapUrl = formatearWhatsAppUrl(repPhone);
-                        const waSubUrl = formatearWhatsAppUrl(repSubPhone);
-
                         const capPhoneClean = repPhone.replace(/'/g, "\\'");
-                        const discClean = repDiscord.replace(/'/g, "\\'");
 
-                        repContactBar.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-                                    <i class="fas fa-headset text-sm"></i>
+                        if (repPhone) {
+                            repContactBar.innerHTML = `
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 text-xs">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <div class="truncate">
+                                        <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400/90 mr-1.5">Capitán:</span>
+                                        <span class="text-xs text-white font-mono font-bold">${repPhone}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 block">Contacto Oficial del Representante (Coordinación de Partidas)</span>
-                                    <p class="text-xs text-gray-300 font-bold">
-                                        Nro. Capitán: <span class="text-white font-mono">${repPhone || 'No registrado'}</span>
-                                        ${repSubPhone ? `<span class="text-gray-500 mx-1.5">|</span> Subcap.: <span class="text-gray-200 font-mono">${repSubPhone}</span>` : ''}
-                                    </p>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    ${waCapUrl ? `
+                                        <a href="${waCapUrl}" target="_blank" rel="noopener noreferrer" class="btn-app-whatsapp px-3 py-1 rounded-xl text-[11px] font-black inline-flex items-center gap-1.5 h-7 shadow-sm transition-transform active:scale-95">
+                                            <i class="fab fa-whatsapp text-sm"></i> <span>WhatsApp Rep.</span>
+                                        </a>
+                                    ` : ''}
+                                    <button type="button" onclick="copiarNumeroRep(this, '${capPhoneClean}')" class="px-2.5 py-1 rounded-xl bg-gray-900/90 hover:bg-gray-800 text-gray-300 border border-gray-700 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1 h-7 cursor-pointer transition-colors" title="Copiar número de contacto del representante">
+                                        <i class="fas fa-copy text-[10px]"></i> <span class="copy-phone-label">Copiar</span>
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
-                                ${waCapUrl ? `
-                                    <a href="${waCapUrl}" target="_blank" rel="noopener noreferrer" class="btn-app-whatsapp px-3 py-1.5 rounded-xl text-[11px] font-black inline-flex items-center gap-1.5 h-8">
-                                        <i class="fab fa-whatsapp text-sm"></i> <span>WhatsApp Rep. (${repPhone})</span>
-                                    </a>
-                                    <button type="button" onclick="copiarNumeroRep(this, '${capPhoneClean}')" class="px-2.5 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-300 border border-gray-700 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 h-8 cursor-pointer transition-colors" title="Copiar número de contacto del representante">
-                                        <i class="fas fa-copy text-[10px]"></i> <span class="copy-phone-label">Copiar Nro</span>
-                                    </button>
-                                ` : ''}
-                                ${waSubUrl ? `
-                                    <a href="${waSubUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/70 text-emerald-300 border border-emerald-500/35 text-[10px] font-black inline-flex items-center gap-1.5 h-8 transition-colors">
-                                        <i class="fab fa-whatsapp"></i> <span>Subcap.</span>
-                                    </a>
-                                ` : ''}
-                                ${repDiscord && repDiscord !== '-' ? `
-                                    <button type="button" onclick="copiarDiscord(this, '${discClean}')" class="btn-app-discord px-3 py-1.5 rounded-xl text-[11px] font-black inline-flex items-center gap-1.5 h-8 cursor-pointer" title="Copiar Discord del Representante">
-                                        <i class="fab fa-discord text-xs"></i> <span class="discord-tag">${repDiscord}</span>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        `;
-                        repContactBar.classList.remove('hidden');
-                        repContactBar.classList.add('flex');
+                            `;
+                            repContactBar.className = "flex bg-[#040810]/90 border border-emerald-500/30 rounded-xl px-3 py-2 flex-row items-center justify-between gap-3 shadow-sm";
+                        } else {
+                            repContactBar.classList.add('hidden');
+                            repContactBar.classList.remove('flex');
+                        }
                     } else {
                         repContactBar.classList.add('hidden');
                         repContactBar.classList.remove('flex');
@@ -2050,21 +2039,21 @@
                 let rosterHTML = '';
 
                 if (activeTournament === 4 && totalNotas > 0) {
-                    const itemsHTML = [
-                        ...(tieneNotaStaff ? [`<li class="text-[11px] text-amber-100"><strong class="text-amber-300 font-black">[Nota Oficial Staff]:</strong> ${notaStaffTxt}</li>`] : []),
-                        ...reportesEquipo.map(r => `<li class="text-[11px] text-amber-100"><strong class="text-amber-300 font-black">[${r.categoria} - ${r.jugadorNick || 'Equipo'}]:</strong> ${r.mensaje}</li>`)
-                    ].join('');
+                    const itemsHTML = reportesEquipo.map(r => `
+                        <li class="text-[11px] text-amber-100 flex items-start gap-1.5">
+                            <i class="fas fa-exclamation-circle text-amber-400 mt-0.5 text-[10px] shrink-0"></i>
+                            <span><strong class="text-amber-300 font-black">[Reporte Comunitario - ${r.categoria}]:</strong> ${r.jugadorNick ? `En jugador <em>${r.jugadorNick}</em>.` : ''} En revisión por el Staff.</span>
+                        </li>
+                    `).join('');
 
                     rosterHTML += `
-                        <div class="bg-amber-950/25 border border-amber-500/45 mb-3.5 p-3.5 rounded-2xl flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-                                    <i class="fas fa-flag text-sm"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-black uppercase text-amber-300 tracking-wider">Observaciones / Notas Registradas (${totalNotas})</h4>
-                                    <ul class="mt-1 space-y-1 list-disc list-inside">${itemsHTML}</ul>
-                                </div>
+                        <div class="bg-amber-950/20 border border-amber-500/35 mb-3.5 p-3 rounded-2xl flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                                <i class="fas fa-flag text-xs"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-black uppercase text-amber-300 tracking-wider">Reportes Comunitarios en Revisión (${totalNotas})</h4>
+                                <ul class="mt-1 space-y-1">${itemsHTML}</ul>
                             </div>
                         </div>
                     `;
