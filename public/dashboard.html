@@ -39,7 +39,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=209">
+    <link rel="stylesheet" href="/dist/output.css?v=210">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -371,13 +371,19 @@
                             <i class="fas fa-file-excel mr-1"></i> Google Sheets Sync
                         </span>
                         <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Módulo Independiente</span>
+                        <a href="/staff-scouting" id="dashboard-sc3-reportes-badge" class="hidden px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse items-center gap-1.5 hover:bg-amber-500 hover:text-black transition-all">
+                            <i class="fas fa-flag"></i> <span id="dashboard-sc3-reportes-count">0</span> Notas OP.GG / Nick Pendientes
+                        </a>
                     </div>
                     <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                        <i class="fas fa-binoculars text-emerald-400"></i> Scouting Tournament 3 — Bandeja de Equipos
+                        <i class="fas fa-binoculars text-emerald-400"></i> Scouting Tournament 3 — Bandeja de Equipos & Notas Públicas
                     </h3>
-                    <p class="text-xs text-gray-400 mt-1 max-w-2xl">Control y verificación de inscripciones recibidas vía Google Forms. Gestiona las fichas técnicas de cada equipo y sincroniza el estado de verificación bidireccionalmente con Google Sheets.</p>
+                    <p class="text-xs text-gray-400 mt-1 max-w-2xl">Control y verificación de inscripciones, sincronización en tiempo real con la Base de Datos Pública (<code class="text-emerald-400">/scouting</code>) y bandeja de reportes de irregularidades de OP.GG o Nick.</p>
                 </div>
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+                    <a href="/scouting?torneo=scouting3" target="_blank" class="px-4 py-3 rounded-xl bg-gray-900 hover:bg-gray-800 text-emerald-400 border border-emerald-500/30 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
+                        <i class="fas fa-users"></i> Vista Pública Jugadores
+                    </a>
                     <a href="/staff-scouting" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:shadow-emerald-500/25 active:scale-95 w-full sm:w-auto">
                         <i class="fas fa-arrow-right"></i> Ingresar a Scouting T3
                     </a>
@@ -847,8 +853,8 @@
         import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=209";
-        import "/app-version.js?v=209";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=210";
+        import "/app-version.js?v=210";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -857,6 +863,7 @@
         const getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name.trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
 
         let unsubscribeSnapshot = null;
+        let unsubscribeScoutingReportes = null;
         let currentModalTeamId = null;
 
         // Estructura en memoria para torneos registrados
@@ -1702,10 +1709,35 @@
 
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 iniciarSuscripcionEnTiempoReal();
+
+                if (unsubscribeScoutingReportes) unsubscribeScoutingReportes();
+                try {
+                    unsubscribeScoutingReportes = onSnapshot(doc(db, "torneos_activos", "scouting3_reportes"), (snap) => {
+                        const badge = document.getElementById('dashboard-sc3-reportes-badge');
+                        const countEl = document.getElementById('dashboard-sc3-reportes-count');
+                        if (!badge || !countEl) return;
+                        if (snap.exists()) {
+                            const items = Array.isArray(snap.data().items) ? snap.data().items : [];
+                            const pendientes = items.filter(r => r && r.estado !== 'resuelto').length;
+                            countEl.textContent = pendientes;
+                            if (pendientes > 0) {
+                                badge.classList.remove('hidden');
+                                badge.classList.add('inline-flex');
+                            } else {
+                                badge.classList.add('hidden');
+                                badge.classList.remove('inline-flex');
+                            }
+                        }
+                    });
+                } catch (e) {}
             } else {
                 if (unsubscribeSnapshot) {
                     unsubscribeSnapshot();
                     unsubscribeSnapshot = null;
+                }
+                if (unsubscribeScoutingReportes) {
+                    unsubscribeScoutingReportes();
+                    unsubscribeScoutingReportes = null;
                 }
                 loginScreen.classList.remove('hidden');
                 dashboardContent.classList.add('hidden');

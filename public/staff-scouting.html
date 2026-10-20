@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=205">
+    <link rel="stylesheet" href="/dist/output.css?v=210">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -119,6 +119,12 @@
 
             <!-- Barra de Herramientas de Navegación (Scrollable en móvil, fluida en desktop) -->
             <div class="flex gap-1.5 sm:gap-2.5 items-center overflow-x-auto no-scrollbar pb-0.5 sm:pb-0 shrink-0">
+                <!-- Botón Mensajes / Reportes Comunidad (OP.GG & Nicks) -->
+                <button onclick="abrirModalReportesComunidad()" id="btn-header-reportes-comunidad" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0" title="Bandeja de notas y reportes de OP.GG / Nicks enviados desde la vista pública">
+                    <i class="fas fa-flag text-amber-400"></i> <span>Notas OP.GG</span>
+                    <span id="badge-header-reportes-comunidad" class="px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black font-mono ml-0.5">0</span>
+                </button>
+
                 <!-- Botón Irregularidades e Integridad -->
                 <button onclick="abrirModalIrregularidades()" id="btn-header-irregularidades" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0" title="Auditoría de integridad competitiva, multiequipo y jugadores bloqueados de la Liga">
                     <i class="fas fa-shield-alt text-rose-400"></i> <span>Irregularidades</span>
@@ -1565,6 +1571,62 @@
         </div>
     </div>
 
+    <!-- ============================================================== -->
+    <!-- MODAL BANDEJA DE NOTAS Y REPORTES DE LA COMUNIDAD (OP.GG/NICK) -->
+    <!-- ============================================================== -->
+    <div id="modal-reportes-comunidad" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalReportesComunidad()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-6 hidden" style="z-index: 50;">
+        <div class="bg-[#050505] border border-amber-500/40 rounded-2xl sm:rounded-3xl w-full max-w-4xl max-h-[94dvh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xl shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.18)]">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider truncate flex items-center gap-2">
+                            <span>Bandeja de Notas & Reportes OP.GG / Nick</span>
+                            <span id="badge-modal-rep-comunidad-total" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">0</span>
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Mensajes recibidos en tiempo real desde la base de datos pública (/scouting) para corregir OP.GG, cambios de Nick o cuentas Main.</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalReportesComunidad()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#070b12] flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] uppercase font-black text-gray-500 mr-1">Estado:</span>
+                    <button type="button" onclick="cambiarFiltroReportesComunidad('pendientes')" id="btn-rep-com-pendientes" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer">
+                        Pendientes
+                    </button>
+                    <button type="button" onclick="cambiarFiltroReportesComunidad('resueltos')" id="btn-rep-com-resueltos" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">
+                        Resueltos
+                    </button>
+                    <button type="button" onclick="cambiarFiltroReportesComunidad('todos')" id="btn-rep-com-todos" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer">
+                        Todos
+                    </button>
+                </div>
+                <a href="/scouting?torneo=scouting3" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 font-black text-[11px] uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                    <i class="fas fa-external-link-alt"></i> Ver Página Pública
+                </a>
+            </div>
+
+            <div id="lista-reportes-comunidad-body" class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-3 bg-[#050505]">
+                <!-- Renderizado dinámicamente -->
+            </div>
+
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0a0a0a] flex justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-500">
+                    <i class="fas fa-bolt text-emerald-400 mr-1"></i> Al editar un equipo o resolver una nota, la vista pública se actualiza automáticamente para todos los usuarios.
+                </span>
+                <button onclick="cerrarModalReportesComunidad()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- CONTENEDOR AUXILIAR DE MODAL (BLOQUEADO EN PRODUCCIÓN) -->
     <div id="modal-config-url" class="hidden"></div>
 
@@ -1572,9 +1634,9 @@
     <script type="module">
         import { db, auth } from "/firebase-config.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, query, where, getDocs, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=205";
+        import "/app-version.js?v=210";
 
         // ==============================================================
         // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
@@ -1959,10 +2021,239 @@
             actualizarMetricas();
             renderizarTarjetasEquipos();
 
+            // Iniciar listener en tiempo real de Notas/Reportes enviados desde la página pública (/scouting)
+            iniciarListenerReportesComunidadStaff();
+
             // Sincronizar automáticamente con Google Sheets y arrancar polling en segundo plano
             sincronizarGoogleSheets();
             iniciarAutoSincronizacion();
         }
+
+        // ==============================================================
+        // 2.5 SINCRONIZACIÓN PÚBLICA EN VIVO (CERO INFO CRÍTICA) Y BANDEJA DE NOTAS OP.GG
+        // ==============================================================
+        let reportesComunidadStaff = [];
+        let filtroReportesComunidadActivo = 'pendientes';
+        let conteoReportesPrevio = -1;
+
+        function sanitizarEquiposParaVistaPublica(listaCruda) {
+            if (!Array.isArray(listaCruda)) return [];
+            return listaCruda.map((eq, idx) => {
+                if (!eq || String(eq.estado || '').toLowerCase() === 'rechazado') return null;
+                const cleanPlayer = (p, fallbackPos) => {
+                    if (!p) return null;
+                    const rLas = String(p.riotIdLas || '').trim();
+                    const rMain = String(p.riotIdMain || '').trim();
+                    if (!rLas && !rMain) return null;
+                    return {
+                        posicion: p.posicion || fallbackPos || 'ROSTER',
+                        riotIdLas: rLas,
+                        opggLas: String(p.opggLas || '').trim(),
+                        riotIdMain: rMain,
+                        opggMain: String(p.opggMain || '').trim(),
+                        rangoSoloQ: String(p.rangoSoloQ || 'UNRANKED').trim(),
+                        rolSecundario: String(p.rolSecundario || '').trim()
+                        // CERO datos críticos: sin nombreCi, sin ci, sin telefono personal, sin ciudad
+                    };
+                };
+                return {
+                    rowId: eq.rowId || (idx + 1),
+                    nombre: String(eq.nombre || '').trim(),
+                    tag: String(eq.tag || '').trim(),
+                    logo: String(eq.logoRaw || eq.logo || '').trim(),
+                    logoRaw: String(eq.logoRaw || eq.logo || '').trim(),
+                    estado: String(eq.estado || 'Pendiente').trim(),
+                    notasStaff: String(eq.notasStaff || '').trim(),
+                    capitan: {
+                        telefono: String(eq.capitan?.telefono || '').trim(),
+                        discord: String(eq.capitan?.discord || '').trim()
+                    },
+                    subcapitan: {
+                        telefono: String(eq.subcapitan?.telefono || '').trim(),
+                        discord: String(eq.subcapitan?.discord || '').trim()
+                    },
+                    titulares: Array.isArray(eq.titulares) ? eq.titulares.map((t, i) => cleanPlayer(t, ['TOP','JG','MID','ADC','SUPP'][i])).filter(Boolean) : [],
+                    suplentes: Array.isArray(eq.suplentes) ? eq.suplentes.map(s => cleanPlayer(s, 'SUB')).filter(Boolean) : []
+                };
+            }).filter(Boolean);
+        }
+
+        async function publicarSincronizacionPublicaScouting3() {
+            try {
+                const publicEquipos = sanitizarEquiposParaVistaPublica(equiposScouting);
+                if (publicEquipos.length === 0) return;
+                await setDoc(doc(db, "torneos_activos", "scouting3_live_sync"), {
+                    equipos: publicEquipos,
+                    updatedAt: Date.now(),
+                    updatedBy: staffNickActual || 'Staff LBL'
+                });
+            } catch (err) {
+                console.warn("Aviso al sincronizar vista pública en Firestore:", err);
+            }
+        }
+
+        function iniciarListenerReportesComunidadStaff() {
+            try {
+                onSnapshot(doc(db, "torneos_activos", "scouting3_reportes"), (snap) => {
+                    if (snap.exists() && Array.isArray(snap.data().lista)) {
+                        reportesComunidadStaff = snap.data().lista;
+                    } else {
+                        reportesComunidadStaff = [];
+                    }
+
+                    const pendientes = reportesComunidadStaff.filter(r => (r.estado || 'PENDIENTE') !== 'RESUELTO');
+                    const badgeHeader = document.getElementById('badge-header-reportes-comunidad');
+                    const badgeModal = document.getElementById('badge-modal-rep-comunidad-total');
+
+                    if (badgeHeader) {
+                        badgeHeader.textContent = pendientes.length;
+                        badgeHeader.className = pendientes.length > 0
+                            ? "px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black font-mono ml-0.5 animate-pulse"
+                            : "px-1.5 py-0.2 rounded-full bg-gray-800 text-gray-400 text-[9px] font-black font-mono ml-0.5";
+                    }
+                    if (badgeModal) badgeModal.textContent = `${pendientes.length} Pendientes`;
+
+                    if (conteoReportesPrevio !== -1 && pendientes.length > conteoReportesPrevio) {
+                        const ultimo = pendientes[0];
+                        if (ultimo) {
+                            mostrarToastNotificacion(`🚩 Nueva nota OP.GG/Nick en [${ultimo.equipoTag || 'SC3'}] ${ultimo.equipoNombre}: ${ultimo.categoria}`);
+                        }
+                    }
+                    conteoReportesPrevio = pendientes.length;
+
+                    renderizarReportesComunidadStaff();
+                }, (err) => {
+                    console.warn("Error en listener de reportes comunidad:", err);
+                });
+            } catch (e) {
+                console.warn("No se pudo iniciar listener de reportes comunidad:", e);
+            }
+        }
+
+        window.abrirModalReportesComunidad = function() {
+            renderizarReportesComunidadStaff();
+            const m = document.getElementById('modal-reportes-comunidad');
+            if (m) m.classList.remove('hidden');
+        };
+
+        window.cerrarModalReportesComunidad = function() {
+            const m = document.getElementById('modal-reportes-comunidad');
+            if (m) m.classList.add('hidden');
+        };
+
+        window.cambiarFiltroReportesComunidad = function(filtro) {
+            filtroReportesComunidadActivo = filtro;
+            const bPend = document.getElementById('btn-rep-com-pendientes');
+            const bRes = document.getElementById('btn-rep-com-resueltos');
+            const bTodos = document.getElementById('btn-rep-com-todos');
+            const normalCls = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer";
+            const activeCls = "px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer";
+
+            if (bPend) bPend.className = filtro === 'pendientes' ? activeCls : normalCls;
+            if (bRes) bRes.className = filtro === 'resueltos' ? activeCls : normalCls;
+            if (bTodos) bTodos.className = filtro === 'todos' ? activeCls : normalCls;
+            renderizarReportesComunidadStaff();
+        };
+
+        function renderizarReportesComunidadStaff() {
+            const cont = document.getElementById('lista-reportes-comunidad-body');
+            if (!cont) return;
+
+            let filtrados = reportesComunidadStaff;
+            if (filtroReportesComunidadActivo === 'pendientes') {
+                filtrados = reportesComunidadStaff.filter(r => (r.estado || 'PENDIENTE') !== 'RESUELTO');
+            } else if (filtroReportesComunidadActivo === 'resueltos') {
+                filtrados = reportesComunidadStaff.filter(r => (r.estado || 'PENDIENTE') === 'RESUELTO');
+            }
+
+            if (filtrados.length === 0) {
+                cont.innerHTML = `
+                    <div class="p-10 text-center bg-[#0a0a0a] rounded-2xl border border-gray-800 space-y-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-3xl mb-1 block"></i>
+                        <p class="text-white font-bold text-sm">No hay notas ni reportes en esta bandeja</p>
+                        <p class="text-xs text-gray-500">Cualquier observación de OP.GG o Nick enviada desde la vista pública aparecerá aquí al instante.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cont.innerHTML = filtrados.map(rep => {
+                const esResuelto = (rep.estado || 'PENDIENTE') === 'RESUELTO';
+                const fechaFmt = rep.createdAt ? new Date(rep.createdAt).toLocaleString('es-BO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '--';
+                const eqMatch = equiposScouting.find(e => String(e.rowId) === String(rep.rowId) || (e.nombre && rep.equipoNombre && e.nombre.toLowerCase() === rep.equipoNombre.toLowerCase()));
+                const targetRowId = eqMatch ? eqMatch.rowId : rep.rowId;
+
+                return `
+                    <div class="p-4 rounded-2xl border ${esResuelto ? 'bg-[#080b10] border-gray-800/80 opacity-75' : 'bg-amber-950/10 border-amber-500/40'} flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all">
+                        <div class="space-y-1.5 min-w-0 flex-grow">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${esResuelto ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
+                                    ${esResuelto ? '✓ RESUELTO' : '🚩 PENDIENTE'}
+                                </span>
+                                <span class="text-xs font-black text-emerald-400 font-mono">[${rep.equipoTag || 'TAG'}]</span>
+                                <span class="text-xs sm:text-sm font-black text-white">${rep.equipoNombre || 'Equipo'}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-gray-900 border border-gray-700 text-cyan-300 font-mono font-bold">Jugador: ${rep.jugadorNick || 'General'}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30 text-amber-200 font-bold">${rep.categoria || 'Observación'}</span>
+                            </div>
+                            <p class="text-xs text-gray-200 bg-black/50 p-2.5 rounded-xl border border-gray-800/80 leading-relaxed break-words">
+                                ${rep.mensaje || ''}
+                            </p>
+                            <div class="flex flex-wrap items-center gap-3 text-[10px] text-gray-500">
+                                <span><i class="fas fa-user-edit mr-1"></i> Reportado por: <strong class="text-gray-300">${rep.autor || 'Comunidad'}</strong></span>
+                                <span><i class="fas fa-clock mr-1"></i> ${fechaFmt}</span>
+                                ${rep.resueltoPor ? `<span class="text-emerald-400"><i class="fas fa-check mr-1"></i> Atendido por ${rep.resueltoPor}</span>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="flex sm:flex-col items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+                            ${targetRowId ? `
+                                <button type="button" onclick="cerrarModalReportesComunidad(); abrirModalDetalle(${targetRowId}, 'editar');" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm w-full justify-center">
+                                    <i class="fas fa-edit"></i> Corregir Equipo
+                                </button>
+                            ` : ''}
+                            <button type="button" onclick="cambiarEstadoReporteComunidad('${rep.id}', '${esResuelto ? 'PENDIENTE' : 'RESUELTO'}')" class="px-3 py-1.5 rounded-xl ${esResuelto ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' : 'bg-emerald-600 hover:bg-emerald-500 text-black'} font-black text-[10px] uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm w-full justify-center">
+                                <i class="fas ${esResuelto ? 'fa-undo' : 'fa-check'}"></i> ${esResuelto ? 'Reabrir' : 'Marcar Resuelto'}
+                            </button>
+                            <button type="button" onclick="eliminarReporteComunidad('${rep.id}')" class="px-2.5 py-1 rounded-lg bg-rose-950/50 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 text-[10px] font-bold cursor-pointer w-full justify-center flex items-center gap-1">
+                                <i class="fas fa-trash-alt"></i> Borrar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.cambiarEstadoReporteComunidad = async function(repId, nuevoEstado) {
+            try {
+                const nuevaLista = reportesComunidadStaff.map(r => {
+                    if (r.id === repId) {
+                        return { ...r, estado: nuevoEstado, resueltoPor: staffNickActual, updatedAt: new Date().toISOString() };
+                    }
+                    return r;
+                });
+                await setDoc(doc(db, "torneos_activos", "scouting3_reportes"), {
+                    lista: nuevaLista,
+                    updatedAt: Date.now()
+                });
+                mostrarToastNotificacion(nuevoEstado === 'RESUELTO' ? '✅ Nota marcada como resuelta (actualizado en vista pública).' : '🔄 Nota reabierta.');
+            } catch (e) {
+                console.error("Error actualizando reporte:", e);
+            }
+        };
+
+        window.eliminarReporteComunidad = async function(repId) {
+            if (!confirm('¿Eliminar permanentemente esta nota de la bandeja?')) return;
+            try {
+                const nuevaLista = reportesComunidadStaff.filter(r => r.id !== repId);
+                await setDoc(doc(db, "torneos_activos", "scouting3_reportes"), {
+                    lista: nuevaLista,
+                    updatedAt: Date.now()
+                });
+                mostrarToastNotificacion('🗑️ Nota eliminada.');
+            } catch (e) {
+                console.error("Error eliminando reporte:", e);
+            }
+        };
 
         // ==============================================================
         // 3. MOTOR DE AUTO-SINCRONIZACIÓN EN TIEMPO REAL (GOOGLE SHEETS)
@@ -1974,7 +2265,7 @@
         const POLLING_INTERVAL_MS = 30000; // Sondeo cada 30 segundos
 
         function hayAlgunModalAbierto() {
-            const ids = ['modal-detalle-equipo', 'modal-crear-equipo', 'modal-censo-residencias', 'modal-irregularidades', 'modal-visor-logo'];
+            const ids = ['modal-detalle-equipo', 'modal-crear-equipo', 'modal-censo-residencias', 'modal-irregularidades', 'modal-reportes-comunidad', 'modal-visor-logo'];
             return ids.some(id => {
                 const el = document.getElementById(id);
                 return el && !el.classList.contains('hidden');
@@ -2055,6 +2346,7 @@
 
                     equiposScouting = nuevosEquipos;
                     localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
                     ultimaSyncTimestamp = Date.now();
                     
                     const ahora = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -3354,6 +3646,7 @@
             equipoSeleccionado.fechaRevision = fechaStr;
 
             localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
             actualizarMetricas();
             renderizarTarjetasEquipos();
             abrirModalDetalle(equipoSeleccionado.rowId, 'verificacion');
@@ -3589,6 +3882,7 @@
             // Aplicar localmente de inmediato
             Object.assign(equipoSeleccionado, equipoModificadoLocal);
             localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
             ejecutarAuditoriaIrregularidades();
             actualizarMetricas();
             renderizarTarjetasEquipos();
@@ -3661,6 +3955,7 @@
             // Eliminar de memoria local
             equiposScouting = equiposScouting.filter(e => e.rowId !== targetRowId);
             localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
             actualizarMetricas();
             renderizarTarjetasEquipos();
 
@@ -3786,6 +4081,7 @@
                 nuevoEquipoObj.rowId = (equiposScouting.length > 0 ? Math.max(...equiposScouting.map(x => x.rowId || 0)) : 1) + 1;
                 equiposScouting.unshift(nuevoEquipoObj);
                 localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
                 actualizarMetricas();
                 renderizarTarjetasEquipos();
                 cerrarModalCrearEquipo();
@@ -3813,6 +4109,7 @@
                     nuevoEquipoObj.rowId = json.rowId;
                     equiposScouting.unshift(nuevoEquipoObj);
                     localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    publicarSincronizacionPublicaScouting3();
                     actualizarMetricas();
                     renderizarTarjetasEquipos();
                     cerrarModalCrearEquipo();
