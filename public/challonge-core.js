@@ -715,74 +715,56 @@ async function apiCall(endpointPath, preferredApiKey = null) {
             } catch (e) {}
         }
 
-        // 2. PROXIES DE PRODUCCIÓN (Sin dominios muertos y con carrera rápida)
+        // 2. PROXIES DE PRODUCCIÓN (Secuencial inteligente con caché de proxy preferido, sin disparar 429 en paralelo y con 11s de margen para torneos de 64+ equipos)
         const baseProxies = [
-            { id: 'codetabs', url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false },
-            { id: 'allorigins_raw', url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false },
-            { id: 'allorigins_get', url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true },
-            { id: 'corseu', url: `https://cors.eu.org/${targetUrl}`, isWrapper: false }
+            { id: 'allorigins_get', url: `https://api.allorigins.win/get?url=${encodedTarget}`, isWrapper: true, timeout: 11000 },
+            { id: 'codetabs', url: `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`, isWrapper: false, timeout: 11000 },
+            { id: 'allorigins_raw', url: `https://api.allorigins.win/raw?url=${encodedTarget}`, isWrapper: false, timeout: 11000 },
+            { id: 'thingproxy', url: `https://thingproxy.freeboard.io/fetch/${targetUrl}`, isWrapper: false, timeout: 10000 }
         ];
 
         if (_preferredProxyId) {
             baseProxies.sort((a, b) => (a.id === _preferredProxyId ? -1 : (b.id === _preferredProxyId ? 1 : 0)));
         }
 
-        let challongeNotFound = false;
+        for (const proxyItem of baseProxies) {
+            try {
+                const res = await fetchWithTimeout(proxyItem.url, {}, proxyItem.timeout || 11000);
+                if (!res) continue;
 
-        const trySingleProxy = async (proxyItem, timeoutMs = 3200) => {
-            const res = await fetchWithTimeout(proxyItem.url, {}, timeoutMs);
-            if (!res) throw new Error('Sin respuesta');
-
-            if (res.status === 404 || res.status === 422) {
-                challongeNotFound = true;
-                throw new Error('Challonge 404');
-            }
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
-
-            let parsed = null;
-            if (proxyItem.isWrapper) {
-                const wrapper = await res.json();
-                if (wrapper && wrapper.status && (wrapper.status.http_code === 404 || wrapper.status.http_code === 422)) {
-                    challongeNotFound = true;
-                    throw new Error('Challonge 404 wrapper');
+                if (res.status === 404 || res.status === 422) {
+                    return null; // Recurso no existe en Challonge: cortar inmediato sin quemar proxies ni llaves
                 }
-                if (wrapper && wrapper.contents) {
-                    parsed = JSON.parse(wrapper.contents);
+                if (!res.ok) {
+                    // Ej. 429 Too Many Requests o 502/503 del proxy -> saltar al siguiente proxy de inmediato (~100ms)
+                    continue;
                 }
-            } else {
-                parsed = await res.json();
+
+                let parsed = null;
+                if (proxyItem.isWrapper) {
+                    const wrapper = await res.json();
+                    if (wrapper && wrapper.status && (wrapper.status.http_code === 404 || wrapper.status.http_code === 422)) {
+                        return null;
+                    }
+                    if (wrapper && wrapper.contents) {
+                        parsed = JSON.parse(wrapper.contents);
+                    }
+                } else {
+                    parsed = await res.json();
+                }
+
+                if (parsed && parsed.errors) {
+                    return null;
+                }
+
+                if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                    _preferredProxyId = proxyItem.id;
+                    return { data: parsed, keyUsed: cleanKey };
+                }
+            } catch (e) {
+                // Si este proxy dio timeout o error de red, pasa al siguiente de la lista
+                continue;
             }
-
-            if (parsed && parsed.errors) {
-                challongeNotFound = true;
-                throw new Error('Challonge API errors');
-            }
-
-            if (parsed && (parsed.tournament || Array.isArray(parsed))) {
-                _preferredProxyId = proxyItem.id;
-                return { data: parsed, keyUsed: cleanKey };
-            }
-            throw new Error('Payload inválido');
-        };
-
-        // Lanzar en paralelo los 2 primeros proxies más veloces para respuesta inmediata (< 1s)
-        try {
-            const fastBatch = baseProxies.slice(0, 2).map(p => trySingleProxy(p, 3000));
-            const winner = await Promise.any(fastBatch);
-            if (winner) return winner;
-        } catch (e) {
-            if (challongeNotFound) return null;
-        }
-
-        // Fallback con los proxies restantes si los 2 primeros fallaron por red
-        try {
-            const fallbackBatch = baseProxies.slice(2).map(p => trySingleProxy(p, 3500));
-            const winner = await Promise.any(fallbackBatch);
-            if (winner) return winner;
-        } catch (e) {
-            if (challongeNotFound) return null;
         }
     }
 
@@ -833,6 +815,7 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
 }
 
 export const KNOWN_CHALLONGE_IDS = {
+    'ts3lbl':       '18498275',
     't1clbl2026':   '18378786',
     't2clbl2026':   '18383807',
     't1albl2026':   '17573081',
@@ -887,8 +870,9 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
         }
     }
 
-    // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL INTENTO DIRECTO FALLÓ
-    if (!payload) {
+    // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL SLUG NO ES NUMÉRICO Y EL INTENTO DIRECTO FALLÓ
+    const isNumericId = /^\d+$/.test(cleanSlug);
+    if (!payload && !isNumericId) {
         const resolved = await resolverTorneoANumericId(cleanSlug, apiKey);
         if (resolved && resolved.id) {
             const res2 = await apiCall(`tournaments/${resolved.id}.json?include_participants=1&include_matches=1`, apiKey);
