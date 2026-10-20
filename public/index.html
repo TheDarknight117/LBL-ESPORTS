@@ -925,7 +925,7 @@
                     </a>
                     <div class="text-left w-full min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
                         <p class="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-1 sm:mb-2">Barón Nashor traído a ustedes gracias a VOLT...</p>
-                        <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.08] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4">
+                        <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.12] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4 flex flex-col gap-0.5 sm:gap-1">
                             <span class="block">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span></span>
                             <span class="block">QUE DEFINE CAMPEONES...</span>
                         </h3>
@@ -941,7 +941,7 @@
 
                 <!-- Barra de Progreso Delgada Minimalista (2px) -->
                 <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-3 sm:mt-6 md:mt-8 pointer-events-none max-w-4xl mx-auto">
-                    <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
+                    <div id="sponsor-progress-bar" class="h-full w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
                 </div>
             </div>
 
@@ -1563,8 +1563,6 @@
         let slideRemainingTime = 6000;
         let isSponsorPaused = false;
         let isSlideTransitioning = false; // Cerrojo anti-spam para evitar recargas ante clics repetidos
-        let sponsorHoverResumeTimeout = null;
-        let hasPausedCurrentSlide = false; // Permite únicamente una pausa por ciclo de diapositiva
         const SPONSOR_DURATION = 6000;
 
 
@@ -1591,11 +1589,15 @@
             slideStartTime = Date.now();
             slideRemainingTime = duration;
             isSponsorPaused = false;
-            if (!resume) {
-                hasPausedCurrentSlide = false;
-            }
 
             startSponsorProgressBar(duration, resume);
+
+            // Si el cursor ya está sobre el card (ej. tras cambio de slide o click), pausar limpiamente
+            const card = document.getElementById('sponsor-spotlight-card');
+            if (card && card.matches(':hover')) {
+                pauseSponsor();
+                return;
+            }
 
             sponsorTimeout = setTimeout(() => {
                 nextSponsorSlide(false);
@@ -1621,7 +1623,7 @@
                 ${imgHTML}
                 <div class="text-left w-full min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
                     ${subHTML}
-                    <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.08] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4">${data.title}</h3>
+                    <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.12] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4 flex flex-col gap-0.5 sm:gap-1">${data.title}</h3>
                     <p class="text-[11px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider sm:tracking-widest uppercase mb-3 sm:mb-4 md:mb-5">${data.desc}</p>
                     <div>
                         <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 sm:gap-2.5 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none ${data.ctaClasses}">
@@ -1707,7 +1709,6 @@
         function resetSponsorTimer() {
             try {
                 clearTimeout(sponsorTimeout);
-                clearTimeout(sponsorHoverResumeTimeout);
                 isSponsorPaused = false;
                 runSponsorTimer(SPONSOR_DURATION, false);
             } catch (err) {
@@ -1717,30 +1718,22 @@
 
         function pauseSponsor() {
             try {
-                // Solo detectar y pausar UNA vez por diapositiva activa (evita pausar múltiples veces al pasar el cursor)
-                if (isSponsorPaused || hasPausedCurrentSlide) return;
+                if (isSponsorPaused) return;
                 
                 isSponsorPaused = true;
-                hasPausedCurrentSlide = true; // Queda registrado que ya se aplicó la pausa en este ciclo
                 clearTimeout(sponsorTimeout);
-                clearTimeout(sponsorHoverResumeTimeout);
 
                 // Calcular tiempo restante exacto de la diapositiva en curso
                 const elapsed = Date.now() - slideStartTime;
-                slideRemainingTime = Math.max(500, slideRemainingTime - elapsed);
+                slideRemainingTime = Math.max(0, slideRemainingTime - elapsed);
 
-                // Congelar la barra de progreso en su ancho actual
+                // Congelar la barra de progreso limpiamente en su porcentaje actual
                 const bar = document.getElementById('sponsor-progress-bar');
                 if (bar) {
-                    const computedWidth = window.getComputedStyle(bar).width;
+                    const progressPercent = Math.min(100, Math.max(0, ((SPONSOR_DURATION - slideRemainingTime) / SPONSOR_DURATION) * 100));
                     bar.style.transition = 'none';
-                    bar.style.width = computedWidth;
+                    bar.style.width = `${progressPercent}%`;
                 }
-
-                // Pausar por 1 segundo y luego reanudar automáticamente desde donde estaba
-                sponsorHoverResumeTimeout = setTimeout(() => {
-                    resumeSponsor();
-                }, 1000);
             } catch (err) {
                 console.warn('[LBL Sponsors] Error en pauseSponsor:', err);
             }
@@ -1748,11 +1741,16 @@
 
         function resumeSponsor() {
             try {
-                clearTimeout(sponsorHoverResumeTimeout);
-                if (!isSponsorPaused) return; // Si ya se reanudó, descartar llamadas redundantes
+                if (!isSponsorPaused) return;
                 isSponsorPaused = false;
 
-                // Reanudar con el tiempo restante exacto
+                // Si queda muy poco tiempo (< 200ms), avanzar de forma suave
+                if (slideRemainingTime <= 200) {
+                    nextSponsorSlide(false);
+                    return;
+                }
+
+                // Reanudar con el tiempo restante exacto y transición continua
                 runSponsorTimer(slideRemainingTime, true);
             } catch (err) {
                 console.warn('[LBL Sponsors] Error en resumeSponsor:', err);
