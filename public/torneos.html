@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=215">
+    <link rel="stylesheet" href="/dist/output.css?v=216">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -452,9 +452,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=215";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=216";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=215";
+        import "/app-version.js?v=216";
 
         // ══════════════════════════════════════════════════════════════════
         //  SINCRONIZACIÓN EN TIEMPO REAL: EQUIPOS Y TAGS DE SCOUTING 3
@@ -2841,12 +2841,99 @@
             };
         }
 
+        // --- DETECCIÓN DE ZONA HORARIA Y FORMATEO INTERNACIONAL DE PARTIDAS ---
+        const MAPA_ZONAS_HORARIAS_PAIS = {
+            BOL: { tz: 'America/La_Paz', code: 'BOL', iso: 'bo', flag: '🇧🇴', pais: 'Bolivia', esBolivia: true },
+            ARG: { tz: 'America/Argentina/Buenos_Aires', code: 'ARG', iso: 'ar', flag: '🇦🇷', pais: 'Argentina', esBolivia: false },
+            CHI: { tz: 'America/Santiago', code: 'CHI', iso: 'cl', flag: '🇨🇱', pais: 'Chile', esBolivia: false },
+            PER: { tz: 'America/Lima', code: 'PER', iso: 'pe', flag: '🇵🇪', pais: 'Perú', esBolivia: false },
+            URU: { tz: 'America/Montevideo', code: 'URU', iso: 'uy', flag: '🇺🇾', pais: 'Uruguay', esBolivia: false },
+            PAR: { tz: 'America/Asuncion', code: 'PAR', iso: 'py', flag: '🇵🇾', pais: 'Paraguay', esBolivia: false },
+            COL: { tz: 'America/Bogota', code: 'COL', iso: 'co', flag: '🇨🇴', pais: 'Colombia', esBolivia: false },
+            MEX: { tz: 'America/Mexico_City', code: 'MEX', iso: 'mx', flag: '🇲🇽', pais: 'México', esBolivia: false },
+            ESP: { tz: 'Europe/Madrid', code: 'ESP', iso: 'es', flag: '🇪🇸', pais: 'España', esBolivia: false },
+            USA: { tz: 'America/New_York', code: 'USA', iso: 'us', flag: '🇺🇸', pais: 'EE.UU.', esBolivia: false }
+        };
+
+        let _zonaHorariaManual = localStorage.getItem('lbl_timezone_manual') || 'AUTO';
+
+        function detectarZonaHorariaNavegador() {
+            let tz = 'America/La_Paz';
+            try {
+                tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/La_Paz';
+            } catch(e) {
+                tz = 'America/La_Paz';
+            }
+
+            const tzLower = tz.toLowerCase();
+            if (tzLower.includes('la_paz') || tzLower === 'america/la_paz') {
+                return { tz: 'America/La_Paz', code: 'BOL', iso: 'bo', flag: '🇧🇴', pais: 'Bolivia', esBolivia: true };
+            }
+            if (tzLower.includes('argentina') || tzLower.includes('buenos_aires') || tzLower.includes('cordoba') || tzLower.includes('mendoza') || tzLower.includes('salta') || tzLower.includes('tucuman') || tzLower.includes('ushuaia') || tzLower.includes('rosario')) {
+                return { tz, code: 'ARG', iso: 'ar', flag: '🇦🇷', pais: 'Argentina', esBolivia: false };
+            }
+            if (tzLower.includes('santiago') || tzLower.includes('easter') || tzLower.includes('punta_arenas') || tzLower.includes('chile')) {
+                return { tz, code: 'CHI', iso: 'cl', flag: '🇨🇱', pais: 'Chile', esBolivia: false };
+            }
+            if (tzLower.includes('lima') || tzLower.includes('peru')) {
+                return { tz, code: 'PER', iso: 'pe', flag: '🇵🇪', pais: 'Perú', esBolivia: false };
+            }
+            if (tzLower.includes('montevideo') || tzLower.includes('uruguay')) {
+                return { tz, code: 'URU', iso: 'uy', flag: '🇺🇾', pais: 'Uruguay', esBolivia: false };
+            }
+            if (tzLower.includes('asuncion') || tzLower.includes('paraguay')) {
+                return { tz, code: 'PAR', iso: 'py', flag: '🇵🇾', pais: 'Paraguay', esBolivia: false };
+            }
+            if (tzLower.includes('bogota') || tzLower.includes('colombia')) {
+                return { tz, code: 'COL', iso: 'co', flag: '🇨🇴', pais: 'Colombia', esBolivia: false };
+            }
+            if (tzLower.includes('mexico') || tzLower.includes('cancun') || tzLower.includes('monterrey') || tzLower.includes('merida') || tzLower.includes('tijuana')) {
+                return { tz, code: 'MEX', iso: 'mx', flag: '🇲🇽', pais: 'México', esBolivia: false };
+            }
+            if (tzLower.includes('madrid') || tzLower.includes('canary')) {
+                return { tz, code: 'ESP', iso: 'es', flag: '🇪🇸', pais: 'España', esBolivia: false };
+            }
+            if (tzLower.includes('new_york') || tzLower.includes('chicago') || tzLower.includes('los_angeles') || tzLower.includes('denver')) {
+                return { tz, code: 'USA', iso: 'us', flag: '🇺🇸', pais: 'EE.UU.', esBolivia: false };
+            }
+
+            return { tz, code: 'LOC', iso: '', flag: '🌐', pais: 'Local', esBolivia: false };
+        }
+
+        function obtenerInfoZonaHorariaUsuario() {
+            if (_zonaHorariaManual && _zonaHorariaManual !== 'AUTO' && MAPA_ZONAS_HORARIAS_PAIS[_zonaHorariaManual]) {
+                return MAPA_ZONAS_HORARIAS_PAIS[_zonaHorariaManual];
+            }
+            return detectarZonaHorariaNavegador();
+        }
+
+        window.cambiarZonaHorariaManual = (val) => {
+            _zonaHorariaManual = val;
+            localStorage.setItem('lbl_timezone_manual', val);
+            if (typeof renderizarTorneoDetalle === 'function') {
+                renderizarTorneoDetalle(false);
+            }
+        };
+
+        function renderizarBanderitaHTML(iso, flagEmoji, altText = '') {
+            if (!iso) {
+                return `<span class="inline-block text-[11px] leading-none">${flagEmoji || altText}</span>`;
+            }
+            return `<img src="https://flagcdn.com/20x15/${iso}.png" width="16" height="12" class="inline-block rounded-[2px] object-cover shrink-0 align-middle -mt-0.5 shadow-xs" alt="${flagEmoji || altText}" onerror="this.outerHTML='${flagEmoji || altText}';">`;
+        }
+
         // --- HELPER PARA FORMATEAR FECHA Y HORA DE CADA PARTIDA ---
         function formatearFechaHoraMatch(isoString) {
+            const userTz = obtenerInfoZonaHorariaUsuario();
+
             if (!isoString) {
                 return {
                     fechaTexto: 'Fecha por definir',
                     horaTexto: 'Por Definir',
+                    horaBolivia: 'Por Definir',
+                    horaLocal: 'Por Definir',
+                    esBolivia: userTz.esBolivia,
+                    userTz,
                     completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
                 };
             }
@@ -2856,10 +2943,16 @@
                     return {
                         fechaTexto: 'Fecha por definir',
                         horaTexto: 'Por Definir',
+                        horaBolivia: 'Por Definir',
+                        horaLocal: 'Por Definir',
+                        esBolivia: userTz.esBolivia,
+                        userTz,
                         completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
                     };
                 }
-                const formatter = new Intl.DateTimeFormat('es-BO', {
+
+                // 1. Formato oficial Bolivia (BOT)
+                const formatterBO = new Intl.DateTimeFormat('es-BO', {
                     timeZone: 'America/La_Paz',
                     weekday: 'short',
                     day: 'numeric',
@@ -2869,33 +2962,70 @@
                     hour12: false
                 });
 
-                const parts = formatter.formatToParts(d);
-                let diaSem = '';
-                let diaNum = '';
-                let mesStr = '';
-                let hora = '';
-                let min = '';
-
-                parts.forEach(p => {
-                    if (p.type === 'weekday') diaSem = p.value.toUpperCase().replace('.', '');
-                    if (p.type === 'day') diaNum = p.value;
-                    if (p.type === 'month') mesStr = p.value.toUpperCase().replace('.', '');
-                    if (p.type === 'hour') hora = p.value;
-                    if (p.type === 'minute') min = p.value;
+                const partsBO = formatterBO.formatToParts(d);
+                let diaSemBO = '', diaNumBO = '', mesStrBO = '', horaBO = '', minBO = '';
+                partsBO.forEach(p => {
+                    if (p.type === 'weekday') diaSemBO = p.value.toUpperCase().replace('.', '');
+                    if (p.type === 'day') diaNumBO = p.value;
+                    if (p.type === 'month') mesStrBO = p.value.toUpperCase().replace('.', '');
+                    if (p.type === 'hour') horaBO = p.value;
+                    if (p.type === 'minute') minBO = p.value;
                 });
 
-                const horaStr = `${hora}:${min}`;
-                const fechaTexto = `${diaSem} ${diaNum} ${mesStr}`;
+                const horaBolivia = `${horaBO}:${minBO}`;
+                const fechaTextoBO = `${diaSemBO} ${diaNumBO} ${mesStrBO}`;
+
+                // 2. Formato local del usuario (si difiere de Bolivia)
+                let horaLocal = horaBolivia;
+                let fechaTextoLocal = fechaTextoBO;
+
+                if (!userTz.esBolivia) {
+                    try {
+                        const formatterLocal = new Intl.DateTimeFormat('es', {
+                            timeZone: userTz.tz,
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        });
+
+                        const partsLocal = formatterLocal.formatToParts(d);
+                        let diaSemLoc = '', diaNumLoc = '', mesStrLoc = '', horaLoc = '', minLoc = '';
+                        partsLocal.forEach(p => {
+                            if (p.type === 'weekday') diaSemLoc = p.value.toUpperCase().replace('.', '');
+                            if (p.type === 'day') diaNumLoc = p.value;
+                            if (p.type === 'month') mesStrLoc = p.value.toUpperCase().replace('.', '');
+                            if (p.type === 'hour') horaLoc = p.value;
+                            if (p.type === 'minute') minLoc = p.value;
+                        });
+
+                        horaLocal = `${horaLoc}:${minLoc}`;
+                        fechaTextoLocal = `${diaSemLoc} ${diaNumLoc} ${mesStrLoc}`;
+                    } catch (err) {
+                        horaLocal = horaBolivia;
+                        fechaTextoLocal = fechaTextoBO;
+                    }
+                }
 
                 return {
-                    fechaTexto,
-                    horaTexto: horaStr,
-                    completo: `${fechaTexto} • ${horaStr}`
+                    fechaTexto: userTz.esBolivia ? fechaTextoBO : fechaTextoLocal,
+                    horaTexto: userTz.esBolivia ? horaBolivia : horaLocal,
+                    horaBolivia,
+                    horaLocal,
+                    esBolivia: userTz.esBolivia,
+                    userTz,
+                    completo: `${userTz.esBolivia ? fechaTextoBO : fechaTextoLocal} • ${userTz.esBolivia ? horaBolivia : horaLocal}`
                 };
             } catch(e) {
                 return {
                     fechaTexto: 'Fecha por definir',
                     horaTexto: 'Por Definir',
+                    horaBolivia: 'Por Definir',
+                    horaLocal: 'Por Definir',
+                    esBolivia: userTz.esBolivia,
+                    userTz,
                     completo: '📅 Fecha por definir • 🕒 Hora por confirmar'
                 };
             }
@@ -3177,16 +3307,27 @@
                     matchesCardsHTML += `
                         <div class="p-4 sm:p-5 md:p-6 rounded-2xl bg-[#040814] hover:bg-[#081022] transition-all shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 group ${cardAnimClass}" ${animStyle}>
                             <!-- COLUMNA 1: FECHA, HORA Y ESTADO -->
-                            <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-2 shrink-0 lg:w-40">
-                                <div class="flex flex-col">
-                                    <span class="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-1.5">
-                                        <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
-                                    </span>
-                                    <span class="text-[11px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider uppercase">
+                            <div class="flex items-center lg:items-start justify-between lg:justify-center lg:flex-col gap-1.5 sm:gap-2 shrink-0 lg:w-44">
+                                <div class="flex flex-col min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-1.5 whitespace-nowrap">
+                                            <i class="far fa-clock text-cyan-400"></i> ${dt.horaTexto}
+                                        </span>
+                                        ${dt.horaTexto !== 'Por Definir' ? (dt.esBolivia
+                                            ? `<span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-black text-gray-300 bg-gray-900/90 border border-gray-700/60 px-1.5 py-0.5 rounded tracking-wider shadow-xs">BOL ${renderizarBanderitaHTML('bo', '🇧🇴', 'BOL')}</span>`
+                                            : `<span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-black text-cyan-300 bg-cyan-950/60 border border-cyan-500/40 px-1.5 py-0.5 rounded tracking-wider shadow-[0_0_8px_rgba(6,182,212,0.25)]">${dt.userTz.code} ${renderizarBanderitaHTML(dt.userTz.iso, dt.userTz.flag, dt.userTz.code)}</span>`
+                                        ) : ''}
+                                    </div>
+                                    ${(!dt.esBolivia && dt.horaTexto !== 'Por Definir') ? `
+                                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-semibold flex items-center gap-1 mt-0.5 whitespace-nowrap">
+                                        <span>Ref. ${dt.horaBolivia} BOL</span>
+                                        ${renderizarBanderitaHTML('bo', '🇧🇴', 'BOL')}
+                                    </div>` : ''}
+                                    <span class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-wider uppercase ${dt.esBolivia ? 'mt-0.5' : ''}">
                                         ${dt.fechaTexto}
                                     </span>
                                 </div>
-                                <div>
+                                <div class="shrink-0">
                                     ${stateBadge}
                                 </div>
                             </div>
@@ -3246,17 +3387,36 @@
                     </div>`;
             }
 
+            const tzNavegador = detectarZonaHorariaNavegador();
+
             return `
                 <div class="w-full p-6 md:p-8 rounded-3xl bg-[#070c14] space-y-6 shadow-2xl">
                     <!-- CABECERA DEL CRONOGRAMA Y TABS DE ESTADO -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
                         <div>
                             <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tight flex items-center gap-2">
                                 <i class="far fa-calendar-alt text-cyan-400"></i> Cronograma de Partidos & Horarios
                             </h3>
-                            <span class="text-xs text-gray-400 font-medium block mt-0.5">
-                                Fechas, horarios oficiales y resultados del torneo.
-                            </span>
+                            <div class="flex flex-wrap items-center gap-2 mt-1">
+                                <span class="text-xs text-gray-400 font-medium">
+                                    Fechas, horarios oficiales y resultados del torneo.
+                                </span>
+                                <div class="inline-flex items-center gap-1.5 bg-[#030712] border border-gray-800 rounded-lg px-2.5 py-1 text-[11px] font-bold text-gray-300">
+                                    <i class="fas fa-globe text-cyan-400 text-[10px]"></i>
+                                    <span class="text-gray-400 font-normal">Zona:</span>
+                                    <select onchange="cambiarZonaHorariaManual(this.value)" class="bg-transparent text-white font-bold cursor-pointer focus:outline-hidden text-[11px]">
+                                        <option value="AUTO" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'AUTO' ? 'selected' : ''}>Auto (${tzNavegador.code})</option>
+                                        <option value="BOL" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'BOL' ? 'selected' : ''}>BOL 🇧🇴 (Oficial)</option>
+                                        <option value="ARG" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'ARG' ? 'selected' : ''}>ARG 🇦🇷</option>
+                                        <option value="CHI" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'CHI' ? 'selected' : ''}>CHI 🇨🇱</option>
+                                        <option value="PER" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'PER' ? 'selected' : ''}>PER 🇵🇪</option>
+                                        <option value="URU" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'URU' ? 'selected' : ''}>URU 🇺🇾</option>
+                                        <option value="PAR" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'PAR' ? 'selected' : ''}>PAR 🇵🇾</option>
+                                        <option value="COL" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'COL' ? 'selected' : ''}>COL 🇨🇴</option>
+                                        <option value="MEX" class="bg-[#0b1220] text-white" ${_zonaHorariaManual === 'MEX' ? 'selected' : ''}>MEX 🇲🇽</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- SELECTOR DE FILTRO: PRÓXIMOS vs ANTERIORES vs TODOS -->
