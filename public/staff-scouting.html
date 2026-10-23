@@ -13,11 +13,17 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=212">
+    <link rel="stylesheet" href="/dist/output.css?v=217">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
         .glass-panel { background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .staff-card {
+            background: #090e17;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            content-visibility: auto;
+            contain-intrinsic-size: 340px;
+        }
         .badge-pendiente { background-color: #ca8a0420; color: #facc15; border: 1px solid #ca8a04; }
         .badge-aceptado { background-color: #16a34a20; color: #4ade80; border: 1px solid #16a34a; }
         .badge-observado { background-color: #ea580c20; color: #fb923c; border: 1px solid #ea580c; }
@@ -2014,6 +2020,9 @@
                 equiposScouting = MOCK_INICIAL;
             }
 
+            // Pre-indexar equipos para búsqueda ultrarrápida instantánea
+            indexarTodosLosEquipos();
+
             // Cargar jugadores de la Liga LBL Oficial y calcular auditoría de irregularidades
             await cargarJugadoresLigaLBLOficial();
             ejecutarAuditoriaIrregularidades();
@@ -2267,6 +2276,7 @@
         let ultimaSyncTimestamp = 0;
         let ultimaEdicionTimestamp = 0;
         let autoSyncTimer = null;
+        let ultimoHashEquiposCache = '';
         const POLLING_INTERVAL_MS = 30000; // Sondeo cada 30 segundos
 
         function hayAlgunModalAbierto() {
@@ -2348,9 +2358,13 @@
                         return eq;
                     });
                     const hayNuevos = totalPrevio > 0 && nuevosEquipos.length > totalPrevio;
+                    const jsonStr = JSON.stringify(nuevosEquipos);
+                    const datosCambiaron = (jsonStr !== ultimoHashEquiposCache);
+                    ultimoHashEquiposCache = jsonStr;
 
                     equiposScouting = nuevosEquipos;
-                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
+                    indexarTodosLosEquipos();
+                    localStorage.setItem(STORAGE_KEY_CACHE, jsonStr);
                     publicarSincronizacionPublicaScouting3();
                     ultimaSyncTimestamp = Date.now();
                     
@@ -2359,6 +2373,12 @@
                         labelSync.textContent = `Hoy a las ${ahora} (${equiposScouting.length} equipos)`;
                         labelSync.classList.remove('text-rose-400');
                         labelSync.classList.add('text-emerald-400');
+                    }
+
+                    if (datosCambiaron || !silencioso) {
+                        ejecutarAuditoriaIrregularidades();
+                        actualizarMetricas();
+                        renderizarTarjetasEquipos();
                     }
 
                     // Si el usuario pidió sincronizar manualmente con un modal abierto (y no está editando), refrescar manteniendo su pestaña
@@ -2395,9 +2415,6 @@
             } finally {
                 isSyncing = false;
                 if (icon) icon.classList.remove('fa-spin');
-                ejecutarAuditoriaIrregularidades();
-                actualizarMetricas();
-                renderizarTarjetasEquipos();
             }
         };
 
@@ -2572,11 +2589,71 @@
             return p;
         }
 
-        // 4. Renderizado de Tarjetas
+        // 3.8 MOTOR DE INDEXACIÓN DE BÚSQUEDA ULTRARRÁPIDA (SUB-MILISEGUNDO)
+        function indexarEquipoParaBusqueda(eq) {
+            if (!eq) return;
+            const tokens = [
+                eq.nombre || '',
+                eq.tag || '',
+                eq.procedencia || '',
+                eq.email || '',
+                eq.estado || '',
+                eq.notasStaff || '',
+                String(eq.rowId || ''),
+                eq.capitan?.nombreCi || '',
+                eq.capitan?.ci || '',
+                eq.capitan?.telefono || '',
+                eq.capitan?.discord || '',
+                eq.subcapitan?.nombreCi || '',
+                eq.subcapitan?.ci || '',
+                eq.subcapitan?.telefono || '',
+                eq.subcapitan?.discord || ''
+            ];
+
+            const procesarP = (p) => {
+                if (!p) return;
+                tokens.push(
+                    p.nombreCi || '',
+                    p.ci || '',
+                    p.riotIdLas || '',
+                    p.riotIdMain || '',
+                    p.discord || '',
+                    p.telefono || '',
+                    p.ciudad || '',
+                    p.posicion || '',
+                    p.rangoSoloQ || '',
+                    p.rolSecundario || ''
+                );
+                if (p.ciudad && typeof analizarYNormalizarResidencia === 'function') {
+                    try {
+                        const geo = analizarYNormalizarResidencia(p.ciudad);
+                        if (geo.limpio) tokens.push(geo.limpio);
+                        if (geo.pais) tokens.push(geo.pais);
+                        if (geo.departamento) tokens.push(geo.departamento);
+                        if (geo.ciudadDetalle) tokens.push(geo.ciudadDetalle);
+                    } catch (e) {}
+                }
+            };
+
+            (eq.titulares || []).forEach(procesarP);
+            (eq.suplentes || []).forEach(procesarP);
+
+            eq._searchIndex = tokens.join(' ').toLowerCase();
+        }
+
+        function indexarTodosLosEquipos() {
+            if (!Array.isArray(equiposScouting)) return;
+            for (let i = 0; i < equiposScouting.length; i++) {
+                indexarEquipoParaBusqueda(equiposScouting[i]);
+            }
+        }
+
+        // 4. Renderizado de Tarjetas (Virtualizado por CSS con .staff-card y carga diferida)
         function renderizarTarjetasEquipos() {
             const contenedor = document.getElementById('contenedor-equipos');
             const estadoVacio = document.getElementById('estado-vacio');
-            const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            const rawQuery = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            const queryTokens = rawQuery ? rawQuery.split(/\s+/).filter(Boolean) : [];
 
             const filtrados = equiposScouting.filter(eq => {
                 // Filtro por Estado
@@ -2584,34 +2661,18 @@
                     return false;
                 }
 
-                // Filtro por Búsqueda
-                if (!query) return true;
+                // Filtro por Búsqueda rápida indexada (sub-milisegundo)
+                if (queryTokens.length === 0) return true;
 
-                const matchText = (val) => val && val.toString().toLowerCase().includes(query);
-
-                if (matchText(eq.nombre)) return true;
-                if (matchText(eq.tag)) return true;
-                if (matchText(eq.procedencia)) return true;
-                if (matchText(eq.capitan?.nombreCi)) return true;
-                if (matchText(eq.capitan?.telefono)) return true;
-                if (matchText(eq.capitan?.discord)) return true;
-
-                // Titulares
-                if (Array.isArray(eq.titulares)) {
-                    for (const t of eq.titulares) {
-                        const infoGeo = analizarYNormalizarResidencia(t.ciudad);
-                        if (matchText(t.nombreCi) || matchText(t.riotIdLas) || matchText(t.riotIdMain) || matchText(t.discord) || matchText(t.ciudad) || matchText(infoGeo.limpio) || matchText(infoGeo.pais)) return true;
-                    }
-                }
-                // Suplentes
-                if (Array.isArray(eq.suplentes)) {
-                    for (const s of eq.suplentes) {
-                        const infoGeo = analizarYNormalizarResidencia(s.ciudad);
-                        if (matchText(s.nombreCi) || matchText(s.riotIdLas) || matchText(s.riotIdMain) || matchText(s.discord) || matchText(s.ciudad) || matchText(infoGeo.limpio) || matchText(infoGeo.pais)) return true;
-                    }
+                if (!eq._searchIndex) {
+                    indexarEquipoParaBusqueda(eq);
                 }
 
-                return false;
+                const sIndex = eq._searchIndex || '';
+                for (let i = 0; i < queryTokens.length; i++) {
+                    if (!sIndex.includes(queryTokens[i])) return false;
+                }
+                return true;
             });
 
             if (filtrados.length === 0) {
@@ -2636,7 +2697,7 @@
                 const estado = eq.estado || 'Pendiente';
                 const badgeCls = `badge-${estado.toLowerCase()}`;
                 const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-                const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo) || fallbackLogo;
+                const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo, 's128') || fallbackLogo;
                 const procCorta = normalizarProcedenciaCorta(eq.procedencia);
 
                 const tieneCuentasExt = (eq.titulares || []).some(t => esCuentaExtDistinta(t.riotIdMain, t.riotIdLas)) ||
@@ -2687,12 +2748,12 @@
                     </a>` : '';
 
                 return `
-                    <div onclick="abrirModalDetalle(${eq.rowId})" class="glass-panel p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group cursor-pointer hover:-translate-y-0.5">
+                    <div onclick="abrirModalDetalle(${eq.rowId})" class="staff-card p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group cursor-pointer hover:-translate-y-0.5">
                         <div>
                             <!-- Header de Tarjeta -->
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <img src="${logoSrc}" onerror="this.src='${fallbackLogo}'" class="w-11 h-11 rounded-xl bg-black/60 object-contain border border-gray-800 shrink-0 p-1 group-hover:border-emerald-500/30 transition-colors">
+                                    <img src="${logoSrc}" loading="lazy" decoding="async" width="44" height="44" onerror="this.src='${fallbackLogo}'" class="w-11 h-11 rounded-xl bg-black/60 object-contain border border-gray-800 shrink-0 p-1 group-hover:border-emerald-500/30 transition-colors">
                                     <div class="min-w-0">
                                         <h4 class="font-black text-white text-sm sm:text-base truncate uppercase group-hover:text-emerald-400 transition-colors tracking-wide">${eq.nombre}</h4>
                                         <p class="text-[10px] sm:text-[11px] text-gray-400 flex items-center gap-1.5 font-mono mt-0.5" title="${eq.procedencia || 'Sin procedencia'}">
@@ -2788,20 +2849,27 @@
             renderizarTarjetasEquipos();
         };
 
+        let debounceFiltrosTimer = null;
         window.aplicarFiltros = function() {
             const input = document.getElementById('searchInput');
             const btnClear = document.getElementById('btnClearSearch');
             if (input && btnClear) {
                 btnClear.classList.toggle('hidden', !input.value);
             }
-            renderizarTarjetasEquipos();
+            if (debounceFiltrosTimer) clearTimeout(debounceFiltrosTimer);
+            debounceFiltrosTimer = setTimeout(() => {
+                renderizarTarjetasEquipos();
+            }, 120);
         };
 
         window.limpiarBusqueda = function() {
             const input = document.getElementById('searchInput');
             if (input) {
                 input.value = "";
-                aplicarFiltros();
+                if (debounceFiltrosTimer) clearTimeout(debounceFiltrosTimer);
+                const btnClear = document.getElementById('btnClearSearch');
+                if (btnClear) btnClear.classList.add('hidden');
+                renderizarTarjetasEquipos();
             }
         };
 
@@ -3886,6 +3954,7 @@
 
             // Aplicar localmente de inmediato
             Object.assign(equipoSeleccionado, equipoModificadoLocal);
+            indexarEquipoParaBusqueda(equipoSeleccionado);
             localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
                     publicarSincronizacionPublicaScouting3();
             ejecutarAuditoriaIrregularidades();
@@ -4084,6 +4153,7 @@
             const apiUrl = getApiUrl();
             if (!apiUrl) {
                 nuevoEquipoObj.rowId = (equiposScouting.length > 0 ? Math.max(...equiposScouting.map(x => x.rowId || 0)) : 1) + 1;
+                indexarEquipoParaBusqueda(nuevoEquipoObj);
                 equiposScouting.unshift(nuevoEquipoObj);
                 localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
                     publicarSincronizacionPublicaScouting3();
@@ -4112,6 +4182,7 @@
                 const json = await res.json();
                 if (json.success) {
                     nuevoEquipoObj.rowId = json.rowId;
+                    indexarEquipoParaBusqueda(nuevoEquipoObj);
                     equiposScouting.unshift(nuevoEquipoObj);
                     localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
                     publicarSincronizacionPublicaScouting3();
@@ -5448,7 +5519,10 @@ Por favor responder a este mensaje con los datos corregidos. ¡Muchas gracias!`;
 
         window.ejecutarAuditoriaIrregularidades = function() {
             auditarTodasLasIrregularidades();
-            renderizarListaIrregularidades(filtroIrregActivo);
+            const modalIrreg = document.getElementById('modal-irregularidades');
+            if (modalIrreg && !modalIrreg.classList.contains('hidden')) {
+                renderizarListaIrregularidades(filtroIrregActivo);
+            }
         };
 
         function esJugadorEnConflicto(rowId, j) {
