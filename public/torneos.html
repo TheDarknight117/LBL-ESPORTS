@@ -452,7 +452,7 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=216";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=218";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
         import "/app-version.js?v=216";
 
@@ -4635,6 +4635,7 @@
 
         const CHALLONGE_PUBLIC_SLUG_MAP = {
             '18498275': 'TS3LBL',
+            '18664608': 'CLxTS3LBL',
             '18388155': 'WCUP2026LBL',
             '18378786': 'T1CLBL2026',
             '18383807': 'T2CLBL2026',

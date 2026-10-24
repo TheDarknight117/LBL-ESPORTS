@@ -13,8 +13,8 @@
 
 // POOL MULTI-KEY OFICIAL LBL (1,000 requests/mes combinados)
 export const CHALLONGE_API_KEYS = [
-    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b', // Llave 1: LBL Activa (Con cuota disponible)
-    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8'  // Llave 2: LBL Backup
+    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 1: LBL Activa (200 OK, cuota disponible)
+    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 2: LBL Backup (Límite 429 alcanzado)
 ];
 
 export const DEFAULT_CHALLONGE_API_KEY = CHALLONGE_API_KEYS[0];
@@ -736,6 +736,9 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                 if (res.status === 404 || res.status === 422) {
                     return null; // Recurso no existe en Challonge: cortar inmediato sin quemar proxies ni llaves
                 }
+                if (res.status === 429 || res.status === 401) {
+                    break;
+                }
                 if (!res.ok) {
                     // Ej. 429 Too Many Requests o 502/503 del proxy -> saltar al siguiente proxy de inmediato (~100ms)
                     continue;
@@ -747,6 +750,9 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                     if (wrapper && wrapper.status && (wrapper.status.http_code === 404 || wrapper.status.http_code === 422)) {
                         return null;
                     }
+                    if (wrapper && wrapper.status && (wrapper.status.http_code === 429 || wrapper.status.http_code === 401)) {
+                        break;
+                    }
                     if (wrapper && wrapper.contents) {
                         parsed = JSON.parse(wrapper.contents);
                     }
@@ -755,6 +761,10 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                 }
 
                 if (parsed && parsed.errors) {
+                    const errStr = JSON.stringify(parsed.errors).toLowerCase();
+                    if (errStr.includes('limit') || errStr.includes('unauthorized') || errStr.includes('invalid api key')) {
+                        break;
+                    }
                     return null;
                 }
 
@@ -817,6 +827,7 @@ async function resolverTorneoANumericId(inputSlug, apiKey) {
 
 export const KNOWN_CHALLONGE_IDS = {
     'ts3lbl':         '18498275',
+    'clxts3lbl':      '18664608',
     'wcup2026lbl':    '18388155',
     't1clbl2026':     '18378786',
     't2clbl2026':     '18383807',
