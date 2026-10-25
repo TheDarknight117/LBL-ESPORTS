@@ -541,6 +541,9 @@
             timerSeconds: 52 * 60 + 26,
             timerRunning: true,
             flyerUrl: "",
+            mediaType: "video",
+            mediaUrl: "/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4",
+            footerMode: "spotlight",
             secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
             matches: [],
             spotlight: {
@@ -1156,11 +1159,58 @@
             updateTimerDisplay();
         }
 
+        function updateMediaPreview() {
+            const vidEl = document.getElementById('ctrl-preview-video');
+            const imgEl = document.getElementById('ctrl-preview-image');
+            const fallbackEl = document.getElementById('ctrl-preview-fallback');
+            const mediaUrl = (document.getElementById('input-media-url')?.value || '').trim();
+            const mediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'video';
+
+            const isVideo = mediaType === 'video' || (mediaType !== 'image' && (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm')));
+
+            if (mediaType === 'default' || !mediaUrl) {
+                if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }
+                if (imgEl) imgEl.classList.add('hidden');
+                if (fallbackEl) fallbackEl.classList.remove('hidden');
+            } else if (isVideo) {
+                if (imgEl) imgEl.classList.add('hidden');
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+                if (vidEl) {
+                    vidEl.classList.remove('hidden');
+                    if (vidEl.src !== mediaUrl) {
+                        vidEl.src = mediaUrl;
+                        vidEl.load();
+                    }
+                    vidEl.play().catch(() => {});
+                }
+            } else {
+                if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+                if (imgEl) {
+                    imgEl.src = mediaUrl;
+                    imgEl.classList.remove('hidden');
+                }
+            }
+        }
+
         function applyChannelData(data) {
             if (!data) return;
             if (data.stageTitle) document.getElementById('input-stage-title').value = data.stageTitle;
             if (data.subTitle) document.getElementById('input-stage-subtitle').value = data.subTitle;
-            if (typeof data.flyerUrl !== 'undefined') document.getElementById('input-flyer-url').value = data.flyerUrl;
+            
+            const incomingMediaUrl = data.mediaUrl || data.flyerUrl || '';
+            const incomingMediaType = data.mediaType || (incomingMediaUrl.endsWith('.mp4') || incomingMediaUrl.endsWith('.webm') ? 'video' : (incomingMediaUrl ? 'image' : 'default'));
+            
+            if (document.getElementById('input-media-url')) document.getElementById('input-media-url').value = incomingMediaUrl;
+            if (document.getElementById('input-flyer-url')) document.getElementById('input-flyer-url').value = incomingMediaUrl;
+            
+            const radioEl = document.querySelector(`input[name="media-type"][value="${incomingMediaType}"]`);
+            if (radioEl) radioEl.checked = true;
+
+            if (data.footerMode && document.getElementById('select-footer-mode')) {
+                document.getElementById('select-footer-mode').value = data.footerMode;
+            }
+
             if (data.secondarySponsorUrl) document.getElementById('select-secondary-sponsor').value = data.secondarySponsorUrl;
             if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
             if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
@@ -1174,6 +1224,7 @@
                     });
                 }
             }
+            updateMediaPreview();
         }
 
         function populateSpotlightDropdown() {
@@ -1335,7 +1386,15 @@
 
             state.stageTitle = document.getElementById('input-stage-title').value;
             state.subTitle = document.getElementById('input-stage-subtitle').value;
-            state.flyerUrl = document.getElementById('input-flyer-url').value.trim();
+
+            const selectedMediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'video';
+            const mediaUrlVal = (document.getElementById('input-media-url')?.value || '').trim();
+            const footerModeVal = document.getElementById('select-footer-mode')?.value || 'spotlight';
+
+            state.mediaType = selectedMediaType;
+            state.mediaUrl = mediaUrlVal;
+            state.flyerUrl = mediaUrlVal;
+            state.footerMode = footerModeVal;
             state.secondarySponsorUrl = document.getElementById('select-secondary-sponsor').value;
 
             const spotName = document.getElementById('select-spotlight-team').value;
@@ -1362,7 +1421,10 @@
                 timerSeconds: state.timerSeconds,
                 timerRunning: state.timerRunning,
                 matches: state.matches,
+                mediaType: state.mediaType,
+                mediaUrl: state.mediaUrl,
                 flyerUrl: state.flyerUrl,
+                footerMode: state.footerMode,
                 secondarySponsorUrl: state.secondarySponsorUrl,
                 spotlight: state.spotlight,
                 updatedAt: new Date().toISOString()
