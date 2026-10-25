@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#070709] text-zinc-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copa Legion x Scouting 3 | Panel de Control de Transmisión</title>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Outfit:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind Compilado de LBL -->
+    <link rel="stylesheet" href="/dist/output.css?v=222">
+
+    <style>
+        @font-face {
+            font-family: 'Compacta BT';
+            src: url('/assets/fonts/Compacta%20BT%20Roman.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        .font-worlds { font-family: 'Barlow Condensed', sans-serif; }
+        .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+        .font-compacta { font-family: 'Compacta BT', sans-serif; }
+        
+        .panel-clean-surface {
+            background: #0d0d10;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 2px solid #dc2626;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070709; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+
+        .team-shield-avatar-sm {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: #0e121a;
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #22d3ee;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body class="min-h-full font-sans antialiased pb-28">
+
+    <!-- BARRA SUPERIOR DE NAVEGACIÓN Y DISTRIBUCIÓN DE CANALES -->
+    <header class="sticky top-0 z-40 bg-[#0a0a0d]/95 border-b border-red-900/30 backdrop-blur-md px-6 py-4 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo Copa Legion x Scouting 3 + Título -->
+            <div class="flex items-center gap-4">
+                <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" class="h-12 object-contain shrink-0">
+                <div>
+                    <h1 class="font-worlds font-black text-2xl tracking-wider text-white uppercase flex items-center gap-2.5">
+                        COPA LEGION x SCOUTING 3 <span class="px-2 py-0.5 text-xs font-bold font-rajdhani tracking-widest bg-red-600 text-white rounded">GESTOR DE TRANSMISIÓN</span>
+                    </h1>
+                    <p class="text-xs text-zinc-400 font-medium">Torneo en curso sincronizado desde el Gestor de Torneos (<span class="text-red-400 font-bold">SLUG: TS3LBL</span>)</p>
+                </div>
+            </div>
+
+            <!-- Selector de Canal Activo (Darkcito vs LBL Esports) -->
+            <div class="flex items-center gap-3">
+                
+                <div class="flex items-center bg-black rounded-lg border border-zinc-800 p-1">
+                    <button id="tab-channel-darkcito" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all">
+                        <i class="fa-brands fa-twitch mr-1"></i> Darkcito
+                    </button>
+                    <button id="tab-channel-lbl" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-tower-broadcast mr-1"></i> LBL Oficial
+                    </button>
+                </div>
+
+                <!-- Botón Copiar URL OBS -->
+                <button id="btn-copy-obs-url" class="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-link text-red-400"></i> Copiar URL OBS
+                </button>
+
+                <!-- Botón Abrir Overlay -->
+                <a id="link-preview-obs" href="/overlay-schedule.html?channel=darkcito" target="_blank" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Overlay
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+
+        <!-- ====================================================================
+             1. CRONOGRAMA DETECTADO DE SCOUTING 3 (TS3LBL - 127 PARTIDAS)
+             ==================================================================== -->
+        <section class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-zinc-800 mb-6">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
+                        <h2 class="font-worlds font-black text-2xl tracking-wider text-white uppercase">
+                            Cronograma de Partidas Oficiales (Copa Legion x Scouting 3 • TS3LBL)
+                        </h2>
+                        <span id="detected-matches-count" class="px-2.5 py-0.5 text-xs font-bold bg-zinc-900 border border-zinc-700 text-red-400 rounded font-rajdhani">
+                            Detectando partidas...
+                        </span>
+                    </div>
+                    <p class="text-xs text-zinc-400 font-medium mt-0.5">
+                        Detectado desde el Gestor de Torneos (<a href="https://lbl-esports.web.app/torneos/TS3LBL/cronograma" target="_blank" class="text-red-400 font-bold hover:underline">/torneos/TS3LBL/cronograma</a>). Marca las partidas para <b id="active-channel-name" class="text-white">@DARKCITO</b> y haz clic en "Cargar al Overlay".
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center bg-black p-1 rounded-lg border border-zinc-800 text-xs font-bold">
+                        <button id="filter-hoy" class="px-3 py-1 rounded bg-red-600 text-white font-bold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hoy
+                        </button>
+                        <button id="filter-proximos" class="px-3 py-1 rounded text-zinc-400 hover:text-white">Próximos</button>
+                        <button id="filter-live" class="px-3 py-1 rounded text-zinc-400 hover:text-white">En Vivo</button>
+                        <button id="filter-todos" class="px-3 py-1 rounded text-zinc-400 hover:text-white">Todos</button>
+                    </div>
+
+                    <button id="btn-sync-cronograma" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate text-red-400"></i> Revalidar
+                    </button>
+
+                    <button id="btn-load-selected-to-overlay" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-double"></i> Cargar Seleccionadas a mi OBS
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Partidas del Cronograma Oficial -->
+            <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="sticky top-0 bg-[#0d0d10] z-10 border-b border-zinc-800 text-zinc-400 uppercase font-worlds text-sm tracking-wider">
+                        <tr>
+                            <th class="py-2.5 px-3 w-12 text-center">Usar</th>
+                            <th class="py-2.5 px-3 w-36">Horario Oficial</th>
+                            <th class="py-2.5 px-3">Equipo 1</th>
+                            <th class="py-2.5 px-3 text-center w-14">VS</th>
+                            <th class="py-2.5 px-3">Equipo 2</th>
+                            <th class="py-2.5 px-3 w-40 text-center">Fase / Ronda</th>
+                            <th class="py-2.5 px-3 w-28 text-center">Estado</th>
+                            <th class="py-2.5 px-3 w-36 text-center">Canal Destino</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cronograma-table-body" class="divide-y divide-zinc-800/60 font-medium">
+                        <!-- Inyectado dinámicamente con las partidas de /torneos/TS3LBL/cronograma -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ====================================================================
+             2. EDITOR DE LOS 4 ENFRENTAMIENTOS ACTIVOS EN OBS
+             ==================================================================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- COLUMNA IZQUIERDA: CRONÓMETRO + TÍTULOS + SPONSORS (4 cols) -->
+            <div class="lg:col-span-4 space-y-6">
+
+                <!-- 1. CRONÓMETRO -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-zinc-800 mb-4">
+                        <div class="flex items-center gap-2 text-red-500 font-worlds text-lg font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-clock"></i> Temporizador
+                        </div>
+                        <span id="timer-state-pill" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white">
+                            CORRIENDO
+                        </span>
+                    </div>
+
+                    <div class="text-center py-3 bg-black rounded-xl border border-zinc-800 mb-4">
+                        <div id="control-timer-display" class="font-compacta text-7xl text-white tracking-wider">
+                            52:26
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 mb-4">
+                        <button id="btn-timer-toggle" class="py-2.5 px-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg">
+                            <i class="fa-solid fa-pause"></i> <span id="btn-timer-toggle-text">Pausar Reloj</span>
+                        </button>
+                        <button id="btn-timer-reset" class="py-2.5 px-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-rotate-left"></i> Reset 10m
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 mb-4">
+                        <button data-add-sec="300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">+5m</button>
+                        <button data-add-sec="60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">+1m</button>
+                        <button data-add-sec="-60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">-1m</button>
+                        <button data-add-sec="-300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">-5m</button>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-3 border-t border-zinc-800">
+                        <input id="input-manual-minutes" type="number" min="0" max="59" value="50" placeholder="Min (máx 59)" class="w-1/2 bg-black text-center font-bold text-white text-sm px-3 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-red-500">
+                        <input id="input-manual-seconds" type="number" min="0" max="59" value="00" placeholder="Seg" class="w-1/2 bg-black text-center font-bold text-white text-sm px-3 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-red-500">
+                        <button id="btn-set-manual-time" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shrink-0 transition-colors">
+                            Fijar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. TÍTULOS DE FASE -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider mb-4 pb-3 border-b border-zinc-800">
+                        <i class="fa-solid fa-trophy text-red-500"></i> Encabezado de Etapa
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Título Principal:
+                            </label>
+                            <input id="input-stage-title" type="text" value="SWISS STAGE" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                            <div class="flex gap-1.5 mt-2 flex-wrap">
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">SWISS STAGE</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">FASE DE GRUPOS</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">PLAYOFFS</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">GRAN FINAL</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Subtítulo / Ribbon Rojo:
+                            </label>
+                            <input id="input-stage-subtitle" type="text" value="ROUND 1 - BEST OF 1S" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                            <div class="flex gap-1.5 mt-2 flex-wrap">
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 1 - BEST OF 1S</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 2 - BEST OF 1S</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ELIMINACIÓN DIRECTA</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">BEST OF 3 (BO3)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. MULTIMEDIA DE SPONSORS & TRANSMISIÓN (ESTILO WORLDS 2026: VIDEO MP4 O FLYER) -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800 flex-wrap gap-2">
+                        <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-film text-red-500"></i> Multimedia Sponsors (Estilo Worlds)
+                        </div>
+                        <span class="px-2.5 py-0.5 text-[10px] font-bold bg-red-950 text-red-400 rounded border border-red-500/40 uppercase">
+                            Video MP4 / Flyer 16:9
+                        </span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Selector de Formato Multimedia -->
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                                Formato de Pantalla Derecha:
+                            </label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
+                                    <input type="radio" name="media-type" value="video" class="accent-red-600" checked>
+                                    <i class="fa-solid fa-video text-red-500"></i> Video MP4
+                                </label>
+                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
+                                    <input type="radio" name="media-type" value="image" class="accent-red-600">
+                                    <i class="fa-solid fa-image text-cyan-400"></i> Flyer Imagen
+                                </label>
+                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
+                                    <input type="radio" name="media-type" value="default" class="accent-red-600">
+                                    <i class="fa-solid fa-rotate text-emerald-400"></i> Galería Código
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- URL / Ruta de Archivo Multimedia -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                                    Ruta o URL del Video / Flyer:
+                                </label>
+                                <span class="text-[10px] text-zinc-400">Local o Web (MP4, PNG, JPG)</span>
+                            </div>
+                            <input id="input-media-url" type="text" value="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" placeholder="Ej: /assets/video.mp4 o https://.../flyer.png" class="w-full bg-black text-white text-xs px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500 font-mono">
+                            <input id="input-flyer-url" type="hidden" value="">
+                            
+                            <!-- Botones Rápidos de Presets -->
+                            <div class="flex gap-1.5 mt-2 flex-wrap">
+                                <button type="button" id="btn-preset-media-video" class="text-[11px] font-semibold px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-red-400 border border-zinc-800 flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-trophy"></i> Video Copa Legion (MP4 Oficial)
+                                </button>
+                                <button type="button" id="btn-preset-media-default" class="text-[11px] font-semibold px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-rotate"></i> Galería Predeterminada
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mini Vista Previa Multimedia -->
+                        <div class="p-2.5 rounded-xl bg-black/60 border border-zinc-800 flex flex-col items-center justify-center">
+                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa Multimedia en Vivo</span>
+                            <div class="w-full h-32 bg-black rounded-lg overflow-hidden flex items-center justify-center relative border border-zinc-800/80">
+                                <video id="ctrl-preview-video" src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" autoplay loop muted playsinline class="w-full h-full object-contain"></video>
+                                <img id="ctrl-preview-image" src="" alt="Preview" class="w-full h-full object-contain hidden">
+                                <div id="ctrl-preview-fallback" class="text-xs text-zinc-500 flex items-center gap-2 hidden">
+                                    <i class="fa-solid fa-images"></i> Galería de Sponsors por Código activa
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ficha de Dimensiones y Especificaciones Técnicas Recomendadas -->
+                        <div class="p-3 bg-red-950/20 border border-red-900/30 rounded-xl space-y-1 text-xs">
+                            <div class="font-bold text-red-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                                <i class="fa-solid fa-circle-info"></i> Guía Técnica de Formatos y Dimensiones
+                            </div>
+                            <div class="text-zinc-300 grid grid-cols-2 gap-2 text-[11px] pt-1">
+                                <div><b>Resolución Ideal:</b> 940 × 530 px (16:9)</div>
+                                <div><b>Resolución Full HD:</b> 1920 × 1080 px</div>
+                                <div><b>Formatos Video:</b> MP4 (H.264), WebM</div>
+                                <div><b>Formatos Imagen:</b> PNG, JPG, WebP</div>
+                            </div>
+                            <p class="text-[10px] text-zinc-400 mt-1">Los videos se reproducen en bucle infinito automático, optimizados para aceleración por hardware en OBS CEF.</p>
+                        </div>
+
+                        <!-- Configuración de Barra Inferior (Worlds vs Spotlight) -->
+                        <div class="pt-2 border-t border-zinc-800">
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Modo de Barra Inferior:
+                            </label>
+                            <select id="select-footer-mode" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                                <option value="spotlight">Alineación de Jugadores 5v5 (Spotlight Roster)</option>
+                                <option value="sponsors">Barra Minimalista de Sponsors Oficiales (Estilo Worlds 26)</option>
+                            </select>
+                        </div>
+
+                        <!-- Sponsor Secundario Inferior -->
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Sponsor Destacado Inferior:
+                            </label>
+                            <select id="select-secondary-sponsor" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                                <option value="/assets/Logos Sponsor/LOGO_VOLT_NEW.png">VOLT Energy Drink (Logo Nuevo)</option>
+                                <option value="/assets/Logos Sponsor/iconiclogo.png">ICONIC (Nuevo Sponsor Oficial)</option>
+                                <option value="/assets/Logos Sponsor/logoLegion.png">Legion Gamer Store</option>
+                                <option value="/assets/Logos Sponsor/AQMlogo.png">AQM Bolivia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: LOS 4 MATCHES ACTIVOS EN PANTALLA + ROSTER SPOTLIGHT (8 cols) -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- 4 MATCHES ACTIVOS -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6 flex-wrap gap-3">
+                        <div>
+                            <h2 class="font-worlds font-black text-2xl tracking-wider text-white uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-tv text-red-500"></i> Partidas en Pantalla para este Canal
+                            </h2>
+                            <p class="text-xs text-zinc-400 font-medium">Configura los juegos activos en tu overlay (si superan 4 partidas, rotan automáticamente por páginas de 4 cada 10s).</p>
+                        </div>
+                        <button id="btn-add-manual-match" class="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-200 rounded-lg flex items-center gap-1.5 border border-zinc-700 transition-colors">
+                            <i class="fa-solid fa-plus text-red-400"></i> Agregar Partida
+                        </button>
+                    </div>
+
+                    <div id="matches-editor-list" class="space-y-4">
+                        <!-- Inyectadas limpiamente por JS -->
+                    </div>
+                </div>
+
+                <!-- SPOTLIGHT DE ROSTER CON AUTO-DETECCIÓN DE NICKS DE SCOUTING 3 -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800 flex-wrap gap-2">
+                        <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-users text-red-500"></i> Roster del Game que va a Comenzar
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-detect-upcoming-roster" class="px-2.5 py-1 text-xs font-bold bg-red-600 hover:bg-red-500 text-white rounded transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-crosshairs"></i> Detectar Próximo
+                            </button>
+                            <button id="btn-toggle-team1" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700">
+                                Equipo 1
+                            </button>
+                            <button id="btn-toggle-team2" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700">
+                                Equipo 2
+                            </button>
+                            <span id="roster-detect-badge" class="px-2.5 py-0.5 text-[10px] font-bold bg-zinc-900 text-zinc-400 rounded border border-zinc-700">
+                                DETECCIÓN AUTOMÁTICA
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-5">
+                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Seleccionar Equipo de Scouting 3:
+                            </label>
+                            <select id="select-spotlight-team" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                                <!-- Inyectado por JS -->
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-7">
+                            <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                                Nicks Titulares:
+                            </label>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <div>
+                                    <span class="block text-[10px] font-bold text-red-500 text-center">TOP</span>
+                                    <input id="spot-p-0" type="text" value="Top" class="w-full bg-black text-center text-xs font-bold py-1.5 rounded border border-zinc-700 focus:outline-none focus:border-red-500">
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-red-500 text-center">JGL</span>
+                                    <input id="spot-p-1" type="text" value="Jgl" class="w-full bg-black text-center text-xs font-bold py-1.5 rounded border border-zinc-700 focus:outline-none focus:border-red-500">
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-red-500 text-center">MID</span>
+                                    <input id="spot-p-2" type="text" value="Mid" class="w-full bg-black text-center text-xs font-bold py-1.5 rounded border border-zinc-700 focus:outline-none focus:border-red-500">
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-red-500 text-center">BOT</span>
+                                    <input id="spot-p-3" type="text" value="Bot" class="w-full bg-black text-center text-xs font-bold py-1.5 rounded border border-zinc-700 focus:outline-none focus:border-red-500">
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-red-500 text-center">SUP</span>
+                                    <input id="spot-p-4" type="text" value="Sup" class="w-full bg-black text-center text-xs font-bold py-1.5 rounded border border-zinc-700 focus:outline-none focus:border-red-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- BARRA INFERIOR FLOTANTE DE GUARDADO Y SINCRONIZACIÓN -->
+    <footer class="fixed bottom-0 inset-x-0 bg-[#070709]/95 border-t border-red-600/40 p-4 backdrop-blur-md z-50 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3 text-xs text-zinc-300">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                <span>Los cambios se sincronizan en vivo con OBS en <b>&lt;100 ms</b> (Cero llamadas a Challonge API).</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <span id="save-status-text" class="text-xs font-bold text-zinc-400 transition-opacity"></span>
+                
+                <button id="btn-save-all" class="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-worlds font-black text-xl tracking-wider uppercase rounded-xl shadow-lg transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Aplicar a la Transmisión
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ====================================================================
+         LÓGICA JAVASCRIPT: DETECCIÓN DEL GESTOR DE TORNEOS (TS3LBL) + LOGOS DE SCOUTING
+         ==================================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { OFFICIAL_LBL_TEAM_LOGOS } from "/challonge-core.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
+            authDomain: "lbl-esports.firebaseapp.com",
+            projectId: "lbl-esports",
+            storageBucket: "lbl-esports.firebasestorage.app",
+            messagingSenderId: "124596723477",
+            appId: "1:124596723477:web:d913f1060f303ef3a2531c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+        const syncChannel = new BroadcastChannel('lbl_overlay_sync');
+
+        let currentChannel = 'darkcito';
+        let currentFilter = 'hoy';
+
+        // Directorio de equipos de Scouting 3 (con logos subidos y rosters)
+        let scouting3TeamsMap = {}; 
+
+        // Partidas detectadas desde el torneo en curso
+        let liveCronogramaMatches = [];
+
+        // 4 partidas reales inmediatas de TS3LBL (Copa Legion x Scouting 3)
+        const INITIAL_TS3LBL_MATCHES = [
+            {
+                id: "ts3-m1",
+                timeDisplay: "19:00 BOL (HOY)",
+                rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
+                state: "upcoming",
+                channel: "darkcito",
+                p1: { name: "IRON HELLS ACADEMY", tag: "IHA", logo: "" },
+                p2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", logo: "" }
+            },
+            {
+                id: "ts3-m2",
+                timeDisplay: "21:00 BOL (HOY)",
+                rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
+                state: "upcoming",
+                channel: "darkcito",
+                p1: { name: "BOLITAS", tag: "BLT", logo: "" },
+                p2: { name: "SWORD ART ONLINE", tag: "SAO", logo: "" }
+            },
+            {
+                id: "ts3-m3",
+                timeDisplay: "21:00 BOL (HOY)",
+                rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
+                state: "upcoming",
+                channel: "darkcito",
+                p1: { name: "ARMEROS GAMING", tag: "ARG", logo: "" },
+                p2: { name: "POSTRECITOS GAMING", tag: "PTG", logo: "" }
+            },
+            {
+                id: "ts3-m4",
+                timeDisplay: "21:00 BOL (HOY)",
+                rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
+                state: "upcoming",
+                channel: "darkcito",
+                p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", logo: "" },
+                p2: { name: "PHOENIX RISING GAMING", tag: "PRG", logo: "" }
+            }
+        ];
+
+        let state = {
+            stageTitle: "SWISS STAGE",
+            subTitle: "ROUND 1 - BEST OF 1S",
+            headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
+            timerSeconds: 52 * 60 + 26,
+            timerRunning: true,
+            flyerUrl: "",
+            secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
+            matches: [],
+            spotlight: {
+                teamName: "PENT-HEXCH",
+                teamTag: "PHX",
+                teamSeed: "Scouting 3 • Roster",
+                teamLogo: "",
+                players: [
+                    { name: "Top", role: "TOP" },
+                    { name: "Jgl", role: "JUNGLE" },
+                    { name: "Mid", role: "MID" },
+                    { name: "Bot", role: "BOT" },
+                    { name: "Sup", role: "SUPPORT" }
+                ]
+            }
+        };
+
+        // Normalizador de URLs de Google Drive para logos subidos en Scouting 3
+        function normalizarUrlDriveImagen(url, size = 's800') {
+            if (!url || typeof url !== 'string') return '';
+            const str = url.trim();
+            const driveMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                const driveId = driveMatch[1];
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    return `/api/drive-proxy?id=${driveId}&sz=${size}`;
+                }
+                return `https://lh3.googleusercontent.com/d/${driveId}=${size}`;
+            }
+            return str;
+        }
+
+        // 1. Cargar Equipos y Logos Oficiales de Scouting 3 (de https://lbl-esports.web.app/scouting?torneo=scouting3)
+        async function fetchScouting3RegisteredTeams() {
+            try {
+                // A. Primero intentar leer torneos_activos/scouting3_live_sync de Firestore
+                const snap = await getDoc(doc(db, "torneos_activos", "scouting3_live_sync"));
+                if (snap.exists() && Array.isArray(snap.data().equipos)) {
+                    processScoutingTeams(snap.data().equipos);
+                } else {
+                    // B. Leer de localStorage o de la API de Apps Script de Scouting 3
+                    const cached = localStorage.getItem('lbl_scouting3_public_sanitized_v214');
+                    if (cached) {
+                        processScoutingTeams(JSON.parse(cached));
+                    }
+                    const res = await fetch("https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec");
+                    const json = await res.json();
+                    if (json.success && Array.isArray(json.equipos)) {
+                        processScoutingTeams(json.equipos);
+                        try { localStorage.setItem('lbl_scouting3_public_sanitized_v214', JSON.stringify(json.equipos)); } catch(e) {}
+                    }
+                }
+            } catch (err) {
+                console.warn("[Scouting 3 Teams] Aviso al consultar equipos de Scouting 3:", err);
+            }
+        }
+
+        function processScoutingTeams(equipos) {
+            equipos.forEach(eq => {
+                const name = (eq.nombre || eq.name || '').trim();
+                const key = name.toLowerCase();
+                if (!key) return;
+
+                const rawLogo = eq.logoRaw || eq.logo || '';
+                const logoNorm = normalizarUrlDriveImagen(rawLogo, 's800');
+
+                scouting3TeamsMap[key] = {
+                    name: name,
+                    tag: eq.tag || name.substring(0, 3).toUpperCase(),
+                    logo: logoNorm,
+                    titulares: eq.titulares || []
+                };
+            });
+        }
+
+        // 2. Detectar Torneo TS3LBL desde el Gestor de Torneos (Firestore torneos_registrados)
+        async function detectActiveTournamentFromGestor() {
+            document.getElementById('detected-matches-count').textContent = "Consultando Gestor de Torneos...";
+
+            let tournamentData = null;
+
+            // Intento A: Leer de Firestore torneos_registrados
+            try {
+                const snap = await getDocs(collection(db, 'torneos_registrados'));
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const slug = String(data.slug || data.id || '').toUpperCase();
+                    const name = String(data.nombre || '').toLowerCase();
+                    if (slug === 'TS3LBL' || data.challongeId === '18498275' || name.includes('scouting 3') || docSnap.id === 'scouting3') {
+                        tournamentData = { ...data, id: docSnap.id };
+                    }
+                });
+            } catch(e) {}
+
+            // Intento B: Leer de localStorage del Gestor de Torneos (lbl_torneos_registrados_cache)
+            if (!tournamentData) {
+                try {
+                    const localList = localStorage.getItem('lbl_torneos_registrados_cache');
+                    if (localList) {
+                        const parsed = JSON.parse(localList);
+                        const found = parsed.find(t => String(t.slug || t.id).toUpperCase() === 'TS3LBL' || String(t.challongeId) === '18498275');
+                        if (found) tournamentData = found;
+                    }
+                } catch(e) {}
+            }
+
+            // Helper para calcular horario oficial en Bolivia y detección estricta del día presente (HOY)
+            function parseMatchSchedule(m, idx) {
+                const raw = m.scheduled_time || m.underway_at;
+                const now = new Date();
+                const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/La_Paz', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+
+                if (!raw) {
+                    const isDefaultToday = idx < 8;
+                    return {
+                        isToday: isDefaultToday,
+                        isFuture: !isDefaultToday,
+                        isPast: false,
+                        dateFmt: isDefaultToday ? todayStr : '2026-10-24',
+                        timeDisplay: idx === 0 ? '19:00 BOL (HOY)' : (idx <= 6 ? '21:00 BOL (HOY)' : 'HORARIO TBD'),
+                        timestamp: now.getTime() + (idx * 3600000)
+                    };
+                }
+
+                const d = new Date(raw);
+                if (isNaN(d.getTime())) {
+                    return { isToday: false, isFuture: false, isPast: false, dateFmt: '', timeDisplay: 'HORARIO TBD', timestamp: 0 };
+                }
+
+                const dStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/La_Paz', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+                const isToday = dStr === todayStr;
+                const isPast = dStr < todayStr;
+                const isFuture = dStr > todayStr;
+
+                const timeFmt = new Intl.DateTimeFormat('es-BO', {
+                    timeZone: 'America/La_Paz',
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+
+                const parts = timeFmt.formatToParts(d);
+                let dia = '', mes = '', hora = '', min = '';
+                parts.forEach(p => {
+                    if (p.type === 'day') dia = p.value;
+                    if (p.type === 'month') mes = p.value.toUpperCase().replace('.', '');
+                    if (p.type === 'hour') hora = p.value;
+                    if (p.type === 'minute') min = p.value;
+                });
+
+                const timeDisplay = `${hora}:${min} BOL (${dia} ${mes})${isToday ? ' • HOY' : ''}`;
+
+                return {
+                    isToday,
+                    isFuture,
+                    isPast,
+                    dateFmt: dStr,
+                    timeDisplay,
+                    timestamp: d.getTime()
+                };
+            }
+
+            // Procesar las partidas del torneo si existen en el Gestor de Torneos
+            if (tournamentData && Array.isArray(tournamentData.matches) && tournamentData.matches.length > 0) {
+                const rawMatches = tournamentData.matches;
+                const rawParticipantes = tournamentData.participantes || tournamentData.datosChallonge?.participantes || [];
+                
+                const partMap = {};
+                rawParticipantes.forEach(p => {
+                    if (p.id) partMap[p.id] = p;
+                });
+
+                // Filtrar estrictamente solo partidas jugables:
+                // Descartar BYEs y partidas que figuran como completed / FINAL por BYEs de Challonge
+                const playableRawMatches = rawMatches.filter(m => {
+                    const p1Ch = partMap[m.player1_id] || m.player1 || {};
+                    const p2Ch = partMap[m.player2_id] || m.player2 || {};
+                    const p1Name = String(p1Ch.name || p1Ch.display_name || p1Ch.nombre || '').toUpperCase().trim();
+                    const p2Name = String(p2Ch.name || p2Ch.display_name || p2Ch.nombre || '').toUpperCase().trim();
+
+                    // Si no tiene ambos jugadores definidos o alguno es BYE, es un pase automático no jugable
+                    if (!m.player1_id || !m.player2_id) return false;
+                    if (p1Name.includes('BYE') || p2Name.includes('BYE') || p1Ch.is_bye || p2Ch.is_bye) return false;
+
+                    // Excluir partidas marcadas FINAL / completed por BYE de Challonge
+                    if (m.state === 'completed' || m.state === 'complete') return false;
+
+                    return true;
+                });
+
+                liveCronogramaMatches = playableRawMatches.map((m, idx) => {
+                    const p1Ch = partMap[m.player1_id] || m.player1 || {};
+                    const p2Ch = partMap[m.player2_id] || m.player2 || {};
+
+                    const p1Name = String(p1Ch.name || p1Ch.display_name || p1Ch.nombre || 'TBD').toUpperCase().trim();
+                    const p2Name = String(p2Ch.name || p2Ch.display_name || p2Ch.nombre || 'TBD').toUpperCase().trim();
+
+                    const p1S3 = scouting3TeamsMap[p1Name.toLowerCase()] || {};
+                    const p2S3 = scouting3TeamsMap[p2Name.toLowerCase()] || {};
+
+                    const p1Tag = p1S3.tag || p1Ch.tag || p1Name.substring(0, 3).toUpperCase();
+                    const p2Tag = p2S3.tag || p2Ch.tag || p2Name.substring(0, 3).toUpperCase();
+
+                    const sched = parseMatchSchedule(m, idx);
+
+                    // Asignación inicial de canal: primeros 4 a darkcito, siguientes a lbl_oficial
+                    const defaultChannel = idx < 4 ? 'darkcito' : 'lbl_oficial';
+
+                    return {
+                        id: String(m.id || `m-${idx + 1}`),
+                        matchNumber: `MATCH ${idx + 1}`,
+                        timeDisplay: sched.timeDisplay,
+                        rondaDisplay: m.round ? `RONDA ${m.round} - DOBLE ELIMINACIÓN` : 'RONDA 1',
+                        state: m.state || 'upcoming',
+                        score1: m.scores_csv ? parseInt(m.scores_csv.split('-')[0]) : (m.score1 || 0),
+                        score2: m.scores_csv ? parseInt(m.scores_csv.split('-')[1]) : (m.score2 || 0),
+                        winner: m.winner_id ? (m.winner_id === m.player1_id ? 'team1' : 'team2') : null,
+                        channel: defaultChannel,
+                        isToday: sched.isToday,
+                        isFuture: sched.isFuture,
+                        isPast: sched.isPast,
+                        timestamp: sched.timestamp,
+                        p1: { name: p1Name, tag: p1Tag, logo: p1S3.logo || '' },
+                        p2: { name: p2Name, tag: p2Tag, logo: p2S3.logo || '' }
+                    };
+                });
+
+                // ORDENAR: Máxima prioridad a los games de HOY (en vivo primero, luego por horario)
+                liveCronogramaMatches.sort((a, b) => {
+                    if (a.isToday && !b.isToday) return -1;
+                    if (!a.isToday && b.isToday) return 1;
+
+                    const isLiveA = a.state === 'live';
+                    const isLiveB = b.state === 'live';
+                    if (isLiveA && !isLiveB) return -1;
+                    if (!isLiveA && isLiveB) return 1;
+
+                    return (a.timestamp || 0) - (b.timestamp || 0);
+                });
+
+                const todayMatches = liveCronogramaMatches.filter(m => m.isToday);
+                if (todayMatches.length > 0) {
+                    currentFilter = 'hoy';
+                    document.getElementById('detected-matches-count').textContent = `Hoy: ${todayMatches.length} Partidas Programadas (SLUG: TS3LBL)`;
+                } else {
+                    currentFilter = 'proximos';
+                    document.getElementById('detected-matches-count').textContent = `Detectadas: ${liveCronogramaMatches.length} Partidas (SLUG: TS3LBL)`;
+                }
+            } else {
+                // Fallback exacto con las partidas activas del cronograma oficial
+                liveCronogramaMatches = INITIAL_TS3LBL_MATCHES.map((m, idx) => {
+                    const s1 = scouting3TeamsMap[m.p1.name.toLowerCase()] || {};
+                    const s2 = scouting3TeamsMap[m.p2.name.toLowerCase()] || {};
+                    return {
+                        ...m,
+                        isToday: idx < 8,
+                        isFuture: idx >= 8,
+                        isPast: false,
+                        p1: { ...m.p1, logo: s1.logo || '' },
+                        p2: { ...m.p2, logo: s2.logo || '' }
+                    };
+                });
+                document.getElementById('detected-matches-count').textContent = `Hoy: ${liveCronogramaMatches.length} Partidas Oficiales TS3LBL`;
+            }
+
+            updateFilterTabs();
+            renderCronogramaTable();
+            populateSpotlightDropdown();
+        }
+
+        // Renderizado de avatar seguro (imagen o escudo de logo sin imagen rota)
+        function renderAvatarBadgeHTML(logoUrl, name, tag) {
+            const clean = (logoUrl || '').trim();
+            if (clean && clean !== '/assets/logo.webp') {
+                return `<img src="${clean}" class="w-6 h-6 object-contain" onerror="this.outerHTML='<div class=\\\'team-shield-avatar-sm\\\'><i class=\\\'fas fa-shield-alt\\\'></i></div>'">`;
+            }
+            return `<div class="team-shield-avatar-sm"><i class="fas fa-shield-alt"></i></div>`;
+        }
+
+        // 3. Renderizado de la Tabla de Partidas del Cronograma
+        function renderCronogramaTable() {
+            const tbody = document.getElementById('cronograma-table-body');
+            tbody.innerHTML = '';
+
+            let filtered = liveCronogramaMatches;
+            if (currentFilter === 'hoy') {
+                filtered = liveCronogramaMatches.filter(m => m.isToday && m.state !== 'completed');
+                if (filtered.length === 0) filtered = liveCronogramaMatches.filter(m => m.state !== 'completed');
+            } else if (currentFilter === 'proximos') {
+                filtered = liveCronogramaMatches.filter(m => m.state !== 'completed' && m.state !== 'complete');
+            } else if (currentFilter === 'live') {
+                filtered = liveCronogramaMatches.filter(m => m.state === 'live');
+            } else if (currentFilter === 'todos') {
+                filtered = liveCronogramaMatches.filter(m => m.state !== 'completed');
+            }
+
+            filtered.forEach((m, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-zinc-900/40 transition-colors";
+                const isAssignedToActive = m.channel === currentChannel || m.channel === 'ambos';
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="checkbox" data-id="${m.id}" class="chk-cronograma-item rounded bg-black text-red-600 focus:ring-0 w-4 h-4 cursor-pointer" ${isAssignedToActive ? 'checked' : ''}>
+                    </td>
+                    <td class="py-2.5 px-3 font-worlds text-sm text-red-400 font-bold uppercase whitespace-nowrap">
+                        ${m.timeDisplay || '19:00 BOL'}
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-2">
+                            ${renderAvatarBadgeHTML(m.p1.logo, m.p1.name, m.p1.tag)}
+                            <span class="font-bold text-white">${m.p1.name}</span>
+                            <span class="text-[10px] text-zinc-500 font-bold">[${m.p1.tag}]</span>
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center font-worlds font-black text-red-500 text-sm">
+                        VS
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-2">
+                            ${renderAvatarBadgeHTML(m.p2.logo, m.p2.name, m.p2.tag)}
+                            <span class="font-bold text-white">${m.p2.name}</span>
+                            <span class="text-[10px] text-zinc-500 font-bold">[${m.p2.tag}]</span>
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center text-xs font-bold text-zinc-400 whitespace-nowrap">
+                        ${m.rondaDisplay || 'DOBLE ELIMINACIÓN'}
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${m.state === 'live' ? 'bg-red-600 text-white animate-pulse' : m.state === 'completed' ? 'bg-zinc-800 text-zinc-300' : 'bg-black text-amber-400 border border-amber-500/40'}">
+                            ${m.state === 'live' ? 'EN VIVO' : m.state === 'completed' ? 'FINAL' : 'PRÓXIMO'}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <select data-id="${m.id}" class="select-cronograma-channel bg-black text-xs font-bold text-zinc-200 rounded px-2 py-1 border border-zinc-700">
+                            <option value="darkcito" ${m.channel === 'darkcito' ? 'selected' : ''}>@Darkcito</option>
+                            <option value="lbl_oficial" ${m.channel === 'lbl_oficial' ? 'selected' : ''}>@LBL Oficial</option>
+                            <option value="ambos" ${m.channel === 'ambos' ? 'selected' : ''}>Ambos</option>
+                        </select>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll('.select-cronograma-channel').forEach(s => {
+                s.addEventListener('change', (e) => {
+                    const id = e.target.dataset.id;
+                    const item = liveCronogramaMatches.find(x => x.id === id);
+                    if (item) {
+                        item.channel = e.target.value;
+                        const chk = tbody.querySelector(`.chk-cronograma-item[data-id="${id}"]`);
+                        if (chk) {
+                            chk.checked = (item.channel === currentChannel || item.channel === 'ambos');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Filtros
+        document.getElementById('filter-hoy').addEventListener('click', () => {
+            currentFilter = 'hoy';
+            updateFilterTabs();
+            renderCronogramaTable();
+        });
+        document.getElementById('filter-proximos').addEventListener('click', () => {
+            currentFilter = 'proximos';
+            updateFilterTabs();
+            renderCronogramaTable();
+        });
+        document.getElementById('filter-live').addEventListener('click', () => {
+            currentFilter = 'live';
+            updateFilterTabs();
+            renderCronogramaTable();
+        });
+        document.getElementById('filter-todos').addEventListener('click', () => {
+            currentFilter = 'todos';
+            updateFilterTabs();
+            renderCronogramaTable();
+        });
+
+        function updateFilterTabs() {
+            const btnHoy = document.getElementById('filter-hoy');
+            const btnProx = document.getElementById('filter-proximos');
+            const btnLive = document.getElementById('filter-live');
+            const btnTodos = document.getElementById('filter-todos');
+
+            if (btnHoy) btnHoy.className = currentFilter === 'hoy' ? "px-3 py-1 rounded bg-red-600 text-white font-bold flex items-center gap-1.5" : "px-3 py-1 rounded text-zinc-400 hover:text-white flex items-center gap-1.5";
+            if (btnProx) btnProx.className = currentFilter === 'proximos' ? "px-3 py-1 rounded bg-red-600 text-white font-bold" : "px-3 py-1 rounded text-zinc-400 hover:text-white";
+            if (btnLive) btnLive.className = currentFilter === 'live' ? "px-3 py-1 rounded bg-red-600 text-white font-bold" : "px-3 py-1 rounded text-zinc-400 hover:text-white";
+            if (btnTodos) btnTodos.className = currentFilter === 'todos' ? "px-3 py-1 rounded bg-red-600 text-white font-bold" : "px-3 py-1 rounded text-zinc-400 hover:text-white";
+        }
+
+        // Botón Cargar Seleccionadas al Overlay de OBS (Rotación automática si son más de 4)
+        document.getElementById('btn-load-selected-to-overlay').addEventListener('click', () => {
+            const chkIds = Array.from(document.querySelectorAll('.chk-cronograma-item:checked')).map(c => c.dataset.id);
+            const selected = liveCronogramaMatches.filter(m => chkIds.includes(m.id)).slice(0, 12);
+
+            if (selected.length === 0) {
+                alert("Marca al menos 1 partida con la casilla para cargarla en tu overlay.");
+                return;
+            }
+
+            state.matches = selected.map((m, idx) => ({
+                matchNumber: `MATCH ${idx + 1}`,
+                timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
+                team1: { name: m.p1.name.toUpperCase().trim(), tag: m.p1.tag.toUpperCase(), seed: "Scouting 3", logo: m.p1.logo || "", score: m.score1 || 0 },
+                team2: { name: m.p2.name.toUpperCase().trim(), tag: m.p2.tag.toUpperCase(), seed: "Scouting 3", logo: m.p2.logo || "", score: m.score2 || 0 },
+                status: m.state === 'live' ? 'LIVE' : m.state === 'completed' ? 'COMPLETED' : 'UPCOMING',
+                winner: m.winner || null
+            }));
+
+            // Auto-detectar roster del juego que va a comenzar inmediatamente
+            autoDetectUpcomingRoster();
+
+            renderMatchesEditor();
+            saveChanges(true);
+        });
+
+        document.getElementById('btn-sync-cronograma').addEventListener('click', () => {
+            detectActiveTournamentFromGestor();
+        });
+
+        document.getElementById('btn-add-manual-match')?.addEventListener('click', () => {
+            if (state.matches.length >= 12) {
+                alert("El overlay admite un máximo de 12 enfrentamientos (3 páginas de 4).");
+                return;
+            }
+            const idx = state.matches.length;
+            state.matches.push({
+                matchNumber: `MATCH ${idx + 1}`,
+                timeDisplay: "19:00 BOL (HOY)",
+                team1: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
+                team2: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
+                status: "UPCOMING",
+                winner: null
+            });
+            renderMatchesEditor();
+            saveChanges(true);
+        });
+
+        // 4. Editor de Partidas Activas
+        function renderMatchesEditor() {
+            const container = document.getElementById('matches-editor-list');
+            container.innerHTML = '';
+
+            state.matches.forEach((m, idx) => {
+                const pageNum = Math.floor(idx / 4) + 1;
+                const row = document.createElement('div');
+                row.className = "p-4 rounded-xl bg-black border border-zinc-800 space-y-3";
+
+                row.innerHTML = `
+                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800 flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded bg-zinc-900 text-red-500 font-worlds font-black text-sm flex items-center justify-center">
+                                ${idx + 1}
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase bg-zinc-900 border border-zinc-700 text-red-400">Pág ${pageNum}</span>
+                            <input type="text" value="${m.matchNumber || `MATCH ${idx + 1}`}" id="match-number-${idx}" class="bg-zinc-900 font-worlds font-bold text-sm text-white px-2.5 py-1 rounded border border-zinc-700 w-28 uppercase">
+                            <div class="flex items-center gap-1.5 bg-zinc-900 px-2.5 py-1 rounded border border-zinc-700">
+                                <i class="fa-regular fa-clock text-red-400 text-xs"></i>
+                                <input type="text" value="${m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)')}" id="match-time-${idx}" placeholder="Hora y Día (Ej: 19:00 BOL • HOY)" class="bg-transparent font-rajdhani font-bold text-xs text-zinc-100 focus:outline-none w-44">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-zinc-400 uppercase">Estado:</label>
+                            <select id="match-status-${idx}" class="bg-zinc-900 text-xs font-bold px-2.5 py-1 rounded border border-zinc-700 text-white">
+                                <option value="UPCOMING" ${m.status === 'UPCOMING' ? 'selected' : ''}>Próxima (VS)</option>
+                                <option value="LIVE" ${m.status === 'LIVE' ? 'selected' : ''}>En Vivo (LIVE)</option>
+                                <option value="COMPLETED" ${m.status === 'COMPLETED' ? 'selected' : ''}>Finalizada (Ganador)</option>
+                            </select>
+                            <button type="button" class="btn-delete-match text-zinc-500 hover:text-red-400 p-1.5 transition-colors" data-idx="${idx}" title="Eliminar enfrentamiento">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-11 gap-3 items-center text-xs">
+                        <div class="col-span-5 flex items-center gap-2">
+                            <div id="editor-avatar-1-${idx}">
+                                ${renderAvatarBadgeHTML(m.team1.logo, m.team1.name, m.team1.tag)}
+                            </div>
+                            <input type="text" value="${m.team1.name}" id="input-team1-${idx}" class="w-full bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700">
+                            <div class="flex items-center gap-1 shrink-0">
+                                <button type="button" class="btn-score-dec w-6 h-6 bg-zinc-800 rounded font-bold" data-idx="${idx}" data-team="1">-</button>
+                                <span id="score-text-1-${idx}" class="w-6 text-center font-worlds font-black text-xl text-white">${m.team1.score ?? 0}</span>
+                                <button type="button" class="btn-score-inc w-6 h-6 bg-red-600 rounded font-bold" data-idx="${idx}" data-team="1">+</button>
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 text-center font-worlds font-black text-red-500 text-lg">
+                            VS
+                        </div>
+
+                        <div class="col-span-5 flex items-center gap-2">
+                            <div class="flex items-center gap-1 shrink-0">
+                                <button type="button" class="btn-score-dec w-6 h-6 bg-zinc-800 rounded font-bold" data-idx="${idx}" data-team="2">-</button>
+                                <span id="score-text-2-${idx}" class="w-6 text-center font-worlds font-black text-xl text-white">${m.team2.score ?? 0}</span>
+                                <button type="button" class="btn-score-inc w-6 h-6 bg-red-600 rounded font-bold" data-idx="${idx}" data-team="2">+</button>
+                            </div>
+                            <input type="text" value="${m.team2.name}" id="input-team2-${idx}" class="w-full bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700 text-right">
+                            <div id="editor-avatar-2-${idx}">
+                                ${renderAvatarBadgeHTML(m.team2.logo, m.team2.name, m.team2.tag)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(row);
+
+                row.querySelector(`#input-team1-${idx}`).addEventListener('input', (e) => {
+                    m.team1.name = e.target.value.toUpperCase();
+                    m.team1.tag = e.target.value.substring(0, 3).toUpperCase();
+                });
+                row.querySelector(`#input-team2-${idx}`).addEventListener('input', (e) => {
+                    m.team2.name = e.target.value.toUpperCase();
+                    m.team2.tag = e.target.value.substring(0, 3).toUpperCase();
+                });
+            });
+
+            container.querySelectorAll('.btn-score-inc').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    const t = btn.dataset.team;
+                    if (t === '1') {
+                        state.matches[idx].team1.score = (state.matches[idx].team1.score || 0) + 1;
+                        document.getElementById(`score-text-1-${idx}`).textContent = state.matches[idx].team1.score;
+                    } else {
+                        state.matches[idx].team2.score = (state.matches[idx].team2.score || 0) + 1;
+                        document.getElementById(`score-text-2-${idx}`).textContent = state.matches[idx].team2.score;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.btn-score-dec').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    const t = btn.dataset.team;
+                    if (t === '1') {
+                        state.matches[idx].team1.score = Math.max(0, (state.matches[idx].team1.score || 0) - 1);
+                        document.getElementById(`score-text-1-${idx}`).textContent = state.matches[idx].team1.score;
+                    } else {
+                        state.matches[idx].team2.score = Math.max(0, (state.matches[idx].team2.score || 0) - 1);
+                        document.getElementById(`score-text-2-${idx}`).textContent = state.matches[idx].team2.score;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.btn-delete-match').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    state.matches.splice(idx, 1);
+                    renderMatchesEditor();
+                    saveChanges(true);
+                });
+            });
+        }
+
+        // 5. Selector de Canales
+        function switchChannel(channelName) {
+            currentChannel = channelName;
+            document.getElementById('link-preview-obs').href = `/overlay-schedule.html?channel=${channelName}`;
+
+            const btnDark = document.getElementById('tab-channel-darkcito');
+            const btnLbl = document.getElementById('tab-channel-lbl');
+
+            if (channelName === 'darkcito') {
+                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all";
+                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+            } else {
+                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all";
+                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+            }
+
+            renderCronogramaTable();
+            loadActiveChannelData(channelName);
+        }
+
+        document.getElementById('tab-channel-darkcito').addEventListener('click', () => switchChannel('darkcito'));
+        document.getElementById('tab-channel-lbl').addEventListener('click', () => switchChannel('lbl_oficial'));
+
+        async function loadActiveChannelData(channel) {
+            const localData = localStorage.getItem(`lbl_overlay_${channel}`);
+            if (localData) {
+                try { applyChannelData(JSON.parse(localData)); } catch(e) {}
+            }
+
+            try {
+                const snap = await getDoc(doc(db, "torneos_activos", `overlay_${channel}`));
+                if (snap.exists()) {
+                    applyChannelData(snap.data());
+                }
+            } catch(e) {}
+
+            if (state.matches.length === 0) {
+                state.matches = INITIAL_TS3LBL_MATCHES.map((m, idx) => ({
+                    matchNumber: `MATCH ${idx + 1}`,
+                    timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
+                    team1: { name: m.p1.name, tag: m.p1.tag, seed: "Scouting 3", logo: m.p1.logo || "", score: 0 },
+                    team2: { name: m.p2.name, tag: m.p2.tag, seed: "Scouting 3", logo: m.p2.logo || "", score: 0 },
+                    status: "UPCOMING",
+                    winner: null
+                }));
+            }
+
+            renderMatchesEditor();
+            populateSpotlightDropdown();
+            updateTimerDisplay();
+        }
+
+        function applyChannelData(data) {
+            if (!data) return;
+            if (data.stageTitle) document.getElementById('input-stage-title').value = data.stageTitle;
+            if (data.subTitle) document.getElementById('input-stage-subtitle').value = data.subTitle;
+            if (typeof data.flyerUrl !== 'undefined') document.getElementById('input-flyer-url').value = data.flyerUrl;
+            if (data.secondarySponsorUrl) document.getElementById('select-secondary-sponsor').value = data.secondarySponsorUrl;
+            if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
+            if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
+            if (data.matches && data.matches.length > 0) state.matches = data.matches;
+            if (data.spotlight) {
+                state.spotlight = data.spotlight;
+                if (data.spotlight.players) {
+                    data.spotlight.players.forEach((p, i) => {
+                        const el = document.getElementById(`spot-p-${i}`);
+                        if (el) el.value = p.name;
+                    });
+                }
+            }
+        }
+
+        function populateSpotlightDropdown() {
+            const selectEl = document.getElementById('select-spotlight-team');
+            selectEl.innerHTML = '';
+            
+            const teamNames = new Set();
+            liveCronogramaMatches.forEach(m => {
+                if (m.p1?.name) teamNames.add(m.p1.name);
+                if (m.p2?.name) teamNames.add(m.p2.name);
+            });
+            Object.keys(scouting3TeamsMap).forEach(k => {
+                teamNames.add(scouting3TeamsMap[k].name);
+            });
+
+            Array.from(teamNames).sort().forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                if (state.spotlight?.teamName === name) opt.selected = true;
+                selectEl.appendChild(opt);
+            });
+
+            selectEl.addEventListener('change', (e) => {
+                autoFillSpotlight(e.target.value);
+            });
+        }
+
+        function limpiarRiotNick(raw) {
+            if (!raw || typeof raw !== 'string') return '';
+            return raw.split('#')[0].trim();
+        }
+
+        function autoFillSpotlight(teamName) {
+            const s3 = scouting3TeamsMap[teamName.toLowerCase()];
+            if (s3 && Array.isArray(s3.titulares) && s3.titulares.length > 0) {
+                const top = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'TOP');
+                const jg = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'JG' || String(t.posicion).toUpperCase() === 'JUNGLE');
+                const mid = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'MID');
+                const adc = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'ADC' || String(t.posicion).toUpperCase() === 'BOT');
+                const sup = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'SUPP' || String(t.posicion).toUpperCase() === 'SUPPORT');
+
+                document.getElementById('spot-p-0').value = limpiarRiotNick(top?.riotIdLas || top?.riotIdMain || top?.nombre || 'Top').toUpperCase();
+                document.getElementById('spot-p-1').value = limpiarRiotNick(jg?.riotIdLas || jg?.riotIdMain || jg?.nombre || 'Jgl').toUpperCase();
+                document.getElementById('spot-p-2').value = limpiarRiotNick(mid?.riotIdLas || mid?.riotIdMain || mid?.nombre || 'Mid').toUpperCase();
+                document.getElementById('spot-p-3').value = limpiarRiotNick(adc?.riotIdLas || adc?.riotIdMain || adc?.nombre || 'Bot').toUpperCase();
+                document.getElementById('spot-p-4').value = limpiarRiotNick(sup?.riotIdLas || sup?.riotIdMain || sup?.nombre || 'Sup').toUpperCase();
+
+                document.getElementById('roster-detect-badge').textContent = `✓ ${s3.tag || teamName} (NICKS LIMPIOS)`;
+                document.getElementById('roster-detect-badge').className = "px-2.5 py-0.5 text-[10px] font-bold bg-red-950 text-red-400 rounded border border-red-500/40";
+            }
+        }
+
+        // Auto-detectar los jugadores del game que está por comenzar
+        function autoDetectUpcomingRoster() {
+            if (!state.matches || state.matches.length === 0) return;
+            const nextMatch = state.matches.find(m => m.status === 'LIVE') || state.matches.find(m => m.status === 'UPCOMING') || state.matches[0];
+            if (nextMatch && nextMatch.team1?.name) {
+                const selectEl = document.getElementById('select-spotlight-team');
+                if (selectEl) {
+                    selectEl.value = nextMatch.team1.name;
+                    autoFillSpotlight(nextMatch.team1.name);
+                }
+            }
+        }
+
+        // Alternar equipo 1 o equipo 2 del próximo partido
+        function setSpotlightTeamFromUpcoming(teamNum) {
+            if (!state.matches || state.matches.length === 0) return;
+            const nextMatch = state.matches.find(m => m.status === 'LIVE') || state.matches.find(m => m.status === 'UPCOMING') || state.matches[0];
+            if (!nextMatch) return;
+            const team = teamNum === 1 ? nextMatch.team1 : nextMatch.team2;
+            if (team && team.name) {
+                const selectEl = document.getElementById('select-spotlight-team');
+                if (selectEl) {
+                    selectEl.value = team.name;
+                    autoFillSpotlight(team.name);
+                    saveChanges(true);
+                }
+            }
+        }
+
+        // 6. Cronómetro (Formato MM:SS con límite de 59 minutos)
+        function formatTimerDisplay(totalSecs) {
+            const clamped = Math.min(Math.max(0, totalSecs), 59 * 60 + 59);
+            const m = Math.floor(clamped / 60);
+            const s = clamped % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('control-timer-display').textContent = formatTimerDisplay(state.timerSeconds);
+            const pill = document.getElementById('timer-state-pill');
+            const btnText = document.getElementById('btn-timer-toggle-text');
+            const btnIcon = document.querySelector('#btn-timer-toggle i');
+            
+            if (state.timerRunning) {
+                pill.textContent = "CORRIENDO";
+                pill.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white";
+                btnText.textContent = "Pausar Reloj";
+                btnIcon.className = "fa-solid fa-pause";
+            } else {
+                pill.textContent = "PAUSADO";
+                pill.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-amber-600 text-white";
+                btnText.textContent = "Iniciar Reloj";
+                btnIcon.className = "fa-solid fa-play";
+            }
+        }
+
+        setInterval(() => {
+            if (state.timerRunning && state.timerSeconds > 0) {
+                state.timerSeconds--;
+                document.getElementById('control-timer-display').textContent = formatTimerDisplay(state.timerSeconds);
+            }
+        }, 1000);
+
+        document.getElementById('btn-timer-toggle').addEventListener('click', () => {
+            state.timerRunning = !state.timerRunning;
+            updateTimerDisplay();
+            saveChanges(false);
+        });
+
+        document.getElementById('btn-timer-reset').addEventListener('click', () => {
+            state.timerSeconds = 10 * 60;
+            updateTimerDisplay();
+            saveChanges(false);
+        });
+
+        document.querySelectorAll('.btn-quick-time').forEach(b => {
+            b.addEventListener('click', () => {
+                const add = parseInt(b.dataset.addSec);
+                state.timerSeconds = Math.min(59 * 60 + 59, Math.max(0, state.timerSeconds + add));
+                updateTimerDisplay();
+                saveChanges(false);
+            });
+        });
+
+        document.getElementById('btn-set-manual-time').addEventListener('click', () => {
+            const min = Math.min(59, Math.max(0, parseInt(document.getElementById('input-manual-minutes').value) || 0));
+            const sec = Math.min(59, Math.max(0, parseInt(document.getElementById('input-manual-seconds').value) || 0));
+            state.timerSeconds = (min * 60) + sec;
+            updateTimerDisplay();
+            saveChanges(false);
+        });
+
+        // 7. Guardar y Sincronizar
+        async function saveChanges(showFeedback = true) {
+            const statusEl = document.getElementById('save-status-text');
+            if (showFeedback) {
+                statusEl.textContent = "Sincronizando con OBS...";
+                statusEl.className = "text-xs font-bold text-amber-400";
+            }
+
+            state.matches.forEach((m, idx) => {
+                m.matchNumber = document.getElementById(`match-number-${idx}`)?.value || `MATCH ${idx + 1}`;
+                m.timeDisplay = document.getElementById(`match-time-${idx}`)?.value.trim() || m.timeDisplay || '19:00 BOL (HOY)';
+                m.status = document.getElementById(`match-status-${idx}`)?.value || 'UPCOMING';
+            });
+
+            state.stageTitle = document.getElementById('input-stage-title').value;
+            state.subTitle = document.getElementById('input-stage-subtitle').value;
+            state.flyerUrl = document.getElementById('input-flyer-url').value.trim();
+            state.secondarySponsorUrl = document.getElementById('select-secondary-sponsor').value;
+
+            const spotName = document.getElementById('select-spotlight-team').value;
+            const s3Obj = scouting3TeamsMap[spotName.toLowerCase()] || {};
+            state.spotlight = {
+                teamName: spotName,
+                teamTag: s3Obj.tag || spotName.substring(0, 3).toUpperCase(),
+                teamSeed: "Scouting 3 • Roster",
+                teamLogo: s3Obj.logo || "",
+                players: [
+                    { name: document.getElementById('spot-p-0').value.trim() || 'Top', role: 'TOP' },
+                    { name: document.getElementById('spot-p-1').value.trim() || 'Jgl', role: 'JUNGLE' },
+                    { name: document.getElementById('spot-p-2').value.trim() || 'Mid', role: 'MID' },
+                    { name: document.getElementById('spot-p-3').value.trim() || 'Bot', role: 'BOT' },
+                    { name: document.getElementById('spot-p-4').value.trim() || 'Sup', role: 'SUPPORT' }
+                ]
+            };
+
+            const payload = {
+                channelId: currentChannel,
+                stageTitle: state.stageTitle,
+                subTitle: state.subTitle,
+                headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
+                timerSeconds: state.timerSeconds,
+                timerRunning: state.timerRunning,
+                matches: state.matches,
+                flyerUrl: state.flyerUrl,
+                secondarySponsorUrl: state.secondarySponsorUrl,
+                spotlight: state.spotlight,
+                updatedAt: new Date().toISOString()
+            };
+
+            try { syncChannel.postMessage(payload); } catch(e) {}
+            try { localStorage.setItem(`lbl_overlay_${currentChannel}`, JSON.stringify(payload)); } catch(e) {}
+
+            try {
+                await setDoc(doc(db, "torneos_activos", `overlay_${currentChannel}`), payload, { merge: true });
+                if (showFeedback) {
+                    statusEl.textContent = "✓ ¡Actualizado en OBS (<100ms)!";
+                    statusEl.className = "text-xs font-bold text-emerald-400";
+                    setTimeout(() => { statusEl.textContent = ""; }, 4000);
+                }
+            } catch (err) {
+                if (showFeedback) {
+                    statusEl.textContent = "✓ ¡Sincronizado localmente con OBS!";
+                    statusEl.className = "text-xs font-bold text-emerald-400";
+                    setTimeout(() => { statusEl.textContent = ""; }, 4000);
+                }
+            }
+        }
+
+        // Botones de control rápido de Roster
+        document.getElementById('btn-detect-upcoming-roster')?.addEventListener('click', () => {
+            autoDetectUpcomingRoster();
+            saveChanges(true);
+        });
+        document.getElementById('btn-toggle-team1')?.addEventListener('click', () => {
+            setSpotlightTeamFromUpcoming(1);
+        });
+        document.getElementById('btn-toggle-team2')?.addEventListener('click', () => {
+            setSpotlightTeamFromUpcoming(2);
+        });
+
+        document.querySelectorAll('.btn-preset-title').forEach(b => {
+            b.addEventListener('click', () => {
+                document.getElementById('input-stage-title').value = b.textContent.trim();
+                saveChanges(true);
+            });
+        });
+        document.querySelectorAll('.btn-preset-subtitle').forEach(b => {
+            b.addEventListener('click', () => {
+                document.getElementById('input-stage-subtitle').value = b.textContent.trim();
+                saveChanges(true);
+            });
+        });
+
+        document.getElementById('btn-save-all').addEventListener('click', () => saveChanges(true));
+
+        document.getElementById('btn-copy-obs-url').addEventListener('click', () => {
+            const currentOrigin = window.location.origin;
+            const obsUrl = `${currentOrigin}/overlay-schedule.html?channel=${currentChannel}`;
+            navigator.clipboard.writeText(obsUrl).then(() => {
+                alert(`¡URL copiada al portapapeles!\n\n${obsUrl}\n\nPégala en OBS como fuente de Navegador a 1920x1080.`);
+            }).catch(() => {
+                prompt("Copia esta URL para OBS:", obsUrl);
+            });
+        });
+
+        // Inicialización
+        (async () => {
+            await fetchScouting3RegisteredTeams();
+            await detectActiveTournamentFromGestor();
+            await loadActiveChannelData(currentChannel);
+        })();
+    </script>
+</body>
+</html>

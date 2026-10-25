@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full w-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copa Legion x Scouting 3 | Broadcast Overlay OBS</title>
+    
+    <!-- Fuentes limpias y nítidas de alta legibilidad -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800&family=Outfit:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind Compilado de LBL -->
+    <link rel="stylesheet" href="/dist/output.css?v=223">
+
+    <style>
+        @font-face {
+            font-family: 'Compacta BT';
+            src: url('/assets/fonts/Compacta%20BT%20Roman.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --lbl-bg-panel: rgba(8, 8, 10, 0.95);
+            --lbl-red-primary: #dc2626;
+            --lbl-border-subtle: rgba(255, 255, 255, 0.08);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent !important;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            text-shadow: none !important;
+        }
+
+        #stage-canvas {
+            width: 1920px;
+            height: 1080px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            transform: translate3d(-50%, -50%, 0);
+            backface-visibility: hidden;
+            contain: paint layout;
+            box-sizing: border-box;
+        }
+
+        .font-worlds { font-family: 'Barlow Condensed', sans-serif; }
+        .font-rajdhani { font-family: 'Rajdhani', 'Outfit', sans-serif; font-weight: 700; }
+        .font-compacta { font-family: 'Compacta BT', sans-serif; }
+
+        .panel-unified {
+            background: #0d0d10;
+            border: 1px solid var(--lbl-border-subtle);
+            border-top: 2px solid var(--lbl-red-primary);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+            contain: content;
+        }
+
+        .panel-header {
+            background: linear-gradient(180deg, #111114 0%, #070709 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: 2px solid var(--lbl-red-primary);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+            contain: content;
+        }
+
+        .ribbon-red {
+            background: linear-gradient(90deg, #350505 0%, #dc2626 50%, #350505 100%);
+            border-left: 2px solid #ef4444;
+            border-right: 2px solid #ef4444;
+            contain: content;
+        }
+
+        .match-divider {
+            background: rgba(255, 255, 255, 0.07);
+            height: 1px;
+        }
+
+        body.test-bg-active {
+            background: #040405 !important;
+        }
+
+        /* Contenedor Normalizado Libre para Logos de Equipos (Sin Cajas, Tamaño Fijo 84px) */
+        .team-logo-slot {
+            width: 84px;
+            height: 84px;
+            min-width: 84px;
+            min-height: 84px;
+            max-width: 84px;
+            max-height: 84px;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: visible;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .team-logo-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
+        }
+
+        .team-logo-slot .team-shield-fallback {
+            color: #22d3ee;
+            font-size: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 2px 8px rgba(34, 211, 238, 0.5));
+        }
+
+        /* Tarjeta de Enfrentamiento (Esports Match Card - Sin cajas internas) */
+        .match-card-slot {
+            background: linear-gradient(90deg, rgba(13, 14, 18, 0.9) 0%, rgba(20, 22, 30, 0.96) 50%, rgba(13, 14, 18, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 3px solid #dc2626;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            padding: 8px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transform: translateZ(0);
+            contain: layout;
+        }
+
+        /* Transición suave para el contenedor de partidas al rotar páginas */
+        #matches-container {
+            transition: opacity 0.35s ease-in-out;
+            will-change: opacity;
+            transform: translateZ(0);
+        }
+
+        /* Galería de Partners con Transición Fade cada 5 segundos en GPU */
+        .partner-gallery-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            will-change: opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .partner-gallery-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Logos alternantes del Header cada 10 segundos en GPU */
+        .header-cycle-logo {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .header-cycle-logo.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Transición suave para spotlight alternante en GPU */
+        #spotlight-bar-inner {
+            transition: opacity 0.35s ease-in-out;
+            will-change: opacity;
+            transform: translateZ(0);
+        }
+
+        /* Animación por GPU para insignias 'EN VIVO' y puntos activos sin repintado de layout */
+        @keyframes livePulseGpu {
+            0%, 100% { opacity: 1; transform: translateZ(0) scale(1); }
+            50% { opacity: 0.35; transform: translateZ(0) scale(1.06); }
+        }
+        .live-pulse-badge {
+            animation: livePulseGpu 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            will-change: opacity, transform;
+            transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LIENZO PRINCIPAL EXACTO 1920x1080 -->
+    <div id="stage-canvas" class="p-9 flex flex-col justify-between">
+
+        <!-- ====================================================================
+             1. HEADER SUPERIOR (Logo Copa Legion x Scouting 3 Alternante + Timer)
+             ==================================================================== -->
+        <header class="w-full flex flex-col">
+            <div class="w-full h-[115px] panel-header rounded-2xl px-10 flex items-center justify-between relative overflow-hidden">
+                
+                <!-- IZQUIERDA: Logos Oficiales Copa Legion y Scouting 3 (Alternan cada 10s con fade) -->
+                <div class="flex items-center gap-8 z-10">
+                    <div class="relative h-20 w-[210px] flex items-center justify-center shrink-0">
+                        <img id="header-logo-legion" 
+                             src="/assets/Logos Sponsor/logo_copa_Legion.png" 
+                             alt="Copa Legion" 
+                             decoding="async"
+                             class="header-cycle-logo active absolute max-h-20 max-w-[200px] object-contain">
+                        <img id="header-logo-sc3" 
+                             src="/assets/Logos Sponsor/LOGO SC3 mejorado por IA.png" 
+                             alt="Torneo Scouting 3" 
+                             decoding="async"
+                             class="header-cycle-logo absolute max-h-20 max-w-[200px] object-contain p-1">
+                    </div>
+                    
+                    <div class="h-12 w-[1px] bg-white/20 mx-1"></div>
+
+                    <!-- Cronómetro Grande Nítido con Fuente Oficial Compacta BT Roman -->
+                    <div id="header-timer" class="font-compacta text-[100px] leading-none tracking-[0.05em] text-white tabular-nums select-none pt-1">
+                        52:26
+                    </div>
+                </div>
+
+                <!-- DERECHA: Título de Fase / Torneo -->
+                <div class="z-10 flex flex-col items-end">
+                    <span class="text-sm font-black text-red-500 tracking-[0.3em] uppercase font-rajdhani">
+                        COPA LEGION • TORNEO SCOUTING 3
+                    </span>
+                    <h1 id="stage-title" class="font-worlds font-black text-[74px] leading-none tracking-wider uppercase text-white mt-0.5">
+                        SWISS STAGE
+                    </h1>
+                </div>
+            </div>
+
+            <!-- SUB-BARRA / RIBBON ROJO (Tipografía Rajdhani Nítida y Altamente Legible) -->
+            <div class="w-full h-[42px] ribbon-red mt-2.5 rounded-lg flex items-center justify-center relative overflow-hidden">
+                <span id="stage-subtitle" class="font-rajdhani font-black text-2xl tracking-[0.12em] uppercase text-white select-none">
+                    ROUND 1 - BEST OF 1S
+                </span>
+            </div>
+        </header>
+
+        <!-- ====================================================================
+             2. CUERPO PRINCIPAL (Columna Partidas + Bloque Flyer Sponsors & Roster)
+             ==================================================================== -->
+        <main class="w-full flex-1 flex gap-7 mt-6 min-h-0">
+
+            <!-- COLUMNA IZQUIERDA: LISTA DE ENFRENTAMIENTOS (44% ancho - Estilo Worlds sin "caja sobre caja") -->
+            <section class="w-[44%] flex flex-col justify-between relative min-h-0">
+                
+                <!-- Cabecera de Columna (Caja individual superior nítida, el resto queda libre hacia el fondo) -->
+                <div class="w-full h-[52px] panel-header rounded-xl px-5 flex items-center justify-between shrink-0 shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-sm bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></span>
+                        <span class="font-rajdhani text-2xl font-black tracking-widest text-white uppercase">JORNADA OFICIAL</span>
+                        <span class="h-4 w-[1px] bg-white/20 mx-1"></span>
+                        <span id="jornada-date" class="px-2.5 py-0.5 rounded bg-[#121217] border border-zinc-700/80 font-rajdhani font-bold text-xs tracking-widest text-red-400 uppercase">
+                            HOY
+                        </span>
+                    </div>
+                    <span id="channel-badge" class="px-3.5 py-1 text-xs font-black font-rajdhani tracking-widest uppercase bg-red-950/90 text-red-300 rounded border border-red-500/50 shadow-sm">
+                        CANAL: @DARKCITO
+                    </span>
+                </div>
+
+                <!-- Contenedor Dinámico de Partidas Activas (Cajas de enfrentamientos flotando directamente sobre el fondo) -->
+                <div id="matches-container" class="flex-1 flex flex-col justify-between pt-3 pb-1 gap-3 min-h-0">
+                    <!-- Inyectados dinámicamente por JS a altura fija y ordenada -->
+                </div>
+
+                <!-- Paginador inferior sutil (Se muestra solo si hay más de 1 página de games) -->
+                <div id="pagination-dots" class="items-center justify-center gap-3 pt-2 hidden shrink-0">
+                    <!-- Inyectado dinámicamente según la cantidad de páginas -->
+                </div>
+            </section>
+
+            <!-- COLUMNA DERECHA: MULTIMEDIA VIDEO/FLYER Y SPOTLIGHT O SPONSORS (56% ancho) -->
+            <section class="w-[56%] flex flex-col justify-between gap-5">
+
+                <!-- SLOT MULTIMEDIA PRINCIPAL (DIMENSIONES EXACTAS: 940 × 530 px / 16:9 WIDESCREEN - VIDEO MP4 O FLYER) -->
+                <div class="w-full flex-1 panel-unified rounded-2xl relative overflow-hidden flex items-center justify-center bg-black/80">
+                    
+                    <div id="media-wrapper" class="w-full h-full relative flex items-center justify-center p-2.5">
+                        
+                        <!-- 1. VIDEO SPONSOR / TROFEO (MP4 / WebM Autoplay Loop estilo Worlds) -->
+                        <video id="sponsor-video" 
+                               src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" 
+                               autoplay 
+                               loop 
+                               muted 
+                               playsinline 
+                               preload="auto"
+                               class="w-full h-full object-contain rounded-xl bg-black">
+                        </video>
+
+                        <!-- 2. IMAGEN / FLYER OFICIAL DE PRODUCTO O PATROCINIO -->
+                        <img id="flyer-image" 
+                             src="" 
+                             alt="Sponsor Media" 
+                             decoding="async"
+                             class="w-full h-full object-contain rounded-xl hidden">
+
+                        <!-- 3. GALERÍA DE PARTNERS OFICIALES (FALLBACK CUANDO NO HAY MEDIA ACTIVA) -->
+                        <div id="partners-gallery-container" class="w-full h-full relative rounded-xl overflow-hidden hidden">
+                            
+                            <!-- SLIDE 1: COPA LEGION x SCOUTING 3 (PROPORCIÓN REFINADA, SIN CAJAS) -->
+                            <div class="partner-gallery-slide active rounded-xl bg-gradient-to-br from-[#121216] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between z-10 border-b border-white/10 pb-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
+                                        <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
+                                            PARTNER OFICIAL • LEGION GAMER STORE
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <img src="/assets/Logos Sponsor/logoLegion.png" alt="Legion Store" decoding="async" class="h-8 object-contain">
+                                        <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="Volt" decoding="async" class="h-7 object-contain">
+                                        <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="h-7 object-contain">
+                                        <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-6 object-contain">
+                                    </div>
+                                </div>
+
+                                <div class="my-auto z-10 flex items-center justify-between gap-10 py-4 px-4">
+                                    <div class="max-w-[500px]">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
+                                             BOLIVIAN LEAGUE OF LEGENDS
+                                        </div>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3">
+                                            COPA LEGION x SCOUTING 3
+                                        </h2>
+                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
+                                            El torneo oficial de scouting competitivo de League of Legends en Bolivia, impulsado por Legion Gamer Store y LBL Esports.
+                                        </p>
+                                        <div class="mt-4 flex items-center gap-3">
+                                            <div class="text-red-500 font-bold font-rajdhani text-xl tracking-widest uppercase flex items-center gap-2">
+                                                <i class="fa-solid fa-gamepad text-base"></i> WWW.LBLESPORTS.COM
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Logo Oficial Copa Legion Proporcionado (Sin cajas, sin QR) -->
+                                    <div class="flex flex-col items-center justify-center shrink-0">
+                                        <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">LEGION GAMER STORE</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
+                                    <span>DIMENSIÓN EXACTA PARA FLYER: 940 × 630 PX</span>
+                                    <span class="text-red-500 uppercase font-bold tracking-widest flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-red-600 live-pulse-badge"></span> TRANSMISIÓN EN VIVO
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- SLIDE 2: VOLT ENERGY DRINK (LOGO PROPORCIONADO + GLOW AZUL / CYAN ELÉCTRICO) -->
+                            <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#071321] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between z-10 border-b border-blue-900/40 pb-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-cyan-400"></span>
+                                        <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
+                                            ENERGÍA OFICIAL • VOLT ENERGY DRINK
+                                        </span>
+                                    </div>
+                                    <span class="px-3 py-1 rounded bg-cyan-950/70 text-cyan-300 font-bold font-rajdhani text-xs tracking-widest uppercase border border-cyan-500/40">
+                                        POWER YOUR PLAY
+                                    </span>
+                                </div>
+
+                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
+                                    <div class="max-w-[480px]">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-blue-950/80 border border-cyan-500/40 text-cyan-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
+                                            BEBIDA ENERGIZANTE OFICIAL
+                                        </div>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
+                                            ACTIVA TU MODO <span class="text-cyan-400">COMPETITIVO</span>
+                                        </h2>
+                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
+                                            En cada teamfight y en cada jugada decisiva, VOLT te da la máxima concentración y energía para alcanzar la victoria en la LBL.
+                                        </p>
+                                    </div>
+
+                                    <!-- Logo VOLT Proporcionado con Glow Azul Eléctrico -->
+                                    <div class="flex flex-col items-center justify-center shrink-0">
+                                        <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_20px_rgba(37,99,235,0.85)]">
+                                        <span class="font-rajdhani font-black text-xl text-cyan-300 tracking-widest mt-2 uppercase">VOLT BOLIVIA</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
+                                    <span>PARTNER EXCLUSIVO DE BEBIDAS ENERGÉTICAS</span>
+                                    <span class="text-cyan-400 uppercase font-bold tracking-widest">LBL ESPORTS x VOLT</span>
+                                </div>
+                            </div>
+
+                            <!-- SLIDE 3: ICONIC (LOGO PROPORCIONADO, SIN CAJAS) -->
+                            <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#0e0e13] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between z-10 border-b border-white/10 pb-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
+                                        <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
+                                            INDUMENTARIA & MERCHANDISING • ICONIC
+                                        </span>
+                                    </div>
+                                    <span class="px-3 py-1 rounded bg-zinc-800 text-zinc-300 font-bold font-rajdhani text-xs tracking-widest uppercase border border-zinc-700">
+                                        ESTILO COMPETITIVO
+                                    </span>
+                                </div>
+
+                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
+                                    <div class="max-w-[480px]">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
+                                            APPAREL OFICIAL LBL
+                                        </div>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
+                                            VISTE EL NIVEL DE UN <span class="text-red-500">CAMPEÓN</span>
+                                        </h2>
+                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
+                                            Jerseys, hoodies y merchandising de alta calidad para la comunidad competitiva de esports en Bolivia.
+                                        </p>
+                                    </div>
+
+                                    <!-- Logo ICONIC Proporcionado -->
+                                    <div class="flex flex-col items-center justify-center shrink-0">
+                                        <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_16px_rgba(255,255,255,0.25)]">
+                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">ICONIC BOLIVIA</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
+                                    <span>EQUIPAMIENTO TEXTIL PARA PRO-PLAYERS</span>
+                                    <span class="text-red-400 uppercase font-bold tracking-widest">ICONIC x LBL ESPORTS</span>
+                                </div>
+                            </div>
+
+                            <!-- SLIDE 4: AQM BOLIVIA (LOGO PROPORCIONADO, SIN CAJAS) -->
+                            <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#091016] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between z-10 border-b border-cyan-900/30 pb-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
+                                        <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
+                                            HARDWARE & PERIFÉRICOS • AQM BOLIVIA
+                                        </span>
+                                    </div>
+                                    <span class="px-3 py-1 rounded bg-cyan-950/60 text-cyan-400 font-bold font-rajdhani text-xs tracking-widest uppercase border border-cyan-500/40">
+                                        PRO HARDWARE
+                                    </span>
+                                </div>
+
+                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
+                                    <div class="max-w-[480px]">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
+                                            TECNOLOGÍA DE VANGUARDIA
+                                        </div>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
+                                            RENDIMIENTO <span class="text-cyan-400">SIN LÍMITES</span>
+                                        </h2>
+                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
+                                            Tecnología, accesorios y soporte de hardware oficial para llevar el rendimiento de los jugadores bolivianos al siguiente nivel.
+                                        </p>
+                                    </div>
+
+                                    <!-- Logo AQM Proporcionado -->
+                                    <div class="flex flex-col items-center justify-center shrink-0">
+                                        <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_16px_rgba(6,182,212,0.4)]">
+                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">AQM BOLIVIA</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
+                                    <span>PERIFÉRICOS Y ENSAMBLES DE ALTO RENDIMIENTO</span>
+                                    <span class="text-cyan-400 uppercase font-bold tracking-widest">AQM x LBL ESPORTS</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BARRA INFERIOR: SPOTLIGHT DE EQUIPO O BARRA DE SPONSORS OFICIALES ESTILO WORLDS -->
+                <div class="w-full h-[105px] relative">
+                    
+                    <!-- MODO 1: ROSTER SPOTLIGHT (Alineación 5v5 + VOLT) -->
+                    <div id="footer-spotlight-bar" class="w-full h-full flex gap-5">
+                        <div id="spotlight-container" class="flex-1 panel-unified rounded-2xl px-6 py-2 flex items-center overflow-hidden">
+                            <div id="spotlight-bar-inner" class="w-full flex items-center justify-between">
+                                <!-- Equipo Destacado -->
+                                <div class="flex items-center gap-4 pr-5 border-r border-white/10 min-w-[210px] shrink-0">
+                                    <div id="spotlight-avatar-container">
+                                        <!-- Imagen o Shield inyectado -->
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span id="spotlight-team-tag" class="block font-worlds font-black text-3xl text-white tracking-wider leading-none truncate max-w-[150px]">
+                                            PENT-HEXCH
+                                        </span>
+                                        <span id="spotlight-team-seed" class="text-xs font-bold text-red-500 tracking-widest uppercase flex items-center gap-1.5 mt-0.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 live-pulse-badge"></span>
+                                            <span id="spotlight-team-seed-text">EQUIPO 1 • ENFRENTAMIENTO</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- 5 Jugadores del Roster con sus NICKS REALES en columnas directas -->
+                                <div id="spotlight-players-container" class="flex-1 flex items-center justify-around pl-4">
+                                    <!-- Inyectados limpiamente por JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo Secundario de Patrocinio VOLT Libre (Con Glow Azul Eléctrico Optimizado) -->
+                        <div class="w-[240px] flex items-center justify-center relative p-1 shrink-0">
+                            <img id="secondary-sponsor-logo" src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="h-16 max-w-[200px] object-contain drop-shadow-[0_0_16px_rgba(37,99,235,0.85)] filter transition-all">
+                        </div>
+                    </div>
+
+                    <!-- MODO 2: BARRA MINIMALISTA DE SPONSORS OFICIALES (ESTILO WORLDS 26) -->
+                    <div id="footer-sponsors-bar" class="w-full h-full panel-unified rounded-2xl px-8 flex items-center justify-around hidden">
+                        <div class="flex items-center gap-3">
+                            <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" decoding="async" class="h-12 max-w-[140px] object-contain">
+                            <div class="flex flex-col">
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">COPA LEGION</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-red-500 uppercase tracking-widest">TORNEO OFICIAL</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-white/20"></div>
+                        <div class="flex items-center gap-3">
+                            <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="h-12 max-w-[130px] object-contain drop-shadow-[0_0_12px_rgba(37,99,235,0.8)]">
+                            <div class="flex flex-col">
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">VOLT ENERGY</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-cyan-400 uppercase tracking-widest">BEBIDA OFICIAL</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-white/20"></div>
+                        <div class="flex items-center gap-3">
+                            <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="h-11 max-w-[130px] object-contain">
+                            <div class="flex flex-col">
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">ICONIC</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-zinc-400 uppercase tracking-widest">APPAREL & MERCH</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-white/20"></div>
+                        <div class="flex items-center gap-3">
+                            <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-10 max-w-[120px] object-contain">
+                            <div class="flex flex-col">
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">AQM BOLIVIA</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-red-400 uppercase tracking-widest">PRO HARDWARE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- BOTONES DE PRUEBA (DESARROLLO) -->
+    <div id="dev-toolbar" class="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-black/90 border border-zinc-800 p-2 rounded-xl text-xs text-white opacity-30 hover:opacity-100 transition-opacity">
+        <button id="btn-toggle-bg" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded font-bold">
+            <i class="fa-solid fa-eye mr-1"></i> Fondo Prueba
+        </button>
+        <button id="btn-sim-state" class="px-3 py-1.5 bg-red-700 hover:bg-red-600 rounded font-bold">
+            <i class="fa-solid fa-rotate mr-1"></i> Simular Estados
+        </button>
+    </div>
+
+    <!-- ====================================================================
+         LÓGICA JAVASCRIPT: PARTIDAS REALES DE SCOUTING 3 Y AVATARES DE ESCUDO
+         ==================================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { initializeFirestore, doc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
+            authDomain: "lbl-esports.firebaseapp.com",
+            projectId: "lbl-esports",
+            storageBucket: "lbl-esports.firebasestorage.app",
+            messagingSenderId: "124596723477",
+            appId: "1:124596723477:web:d913f1060f303ef3a2531c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const channelId = (urlParams.get('channel') || 'darkcito').toLowerCase();
+        document.getElementById('channel-badge').textContent = `CANAL: @${channelId.toUpperCase()}`;
+
+        function autoScaleCanvas() {
+            const canvas = document.getElementById('stage-canvas');
+            if (!canvas) return;
+            const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${scale})`;
+        }
+        window.addEventListener('resize', autoScaleCanvas);
+        autoScaleCanvas();
+
+        // Directorio de equipos y jugadores registrados en Scouting 3
+        let scouting3TeamsMap = {};
+
+        function normalizarUrlDriveImagen(url, size = 's800') {
+            if (!url || typeof url !== 'string') return '';
+            const str = url.trim();
+            const driveMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                const driveId = driveMatch[1];
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    return `/api/drive-proxy?id=${driveId}&sz=${size}`;
+                }
+                return `https://lh3.googleusercontent.com/d/${driveId}=${size}`;
+            }
+            return str;
+        }
+
+        function processScoutingTeams(equipos) {
+            if (!Array.isArray(equipos)) return;
+            equipos.forEach(eq => {
+                const name = (eq.nombre || eq.name || '').trim();
+                const key = name.toLowerCase();
+                if (!key) return;
+
+                const rawLogo = eq.logoRaw || eq.logo || '';
+                const logoNorm = normalizarUrlDriveImagen(rawLogo, 's800');
+
+                scouting3TeamsMap[key] = {
+                    name: name,
+                    tag: eq.tag || name.substring(0, 3).toUpperCase(),
+                    logo: logoNorm,
+                    titulares: eq.titulares || []
+                };
+            });
+        }
+
+        async function fetchScouting3RegisteredTeams() {
+            try {
+                const snap = await getDoc(doc(db, "torneos_activos", "scouting3_live_sync"));
+                if (snap.exists() && Array.isArray(snap.data().equipos)) {
+                    processScoutingTeams(snap.data().equipos);
+                } else {
+                    const cached = localStorage.getItem('lbl_scouting3_public_sanitized_v214');
+                    if (cached) {
+                        processScoutingTeams(JSON.parse(cached));
+                    }
+                    const res = await fetch("https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec");
+                    const json = await res.json();
+                    if (json.success && Array.isArray(json.equipos)) {
+                        processScoutingTeams(json.equipos);
+                        try { localStorage.setItem('lbl_scouting3_public_sanitized_v214', JSON.stringify(json.equipos)); } catch(e) {}
+                    }
+                }
+            } catch (err) {
+                console.warn("[Overlay Schedule] Aviso cargando equipos Scouting 3:", err);
+            }
+            updateSpotlightFromUpcomingMatch();
+            renderMatchesPage(currentMatchPage);
+        }
+
+        // Partidas reales exactas del cronograma de TS3LBL (Copa Legion x Scouting 3)
+        let state = {
+            stageTitle: "SWISS STAGE",
+            subTitle: "ROUND 1 - BEST OF 1S",
+            headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
+            timerSeconds: 52 * 60 + 26,
+            timerRunning: true,
+            matches: [
+                {
+                    matchNumber: "MATCH 1",
+                    timeDisplay: "19:00 BOL (HOY)",
+                    team1: { name: "IRON HELLS ACADEMY", tag: "IHA", seed: "Scouting 3", logo: "" },
+                    team2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", seed: "Scouting 3", logo: "" },
+                    status: "UPCOMING",
+                    score1: 0,
+                    score2: 0
+                },
+                {
+                    matchNumber: "MATCH 2",
+                    timeDisplay: "21:00 BOL (HOY)",
+                    team1: { name: "BOLITAS", tag: "BLT", seed: "Scouting 3", logo: "" },
+                    team2: { name: "SWORD ART ONLINE", tag: "SAO", seed: "Scouting 3", logo: "" },
+                    status: "UPCOMING",
+                    score1: 0,
+                    score2: 0
+                },
+                {
+                    matchNumber: "MATCH 3",
+                    timeDisplay: "21:00 BOL (HOY)",
+                    team1: { name: "ARMEROS GAMING", tag: "ARG", seed: "Scouting 3", logo: "" },
+                    team2: { name: "POSTRECITOS GAMING", tag: "PTG", seed: "Scouting 3", logo: "" },
+                    status: "UPCOMING",
+                    score1: 0,
+                    score2: 0
+                },
+                {
+                    matchNumber: "MATCH 4",
+                    timeDisplay: "21:00 BOL (HOY)",
+                    team1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", seed: "Scouting 3", logo: "" },
+                    team2: { name: "PHOENIX RISING GAMING", tag: "PRG", seed: "Scouting 3", logo: "" },
+                    status: "UPCOMING",
+                    score1: 0,
+                    score2: 0
+                }
+            ],
+            flyerUrl: "",
+            mediaType: "video",
+            mediaUrl: "/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4",
+            footerMode: "spotlight",
+            secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
+            spotlight: {
+                teamName: "PENT-HEXCH",
+                teamTag: "PHX",
+                teamSeed: "Scouting 3 • Roster",
+                teamLogo: "",
+                players: [
+                    { name: "Top", role: "TOP" },
+                    { name: "Jgl", role: "JUNGLE" },
+                    { name: "Mid", role: "MID" },
+                    { name: "Bot", role: "BOT" },
+                    { name: "Sup", role: "SUPPORT" }
+                ]
+            }
+        };
+
+        // Limpieza de Riot IDs: elimina el "#tag" para dejar solo el nick limpio
+        function limpiarRiotNick(rawNick) {
+            if (!rawNick || typeof rawNick !== 'string') return '';
+            return rawNick.split('#')[0].trim();
+        }
+
+        // Generador de avatar con tamaño normalizado uniforme para todos los logos
+        function renderTeamAvatarHTML(logoUrl, teamName, tag) {
+            const cleanUrl = (logoUrl || '').trim();
+            if (cleanUrl && cleanUrl !== '/assets/logo.webp' && cleanUrl !== '/assets/teams/default.webp') {
+                return `
+                    <div class="team-logo-slot">
+                        <img src="${cleanUrl}" alt="${teamName}" decoding="async" onerror="this.outerHTML='<div class=\\\'team-shield-fallback\\\'><i class=\\\'fas fa-shield-alt\\\'></i></div>'">
+                    </div>
+                `;
+            }
+            return `
+                <div class="team-logo-slot">
+                    <div class="team-shield-fallback"><i class="fas fa-shield-alt"></i></div>
+                </div>
+            `;
+        }
+
+        // --------------------------------------------------------------------
+        // PAGINACIÓN Y RENDERIZADO DINÁMICO DE PARTIDAS
+        // Si hay <= 4 partidas: se muestra 1 página fija y se ocultan los puntos.
+        // Si hay > 4 partidas: se rota intermitentemente cada 10s y se muestran los puntos.
+        // --------------------------------------------------------------------
+        const PAGE_SIZE = 4;
+        let currentMatchPage = 0;
+        let matchRotationInterval = null;
+
+        function renderMatchesPage(pageIdx = 0) {
+            const container = document.getElementById('matches-container');
+            const paginationDots = document.getElementById('pagination-dots');
+            if (!container) return;
+
+            const allMatches = (state.matches && state.matches.length > 0) ? state.matches : [];
+            const totalMatches = allMatches.length;
+            const totalPages = Math.ceil(totalMatches / PAGE_SIZE) || 1;
+
+            currentMatchPage = pageIdx % totalPages;
+            const startIdx = currentMatchPage * PAGE_SIZE;
+            const activeList = allMatches.slice(startIdx, startIdx + PAGE_SIZE);
+            const count = activeList.length;
+
+            // Altura y anclaje superior determinado fijo (dimensiones originales amplias del header)
+            container.className = "flex-1 flex flex-col justify-start pt-3.5 pb-2 gap-3 min-h-0";
+            container.innerHTML = '';
+
+            const cardHeightClass = count === 4 ? 'flex-1' : 'min-h-[142px] max-h-[142px]';
+
+            activeList.forEach((match, idx) => {
+                const isLive = match.status === 'LIVE';
+                const isCompleted = match.status === 'COMPLETED';
+                const s1 = match.score1 ?? match.team1?.score ?? 0;
+                const s2 = match.score2 ?? match.team2?.score ?? 0;
+
+                // Determinar ganador y aplicar filtro blanco y negro al perdedor
+                let team1Win = false;
+                let team2Win = false;
+                if (isCompleted || match.winner || ((isCompleted || match.status === 'COMPLETED') && s1 !== s2) || (s1 !== s2 && (s1 > 0 || s2 > 0) && !isLive)) {
+                    if (match.winner === 'team1' || (!match.winner && s1 > s2)) {
+                        team1Win = true;
+                    } else if (match.winner === 'team2' || (!match.winner && s2 > s1)) {
+                        team2Win = true;
+                    }
+                }
+
+                // Normalización de nombres oficiales en MAYÚSCULAS
+                const rawName1 = String(match.team1?.name || 'TBD').toUpperCase().trim();
+                const rawName2 = String(match.team2?.name || 'TBD').toUpperCase().trim();
+
+                // Detección de TAGS oficiales o acrónimos
+                const s3Team1 = scouting3TeamsMap[rawName1.toLowerCase()] || {};
+                const s3Team2 = scouting3TeamsMap[rawName2.toLowerCase()] || {};
+
+                const tag1 = (match.team1?.tag || s3Team1.tag || rawName1.substring(0, 4)).toUpperCase().trim();
+                const tag2 = (match.team2?.tag || s3Team2.tag || rawName2.substring(0, 4)).toUpperCase().trim();
+
+                const logo1 = match.team1?.logo || s3Team1.logo || "";
+                const logo2 = match.team2?.logo || s3Team2.logo || "";
+
+                const globalIdx = startIdx + idx;
+                const timeString = (match.timeDisplay || (globalIdx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)')).trim();
+
+                const matchCard = document.createElement('div');
+                matchCard.className = `match-card-slot ${cardHeightClass} py-2.5 px-4`;
+
+                matchCard.innerHTML = `
+                    <!-- Encabezado de Partida: Número + Horario Oficial -->
+                    <div class="flex items-center justify-between pb-1 border-b border-white/5">
+                        <span class="font-rajdhani font-black text-xs tracking-[0.2em] text-red-500 uppercase flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                            ${match.matchNumber || `MATCH ${globalIdx + 1}`}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            ${timeString ? `
+                                <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#13141a]/90 border border-red-500/30 text-white font-rajdhani font-bold text-xs tracking-wider uppercase shadow-sm">
+                                    <i class="fa-regular fa-clock text-red-500 text-[11px]"></i>
+                                    <span>${timeString}</span>
+                                </div>
+                            ` : ''}
+                            ${isLive ? `<span class="px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest bg-red-600 text-white rounded shadow-md live-pulse-badge">EN VIVO</span>` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Cuerpo de Enfrentamiento: TAG Grande + Logo 84px Libre + Marcador Libre Grande -->
+                    <div class="flex items-center justify-between gap-3 pt-1.5 my-auto">
+                        <!-- EQUIPO 1 (TAG + Subnombre + Logo 84px Libre) -->
+                        <div class="flex-1 flex items-center justify-end gap-3.5 min-w-0 transition-all duration-300 ${team2Win ? 'grayscale opacity-35 contrast-75' : ''}">
+                            <div class="text-right flex-1 min-w-0 pr-1 flex flex-col items-end justify-center">
+                                <span class="block font-worlds font-black text-4xl text-white tracking-widest leading-none uppercase drop-shadow-sm truncate max-w-[170px]">
+                                    ${tag1}
+                                </span>
+                                <span class="block text-[11px] font-bold text-zinc-400 font-rajdhani uppercase tracking-wider truncate max-w-[170px] mt-1">
+                                    ${rawName1}
+                                </span>
+                            </div>
+                            ${renderTeamAvatarHTML(logo1, rawName1, tag1)}
+                        </div>
+
+                        <!-- CENTRO: MARCADOR LIBRE O VS (GRANDE, SIN CAJA, HORIZONTAL) -->
+                        <div class="shrink-0 flex items-center justify-center min-w-[90px] px-2">
+                            ${isUpcomingOrVs(match, count)}
+                        </div>
+
+                        <!-- EQUIPO 2 (Logo 84px Libre + TAG + Subnombre) -->
+                        <div class="flex-1 flex items-center justify-start gap-3.5 min-w-0 transition-all duration-300 ${team1Win ? 'grayscale opacity-35 contrast-75' : ''}">
+                            ${renderTeamAvatarHTML(logo2, rawName2, tag2)}
+                            <div class="text-left flex-1 min-w-0 pl-1 flex flex-col items-start justify-center">
+                                <span class="block font-worlds font-black text-4xl text-white tracking-widest leading-none uppercase drop-shadow-sm truncate max-w-[170px]">
+                                    ${tag2}
+                                </span>
+                                <span class="block text-[11px] font-bold text-zinc-400 font-rajdhani uppercase tracking-wider truncate max-w-[170px] mt-1">
+                                    ${rawName2}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(matchCard);
+            });
+
+            // GESTIÓN DE PUNTOS DE PAGINACIÓN:
+            // Si solo es una página (<= 4 partidas), NO se muestran los puntos.
+            // Si son varias páginas (> 4 partidas), se muestran los puntos y se resalta la página activa.
+            if (paginationDots) {
+                if (totalPages <= 1) {
+                    paginationDots.classList.add('hidden');
+                    paginationDots.style.display = 'none';
+                } else {
+                    paginationDots.classList.remove('hidden');
+                    paginationDots.style.display = 'flex';
+                    paginationDots.innerHTML = '';
+                    for (let p = 0; p < totalPages; p++) {
+                        const dot = document.createElement('span');
+                        if (p === currentMatchPage) {
+                            dot.className = "w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.9)] transition-all duration-300 scale-110";
+                        } else {
+                            dot.className = "w-2.5 h-2.5 rounded-full bg-zinc-700 transition-all duration-300 opacity-60";
+                        }
+                        paginationDots.appendChild(dot);
+                    }
+                }
+            }
+        }
+
+        // Intercambio intermitente entre páginas cada 10s solo si hay más de 1 página (> 4 partidas)
+        function startMatchPageRotation() {
+            if (matchRotationInterval) {
+                clearInterval(matchRotationInterval);
+                matchRotationInterval = null;
+            }
+
+            const totalMatches = (state.matches || []).length;
+            const totalPages = Math.ceil(totalMatches / PAGE_SIZE) || 1;
+
+            if (totalPages <= 1) {
+                return; // Solo una página: no rota
+            }
+
+            matchRotationInterval = setInterval(() => {
+                const container = document.getElementById('matches-container');
+                if (container) container.style.opacity = '0';
+
+                setTimeout(() => {
+                    const currentTotalPages = Math.ceil((state.matches || []).length / PAGE_SIZE) || 1;
+                    if (currentTotalPages <= 1) {
+                        currentMatchPage = 0;
+                        renderMatchesPage(0);
+                        if (container) container.style.opacity = '1';
+                        if (matchRotationInterval) clearInterval(matchRotationInterval);
+                        return;
+                    }
+                    currentMatchPage = (currentMatchPage + 1) % currentTotalPages;
+                    renderMatchesPage(currentMatchPage);
+                    if (container) container.style.opacity = '1';
+                }, 350);
+            }, 10000); // 10 segundos
+        }
+
+        function renderMatches(matchesList) {
+            if (Array.isArray(matchesList)) {
+                state.matches = matchesList;
+            }
+            currentMatchPage = 0;
+            renderMatchesPage(0);
+            startMatchPageRotation();
+        }
+
+        // Marcador Libre Grande (Sin caja, horizontal en una línea con font-worlds y rojo en dash)
+        function isUpcomingOrVs(match, count = 4) {
+            const s1 = match.score1 ?? match.team1?.score ?? 0;
+            const s2 = match.score2 ?? match.team2?.score ?? 0;
+            const isLive = match.status === 'LIVE';
+            const isCompleted = match.status === 'COMPLETED';
+
+            if (isLive || isCompleted) {
+                return `
+                    <div class="flex items-center justify-center whitespace-nowrap px-1">
+                        <span class="font-worlds font-black text-[46px] tracking-widest text-white whitespace-nowrap tabular-nums leading-none select-none flex items-center gap-2 drop-shadow-lg">
+                            <span>${s1}</span>
+                            <span class="text-red-500 font-bold text-3xl -mt-1">-</span>
+                            <span>${s2}</span>
+                        </span>
+                    </div>
+                `;
+            }
+            return `
+                <div class="flex items-center justify-center whitespace-nowrap px-1">
+                    <span class="font-rajdhani font-black text-3xl tracking-widest text-red-500 whitespace-nowrap leading-none select-none drop-shadow-sm">
+                        VS
+                    </span>
+                </div>
+            `;
+        }
+
+        // --------------------------------------------------------------------
+        // DETECCIÓN Y ROTACIÓN AUTOMÁTICA DEL SPOTLIGHT DE EQUIPOS CADA 10S
+        // --------------------------------------------------------------------
+        let activeSpotlightSide = 1; // Alterna entre 1 (Equipo 1) y 2 (Equipo 2)
+        let spotlightInterval = null;
+
+        function getUpcomingOrLiveMatch() {
+            if (!state.matches || state.matches.length === 0) return null;
+            const playable = state.matches.filter(m => {
+                const n1 = String(m.team1?.name || '').toUpperCase();
+                const n2 = String(m.team2?.name || '').toUpperCase();
+                return !n1.includes('BYE') && !n2.includes('BYE');
+            });
+            const pool = playable.length > 0 ? playable : state.matches;
+            return pool.find(m => m.status === 'LIVE') ||
+                   pool.find(m => m.status === 'UPCOMING') ||
+                   pool[0];
+        }
+
+        function updateSpotlightFromUpcomingMatch(side = null) {
+            if (side !== null) activeSpotlightSide = side;
+            const match = getUpcomingOrLiveMatch();
+            if (!match) return;
+
+            const teamObj = (activeSpotlightSide === 1) ? match.team1 : match.team2;
+            const vsTeamObj = (activeSpotlightSide === 1) ? match.team2 : match.team1;
+            const teamName = String(teamObj?.name || 'TBD').toUpperCase().trim();
+            const vsName = String(vsTeamObj?.name || 'TBD').toUpperCase().trim();
+
+            const s3Data = scouting3TeamsMap[teamName.toLowerCase()] || {};
+            const teamTag = (s3Data.tag || teamObj.tag || teamName.substring(0, 3)).toUpperCase();
+            const teamLogo = s3Data.logo || teamObj.logo || '';
+
+            // Jugadores titulares del roster de Scouting 3
+            let playersList = [];
+            if (Array.isArray(s3Data.titulares) && s3Data.titulares.length > 0) {
+                const top = s3Data.titulares.find(t => String(t.posicion).toUpperCase() === 'TOP');
+                const jg = s3Data.titulares.find(t => String(t.posicion).toUpperCase() === 'JG' || String(t.posicion).toUpperCase() === 'JUNGLE');
+                const mid = s3Data.titulares.find(t => String(t.posicion).toUpperCase() === 'MID');
+                const adc = s3Data.titulares.find(t => String(t.posicion).toUpperCase() === 'ADC' || String(t.posicion).toUpperCase() === 'BOT');
+                const sup = s3Data.titulares.find(t => String(t.posicion).toUpperCase() === 'SUPP' || String(t.posicion).toUpperCase() === 'SUPPORT');
+                playersList = [
+                    { name: top?.riotIdLas || top?.riotIdMain || top?.nombre || 'Top', role: 'TOP' },
+                    { name: jg?.riotIdLas || jg?.riotIdMain || jg?.nombre || 'Jgl', role: 'JUNGLE' },
+                    { name: mid?.riotIdLas || mid?.riotIdMain || mid?.nombre || 'Mid', role: 'MID' },
+                    { name: adc?.riotIdLas || adc?.riotIdMain || adc?.nombre || 'Bot', role: 'BOT' },
+                    { name: sup?.riotIdLas || sup?.riotIdMain || sup?.nombre || 'Sup', role: 'SUPPORT' }
+                ];
+            } else if (state.spotlight && state.spotlight.players && state.spotlight.players.length > 0) {
+                playersList = state.spotlight.players;
+            } else {
+                playersList = [
+                    { name: "Top", role: "TOP" },
+                    { name: "Jgl", role: "JUNGLE" },
+                    { name: "Mid", role: "MID" },
+                    { name: "Bot", role: "BOT" },
+                    { name: "Sup", role: "SUPPORT" }
+                ];
+            }
+
+            // Transición suave de opacidad
+            const inner = document.getElementById('spotlight-bar-inner');
+            if (inner) inner.style.opacity = '0.2';
+
+            setTimeout(() => {
+                document.getElementById('spotlight-avatar-container').innerHTML = renderTeamAvatarHTML(teamLogo, teamName, teamTag, 'w-14 h-14');
+                document.getElementById('spotlight-team-tag').textContent = teamTag;
+                
+                const seedEl = document.getElementById('spotlight-team-seed-text');
+                if (seedEl) {
+                    seedEl.textContent = `EQUIPO ${activeSpotlightSide} • VS ${vsTeamObj.tag || vsName}`;
+                }
+
+                const container = document.getElementById('spotlight-players-container');
+                container.innerHTML = '';
+                playersList.forEach(p => {
+                    const cleanNick = limpiarRiotNick(p.name).toUpperCase();
+                    const col = document.createElement('div');
+                    col.className = "flex flex-col items-center justify-center px-2 min-w-0";
+                    col.innerHTML = `
+                        <span class="font-rajdhani font-black text-xs text-red-500 tracking-[0.2em] uppercase mb-0.5">${p.role.toUpperCase()}</span>
+                        <span class="font-rajdhani font-black text-xl text-white tracking-wide uppercase leading-tight truncate max-w-[130px]">${cleanNick}</span>
+                    `;
+                    container.appendChild(col);
+                });
+
+                if (inner) inner.style.opacity = '1';
+            }, 180);
+        }
+
+        function startSpotlightRotation() {
+            if (spotlightInterval) clearInterval(spotlightInterval);
+            spotlightInterval = setInterval(() => {
+                activeSpotlightSide = (activeSpotlightSide === 1) ? 2 : 1;
+                updateSpotlightFromUpcomingMatch(activeSpotlightSide);
+            }, 10000);
+        }
+
+        function renderSpotlight(spotlightData) {
+            // Si llega un spotlight específico, se actualiza la vista inmediata
+            if (!spotlightData) return;
+            updateSpotlightFromUpcomingMatch();
+        }
+
+        // Rotación de Logos de Torneo en el Header cada 10 segundos (Copa Legion <-> Scouting 3)
+        let headerLogoIdx = 0;
+        let headerLogoInterval = null;
+
+        function startHeaderLogoRotation() {
+            if (headerLogoInterval) clearInterval(headerLogoInterval);
+            headerLogoInterval = setInterval(() => {
+                const legionLogo = document.getElementById('header-logo-legion');
+                const sc3Logo = document.getElementById('header-logo-sc3');
+                if (!legionLogo || !sc3Logo) return;
+                
+                headerLogoIdx = (headerLogoIdx + 1) % 2;
+                if (headerLogoIdx === 0) {
+                    legionLogo.classList.add('active');
+                    legionLogo.classList.remove('opacity-0');
+                    sc3Logo.classList.remove('active');
+                    sc3Logo.classList.add('opacity-0');
+                } else {
+                    sc3Logo.classList.add('active');
+                    sc3Logo.classList.remove('opacity-0');
+                    legionLogo.classList.remove('active');
+                    legionLogo.classList.add('opacity-0');
+                }
+            }, 10000);
+        }
+
+        // Rotación de Galería de Partners con fade cada 5 segundos
+        let partnerSlideIdx = 0;
+        let partnerSlideInterval = null;
+
+        function startPartnerSlideRotation() {
+            if (partnerSlideInterval) clearInterval(partnerSlideInterval);
+            partnerSlideInterval = setInterval(() => {
+                const slides = document.querySelectorAll('.partner-gallery-slide');
+                if (!slides || slides.length <= 1) return;
+                slides[partnerSlideIdx].classList.remove('active');
+                partnerSlideIdx = (partnerSlideIdx + 1) % slides.length;
+                slides[partnerSlideIdx].classList.add('active');
+            }, 5000);
+        }
+
+        // Gestión de Multimedia Dinámica (Video MP4 en bucle estilo Worlds, Flyer Imagen o Galería Fallback)
+        function renderMedia(mediaType = 'video', mediaUrl = '') {
+            const videoEl = document.getElementById('sponsor-video');
+            const imgEl = document.getElementById('flyer-image');
+            const galleryEl = document.getElementById('partners-gallery-container');
+            const cleanUrl = (mediaUrl || '').trim();
+
+            const isExplicitVideo = mediaType === 'video';
+            const isVideoExt = cleanUrl.endsWith('.mp4') || cleanUrl.endsWith('.webm') || cleanUrl.endsWith('.ogg');
+            const isVideo = cleanUrl ? (isExplicitVideo || isVideoExt) : false;
+
+            if (cleanUrl) {
+                if (isVideo) {
+                    if (imgEl) imgEl.classList.add('hidden');
+                    if (galleryEl) galleryEl.classList.add('hidden');
+                    if (partnerSlideInterval) clearInterval(partnerSlideInterval);
+
+                    if (videoEl) {
+                        videoEl.classList.remove('hidden');
+                        if (videoEl.getAttribute('src') !== cleanUrl) {
+                            videoEl.src = cleanUrl;
+                            videoEl.load();
+                        }
+                        const playPromise = videoEl.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(() => {});
+                        }
+                    }
+                } else {
+                    if (videoEl) {
+                        videoEl.pause();
+                        videoEl.classList.add('hidden');
+                    }
+                    if (galleryEl) galleryEl.classList.add('hidden');
+                    if (partnerSlideInterval) clearInterval(partnerSlideInterval);
+
+                    if (imgEl) {
+                        imgEl.src = cleanUrl;
+                        imgEl.classList.remove('hidden');
+                    }
+                }
+            } else {
+                // Fallback a galería de partners por código
+                if (videoEl) {
+                    videoEl.pause();
+                    videoEl.classList.add('hidden');
+                }
+                if (imgEl) imgEl.classList.add('hidden');
+                if (galleryEl) {
+                    galleryEl.classList.remove('hidden');
+                    startPartnerSlideRotation();
+                }
+            }
+        }
+
+        // Modo de Barra Inferior: 'spotlight' (Roster 5v5) o 'sponsors' (Estilo Worlds 26)
+        function renderFooter(mode = 'spotlight') {
+            const spotBar = document.getElementById('footer-spotlight-bar');
+            const sponsorsBar = document.getElementById('footer-sponsors-bar');
+            if (mode === 'sponsors') {
+                if (spotBar) spotBar.classList.add('hidden');
+                if (sponsorsBar) sponsorsBar.classList.remove('hidden');
+            } else {
+                if (sponsorsBar) sponsorsBar.classList.add('hidden');
+                if (spotBar) spotBar.classList.remove('hidden');
+            }
+        }
+
+        // Cronómetro en formato MM:SS con límite estricto de 59 minutos
+        function formatTimer(totalSecs) {
+            const clamped = Math.min(Math.max(0, totalSecs), 59 * 60 + 59);
+            const m = Math.floor(clamped / 60);
+            const s = clamped % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // Elementos DOM cacheados para evitar consultas repetitivas al layout
+        const headerTimerEl = document.getElementById('header-timer');
+        const stageTitleEl = document.getElementById('stage-title');
+        const stageSubtitleEl = document.getElementById('stage-subtitle');
+
+        setInterval(() => {
+            if (state.timerRunning && state.timerSeconds > 0) {
+                state.timerSeconds--;
+                if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+            }
+        }, 1000);
+
+        function updateSecondarySponsorLogo(url) {
+            const secImg = document.getElementById('secondary-sponsor-logo');
+            if (!secImg) return;
+            secImg.src = url || "/assets/Logos Sponsor/LOGO_VOLT_NEW.png";
+            if ((url || '').toLowerCase().includes('volt')) {
+                // Glow Azul Eléctrico Optimizado en VOLT (Sin doble filtro pesado)
+                secImg.className = "h-16 max-w-[200px] object-contain drop-shadow-[0_0_16px_rgba(37,99,235,0.85)] filter transition-all";
+            } else {
+                secImg.className = "h-16 max-w-[200px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] filter transition-all";
+            }
+        }
+
+        // Cache de control para evitar reconstrucciones de DOM redundantes (Memoización de sincronización)
+        let lastMatchesJson = '';
+        let lastSpotlightJson = '';
+        let lastMediaUrl = null;
+        let lastMediaType = null;
+        let lastFooterMode = null;
+        let lastSecondaryUrl = null;
+        let lastStageTitle = '';
+        let lastSubTitle = '';
+
+        function applyData(data) {
+            if (!data) return;
+
+            // Actualización solo en caso de cambio real
+            if (data.stageTitle && data.stageTitle !== lastStageTitle) {
+                lastStageTitle = data.stageTitle;
+                if (stageTitleEl) stageTitleEl.textContent = data.stageTitle;
+            }
+            if (data.subTitle && data.subTitle !== lastSubTitle) {
+                lastSubTitle = data.subTitle;
+                if (stageSubtitleEl) stageSubtitleEl.textContent = data.subTitle;
+            }
+
+            if (data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
+                const newMatchesJson = JSON.stringify(data.matches);
+                if (newMatchesJson !== lastMatchesJson) {
+                    lastMatchesJson = newMatchesJson;
+                    state.matches = data.matches;
+                    renderMatches(state.matches);
+                    updateSpotlightFromUpcomingMatch();
+                }
+            }
+
+            if (data.spotlight) {
+                const newSpotlightJson = JSON.stringify(data.spotlight);
+                if (newSpotlightJson !== lastSpotlightJson) {
+                    lastSpotlightJson = newSpotlightJson;
+                    state.spotlight = data.spotlight;
+                    renderSpotlight(state.spotlight);
+                }
+            }
+
+            if (data.secondarySponsorUrl && data.secondarySponsorUrl !== lastSecondaryUrl) {
+                lastSecondaryUrl = data.secondarySponsorUrl;
+                state.secondarySponsorUrl = data.secondarySponsorUrl;
+                updateSecondarySponsorLogo(state.secondarySponsorUrl);
+            }
+
+            const incomingMediaUrl = typeof data.mediaUrl !== 'undefined' ? data.mediaUrl : (typeof data.flyerUrl !== 'undefined' ? data.flyerUrl : null);
+            const incomingMediaType = data.mediaType || (incomingMediaUrl && (incomingMediaUrl.endsWith('.mp4') || incomingMediaUrl.endsWith('.webm')) ? 'video' : (incomingMediaUrl ? 'image' : 'default'));
+
+            if (incomingMediaUrl !== null && (incomingMediaUrl !== lastMediaUrl || incomingMediaType !== lastMediaType)) {
+                lastMediaUrl = incomingMediaUrl;
+                lastMediaType = incomingMediaType;
+                state.mediaUrl = incomingMediaUrl;
+                state.mediaType = incomingMediaType;
+                renderMedia(incomingMediaType, incomingMediaUrl);
+            }
+
+            if (data.footerMode && data.footerMode !== lastFooterMode) {
+                lastFooterMode = data.footerMode;
+                state.footerMode = data.footerMode;
+                renderFooter(state.footerMode);
+            }
+
+            if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
+            if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
+            if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+        }
+
+        // Sincronizaciones tri-capa
+        try {
+            const syncChannel = new BroadcastChannel('lbl_overlay_sync');
+            syncChannel.onmessage = (event) => {
+                if (event.data && (!event.data.channelId || event.data.channelId === channelId)) {
+                    applyData(event.data);
+                }
+            };
+        } catch (e) {}
+
+        window.addEventListener('storage', (event) => {
+            if (event.key === `lbl_overlay_${channelId}`) {
+                try { applyData(JSON.parse(event.newValue)); } catch(e) {}
+            }
+        });
+
+        const savedLocal = localStorage.getItem(`lbl_overlay_${channelId}`);
+        if (savedLocal) {
+            try { applyData(JSON.parse(savedLocal)); } catch(e) {}
+        }
+
+        try {
+            const docRef = doc(db, "torneos_activos", `overlay_${channelId}`);
+            onSnapshot(docRef, (snap) => {
+                if (snap.exists()) applyData(snap.data());
+            }, () => {});
+        } catch (e) {}
+
+        function updateJornadaDate() {
+            const el = document.getElementById('jornada-date');
+            if (!el) return;
+            try {
+                const now = new Date();
+                const dFmt = new Intl.DateTimeFormat('es-BO', {
+                    timeZone: 'America/La_Paz',
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
+                }).format(now);
+                el.textContent = dFmt.toUpperCase().replace('.', '');
+            } catch(e) {
+                el.textContent = 'HOY';
+            }
+        }
+
+        // Render e inicialización
+        updateJornadaDate();
+        lastMatchesJson = JSON.stringify(state.matches);
+        lastMediaUrl = state.mediaUrl;
+        lastMediaType = state.mediaType;
+        lastFooterMode = state.footerMode;
+        lastSecondaryUrl = state.secondarySponsorUrl;
+        renderMatches(state.matches);
+        renderMedia(state.mediaType, state.mediaUrl);
+        renderFooter(state.footerMode);
+        updateSecondarySponsorLogo(state.secondarySponsorUrl);
+        if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+
+        startHeaderLogoRotation();
+        startSpotlightRotation();
+        fetchScouting3RegisteredTeams();
+
+        document.getElementById('btn-toggle-bg').addEventListener('click', () => {
+            document.body.classList.toggle('test-bg-active');
+        });
+
+        document.getElementById('btn-sim-state').addEventListener('click', () => {
+            const current = state.matches[0].status;
+            if (current === 'UPCOMING') {
+                state.matches[0].status = 'LIVE';
+                state.matches[0].score1 = 1;
+                state.matches[0].score2 = 0;
+            } else if (current === 'LIVE') {
+                state.matches[0].status = 'COMPLETED';
+                state.matches[0].score1 = 2;
+                state.matches[0].score2 = 1;
+                state.matches[0].winner = 'team1';
+            } else {
+                state.matches[0].status = 'UPCOMING';
+                state.matches[0].score1 = 0;
+                state.matches[0].score2 = 0;
+                state.matches[0].winner = null;
+            }
+            renderMatches(state.matches);
+            updateSpotlightFromUpcomingMatch();
+        });
+    </script>
+</body>
+</html>
