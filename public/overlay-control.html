@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=222">
+    <link rel="stylesheet" href="/dist/output.css?v=230">
 
     <style>
         @font-face {
@@ -259,10 +259,42 @@
                     </div>
 
                     <div class="space-y-4">
+                        <!-- ZONA DE CARGA DE ARCHIVO LOCAL (DIRECTA, SIN LINKS) -->
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+                                <span>Cargar Medio Local:</span>
+                                <span class="text-[10px] text-red-400 font-bold">Cero links • Carga directa desde tu PC</span>
+                            </label>
+                            
+                            <div id="drop-zone-media" class="relative border-2 border-dashed border-red-500/50 hover:border-red-400 bg-[#0c0c11] hover:bg-[#14141a] rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all group">
+                                <input id="input-file-media" type="file" accept="video/mp4,video/webm,image/png,image/jpeg,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                
+                                <div class="w-12 h-12 rounded-full bg-red-600/20 group-hover:bg-red-600/30 flex items-center justify-center text-red-500 mb-2 transition-transform group-hover:scale-110">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                                </div>
+                                <span class="text-sm font-bold text-white tracking-wide">
+                                    Haz clic para buscar archivo o arrástralo aquí
+                                </span>
+                                <span class="text-[11px] text-zinc-400 mt-0.5">
+                                    Soporta <b class="text-red-400">Video MP4</b> o <b class="text-cyan-400">Flyer (PNG, JPG, WebP)</b>
+                                </span>
+                                
+                                <div id="upload-status-box" class="w-full mt-3 pt-2.5 border-t border-zinc-800 text-xs hidden">
+                                    <div class="flex items-center justify-between text-[11px] px-1">
+                                        <span id="upload-filename-label" class="font-bold text-white truncate max-w-[200px]">archivo.mp4</span>
+                                        <span id="upload-badge-status" class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm">LISTO EN OBS</span>
+                                    </div>
+                                    <div id="upload-bar-wrap" class="w-full bg-zinc-800 rounded-full h-1.5 mt-2 overflow-hidden hidden">
+                                        <div id="upload-bar-fill" class="bg-red-600 h-full w-0 transition-all duration-200"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Selector de Formato Multimedia -->
                         <div>
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
-                                Formato de Pantalla Derecha:
+                                Formato Activo:
                             </label>
                             <div class="grid grid-cols-3 gap-2">
                                 <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
@@ -280,25 +312,27 @@
                             </div>
                         </div>
 
-                        <!-- URL / Ruta de Archivo Multimedia -->
+                        <!-- Presets de 1 Clic y Entrada Avanzada -->
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                                    Ruta o URL del Video / Flyer:
-                                </label>
-                                <span class="text-[10px] text-zinc-400">Local o Web (MP4, PNG, JPG)</span>
+                                <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Presets de Transmisión:</span>
+                                <button type="button" id="btn-toggle-manual-url" class="text-[10px] text-zinc-500 hover:text-red-400 underline">
+                                    Ver ruta interna
+                                </button>
                             </div>
-                            <input id="input-media-url" type="text" value="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" placeholder="Ej: /assets/video.mp4 o https://.../flyer.png" class="w-full bg-black text-white text-xs px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500 font-mono">
-                            <input id="input-flyer-url" type="hidden" value="">
                             
-                            <!-- Botones Rápidos de Presets -->
-                            <div class="flex gap-1.5 mt-2 flex-wrap">
-                                <button type="button" id="btn-preset-media-video" class="text-[11px] font-semibold px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-red-400 border border-zinc-800 flex items-center gap-1.5 transition-colors">
+                            <div class="flex gap-1.5 flex-wrap">
+                                <button type="button" id="btn-preset-media-video" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-red-400 border border-zinc-800 flex items-center gap-1.5 transition-colors">
                                     <i class="fa-solid fa-trophy"></i> Video Copa Legion (MP4 Oficial)
                                 </button>
-                                <button type="button" id="btn-preset-media-default" class="text-[11px] font-semibold px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5 transition-colors">
+                                <button type="button" id="btn-preset-media-default" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5 transition-colors">
                                     <i class="fa-solid fa-rotate"></i> Galería Predeterminada
                                 </button>
+                            </div>
+
+                            <div id="manual-url-container" class="mt-2 hidden">
+                                <input id="input-media-url" type="text" value="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" class="w-full bg-black text-white text-xs px-3 py-2 rounded-lg border border-zinc-800 font-mono text-zinc-400">
+                                <input id="input-flyer-url" type="hidden" value="">
                             </div>
                         </div>
 
@@ -488,6 +522,185 @@
         let currentChannel = 'darkcito';
         let currentFilter = 'hoy';
 
+        // Directorio oficial de logos PNG locales sin fondo para Equipos Scouting 3
+        const LOCAL_SC3_LOGOS = {
+            "armeros gaming": "/assets/Equipos%20SC3/armeros%20gaming.png",
+            "asociacion de troncos": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "asociacion de troncos expertos": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "b1 lol sport": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1 lol sports": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1 lol esports": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "bolitas": "/assets/Equipos%20SC3/bolitas.png",
+            "bolitoons": "/assets/Equipos%20SC3/bolitoons.png",
+            "camino a laja reformed": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "camino a laja": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "ctk gaming": "/assets/Equipos%20SC3/CTK%20gaming.png",
+            "ctk": "/assets/Equipos%20SC3/CTK%20gaming.png",
+            "dead players gaming": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dead players": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dissidents": "/assets/Equipos%20SC3/dissidents.png",
+            "inka warriors gaming": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "inka warriors": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "iron academy": "/assets/Equipos%20SC3/iron%20academy.png",
+            "iron hells academy": "/assets/Equipos%20SC3/iron%20academy.png",
+            "iron hells": "/assets/Equipos%20SC3/iron%20hells.png",
+            "itsd zaun": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "itsd": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "kaox las": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "kaox": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "kaoxitos skyblue": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "kaoxitos skyblue (academy)": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "kaoxitos": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "legion": "/assets/Equipos%20SC3/LEGION.png",
+            "los chipis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "chipis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "new rapture sport": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture sports": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture esports": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "nexus breakers": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "nothing cash": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "nox reign esports": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "nox reign": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "pacha lovers": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pachalovers": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pasteurizados gaming": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "pasteurizados": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "pent-hexch": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "pent hexch": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "phoenix rampage": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "phoenix rising gaming": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "phoenix rising": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "pisa patitos gaming": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "pisa patitos": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "postrecitos gaming": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "postrecitos": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "proyecto q": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "rgb": "/assets/Equipos%20SC3/RGB.png",
+            "rgb esports": "/assets/Equipos%20SC3/RGB.png",
+            "rift rangers alpha": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "rift rangers": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "shadowborns gaming": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "shadowborns": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "siloko": "/assets/Equipos%20SC3/siloko.png",
+            "snake nest": "/assets/Equipos%20SC3/snake%20nest.png",
+            "sword art online": "/assets/Equipos%20SC3/Sword%20Art%20Online.png",
+            "team blood": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "blood": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tragedy": "/assets/Equipos%20SC3/tragedy.png",
+            "triple alianza": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "turnalia": "/assets/Equipos%20SC3/Turnalia.png",
+            "voiden abyss club": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png",
+            "voiden abyss": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png",
+
+            // Acrónimos / Tags Oficiales
+            "arg": "/assets/Equipos%20SC3/armeros%20gaming.png",
+            "ate": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "blt": "/assets/Equipos%20SC3/bolitas.png",
+            "bol": "/assets/Equipos%20SC3/bolitoons.png",
+            "clr": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "dpg": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dis": "/assets/Equipos%20SC3/dissidents.png",
+            "iwg": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "iha": "/assets/Equipos%20SC3/iron%20academy.png",
+            "ih": "/assets/Equipos%20SC3/iron%20hells.png",
+            "itsd": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "kxa": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "leg": "/assets/Equipos%20SC3/LEGION.png",
+            "lgn": "/assets/Equipos%20SC3/LEGION.png",
+            "chp": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "nre": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png", // NOX REIGN ESPORTS es NRE!
+            "nox": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "nrs": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png", // NEW RAPTURE SPORT es NRS!
+            "nb": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "nc": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "ntc": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "plf": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pcl": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "ptz": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "phx": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "pr": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "prg": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "ppg": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "ptg": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "pq": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "rra": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "sbg": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "slk": "/assets/Equipos%20SC3/siloko.png",
+            "snk": "/assets/Equipos%20SC3/snake%20nest.png",
+            "sao": "/assets/Equipos%20SC3/Sword%20Art%20Online.png",
+            "tb": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tgd": "/assets/Equipos%20SC3/tragedy.png",
+            "ta": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "trn": "/assets/Equipos%20SC3/Turnalia.png",
+            "vac": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png"
+        };
+
+        function findLocalSc3Logo(name, tag) {
+            const cleanName = String(name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            const cleanTag = String(tag || '').toLowerCase().trim();
+
+            // 1. REGLAS PRIORITARIAS EXPLÍCITAS PARA PREVENIR CUALQUIER COLISIÓN:
+            // NRE = NOX REIGN ESPORTS vs NRS = NEW RAPTURE SPORT
+            if (cleanTag === 'nre' || cleanName.includes('nox reign') || cleanName === 'nox') {
+                return "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png";
+            }
+            if (cleanTag === 'nrs' || cleanName.includes('rapture')) {
+                return "/assets/Equipos%20SC3/New%20Rapture%20Sport.png";
+            }
+            // Pacha Lovers (PLF / PCL)
+            if (cleanTag === 'plf' || cleanTag === 'pcl' || cleanName.includes('pacha')) {
+                return "/assets/Equipos%20SC3/Pacha%20Lovers.png";
+            }
+            // Nothing Cash (NTC / NC)
+            if (cleanTag === 'ntc' || cleanTag === 'nc' || cleanName.includes('nothing cash')) {
+                return "/assets/Equipos%20SC3/Nothing%20Cash.png";
+            }
+            // Legion (LEG / LGN)
+            if (cleanTag === 'leg' || cleanTag === 'lgn' || cleanName === 'legion') {
+                return "/assets/Equipos%20SC3/LEGION.png";
+            }
+            // Iron Hells Academy (IHA) vs Iron Hells (IH)
+            if (cleanTag === 'iha' || cleanName.includes('iron academy') || cleanName.includes('hells academy')) {
+                return "/assets/Equipos%20SC3/iron%20academy.png";
+            }
+            if (cleanTag === 'ih' || cleanName === 'iron hells') {
+                return "/assets/Equipos%20SC3/iron%20hells.png";
+            }
+
+            // 2. Coincidencia por tabla directa
+            if (cleanName && LOCAL_SC3_LOGOS[cleanName]) return LOCAL_SC3_LOGOS[cleanName];
+            if (cleanTag && LOCAL_SC3_LOGOS[cleanTag]) return LOCAL_SC3_LOGOS[cleanTag];
+
+            // 3. Coincidencia por subcadena
+            for (const [key, path] of Object.entries(LOCAL_SC3_LOGOS)) {
+                if (key.length > 3 && (cleanName.includes(key) || key.includes(cleanName))) {
+                    return path;
+                }
+            }
+            return null;
+        }
+
+        function resolveTeamLogo(teamObj, s3Data) {
+            const name = teamObj?.name || s3Data?.name || '';
+            const tag = teamObj?.tag || s3Data?.tag || '';
+            
+            // 1. PRIORIDAD MÁXIMA: Logo local PNG sin fondo de Equipos SC3
+            const localPng = findLocalSc3Logo(name, tag);
+            if (localPng) return localPng;
+
+            // 2. Si teamObj ya trae un logo explícito (no default y no Drive con fondo si hay alternativa)
+            if (teamObj?.logo && teamObj.logo !== '/assets/logo.webp' && teamObj.logo !== '/assets/teams/default.webp') {
+                return teamObj.logo;
+            }
+
+            // 3. Logo sincronizado de Scouting 3
+            if (s3Data?.logo) return s3Data.logo;
+
+            return '';
+        }
+
         // Directorio de equipos de Scouting 3 (con logos subidos y rosters)
         let scouting3TeamsMap = {}; 
 
@@ -502,8 +715,8 @@
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "darkcito",
-                p1: { name: "IRON HELLS ACADEMY", tag: "IHA", logo: "" },
-                p2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", logo: "" }
+                p1: { name: "IRON HELLS ACADEMY", tag: "IHA", logo: "/assets/Equipos%20SC3/iron%20academy.png" },
+                p2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", logo: "/assets/Equipos%20SC3/asociacion%20de%20troncos.png" }
             },
             {
                 id: "ts3-m2",
@@ -511,8 +724,8 @@
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "darkcito",
-                p1: { name: "BOLITAS", tag: "BLT", logo: "" },
-                p2: { name: "SWORD ART ONLINE", tag: "SAO", logo: "" }
+                p1: { name: "BOLITAS", tag: "BLT", logo: "/assets/Equipos%20SC3/bolitas.png" },
+                p2: { name: "SWORD ART ONLINE", tag: "SAO", logo: "/assets/Equipos%20SC3/Sword%20Art%20Online.png" }
             },
             {
                 id: "ts3-m3",
@@ -520,8 +733,8 @@
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "darkcito",
-                p1: { name: "ARMEROS GAMING", tag: "ARG", logo: "" },
-                p2: { name: "POSTRECITOS GAMING", tag: "PTG", logo: "" }
+                p1: { name: "ARMEROS GAMING", tag: "ARG", logo: "/assets/Equipos%20SC3/armeros%20gaming.png" },
+                p2: { name: "POSTRECITOS GAMING", tag: "PTG", logo: "/assets/Equipos%20SC3/Postrecitos%20Gaming.png" }
             },
             {
                 id: "ts3-m4",
@@ -529,8 +742,8 @@
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "darkcito",
-                p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", logo: "" },
-                p2: { name: "PHOENIX RISING GAMING", tag: "PRG", logo: "" }
+                p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
+                p2: { name: "PHOENIX RISING GAMING", tag: "PRG", logo: "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png" }
             }
         ];
 
@@ -609,11 +822,12 @@
 
                 const rawLogo = eq.logoRaw || eq.logo || '';
                 const logoNorm = normalizarUrlDriveImagen(rawLogo, 's800');
+                const localPng = findLocalSc3Logo(name, eq.tag);
 
                 scouting3TeamsMap[key] = {
                     name: name,
                     tag: eq.tag || name.substring(0, 3).toUpperCase(),
-                    logo: logoNorm,
+                    logo: localPng || logoNorm,
                     titulares: eq.titulares || []
                 };
             });
@@ -769,8 +983,8 @@
                         isFuture: sched.isFuture,
                         isPast: sched.isPast,
                         timestamp: sched.timestamp,
-                        p1: { name: p1Name, tag: p1Tag, logo: p1S3.logo || '' },
-                        p2: { name: p2Name, tag: p2Tag, logo: p2S3.logo || '' }
+                        p1: { name: p1Name, tag: p1Tag, logo: resolveTeamLogo({ name: p1Name, tag: p1Tag }, p1S3) },
+                        p2: { name: p2Name, tag: p2Tag, logo: resolveTeamLogo({ name: p2Name, tag: p2Tag }, p2S3) }
                     };
                 });
 
@@ -805,8 +1019,8 @@
                         isToday: idx < 8,
                         isFuture: idx >= 8,
                         isPast: false,
-                        p1: { ...m.p1, logo: s1.logo || '' },
-                        p2: { ...m.p2, logo: s2.logo || '' }
+                        p1: { ...m.p1, logo: resolveTeamLogo(m.p1, s1) },
+                        p2: { ...m.p2, logo: resolveTeamLogo(m.p2, s2) }
                     };
                 });
                 document.getElementById('detected-matches-count').textContent = `Hoy: ${liveCronogramaMatches.length} Partidas Oficiales TS3LBL`;
@@ -954,8 +1168,8 @@
             state.matches = selected.map((m, idx) => ({
                 matchNumber: `MATCH ${idx + 1}`,
                 timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
-                team1: { name: m.p1.name.toUpperCase().trim(), tag: m.p1.tag.toUpperCase(), seed: "Scouting 3", logo: m.p1.logo || "", score: m.score1 || 0 },
-                team2: { name: m.p2.name.toUpperCase().trim(), tag: m.p2.tag.toUpperCase(), seed: "Scouting 3", logo: m.p2.logo || "", score: m.score2 || 0 },
+                team1: { name: m.p1.name.toUpperCase().trim(), tag: m.p1.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p1, scouting3TeamsMap[m.p1.name.toLowerCase()]), score: m.score1 || 0 },
+                team2: { name: m.p2.name.toUpperCase().trim(), tag: m.p2.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p2, scouting3TeamsMap[m.p2.name.toLowerCase()]), score: m.score2 || 0 },
                 status: m.state === 'live' ? 'LIVE' : m.state === 'completed' ? 'COMPLETED' : 'UPCOMING',
                 winner: m.winner || null
             }));
@@ -1147,8 +1361,8 @@
                 state.matches = INITIAL_TS3LBL_MATCHES.map((m, idx) => ({
                     matchNumber: `MATCH ${idx + 1}`,
                     timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
-                    team1: { name: m.p1.name, tag: m.p1.tag, seed: "Scouting 3", logo: m.p1.logo || "", score: 0 },
-                    team2: { name: m.p2.name, tag: m.p2.tag, seed: "Scouting 3", logo: m.p2.logo || "", score: 0 },
+                    team1: { name: m.p1.name, tag: m.p1.tag, seed: "Scouting 3", logo: resolveTeamLogo(m.p1, scouting3TeamsMap[m.p1.name.toLowerCase()]), score: 0 },
+                    team2: { name: m.p2.name, tag: m.p2.tag, seed: "Scouting 3", logo: resolveTeamLogo(m.p2, scouting3TeamsMap[m.p2.name.toLowerCase()]), score: 0 },
                     status: "UPCOMING",
                     winner: null
                 }));
@@ -1403,7 +1617,7 @@
                 teamName: spotName,
                 teamTag: s3Obj.tag || spotName.substring(0, 3).toUpperCase(),
                 teamSeed: "Scouting 3 • Roster",
-                teamLogo: s3Obj.logo || "",
+                teamLogo: resolveTeamLogo({ name: spotName, tag: s3Obj.tag }, s3Obj),
                 players: [
                     { name: document.getElementById('spot-p-0').value.trim() || 'Top', role: 'TOP' },
                     { name: document.getElementById('spot-p-1').value.trim() || 'Jgl', role: 'JUNGLE' },
@@ -1412,6 +1626,17 @@
                     { name: document.getElementById('spot-p-4').value.trim() || 'Sup', role: 'SUPPORT' }
                 ]
             };
+
+            // Asegurar que todas las partidas lleven los logos PNG locales sin fondo de Equipos SC3
+            state.matches = (state.matches || []).map(m => {
+                const s1 = scouting3TeamsMap[m.team1?.name?.toLowerCase()] || {};
+                const s2 = scouting3TeamsMap[m.team2?.name?.toLowerCase()] || {};
+                return {
+                    ...m,
+                    team1: { ...m.team1, logo: resolveTeamLogo(m.team1, s1) },
+                    team2: { ...m.team2, logo: resolveTeamLogo(m.team2, s2) }
+                };
+            });
 
             const payload = {
                 channelId: currentChannel,
@@ -1486,11 +1711,148 @@
             });
         });
 
+        // Carga directa de archivo local (Video MP4 o Flyer Imagen sin links)
+        const fileInput = document.getElementById('input-file-media');
+        const dropZone = document.getElementById('drop-zone-media');
+        const uploadStatusBox = document.getElementById('upload-status-box');
+        const uploadFilenameLabel = document.getElementById('upload-filename-label');
+        const uploadBadgeStatus = document.getElementById('upload-badge-status');
+        const uploadBarWrap = document.getElementById('upload-bar-wrap');
+        const uploadBarFill = document.getElementById('upload-bar-fill');
+
+        async function handleFileUpload(file) {
+            if (!file) return;
+
+            const isVideo = file.type.startsWith('video/') || file.name.endsWith('.mp4') || file.name.endsWith('.webm') || file.name.endsWith('.m4v');
+            
+            // Auto-seleccionar el radio correcto (Video o Flyer)
+            const radioVal = isVideo ? 'video' : 'image';
+            const radioEl = document.querySelector(`input[name="media-type"][value="${radioVal}"]`);
+            if (radioEl) radioEl.checked = true;
+
+            // Mostrar estado en la caja
+            if (uploadStatusBox) uploadStatusBox.classList.remove('hidden');
+            if (uploadFilenameLabel) uploadFilenameLabel.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+            if (uploadBadgeStatus) {
+                uploadBadgeStatus.textContent = "SUBIENDO...";
+                uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-600 text-white";
+            }
+            if (uploadBarWrap) uploadBarWrap.classList.remove('hidden');
+            if (uploadBarFill) uploadBarFill.style.width = '35%';
+
+            try {
+                // Subir al endpoint local del servidor /api/upload-media
+                const res = await fetch('/api/upload-media', {
+                    method: 'POST',
+                    headers: {
+                        'x-file-name': encodeURIComponent(file.name),
+                        'content-type': file.type || 'application/octet-stream'
+                    },
+                    body: file
+                });
+
+                if (uploadBarFill) uploadBarFill.style.width = '100%';
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const finalUrl = data.url;
+                    
+                    document.getElementById('input-media-url').value = finalUrl;
+                    document.getElementById('input-flyer-url').value = finalUrl;
+
+                    if (uploadBadgeStatus) {
+                        uploadBadgeStatus.textContent = "✓ LISTO EN OBS";
+                        uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm";
+                    }
+
+                    updateMediaPreview();
+                    saveChanges(true);
+                } else {
+                    throw new Error('Servidor retornó código ' + res.status);
+                }
+            } catch (err) {
+                console.warn('Subida por API falló, usando URL Blob directa:', err);
+                const blobUrl = URL.createObjectURL(file);
+                document.getElementById('input-media-url').value = blobUrl;
+                document.getElementById('input-flyer-url').value = blobUrl;
+                if (uploadBadgeStatus) {
+                    uploadBadgeStatus.textContent = "✓ EN VIVO (LOCAL)";
+                    uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white";
+                }
+                updateMediaPreview();
+                saveChanges(true);
+            }
+        }
+
+        fileInput?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFileUpload(file);
+        });
+
+        // Arrastrar y soltar (Drag & Drop)
+        dropZone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-red-400', 'bg-red-950/30');
+        });
+        dropZone?.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-red-400', 'bg-red-950/30');
+        });
+        dropZone?.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-red-400', 'bg-red-950/30');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFileUpload(file);
+        });
+
+        document.getElementById('btn-toggle-manual-url')?.addEventListener('click', () => {
+            const c = document.getElementById('manual-url-container');
+            if (c) c.classList.toggle('hidden');
+        });
+
+        // Eventos de Multimedia y Modo Worlds
+        document.getElementById('btn-preset-media-video')?.addEventListener('click', () => {
+            const r = document.querySelector('input[name="media-type"][value="video"]');
+            if (r) r.checked = true;
+            document.getElementById('input-media-url').value = '/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4';
+            if (uploadStatusBox) uploadStatusBox.classList.add('hidden');
+            updateMediaPreview();
+            saveChanges(true);
+        });
+
+        document.getElementById('btn-preset-media-default')?.addEventListener('click', () => {
+            const r = document.querySelector('input[name="media-type"][value="default"]');
+            if (r) r.checked = true;
+            document.getElementById('input-media-url').value = '';
+            if (uploadStatusBox) uploadStatusBox.classList.add('hidden');
+            updateMediaPreview();
+            saveChanges(true);
+        });
+
+        document.querySelectorAll('input[name="media-type"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                updateMediaPreview();
+                saveChanges(false);
+            });
+        });
+
+        document.getElementById('input-media-url')?.addEventListener('input', () => {
+            updateMediaPreview();
+        });
+
+        document.getElementById('select-footer-mode')?.addEventListener('change', () => {
+            saveChanges(false);
+        });
+
+        document.getElementById('select-secondary-sponsor')?.addEventListener('change', () => {
+            saveChanges(false);
+        });
+
         // Inicialización
         (async () => {
             await fetchScouting3RegisteredTeams();
             await detectActiveTournamentFromGestor();
             await loadActiveChannelData(currentChannel);
+            updateMediaPreview();
         })();
     </script>
 </body>

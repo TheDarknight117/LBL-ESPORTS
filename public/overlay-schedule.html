@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=223">
+    <link rel="stylesheet" href="/dist/output.css?v=230">
 
     <style>
         @font-face {
@@ -259,22 +259,26 @@
              ==================================================================== -->
         <main class="w-full flex-1 flex gap-7 mt-6 min-h-0">
 
-            <!-- COLUMNA IZQUIERDA: LISTA DE ENFRENTAMIENTOS (44% ancho - Estilo Worlds sin "caja sobre caja") -->
-            <section class="w-[44%] flex flex-col justify-between relative min-h-0">
+            <!-- COLUMNA IZQUIERDA: LISTA DE ENFRENTAMIENTOS (45% ancho - Estilo Worlds sin "caja sobre caja") -->
+            <section class="w-[45%] flex flex-col justify-between relative min-h-0">
                 
-                <!-- Cabecera de Columna (Caja individual superior nítida, el resto queda libre hacia el fondo) -->
-                <div class="w-full h-[52px] panel-header rounded-xl px-5 flex items-center justify-between shrink-0 shadow-lg">
-                    <div class="flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-sm bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></span>
-                        <span class="font-rajdhani text-2xl font-black tracking-widest text-white uppercase">JORNADA OFICIAL</span>
-                        <span class="h-4 w-[1px] bg-white/20 mx-1"></span>
-                        <span id="jornada-date" class="px-2.5 py-0.5 rounded bg-[#121217] border border-zinc-700/80 font-rajdhani font-bold text-xs tracking-widest text-red-400 uppercase">
+                <!-- Cabecera de Columna (Caja individual superior amplia, sin cajas internas) -->
+                <div class="w-full h-[72px] panel-header rounded-xl px-7 flex items-center justify-between shrink-0 shadow-xl">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <span class="w-3.5 h-3.5 rounded-sm bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.9)] shrink-0"></span>
+                        <span class="font-rajdhani text-2xl font-black tracking-widest text-white uppercase shrink-0">JORNADA OFICIAL</span>
+                        <span class="h-6 w-[1px] bg-white/20 mx-1 shrink-0"></span>
+                        <span id="jornada-date" class="font-rajdhani font-black text-2xl tracking-widest text-red-500 uppercase leading-none drop-shadow-[0_0_10px_rgba(239,68,68,0.5)] shrink-0 truncate">
                             HOY
                         </span>
                     </div>
-                    <span id="channel-badge" class="px-3.5 py-1 text-xs font-black font-rajdhani tracking-widest uppercase bg-red-950/90 text-red-300 rounded border border-red-500/50 shadow-sm">
-                        CANAL: @DARKCITO
-                    </span>
+                    <!-- Indicador Twitch Limpio (Sin arroba, sin caja interna) -->
+                    <div class="flex items-center gap-3 shrink-0 pl-3">
+                        <i class="fa-brands fa-twitch text-[#a970ff] text-3xl drop-shadow-[0_0_10px_rgba(169,112,255,0.85)]"></i>
+                        <span id="channel-badge" class="font-rajdhani font-black text-2xl text-white uppercase tracking-wider select-none leading-none">
+                            DARKCITO
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Contenedor Dinámico de Partidas Activas (Cajas de enfrentamientos flotando directamente sobre el fondo) -->
@@ -288,8 +292,8 @@
                 </div>
             </section>
 
-            <!-- COLUMNA DERECHA: MULTIMEDIA VIDEO/FLYER Y SPOTLIGHT O SPONSORS (56% ancho) -->
-            <section class="w-[56%] flex flex-col justify-between gap-5">
+            <!-- COLUMNA DERECHA: MULTIMEDIA VIDEO/FLYER Y SPOTLIGHT O SPONSORS (55% ancho) -->
+            <section class="w-[55%] flex flex-col justify-between gap-5">
 
                 <!-- SLOT MULTIMEDIA PRINCIPAL (DIMENSIONES EXACTAS: 940 × 530 px / 16:9 WIDESCREEN - VIDEO MP4 O FLYER) -->
                 <div class="w-full flex-1 panel-unified rounded-2xl relative overflow-hidden flex items-center justify-center bg-black/80">
@@ -317,57 +321,52 @@
                         <!-- 3. GALERÍA DE PARTNERS OFICIALES (FALLBACK CUANDO NO HAY MEDIA ACTIVA) -->
                         <div id="partners-gallery-container" class="w-full h-full relative rounded-xl overflow-hidden hidden">
                             
-                            <!-- SLIDE 1: COPA LEGION x SCOUTING 3 (PROPORCIÓN REFINADA, SIN CAJAS) -->
+                            <!-- SLIDE 1: LEGION GAMER STORE (TIENDA DE COMPUTADORAS) -->
                             <div class="partner-gallery-slide active rounded-xl bg-gradient-to-br from-[#121216] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
-                                <div class="flex items-center justify-between z-10 border-b border-white/10 pb-4">
+                                <div class="flex items-center justify-between z-10 border-b border-red-950/60 pb-4">
                                     <div class="flex items-center gap-3">
                                         <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
                                         <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
                                             PARTNER OFICIAL • LEGION GAMER STORE
                                         </span>
                                     </div>
-                                    <div class="flex items-center gap-6">
-                                        <img src="/assets/Logos Sponsor/logoLegion.png" alt="Legion Store" decoding="async" class="h-8 object-contain">
-                                        <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="Volt" decoding="async" class="h-7 object-contain">
-                                        <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="h-7 object-contain">
-                                        <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-6 object-contain">
-                                    </div>
+                                    <span class="px-3 py-1 rounded bg-red-950/70 text-red-300 font-bold font-rajdhani text-xs tracking-widest uppercase border border-red-500/40">
+                                        POTENCIA GAMING
+                                    </span>
                                 </div>
 
-                                <div class="my-auto z-10 flex items-center justify-between gap-10 py-4 px-4">
-                                    <div class="max-w-[500px]">
-                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
-                                             BOLIVIAN LEAGUE OF LEGENDS
+                                <div class="my-auto z-10 flex items-center justify-between gap-8 py-3 px-2">
+                                    <div class="flex-1 max-w-[500px] pr-4 flex flex-col justify-center">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3 w-fit">
+                                            HARDWARE GAMING & ENSAMBLE PRO
                                         </div>
-                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3">
-                                            COPA LEGION x SCOUTING 3
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3.5">
+                                            POTENCIA GAMING PARA <span class="text-red-500">CAMPEONES</span>
                                         </h2>
-                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
-                                            El torneo oficial de scouting competitivo de League of Legends en Bolivia, impulsado por Legion Gamer Store y LBL Esports.
+                                        <p class="text-zinc-200 text-lg font-medium leading-relaxed">
+                                            Tienda especializada en computadoras de alto rendimiento, componentes de última generación y ensamble profesional en Bolivia para jugar al máximo nivel.
                                         </p>
-                                        <div class="mt-4 flex items-center gap-3">
-                                            <div class="text-red-500 font-bold font-rajdhani text-xl tracking-widest uppercase flex items-center gap-2">
-                                                <i class="fa-solid fa-gamepad text-base"></i> WWW.LBLESPORTS.COM
-                                            </div>
-                                        </div>
                                     </div>
 
-                                    <!-- Logo Oficial Copa Legion Proporcionado (Sin cajas, sin QR) -->
-                                    <div class="flex flex-col items-center justify-center shrink-0">
-                                        <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_20px_rgba(220,38,38,0.4)]">
-                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">LEGION GAMER STORE</span>
+                                    <!-- Logo Oficial Legion Store Normalizado Amplio -->
+                                    <div class="w-[340px] shrink-0 flex flex-col items-center justify-center text-center">
+                                        <div class="h-[160px] w-[340px] flex items-center justify-center">
+                                            <img src="/assets/Logos Sponsor/logoLegion.png" alt="Legion Gamer Store" decoding="async" class="h-[130px] w-auto max-w-[310px] object-contain drop-shadow-[0_0_24px_rgba(220,38,38,0.55)]">
+                                        </div>
+                                        <span class="font-rajdhani font-black text-2xl text-white tracking-widest mt-4 uppercase drop-shadow-sm">LEGION GAMER STORE</span>
+                                        <span class="font-rajdhani font-bold text-xs text-red-500 uppercase tracking-widest mt-0.5">COMPUTADORAS & HARDWARE</span>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
-                                    <span>DIMENSIÓN EXACTA PARA FLYER: 940 × 630 PX</span>
+                                    <span>HARDWARE & COMPUTADORAS DE ALTO RENDIMIENTO</span>
                                     <span class="text-red-500 uppercase font-bold tracking-widest flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-red-600 live-pulse-badge"></span> TRANSMISIÓN EN VIVO
+                                        <span class="w-2 h-2 rounded-full bg-red-600 live-pulse-badge"></span> LBL ESPORTS x LEGION
                                     </span>
                                 </div>
                             </div>
 
-                            <!-- SLIDE 2: VOLT ENERGY DRINK (LOGO PROPORCIONADO + GLOW AZUL / CYAN ELÉCTRICO) -->
+                            <!-- SLIDE 2: VOLT ENERGY DRINK (PUNCHLINE CLÁSICO DE VOLT) -->
                             <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#071321] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
                                 <div class="flex items-center justify-between z-10 border-b border-blue-900/40 pb-4">
                                     <div class="flex items-center gap-3">
@@ -381,23 +380,26 @@
                                     </span>
                                 </div>
 
-                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
-                                    <div class="max-w-[480px]">
-                                        <div class="inline-block px-3.5 py-1 rounded bg-blue-950/80 border border-cyan-500/40 text-cyan-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
+                                <div class="my-auto z-10 flex items-center justify-between gap-8 py-3 px-2">
+                                    <div class="flex-1 max-w-[500px] pr-4 flex flex-col justify-center">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-blue-950/80 border border-cyan-500/40 text-cyan-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3 w-fit">
                                             BEBIDA ENERGIZANTE OFICIAL
                                         </div>
-                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
-                                            ACTIVA TU MODO <span class="text-cyan-400">COMPETITIVO</span>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3.5">
+                                            ENERGÍA QUE DEFINE <span class="text-cyan-400">CAMPEONES</span>
                                         </h2>
-                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
+                                        <p class="text-zinc-200 text-lg font-medium leading-relaxed">
                                             En cada teamfight y en cada jugada decisiva, VOLT te da la máxima concentración y energía para alcanzar la victoria en la LBL.
                                         </p>
                                     </div>
 
-                                    <!-- Logo VOLT Proporcionado con Glow Azul Eléctrico -->
-                                    <div class="flex flex-col items-center justify-center shrink-0">
-                                        <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_20px_rgba(37,99,235,0.85)]">
-                                        <span class="font-rajdhani font-black text-xl text-cyan-300 tracking-widest mt-2 uppercase">VOLT BOLIVIA</span>
+                                    <!-- Logo VOLT Normalizado Amplio -->
+                                    <div class="w-[340px] shrink-0 flex flex-col items-center justify-center text-center">
+                                        <div class="h-[160px] w-[340px] flex items-center justify-center">
+                                            <img src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="h-[105px] w-auto max-w-[320px] object-contain drop-shadow-[0_0_28px_rgba(37,99,235,0.95)]">
+                                        </div>
+                                        <span class="font-rajdhani font-black text-2xl text-cyan-300 tracking-widest mt-4 uppercase drop-shadow-sm">VOLT BOLIVIA</span>
+                                        <span class="font-rajdhani font-bold text-xs text-cyan-400 uppercase tracking-widest mt-0.5">BEBIDA ENERGIZANTE</span>
                                     </div>
                                 </div>
 
@@ -407,82 +409,88 @@
                                 </div>
                             </div>
 
-                            <!-- SLIDE 3: ICONIC (LOGO PROPORCIONADO, SIN CAJAS) -->
+                            <!-- SLIDE 3: ICONIC (MARCA DE ROPA URBANA) -->
                             <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#0e0e13] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
                                 <div class="flex items-center justify-between z-10 border-b border-white/10 pb-4">
                                     <div class="flex items-center gap-3">
                                         <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
                                         <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
-                                            INDUMENTARIA & MERCHANDISING • ICONIC
+                                            MARCA OFICIAL DE ROPA URBANA • ICONIC
                                         </span>
                                     </div>
                                     <span class="px-3 py-1 rounded bg-zinc-800 text-zinc-300 font-bold font-rajdhani text-xs tracking-widest uppercase border border-zinc-700">
-                                        ESTILO COMPETITIVO
+                                        STREETWEAR GAMING
                                     </span>
                                 </div>
 
-                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
-                                    <div class="max-w-[480px]">
-                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
-                                            APPAREL OFICIAL LBL
+                                <div class="my-auto z-10 flex items-center justify-between gap-8 py-3 px-2">
+                                    <div class="flex-1 max-w-[500px] pr-4 flex flex-col justify-center">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3 w-fit">
+                                            APPAREL & STREETWEAR EXCLUSIVO
                                         </div>
-                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
-                                            VISTE EL NIVEL DE UN <span class="text-red-500">CAMPEÓN</span>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3.5">
+                                            EL STREETWEAR DE LA <span class="text-red-500">COMUNIDAD</span>
                                         </h2>
-                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
-                                            Jerseys, hoodies y merchandising de alta calidad para la comunidad competitiva de esports en Bolivia.
+                                        <p class="text-zinc-200 text-lg font-medium leading-relaxed">
+                                            Diseños urbanos auténticos, hoodies, poleras oversize y estilo con identidad propia para vestir con nivel competitivo dentro y fuera del juego.
                                         </p>
                                     </div>
 
-                                    <!-- Logo ICONIC Proporcionado -->
-                                    <div class="flex flex-col items-center justify-center shrink-0">
-                                        <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_16px_rgba(255,255,255,0.25)]">
-                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">ICONIC BOLIVIA</span>
+                                    <!-- Logo ICONIC Normalizado Amplio -->
+                                    <div class="w-[340px] shrink-0 flex flex-col items-center justify-center text-center">
+                                        <div class="h-[160px] w-[340px] flex items-center justify-center">
+                                            <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="h-[70px] w-auto max-w-[310px] object-contain drop-shadow-[0_0_22px_rgba(255,255,255,0.4)]">
+                                        </div>
+                                        <span class="font-rajdhani font-black text-2xl text-white tracking-widest mt-4 uppercase drop-shadow-sm">ICONIC BOLIVIA</span>
+                                        <span class="font-rajdhani font-bold text-xs text-zinc-400 uppercase tracking-widest mt-0.5">ROPA URBANA & STREETWEAR</span>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
-                                    <span>EQUIPAMIENTO TEXTIL PARA PRO-PLAYERS</span>
+                                    <span>MARCA OFICIAL DE ROPA URBANA</span>
                                     <span class="text-red-400 uppercase font-bold tracking-widest">ICONIC x LBL ESPORTS</span>
                                 </div>
                             </div>
 
-                            <!-- SLIDE 4: AQM BOLIVIA (LOGO PROPORCIONADO, SIN CAJAS) -->
+                            <!-- SLIDE 4: AQM (ESPORTS LAN CENTER EN LA PAZ) -->
                             <div class="partner-gallery-slide rounded-xl bg-gradient-to-br from-[#091016] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
                                 <div class="flex items-center justify-between z-10 border-b border-cyan-900/30 pb-4">
                                     <div class="flex items-center gap-3">
                                         <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
                                         <span class="text-sm font-black tracking-[0.2em] uppercase text-white font-rajdhani">
-                                            HARDWARE & PERIFÉRICOS • AQM BOLIVIA
+                                            ESPORTS LAN CENTER EN LA PAZ • AQM
                                         </span>
                                     </div>
                                     <span class="px-3 py-1 rounded bg-cyan-950/60 text-cyan-400 font-bold font-rajdhani text-xs tracking-widest uppercase border border-cyan-500/40">
-                                        PRO HARDWARE
+                                        EL TEMPLO DE LOS ESPORTS
                                     </span>
                                 </div>
 
-                                <div class="my-auto z-10 flex items-center justify-between gap-12 py-4 px-4">
-                                    <div class="max-w-[480px]">
-                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3">
-                                            TECNOLOGÍA DE VANGUARDIA
+                                <div class="my-auto z-10 flex items-center justify-between gap-8 py-3 px-2">
+                                    <div class="flex-1 max-w-[500px] pr-4 flex flex-col justify-center">
+                                        <div class="inline-block px-3.5 py-1 rounded bg-red-950/80 border border-red-500/40 text-red-400 font-bold font-rajdhani text-xs tracking-widest uppercase mb-3 w-fit">
+                                            LAN CENTER OFICIAL • LA PAZ
                                         </div>
-                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-4">
-                                            RENDIMIENTO <span class="text-cyan-400">SIN LÍMITES</span>
+                                        <h2 class="font-rajdhani font-black text-4xl text-white tracking-wider uppercase leading-none mb-3.5">
+                                            DONDE COMPITEN LOS <span class="text-cyan-400">MEJORES</span>
                                         </h2>
-                                        <p class="text-zinc-300 text-base font-medium leading-relaxed">
-                                            Tecnología, accesorios y soporte de hardware oficial para llevar el rendimiento de los jugadores bolivianos al siguiente nivel.
+                                        <p class="text-zinc-200 text-lg font-medium leading-relaxed">
+                                            El LAN Center de esports de referencia en La Paz. Equipos de alta gama, monitores de 240Hz y la mejor atmósfera competitiva para entrenar y rankear en equipo.
                                         </p>
                                     </div>
 
-                                    <!-- Logo AQM Proporcionado -->
-                                    <div class="flex flex-col items-center justify-center shrink-0">
-                                        <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="max-h-28 w-auto object-contain drop-shadow-[0_0_16px_rgba(6,182,212,0.4)]">
-                                        <span class="font-rajdhani font-black text-xl text-white tracking-widest mt-2 uppercase">AQM BOLIVIA</span>
+                                    <!-- Logo AQM Normalizado Amplio y Prominente (Escudo Grande) -->
+                                    <div class="w-[340px] shrink-0 flex flex-col items-center justify-center text-center">
+                                        <div class="h-[160px] w-[340px] flex items-center justify-center">
+                                            <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-[155px] w-auto max-w-[220px] object-contain drop-shadow-[0_0_26px_rgba(6,182,212,0.6)]">
+                                        </div>
+                                        <span class="font-rajdhani font-black text-2xl text-white tracking-widest mt-4 uppercase drop-shadow-sm">AQM LA PAZ</span>
+                                        <span class="font-rajdhani font-bold text-xs text-cyan-400 uppercase tracking-widest mt-0.5">ESPORTS LAN CENTER</span>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-4 border-t border-white/10 z-10 text-xs font-semibold text-zinc-400 tracking-wider">
-                                    <span>PERIFÉRICOS Y ENSAMBLES DE ALTO RENDIMIENTO</span>
+                                    <span>ESPORTS LAN CENTER OFICIAL EN LA PAZ</span>
                                     <span class="text-cyan-400 uppercase font-bold tracking-widest">AQM x LBL ESPORTS</span>
                                 </div>
                             </div>
@@ -532,8 +540,8 @@
                         <div class="flex items-center gap-3">
                             <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" decoding="async" class="h-12 max-w-[140px] object-contain">
                             <div class="flex flex-col">
-                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">COPA LEGION</span>
-                                <span class="font-rajdhani text-[11px] font-bold text-red-500 uppercase tracking-widest">TORNEO OFICIAL</span>
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">LEGION STORE</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-red-500 uppercase tracking-widest">TIENDA COMPUTADORAS</span>
                             </div>
                         </div>
                         <div class="h-10 w-[1px] bg-white/20"></div>
@@ -549,15 +557,15 @@
                             <img src="/assets/Logos Sponsor/iconiclogo.png" alt="Iconic" decoding="async" class="h-11 max-w-[130px] object-contain">
                             <div class="flex flex-col">
                                 <span class="font-worlds font-black text-xl text-white uppercase leading-none">ICONIC</span>
-                                <span class="font-rajdhani text-[11px] font-bold text-zinc-400 uppercase tracking-widest">APPAREL & MERCH</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-zinc-400 uppercase tracking-widest">ROPA URBANA</span>
                             </div>
                         </div>
                         <div class="h-10 w-[1px] bg-white/20"></div>
                         <div class="flex items-center gap-3">
-                            <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-10 max-w-[120px] object-contain">
+                            <img src="/assets/Logos Sponsor/AQMlogo.png" alt="AQM" decoding="async" class="h-12 max-w-[130px] object-contain">
                             <div class="flex flex-col">
-                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">AQM BOLIVIA</span>
-                                <span class="font-rajdhani text-[11px] font-bold text-red-400 uppercase tracking-widest">PRO HARDWARE</span>
+                                <span class="font-worlds font-black text-xl text-white uppercase leading-none">AQM LA PAZ</span>
+                                <span class="font-rajdhani text-[11px] font-bold text-cyan-400 uppercase tracking-widest">ESPORTS LAN CENTER</span>
                             </div>
                         </div>
                     </div>
@@ -601,7 +609,9 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const channelId = (urlParams.get('channel') || 'darkcito').toLowerCase();
-        document.getElementById('channel-badge').textContent = `CANAL: @${channelId.toUpperCase()}`;
+        const cleanChannelUser = channelId.replace(/^@+/, '').toUpperCase();
+        const channelBadgeEl = document.getElementById('channel-badge');
+        if (channelBadgeEl) channelBadgeEl.textContent = cleanChannelUser;
 
         function autoScaleCanvas() {
             const canvas = document.getElementById('stage-canvas');
@@ -611,6 +621,185 @@
         }
         window.addEventListener('resize', autoScaleCanvas);
         autoScaleCanvas();
+
+        // Directorio oficial de logos PNG locales sin fondo para Equipos Scouting 3
+        const LOCAL_SC3_LOGOS = {
+            "armeros gaming": "/assets/Equipos%20SC3/armeros%20gaming.png",
+            "asociacion de troncos": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "asociacion de troncos expertos": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "b1 lol sport": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1 lol sports": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1 lol esports": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "b1": "/assets/Equipos%20SC3/B1%20LoL%20sport.png",
+            "bolitas": "/assets/Equipos%20SC3/bolitas.png",
+            "bolitoons": "/assets/Equipos%20SC3/bolitoons.png",
+            "camino a laja reformed": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "camino a laja": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "ctk gaming": "/assets/Equipos%20SC3/CTK%20gaming.png",
+            "ctk": "/assets/Equipos%20SC3/CTK%20gaming.png",
+            "dead players gaming": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dead players": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dissidents": "/assets/Equipos%20SC3/dissidents.png",
+            "inka warriors gaming": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "inka warriors": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "iron academy": "/assets/Equipos%20SC3/iron%20academy.png",
+            "iron hells academy": "/assets/Equipos%20SC3/iron%20academy.png",
+            "iron hells": "/assets/Equipos%20SC3/iron%20hells.png",
+            "itsd zaun": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "itsd": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "kaox las": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "kaox": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "kaoxitos skyblue": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "kaoxitos skyblue (academy)": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "kaoxitos": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "legion": "/assets/Equipos%20SC3/LEGION.png",
+            "los chipis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "chipis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "new rapture sport": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture sports": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture esports": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "new rapture": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png",
+            "nexus breakers": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "nothing cash": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "nox reign esports": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "nox reign": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "pacha lovers": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pachalovers": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pasteurizados gaming": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "pasteurizados": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "pent-hexch": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "pent hexch": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "phoenix rampage": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "phoenix rising gaming": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "phoenix rising": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "pisa patitos gaming": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "pisa patitos": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "postrecitos gaming": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "postrecitos": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "proyecto q": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "rgb": "/assets/Equipos%20SC3/RGB.png",
+            "rgb esports": "/assets/Equipos%20SC3/RGB.png",
+            "rift rangers alpha": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "rift rangers": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "shadowborns gaming": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "shadowborns": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "siloko": "/assets/Equipos%20SC3/siloko.png",
+            "snake nest": "/assets/Equipos%20SC3/snake%20nest.png",
+            "sword art online": "/assets/Equipos%20SC3/Sword%20Art%20Online.png",
+            "team blood": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "blood": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tragedy": "/assets/Equipos%20SC3/tragedy.png",
+            "triple alianza": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "turnalia": "/assets/Equipos%20SC3/Turnalia.png",
+            "voiden abyss club": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png",
+            "voiden abyss": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png",
+
+            // Acrónimos / Tags Oficiales
+            "arg": "/assets/Equipos%20SC3/armeros%20gaming.png",
+            "ate": "/assets/Equipos%20SC3/asociacion%20de%20troncos.png",
+            "blt": "/assets/Equipos%20SC3/bolitas.png",
+            "bol": "/assets/Equipos%20SC3/bolitoons.png",
+            "clr": "/assets/Equipos%20SC3/camino%20a%20laja%20reformed.png",
+            "dpg": "/assets/Equipos%20SC3/DEAD%20PLAYERS%20GAMING.png",
+            "dis": "/assets/Equipos%20SC3/dissidents.png",
+            "iwg": "/assets/Equipos%20SC3/Inka%20Warriors%20gaming.png",
+            "iha": "/assets/Equipos%20SC3/iron%20academy.png",
+            "ih": "/assets/Equipos%20SC3/iron%20hells.png",
+            "itsd": "/assets/Equipos%20SC3/ITSD%20ZAUN.png",
+            "kxa": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "leg": "/assets/Equipos%20SC3/LEGION.png",
+            "lgn": "/assets/Equipos%20SC3/LEGION.png",
+            "chp": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "nre": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png", // NOX REIGN ESPORTS es NRE!
+            "nox": "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png",
+            "nrs": "/assets/Equipos%20SC3/New%20Rapture%20Sport.png", // NEW RAPTURE SPORT es NRS!
+            "nb": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "nc": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "ntc": "/assets/Equipos%20SC3/Nothing%20Cash.png",
+            "plf": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "pcl": "/assets/Equipos%20SC3/Pacha%20Lovers.png",
+            "ptz": "/assets/Equipos%20SC3/Pasteurizados%20Gaming.png",
+            "phx": "/assets/Equipos%20SC3/PENT-HEXCH.png",
+            "pr": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "prg": "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png",
+            "ppg": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "ptg": "/assets/Equipos%20SC3/Postrecitos%20Gaming.png",
+            "pq": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "rra": "/assets/Equipos%20SC3/rift%20rangers%20alpha.png",
+            "sbg": "/assets/Equipos%20SC3/Shadowborns%20Gaming.png",
+            "slk": "/assets/Equipos%20SC3/siloko.png",
+            "snk": "/assets/Equipos%20SC3/snake%20nest.png",
+            "sao": "/assets/Equipos%20SC3/Sword%20Art%20Online.png",
+            "tb": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tgd": "/assets/Equipos%20SC3/tragedy.png",
+            "ta": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "trn": "/assets/Equipos%20SC3/Turnalia.png",
+            "vac": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png"
+        };
+
+        function findLocalSc3Logo(name, tag) {
+            const cleanName = String(name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            const cleanTag = String(tag || '').toLowerCase().trim();
+
+            // 1. REGLAS PRIORITARIAS EXPLÍCITAS PARA PREVENIR CUALQUIER COLISIÓN:
+            // NRE = NOX REIGN ESPORTS vs NRS = NEW RAPTURE SPORT
+            if (cleanTag === 'nre' || cleanName.includes('nox reign') || cleanName === 'nox') {
+                return "/assets/Equipos%20SC3/NOX%20REIGN%20ESPORTS.png";
+            }
+            if (cleanTag === 'nrs' || cleanName.includes('rapture')) {
+                return "/assets/Equipos%20SC3/New%20Rapture%20Sport.png";
+            }
+            // Pacha Lovers (PLF / PCL)
+            if (cleanTag === 'plf' || cleanTag === 'pcl' || cleanName.includes('pacha')) {
+                return "/assets/Equipos%20SC3/Pacha%20Lovers.png";
+            }
+            // Nothing Cash (NTC / NC)
+            if (cleanTag === 'ntc' || cleanTag === 'nc' || cleanName.includes('nothing cash')) {
+                return "/assets/Equipos%20SC3/Nothing%20Cash.png";
+            }
+            // Legion (LEG / LGN)
+            if (cleanTag === 'leg' || cleanTag === 'lgn' || cleanName === 'legion') {
+                return "/assets/Equipos%20SC3/LEGION.png";
+            }
+            // Iron Hells Academy (IHA) vs Iron Hells (IH)
+            if (cleanTag === 'iha' || cleanName.includes('iron academy') || cleanName.includes('hells academy')) {
+                return "/assets/Equipos%20SC3/iron%20academy.png";
+            }
+            if (cleanTag === 'ih' || cleanName === 'iron hells') {
+                return "/assets/Equipos%20SC3/iron%20hells.png";
+            }
+
+            // 2. Coincidencia por tabla directa
+            if (cleanName && LOCAL_SC3_LOGOS[cleanName]) return LOCAL_SC3_LOGOS[cleanName];
+            if (cleanTag && LOCAL_SC3_LOGOS[cleanTag]) return LOCAL_SC3_LOGOS[cleanTag];
+
+            // 3. Coincidencia por subcadena
+            for (const [key, path] of Object.entries(LOCAL_SC3_LOGOS)) {
+                if (key.length > 3 && (cleanName.includes(key) || key.includes(cleanName))) {
+                    return path;
+                }
+            }
+            return null;
+        }
+
+        function resolveTeamLogo(teamObj, s3Data) {
+            const name = teamObj?.name || s3Data?.name || '';
+            const tag = teamObj?.tag || s3Data?.tag || '';
+            
+            // 1. PRIORIDAD MÁXIMA: Logo local PNG sin fondo de Equipos SC3
+            const localPng = findLocalSc3Logo(name, tag);
+            if (localPng) return localPng;
+
+            // 2. Si teamObj ya trae un logo explícito (no default y no Drive con fondo si hay alternativa)
+            if (teamObj?.logo && teamObj.logo !== '/assets/logo.webp' && teamObj.logo !== '/assets/teams/default.webp') {
+                return teamObj.logo;
+            }
+
+            // 3. Logo sincronizado de Scouting 3
+            if (s3Data?.logo) return s3Data.logo;
+
+            return '';
+        }
 
         // Directorio de equipos y jugadores registrados en Scouting 3
         let scouting3TeamsMap = {};
@@ -638,11 +827,12 @@
 
                 const rawLogo = eq.logoRaw || eq.logo || '';
                 const logoNorm = normalizarUrlDriveImagen(rawLogo, 's800');
+                const localPng = findLocalSc3Logo(name, eq.tag);
 
                 scouting3TeamsMap[key] = {
                     name: name,
                     tag: eq.tag || name.substring(0, 3).toUpperCase(),
-                    logo: logoNorm,
+                    logo: localPng || logoNorm,
                     titulares: eq.titulares || []
                 };
             });
@@ -683,8 +873,8 @@
                 {
                     matchNumber: "MATCH 1",
                     timeDisplay: "19:00 BOL (HOY)",
-                    team1: { name: "IRON HELLS ACADEMY", tag: "IHA", seed: "Scouting 3", logo: "" },
-                    team2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", seed: "Scouting 3", logo: "" },
+                    team1: { name: "IRON HELLS ACADEMY", tag: "IHA", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/iron%20academy.png" },
+                    team2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/asociacion%20de%20troncos.png" },
                     status: "UPCOMING",
                     score1: 0,
                     score2: 0
@@ -692,8 +882,8 @@
                 {
                     matchNumber: "MATCH 2",
                     timeDisplay: "21:00 BOL (HOY)",
-                    team1: { name: "BOLITAS", tag: "BLT", seed: "Scouting 3", logo: "" },
-                    team2: { name: "SWORD ART ONLINE", tag: "SAO", seed: "Scouting 3", logo: "" },
+                    team1: { name: "BOLITAS", tag: "BLT", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/bolitas.png" },
+                    team2: { name: "SWORD ART ONLINE", tag: "SAO", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Sword%20Art%20Online.png" },
                     status: "UPCOMING",
                     score1: 0,
                     score2: 0
@@ -701,8 +891,8 @@
                 {
                     matchNumber: "MATCH 3",
                     timeDisplay: "21:00 BOL (HOY)",
-                    team1: { name: "ARMEROS GAMING", tag: "ARG", seed: "Scouting 3", logo: "" },
-                    team2: { name: "POSTRECITOS GAMING", tag: "PTG", seed: "Scouting 3", logo: "" },
+                    team1: { name: "ARMEROS GAMING", tag: "ARG", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/armeros%20gaming.png" },
+                    team2: { name: "POSTRECITOS GAMING", tag: "PTG", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Postrecitos%20Gaming.png" },
                     status: "UPCOMING",
                     score1: 0,
                     score2: 0
@@ -710,8 +900,8 @@
                 {
                     matchNumber: "MATCH 4",
                     timeDisplay: "21:00 BOL (HOY)",
-                    team1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", seed: "Scouting 3", logo: "" },
-                    team2: { name: "PHOENIX RISING GAMING", tag: "PRG", seed: "Scouting 3", logo: "" },
+                    team1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
+                    team2: { name: "PHOENIX RISING GAMING", tag: "PRG", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png" },
                     status: "UPCOMING",
                     score1: 0,
                     score2: 0
@@ -726,7 +916,7 @@
                 teamName: "PENT-HEXCH",
                 teamTag: "PHX",
                 teamSeed: "Scouting 3 • Roster",
-                teamLogo: "",
+                teamLogo: "/assets/Equipos%20SC3/PENT-HEXCH.png",
                 players: [
                     { name: "Top", role: "TOP" },
                     { name: "Jgl", role: "JUNGLE" },
@@ -817,8 +1007,8 @@
                 const tag1 = (match.team1?.tag || s3Team1.tag || rawName1.substring(0, 4)).toUpperCase().trim();
                 const tag2 = (match.team2?.tag || s3Team2.tag || rawName2.substring(0, 4)).toUpperCase().trim();
 
-                const logo1 = match.team1?.logo || s3Team1.logo || "";
-                const logo2 = match.team2?.logo || s3Team2.logo || "";
+                const logo1 = resolveTeamLogo(match.team1, s3Team1);
+                const logo2 = resolveTeamLogo(match.team2, s3Team2);
 
                 const globalIdx = startIdx + idx;
                 const timeString = (match.timeDisplay || (globalIdx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)')).trim();
@@ -828,19 +1018,19 @@
 
                 matchCard.innerHTML = `
                     <!-- Encabezado de Partida: Número + Horario Oficial -->
-                    <div class="flex items-center justify-between pb-1 border-b border-white/5">
-                        <span class="font-rajdhani font-black text-xs tracking-[0.2em] text-red-500 uppercase flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                    <div class="flex items-center justify-between pb-1.5 border-b border-white/10">
+                        <span class="font-rajdhani font-black text-sm tracking-[0.2em] text-red-500 uppercase flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></span>
                             ${match.matchNumber || `MATCH ${globalIdx + 1}`}
                         </span>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2.5">
                             ${timeString ? `
-                                <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#13141a]/90 border border-red-500/30 text-white font-rajdhani font-bold text-xs tracking-wider uppercase shadow-sm">
-                                    <i class="fa-regular fa-clock text-red-500 text-[11px]"></i>
-                                    <span>${timeString}</span>
+                                <div class="flex items-center gap-2 px-3 py-1 rounded-md bg-[#111116] border border-red-500/40 text-white font-rajdhani font-black text-sm tracking-wider uppercase shadow-md">
+                                    <i class="fa-regular fa-clock text-red-500 text-xs"></i>
+                                    <span class="tracking-widest text-zinc-100">${timeString}</span>
                                 </div>
                             ` : ''}
-                            ${isLive ? `<span class="px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest bg-red-600 text-white rounded shadow-md live-pulse-badge">EN VIVO</span>` : ''}
+                            ${isLive ? `<span class="px-3 py-1 text-xs font-black uppercase tracking-widest bg-red-600 text-white rounded-md shadow-md live-pulse-badge">EN VIVO</span>` : ''}
                         </div>
                     </div>
 
@@ -1006,7 +1196,7 @@
 
             const s3Data = scouting3TeamsMap[teamName.toLowerCase()] || {};
             const teamTag = (s3Data.tag || teamObj.tag || teamName.substring(0, 3)).toUpperCase();
-            const teamLogo = s3Data.logo || teamObj.logo || '';
+            const teamLogo = resolveTeamLogo(teamObj, s3Data);
 
             // Jugadores titulares del roster de Scouting 3
             let playersList = [];

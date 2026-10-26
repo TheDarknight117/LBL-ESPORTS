@@ -19,7 +19,9 @@ const MIME_TYPES = {
     '.ico': 'image/x-icon',
     '.woff': 'font/woff',
     '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf'
+    '.ttf': 'font/ttf',
+    '.mp4': 'video/mp4',
+    '.webm': 'video/webm'
 };
 
 function serveFile(res, filePath) {
@@ -129,6 +131,47 @@ const server = http.createServer((req, res) => {
 
     const urlObj = new URL(req.url, `http://${req.headers.host}`);
     let pathname = decodeURIComponent(urlObj.pathname);
+
+    // UPLOAD DIRECTO DE MULTIMEDIA (Videos MP4 o Flyers locales)
+    if (pathname === '/api/upload-media' && req.method === 'POST') {
+        const rawFileName = req.headers['x-file-name'] || ('upload_' + Date.now());
+        const decoded = decodeURIComponent(rawFileName);
+        const ext = path.extname(decoded).toLowerCase() || '.mp4';
+        const baseName = path.basename(decoded, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const safeFileName = `${Date.now()}_${baseName}${ext}`;
+
+        const uploadsDir = path.join(PUBLIC_DIR, 'uploads');
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const targetPath = path.join(uploadsDir, safeFileName);
+        const writeStream = fs.createWriteStream(targetPath);
+
+        req.pipe(writeStream);
+
+        writeStream.on('finish', () => {
+            const isVideo = ['.mp4', '.webm', '.m4v', '.mov'].includes(ext);
+            const relativeUrl = `/uploads/${safeFileName}`;
+
+            res.writeHead(200, {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({
+                success: true,
+                url: relativeUrl,
+                fileName: decoded,
+                mediaType: isVideo ? 'video' : 'image'
+            }));
+        });
+
+        writeStream.on('error', (err) => {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+            res.end(JSON.stringify({ error: err.message }));
+        });
+        return;
+    }
 
     // PROXY CON CACHÉ PARA IMÁGENES DE GOOGLE DRIVE (Elimina Rate Limit 429)
     if (pathname === '/api/drive-proxy') {

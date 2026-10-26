@@ -6,3 +6,5 @@ node_modules/
 *.xlsx
 public/assets/*.xlsx
 
+# Local dev uploads
+public/uploads/
