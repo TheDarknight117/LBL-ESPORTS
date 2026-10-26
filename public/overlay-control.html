@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=230">
+    <link rel="stylesheet" href="/dist/output.css?v=231">
 
     <style>
         @font-face {
@@ -79,7 +79,7 @@
                         <i class="fa-brands fa-twitch mr-1"></i> Darkcito
                     </button>
                     <button id="tab-channel-lbl" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-tower-broadcast mr-1"></i> LBL Oficial
+                        <i class="fa-solid fa-tower-broadcast mr-1"></i> LBL Esports
                     </button>
                 </div>
 
@@ -707,14 +707,21 @@
         // Partidas detectadas desde el torneo en curso
         let liveCronogramaMatches = [];
 
-        // 4 partidas reales inmediatas de TS3LBL (Copa Legion x Scouting 3)
+        // Registro reactivo de asignaciones de canales ({ [matchId]: 'darkcito' | 'lbl_oficial' | 'ambos' | '' })
+        let matchChannelAssignments = {};
+        try {
+            const savedAss = localStorage.getItem('lbl_overlay_match_assignments');
+            if (savedAss) matchChannelAssignments = JSON.parse(savedAss) || {};
+        } catch(e) {}
+
+        // Partidas de referencia inmediata de TS3LBL (Copa Legion x Scouting 3) - Sin asignación forzada
         const INITIAL_TS3LBL_MATCHES = [
             {
                 id: "ts3-m1",
                 timeDisplay: "19:00 BOL (HOY)",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
-                channel: "darkcito",
+                channel: "",
                 p1: { name: "IRON HELLS ACADEMY", tag: "IHA", logo: "/assets/Equipos%20SC3/iron%20academy.png" },
                 p2: { name: "ASOCIACION DE TRONCOS EXPERTOS", tag: "ATE", logo: "/assets/Equipos%20SC3/asociacion%20de%20troncos.png" }
             },
@@ -723,7 +730,7 @@
                 timeDisplay: "21:00 BOL (HOY)",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
-                channel: "darkcito",
+                channel: "",
                 p1: { name: "BOLITAS", tag: "BLT", logo: "/assets/Equipos%20SC3/bolitas.png" },
                 p2: { name: "SWORD ART ONLINE", tag: "SAO", logo: "/assets/Equipos%20SC3/Sword%20Art%20Online.png" }
             },
@@ -732,7 +739,7 @@
                 timeDisplay: "21:00 BOL (HOY)",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
-                channel: "darkcito",
+                channel: "",
                 p1: { name: "ARMEROS GAMING", tag: "ARG", logo: "/assets/Equipos%20SC3/armeros%20gaming.png" },
                 p2: { name: "POSTRECITOS GAMING", tag: "PTG", logo: "/assets/Equipos%20SC3/Postrecitos%20Gaming.png" }
             },
@@ -741,7 +748,7 @@
                 timeDisplay: "21:00 BOL (HOY)",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
-                channel: "darkcito",
+                channel: "",
                 p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
                 p2: { name: "PHOENIX RISING GAMING", tag: "PRG", logo: "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png" }
             }
@@ -864,6 +871,14 @@
                 } catch(e) {}
             }
 
+            // Sincronizar asignaciones persistidas desde Firestore
+            try {
+                const assSnap = await getDoc(doc(db, "torneos_activos", "overlay_match_assignments"));
+                if (assSnap.exists() && assSnap.data()?.assignments) {
+                    matchChannelAssignments = { ...matchChannelAssignments, ...assSnap.data().assignments };
+                }
+            } catch(e) {}
+
             // Helper para calcular horario oficial en Bolivia y detección estricta del día presente (HOY)
             function parseMatchSchedule(m, idx) {
                 const raw = m.scheduled_time || m.underway_at;
@@ -966,8 +981,9 @@
 
                     const sched = parseMatchSchedule(m, idx);
 
-                    // Asignación inicial de canal: primeros 4 a darkcito, siguientes a lbl_oficial
-                    const defaultChannel = idx < 4 ? 'darkcito' : 'lbl_oficial';
+                    // Asignación limpia sin precarga forzada (usa lo guardado o inicia vacío)
+                    const mIdStr = String(m.id || `m-${idx + 1}`);
+                    const defaultChannel = matchChannelAssignments[mIdStr] || '';
 
                     return {
                         id: String(m.id || `m-${idx + 1}`),
@@ -1016,6 +1032,7 @@
                     const s2 = scouting3TeamsMap[m.p2.name.toLowerCase()] || {};
                     return {
                         ...m,
+                        channel: matchChannelAssignments[m.id] || m.channel || '',
                         isToday: idx < 8,
                         isFuture: idx >= 8,
                         isPast: false,
@@ -1040,10 +1057,27 @@
             return `<div class="team-shield-avatar-sm"><i class="fas fa-shield-alt"></i></div>`;
         }
 
+        async function saveMatchAssignment(matchId, channelVal) {
+            matchChannelAssignments[String(matchId)] = channelVal;
+            try { localStorage.setItem('lbl_overlay_match_assignments', JSON.stringify(matchChannelAssignments)); } catch(e) {}
+            try { syncChannel.postMessage({ type: 'MATCH_ASSIGNMENTS_UPDATE', assignments: matchChannelAssignments }); } catch(e) {}
+            try {
+                await setDoc(doc(db, "torneos_activos", "overlay_match_assignments"), {
+                    assignments: matchChannelAssignments,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch(e) {}
+        }
+
         // 3. Renderizado de la Tabla de Partidas del Cronograma
         function renderCronogramaTable() {
             const tbody = document.getElementById('cronograma-table-body');
             tbody.innerHTML = '';
+
+            const isCurrentDarkcito = currentChannel === 'darkcito';
+            const currentChannelName = isCurrentDarkcito ? '@Darkcito' : 'LBL Esports';
+            const otherChannel = isCurrentDarkcito ? 'lbl_oficial' : 'darkcito';
+            const otherChannelName = isCurrentDarkcito ? 'LBL Esports' : '@Darkcito';
 
             let filtered = liveCronogramaMatches;
             if (currentFilter === 'hoy') {
@@ -1060,7 +1094,10 @@
             filtered.forEach((m, idx) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-zinc-900/40 transition-colors";
+                
                 const isAssignedToActive = m.channel === currentChannel || m.channel === 'ambos';
+                const isAssignedToOther = m.channel === otherChannel;
+                const isAmbos = m.channel === 'ambos';
 
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-center">
@@ -1094,29 +1131,117 @@
                             ${m.state === 'live' ? 'EN VIVO' : m.state === 'completed' ? 'FINAL' : 'PRÓXIMO'}
                         </span>
                     </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <select data-id="${m.id}" class="select-cronograma-channel bg-black text-xs font-bold text-zinc-200 rounded px-2 py-1 border border-zinc-700">
-                            <option value="darkcito" ${m.channel === 'darkcito' ? 'selected' : ''}>@Darkcito</option>
-                            <option value="lbl_oficial" ${m.channel === 'lbl_oficial' ? 'selected' : ''}>@LBL Oficial</option>
-                            <option value="ambos" ${m.channel === 'ambos' ? 'selected' : ''}>Ambos</option>
-                        </select>
+                    <td class="py-2.5 px-3">
+                        <div class="flex flex-col items-center justify-center gap-1">
+                            ${isAssignedToOther ? `
+                                <div class="flex flex-col items-center">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-950/80 text-purple-300 border border-purple-500/50 shadow-sm" title="Esta partida está marcada para ${otherChannelName}. No es necesario que la transmitas tú.">
+                                        <i class="fa-solid fa-tower-broadcast text-purple-400 text-xs"></i> En ${otherChannelName}
+                                    </span>
+                                    <span class="text-[9px] text-zinc-400 font-semibold uppercase tracking-tight mt-0.5">No necesario transmitir</span>
+                                </div>
+                            ` : isAmbos ? `
+                                <div class="flex flex-col items-center">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase bg-cyan-950/80 text-cyan-300 border border-cyan-500/50 shadow-sm">
+                                        <i class="fa-solid fa-users-viewfinder text-cyan-400 text-xs"></i> Ambos Canales
+                                    </span>
+                                    <span class="text-[9px] text-cyan-400 font-semibold uppercase tracking-tight mt-0.5">Transmisión Conjunta</span>
+                                </div>
+                            ` : isAssignedToActive ? `
+                                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-950/80 text-emerald-300 border border-emerald-500/50 shadow-sm">
+                                    <i class="fa-solid fa-check text-emerald-400 text-xs"></i> Mi Canal (${currentChannelName})
+                                </span>
+                            ` : `
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold text-zinc-500 border border-zinc-800">
+                                    Disponible
+                                </span>
+                            `}
+
+                            <select data-id="${m.id}" class="select-cronograma-channel bg-black text-xs font-bold text-zinc-200 rounded px-2 py-1 border border-zinc-700 w-full max-w-[155px]">
+                                <option value="" ${!m.channel ? 'selected' : ''}>-- Sin asignar --</option>
+                                <option value="darkcito" ${m.channel === 'darkcito' ? 'selected' : ''}>@Darkcito</option>
+                                <option value="lbl_oficial" ${m.channel === 'lbl_oficial' ? 'selected' : ''}>LBL Esports</option>
+                                <option value="ambos" ${m.channel === 'ambos' ? 'selected' : ''}>Ambos (Simultáneo)</option>
+                            </select>
+                        </div>
                     </td>
                 `;
 
                 tbody.appendChild(tr);
             });
 
-            tbody.querySelectorAll('.select-cronograma-channel').forEach(s => {
-                s.addEventListener('change', (e) => {
+            // Listener de Checkboxes con confirmación ante cruce de transmisiones
+            tbody.querySelectorAll('.chk-cronograma-item').forEach(chk => {
+                chk.addEventListener('change', async (e) => {
                     const id = e.target.dataset.id;
                     const item = liveCronogramaMatches.find(x => x.id === id);
-                    if (item) {
-                        item.channel = e.target.value;
-                        const chk = tbody.querySelector(`.chk-cronograma-item[data-id="${id}"]`);
-                        if (chk) {
-                            chk.checked = (item.channel === currentChannel || item.channel === 'ambos');
+                    if (!item) return;
+
+                    if (e.target.checked) {
+                        // Si ya está asignada al otro canal, pedir confirmación explícita
+                        if (item.channel === otherChannel) {
+                            const p1Nom = item.p1?.name || 'Equipo 1';
+                            const p2Nom = item.p2?.name || 'Equipo 2';
+                            const confirmacion = window.confirm(
+                                `⚠️ La partida ${p1Nom} vs ${p2Nom} ya está asignada a la transmisión de ${otherChannelName}.\n\n` +
+                                `Normalmente no es necesario que la transmitas tú.\n\n` +
+                                `¿Está seguro de que desea transmitir en ambos canales?\n\n` +
+                                `Al presionar Aceptar se marcará para los dos simultáneamente.`
+                            );
+
+                            if (!confirmacion) {
+                                e.target.checked = false;
+                                return;
+                            }
+                            item.channel = 'ambos';
+                        } else {
+                            item.channel = currentChannel;
+                        }
+                    } else {
+                        // Al desmarcar: si estaba en 'ambos', queda solo para el otro canal; si era propio, queda libre
+                        if (item.channel === 'ambos') {
+                            item.channel = otherChannel;
+                        } else {
+                            item.channel = '';
                         }
                     }
+
+                    await saveMatchAssignment(item.id, item.channel);
+                    renderCronogramaTable();
+                });
+            });
+
+            // Listener del Selector desplegable de canal con confirmación
+            tbody.querySelectorAll('.select-cronograma-channel').forEach(s => {
+                s.addEventListener('change', async (e) => {
+                    const id = e.target.dataset.id;
+                    const item = liveCronogramaMatches.find(x => x.id === id);
+                    if (!item) return;
+
+                    const prevChannel = item.channel || '';
+                    const requestedChannel = e.target.value;
+
+                    // Si estaba en el otro canal y se quiere cambiar a mi canal o ambos
+                    if (prevChannel === otherChannel && (requestedChannel === currentChannel || requestedChannel === 'ambos')) {
+                        const p1Nom = item.p1?.name || 'Equipo 1';
+                        const p2Nom = item.p2?.name || 'Equipo 2';
+                        const confirmacion = window.confirm(
+                            `⚠️ La partida ${p1Nom} vs ${p2Nom} ya está asignada a la transmisión de ${otherChannelName}.\n\n` +
+                            `¿Está seguro de que desea transmitir en ambos canales?\n\n` +
+                            `Al presionar Aceptar se marcará para los dos simultáneamente.`
+                        );
+
+                        if (!confirmacion) {
+                            e.target.value = prevChannel;
+                            return;
+                        }
+                        item.channel = 'ambos';
+                    } else {
+                        item.channel = requestedChannel;
+                    }
+
+                    await saveMatchAssignment(item.id, item.channel);
+                    renderCronogramaTable();
                 });
             });
         }
@@ -1207,6 +1332,20 @@
         function renderMatchesEditor() {
             const container = document.getElementById('matches-editor-list');
             container.innerHTML = '';
+
+            if (!state.matches || state.matches.length === 0) {
+                const emptyNotice = document.createElement('div');
+                emptyNotice.className = "p-8 text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-950/40 space-y-2";
+                emptyNotice.innerHTML = `
+                    <div class="w-12 h-12 rounded-full bg-zinc-900 mx-auto flex items-center justify-center text-zinc-500">
+                        <i class="fa-solid fa-list-check text-xl"></i>
+                    </div>
+                    <p class="text-sm font-bold text-zinc-300">No hay partidas cargadas para ${currentChannel === 'darkcito' ? '@Darkcito' : 'LBL Esports'}</p>
+                    <p class="text-xs text-zinc-500 max-w-md mx-auto">Selecciona las partidas que deseas transmitir en la tabla del cronograma superior y presiona <b>"Cargar Seleccionadas a mi OBS"</b>, o añade una manualmente con el botón inferior.</p>
+                `;
+                container.appendChild(emptyNotice);
+                return;
+            }
 
             state.matches.forEach((m, idx) => {
                 const pageNum = Math.floor(idx / 4) + 1;
@@ -1328,13 +1467,16 @@
 
             const btnDark = document.getElementById('tab-channel-darkcito');
             const btnLbl = document.getElementById('tab-channel-lbl');
+            const activeChannelLabel = document.getElementById('active-channel-name');
 
             if (channelName === 'darkcito') {
-                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all";
+                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
                 btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+                if (activeChannelLabel) activeChannelLabel.textContent = "@DARKCITO";
             } else {
-                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all";
+                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
                 btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+                if (activeChannelLabel) activeChannelLabel.textContent = "LBL ESPORTS";
             }
 
             renderCronogramaTable();
@@ -1345,6 +1487,8 @@
         document.getElementById('tab-channel-lbl').addEventListener('click', () => switchChannel('lbl_oficial'));
 
         async function loadActiveChannelData(channel) {
+            state.matches = [];
+
             const localData = localStorage.getItem(`lbl_overlay_${channel}`);
             if (localData) {
                 try { applyChannelData(JSON.parse(localData)); } catch(e) {}
@@ -1356,17 +1500,6 @@
                     applyChannelData(snap.data());
                 }
             } catch(e) {}
-
-            if (state.matches.length === 0) {
-                state.matches = INITIAL_TS3LBL_MATCHES.map((m, idx) => ({
-                    matchNumber: `MATCH ${idx + 1}`,
-                    timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
-                    team1: { name: m.p1.name, tag: m.p1.tag, seed: "Scouting 3", logo: resolveTeamLogo(m.p1, scouting3TeamsMap[m.p1.name.toLowerCase()]), score: 0 },
-                    team2: { name: m.p2.name, tag: m.p2.tag, seed: "Scouting 3", logo: resolveTeamLogo(m.p2, scouting3TeamsMap[m.p2.name.toLowerCase()]), score: 0 },
-                    status: "UPCOMING",
-                    winner: null
-                }));
-            }
 
             renderMatchesEditor();
             populateSpotlightDropdown();
@@ -1847,12 +1980,46 @@
             saveChanges(false);
         });
 
-        // Inicialización
+        // Inicialización y sincronizaciones en tiempo real
         (async () => {
             await fetchScouting3RegisteredTeams();
             await detectActiveTournamentFromGestor();
             await loadActiveChannelData(currentChannel);
             updateMediaPreview();
+
+            // 1. Escuchar actualizaciones de asignaciones en Firestore (tiempo real entre casters)
+            try {
+                onSnapshot(doc(db, "torneos_activos", "overlay_match_assignments"), (snap) => {
+                    if (snap.exists() && snap.data()?.assignments) {
+                        const newAss = snap.data().assignments;
+                        matchChannelAssignments = { ...matchChannelAssignments, ...newAss };
+                        try { localStorage.setItem('lbl_overlay_match_assignments', JSON.stringify(matchChannelAssignments)); } catch(e) {}
+                        let hasChanges = false;
+                        liveCronogramaMatches.forEach(m => {
+                            if (matchChannelAssignments[m.id] !== undefined && m.channel !== matchChannelAssignments[m.id]) {
+                                m.channel = matchChannelAssignments[m.id];
+                                hasChanges = true;
+                            }
+                        });
+                        if (hasChanges) renderCronogramaTable();
+                    }
+                });
+            } catch(e) {}
+
+            // 2. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
+            try {
+                syncChannel.onmessage = (event) => {
+                    if (event.data?.type === 'MATCH_ASSIGNMENTS_UPDATE' && event.data.assignments) {
+                        matchChannelAssignments = { ...matchChannelAssignments, ...event.data.assignments };
+                        liveCronogramaMatches.forEach(m => {
+                            if (matchChannelAssignments[m.id] !== undefined) {
+                                m.channel = matchChannelAssignments[m.id];
+                            }
+                        });
+                        renderCronogramaTable();
+                    }
+                };
+            } catch(e) {}
         })();
     </script>
 </body>

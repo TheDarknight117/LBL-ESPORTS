@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=230">
+    <link rel="stylesheet" href="/dist/output.css?v=231">
 
     <style>
         @font-face {
@@ -608,10 +608,22 @@
         const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
 
         const urlParams = new URLSearchParams(window.location.search);
-        const channelId = (urlParams.get('channel') || 'darkcito').toLowerCase();
-        const cleanChannelUser = channelId.replace(/^@+/, '').toUpperCase();
+        const rawChannel = urlParams.get('channel') || 'darkcito';
+        const channelId = (rawChannel.toLowerCase() === 'lblesports' || rawChannel.toLowerCase() === 'lbl') ? 'lbl_oficial' : rawChannel.toLowerCase();
+        
+        function formatChannelDisplayName(ch) {
+            const clean = (ch || '').replace(/^@+/, '').trim().toLowerCase();
+            if (clean === 'lbl_oficial' || clean === 'lblesports' || clean === 'lbl' || clean.includes('lbl')) {
+                return 'LBL ESPORTS';
+            }
+            if (clean === 'darkcito') {
+                return 'DARKCITO';
+            }
+            return clean.toUpperCase();
+        }
+
         const channelBadgeEl = document.getElementById('channel-badge');
-        if (channelBadgeEl) channelBadgeEl.textContent = cleanChannelUser;
+        if (channelBadgeEl) channelBadgeEl.textContent = formatChannelDisplayName(channelId);
 
         function autoScaleCanvas() {
             const canvas = document.getElementById('stage-canvas');
@@ -1478,6 +1490,7 @@
             if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
             if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
             if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+            if (channelBadgeEl) channelBadgeEl.textContent = formatChannelDisplayName(data.channelId || channelId);
         }
 
         // Sincronizaciones tri-capa
