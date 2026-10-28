@@ -43,6 +43,12 @@
             border-color: rgba(225, 29, 72, 0.7);
         }
 
+        /* Optimización de Renderizado Masivo a 60 FPS */
+        .card-jugador-lan {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 240px;
+        }
+
         /* Scrollbar temática roja */
         ::-webkit-scrollbar {
             width: 8px;
@@ -120,53 +126,29 @@
     <!-- ============================================================== -->
     <!-- 2. CABECERA PRINCIPAL (NAVBAR AQM)                              -->
     <!-- ============================================================== -->
-    <header class="aqm-glass sticky top-0 z-40 border-b border-red-900/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+    <header class="sticky top-0 z-40 bg-[#070203]/90 backdrop-blur-md border-b border-red-950/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-4">
             
             <!-- Branding AQM x LBL -->
-            <div class="flex items-center gap-3.5 min-w-0">
-                <div class="p-1.5 rounded-2xl bg-black border border-red-600/50 shadow-md shrink-0">
-                    <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-10 h-10 sm:w-11 sm:h-11 object-contain">
-                </div>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <span class="text-base sm:text-lg font-black tracking-tight uppercase text-white truncate">AQUÍ ME QUEDO LAN</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shadow-sm">x LBL</span>
-                    </div>
-                    <p class="text-[11px] sm:text-xs text-red-400 font-semibold truncate flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Sede Exclusiva La Paz • Padrón Oficial Scouting 3</span>
-                    </p>
+            <div class="flex items-center gap-3 min-w-0">
+                <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="h-9 sm:h-10 w-auto object-contain shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-sm sm:text-base font-black tracking-wide uppercase text-white truncate font-sans">
+                        AQUÍ ME QUEDO LAN x LBL
+                    </span>
+                    <span class="hidden sm:inline-block h-3.5 w-px bg-gray-800"></span>
+                    <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-red-400 shrink-0">
+                        <i class="fas fa-location-dot text-[9px]"></i> SEDE LA PAZ
+                    </span>
                 </div>
             </div>
 
             <!-- Acciones y Estado de Sesión -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Botón de Sincronización Manual -->
-                <button type="button" onclick="cargarJugadoresDesdeAPI(true)" title="Forzar sincronización fresca con Google Sheets"
-                    class="px-3 py-2 rounded-xl bg-black/60 hover:bg-red-950/60 border border-red-900/60 text-gray-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
-                    <i id="sync-icon" class="fas fa-arrows-rotate text-red-500"></i>
-                    <span class="hidden md:inline">Actualizar</span>
-                </button>
-
-                <!-- Botón de Historial de Visitas -->
-                <button type="button" onclick="abrirModalHistorial()"
-                    class="px-3 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/50 border border-red-600/50 text-red-200 text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer">
-                    <i class="fas fa-receipt text-red-400"></i>
-                    <span class="hidden sm:inline">Visitas:</span>
-                    <span id="badge-total-visitas" class="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-mono">0</span>
-                </button>
-
-                <!-- Encargado & Cerrar Sesión -->
-                <div class="hidden lg:flex flex-col text-right pr-2 border-r border-red-950">
-                    <span class="text-[10px] uppercase tracking-wider text-gray-400">Encargado de Turno</span>
-                    <span id="display-encargado" class="text-xs font-black text-white truncate max-w-[150px]">Cajero AQM</span>
-                </div>
-
-                <button type="button" onclick="cerrarSesion()" title="Cerrar turno y salir"
-                    class="p-2 sm:px-3 sm:py-2 rounded-xl bg-gray-900 hover:bg-red-700 text-gray-400 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
-                    <i class="fas fa-power-off"></i>
-                    <span class="hidden sm:inline">Cerrar Turno</span>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="cerrarSesion()" title="Cerrar sesión"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer">
+                    <i class="fas fa-power-off text-rose-500/80 text-[11px]"></i>
+                    <span>Cerrar Sesión</span>
                 </button>
             </div>
         </div>
@@ -233,20 +215,19 @@
         </div>
 
         <!-- Barra de Búsqueda Express (Exclusiva La Paz) -->
-        <div class="aqm-glass rounded-3xl p-5 sm:p-6 border border-red-600/30 aqm-border-glow space-y-4">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="aqm-glass rounded-2xl p-5 sm:p-6 border border-red-900/40 space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
                 <div>
-                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
-                        <i class="fas fa-id-card text-red-500 text-xl"></i>
-                        <span>Buscador y Verificador de Identidad (La Paz)</span>
+                    <h3 class="text-base sm:text-lg font-bold text-white uppercase tracking-tight flex items-center gap-2">
+                        <i class="fas fa-id-card text-red-500"></i>
+                        <span>Buscador y Verificador de Identidad</span>
                     </h3>
                     <p class="text-xs text-gray-400 mt-0.5">Ingresa el C.I., Nombre o Riot ID del jugador para consultar su ficha y registrar su visita.</p>
                 </div>
 
-                <!-- Indicador de Exclusividad Territorial -->
                 <div class="flex items-center gap-2">
-                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase bg-red-600 text-white shadow-md flex items-center gap-1.5">
-                        <i class="fas fa-location-dot"></i> Sede Exclusiva: La Paz
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400">
+                        <i class="fas fa-location-dot text-[10px]"></i> SEDE LA PAZ
                     </span>
                 </div>
             </div>
@@ -754,21 +735,67 @@
         window.cargarJugadoresDesdeAPI = cargarJugadoresDesdeAPI;
 
         // ==============================================================
-        // 5. BÚSQUEDA EXPRESS
+        // 5. MOTOR DE BÚSQUEDA ULTRARRÁPIDA E INDEXACIÓN SUB-MILISEGUNDO
         // ==============================================================
-        function aplicarFiltrosYRenderizar() {
-            const query = normalizarTexto(document.getElementById('input-busqueda').value);
+        function indexarJugador(j) {
+            if (!j) return;
+            const ciClean = String(j.ci || '').replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+            const nomClean = normalizarTexto(j.nombreCompleto || '');
+            const riotClean = normalizarTexto(j.riotIdLas || '').replace(/\s+/g, '');
+            const eqClean = normalizarTexto(j.equipoNombre || '');
+            const tagClean = (j.equipoTag || '').toLowerCase().trim();
+            j._ciClean = ciClean;
+            j._searchTokens = `${ciClean} ${nomClean} ${riotClean} ${eqClean} ${tagClean}`;
+        }
 
-            jugadoresFiltrados = todosLosJugadoresLaPaz.filter(j => {
-                if (query) {
-                    const matchCi = normalizarTexto(j.ci).includes(query);
-                    const matchNom = normalizarTexto(j.nombreCompleto).includes(query);
-                    const matchRiot = normalizarTexto(j.riotIdLas).includes(query);
-                    const matchEq = normalizarTexto(j.equipoNombre).includes(query);
-                    return matchCi || matchNom || matchRiot || matchEq;
+        function asegurarIndexacion() {
+            for (let i = 0; i < todosLosJugadoresLaPaz.length; i++) {
+                if (!todosLosJugadoresLaPaz[i]._searchTokens) {
+                    indexarJugador(todosLosJugadoresLaPaz[i]);
                 }
-                return true;
-            });
+            }
+        }
+
+        const mapaVisitasCache = new Map();
+        function recalcularMapaVisitas() {
+            mapaVisitasCache.clear();
+            for (let i = 0; i < historialVisitas.length; i++) {
+                const v = historialVisitas[i];
+                if (v.ci && v.ci !== 'S/N' && v.ci !== 'Verificar Físico') {
+                    const c = String(v.ci).trim();
+                    mapaVisitasCache.set(c, (mapaVisitasCache.get(c) || 0) + 1);
+                }
+                if (v.jugadorId) {
+                    mapaVisitasCache.set(v.jugadorId, (mapaVisitasCache.get(v.jugadorId) || 0) + 1);
+                }
+                if (v.nombre) {
+                    const n = v.nombre.toLowerCase().trim();
+                    mapaVisitasCache.set(n, (mapaVisitasCache.get(n) || 0) + 1);
+                }
+            }
+        }
+
+        function aplicarFiltrosYRenderizar() {
+            asegurarIndexacion();
+            recalcularMapaVisitas();
+
+            const rawQuery = (document.getElementById('input-busqueda')?.value || '').trim();
+            const queryNorm = normalizarTexto(rawQuery);
+            const tokens = queryNorm ? queryNorm.split(/\s+/).filter(Boolean) : [];
+            const queryDigits = rawQuery.replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+
+            if (tokens.length === 0) {
+                jugadoresFiltrados = todosLosJugadoresLaPaz;
+            } else {
+                jugadoresFiltrados = todosLosJugadoresLaPaz.filter(j => {
+                    const s = j._searchTokens || '';
+                    if (queryDigits && j._ciClean && j._ciClean.includes(queryDigits)) return true;
+                    for (let i = 0; i < tokens.length; i++) {
+                        if (!s.includes(tokens[i])) return false;
+                    }
+                    return true;
+                });
+            }
 
             renderizarTarjetas();
         }
@@ -781,27 +808,37 @@
             input.focus();
         };
 
+        let searchFrame = null;
         document.getElementById('input-busqueda').addEventListener('input', (e) => {
             const btnLimpiar = document.getElementById('btn-limpiar');
-            if (e.target.value.trim()) {
-                btnLimpiar.classList.remove('hidden');
-            } else {
-                btnLimpiar.classList.add('hidden');
+            if (btnLimpiar) {
+                if (e.target.value.trim()) {
+                    btnLimpiar.classList.remove('hidden');
+                } else {
+                    btnLimpiar.classList.add('hidden');
+                }
             }
-            aplicarFiltrosYRenderizar();
+            if (searchFrame) cancelAnimationFrame(searchFrame);
+            searchFrame = requestAnimationFrame(() => {
+                aplicarFiltrosYRenderizar();
+            });
         });
 
         // ==============================================================
-        // 6. RENDERIZADO DE TARJETAS
+        // 6. RENDERIZADO TOTAL FLUIDO A 60 FPS (NATIVE CONTENT-VISIBILITY)
         // ==============================================================
         function contarVisitasDeJugador(j) {
             if (!j) return 0;
-            return historialVisitas.filter(v => {
-                if (j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico') {
-                    return v.ci === j.ci;
-                }
-                return v.jugadorId === j.id || (v.nombre && v.nombre.toLowerCase() === j.nombreCompleto.toLowerCase());
-            }).length;
+            if (j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico') {
+                const c = String(j.ci).trim();
+                if (mapaVisitasCache.has(c)) return mapaVisitasCache.get(c);
+            }
+            if (j.id && mapaVisitasCache.has(j.id)) return mapaVisitasCache.get(j.id);
+            if (j.nombreCompleto) {
+                const n = j.nombreCompleto.toLowerCase().trim();
+                if (mapaVisitasCache.has(n)) return mapaVisitasCache.get(n);
+            }
+            return 0;
         }
 
         function renderizarTarjetas() {
@@ -809,9 +846,10 @@
             const conteo = document.getElementById('conteo-resultados');
             if (!container) return;
 
-            conteo.textContent = `Mostrando ${jugadoresFiltrados.length} jugadores acreditados de La Paz`;
+            const total = jugadoresFiltrados.length;
+            conteo.textContent = `Mostrando ${total} jugadores acreditados de La Paz`;
 
-            if (jugadoresFiltrados.length === 0) {
+            if (total === 0) {
                 container.innerHTML = `
                     <div class="col-span-full aqm-glass rounded-3xl p-12 text-center border border-red-900/30 space-y-3">
                         <i class="fas fa-search text-gray-600 text-4xl mb-1 block"></i>
@@ -835,7 +873,7 @@
                 const safeId = escapeHTML(j.id);
 
                 return `
-                    <div class="aqm-glass rounded-2xl p-5 border ${tieneCiValido ? 'border-red-900/40' : 'border-amber-500/50 bg-[#170608]'} aqm-glow-hover transition-all flex flex-col justify-between gap-4 relative overflow-hidden group">
+                    <div class="card-jugador-lan aqm-glass rounded-2xl p-5 border ${tieneCiValido ? 'border-red-900/40' : 'border-amber-500/50 bg-[#170608]'} aqm-glow-hover transition-all flex flex-col justify-between gap-4 relative overflow-hidden group">
                         
                         <div class="space-y-3">
                             <!-- Cabecera de Tarjeta: CI y Rol -->
@@ -1091,7 +1129,8 @@
 
             const totalVisitas = historialVisitas.length;
             document.getElementById('metrica-visitas-total').textContent = totalVisitas;
-            document.getElementById('badge-total-visitas').textContent = totalVisitas;
+            const badgeVisitas = document.getElementById('badge-total-visitas');
+            if (badgeVisitas) badgeVisitas.textContent = totalVisitas;
 
             const hoyStr = new Date().toLocaleDateString('es-BO');
             const visitasHoy = historialVisitas.filter(v => (v.fechaHora || '').includes(hoyStr)).length;

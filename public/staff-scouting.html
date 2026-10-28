@@ -1876,7 +1876,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { collection, query, where, getDocs, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=220";
+        import "/app-version.js?v=225";
 
         // ==============================================================
         // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
@@ -1908,11 +1908,22 @@
         window.guardarConfigUrl = function() {};
         window.restablecerUrlOficial = function() {};
 
-        // Estado en memoria
+        // Estado en memoria y Preferencias de Vista (Declaradas al inicio para evitar TDZ)
         let equiposScouting = [];
         let equipoSeleccionado = null;
         let filtroEstadoActivo = "";
         let staffNickActual = "Staff LBL";
+        let vistaActivaEquipos = localStorage.getItem('lbl_staff_vista_scouting') || 'grid';
+
+        const rolColorMapGlobal = {
+            'TOP': 'text-blue-400',
+            'JG': 'text-purple-400',
+            'JGL': 'text-purple-400',
+            'MID': 'text-amber-400',
+            'ADC': 'text-rose-400',
+            'SUPP': 'text-teal-400',
+            'SUP': 'text-teal-400'
+        };
 
         // Auditoría de Irregularidades y Caché Liga LBL (Declaradas al inicio para evitar TDZ)
         const STORAGE_KEY_LIGA_CACHE = "lbl_scouting_liga_cache_v3";
@@ -2436,10 +2447,12 @@
             }
         };
 
-        // Si ya tenía sesión previa recordada en este navegador, dar acceso inmediato sin congelamientos
+        // Si ya tenía sesión previa recordada en este navegador, dar acceso inmediato sin congelamientos (diferido al siguiente ciclo para garantizar inicialización de todos los módulos)
         if (localStorage.getItem('lbl_staff_logged_in') === 'true') {
             const savedNick = localStorage.getItem('lbl_staff_nick') || 'Staff LBL';
-            window.desbloquearPanelStaff(savedNick);
+            setTimeout(() => {
+                window.desbloquearPanelStaff(savedNick);
+            }, 0);
         }
 
         // Timer de seguridad: si Firebase Auth tarda más de 1.8 segundos, no dejar al usuario congelado en pantalla negra
@@ -2810,7 +2823,7 @@
             }, 4500);
         }
 
-        window.sincronizarGoogleSheets = async function(silencioso = false) {
+        async function sincronizarGoogleSheets(silencioso = false) {
             if (isSyncing) return;
             // Si es sincronización automática silenciosa y hay un modal abierto o se acaba de guardar un cambio, no interrumpir al usuario
             if (silencioso && (hayAlgunModalAbierto() || (Date.now() - ultimaEdicionTimestamp < 20000))) {
@@ -2912,7 +2925,8 @@
                 isSyncing = false;
                 if (icon) icon.classList.remove('fa-spin');
             }
-        };
+        }
+        window.sincronizarGoogleSheets = sincronizarGoogleSheets;
 
         function iniciarAutoSincronizacion() {
             if (autoSyncTimer) clearInterval(autoSyncTimer);
@@ -3147,8 +3161,6 @@
         // ==============================================================
         // 3.9 GESTIÓN DE VISTAS (TARJETAS GRID VS TABLA COMPACTA - CUELLO 4)
         // ==============================================================
-        let vistaActivaEquipos = localStorage.getItem('lbl_staff_vista_scouting') || 'grid';
-
         window.cambiarVistaEquipos = function(vista) {
             vistaActivaEquipos = vista;
             localStorage.setItem('lbl_staff_vista_scouting', vista);
@@ -3169,16 +3181,6 @@
                 btnTabla.className = "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-white border border-transparent";
             }
         }
-
-        const rolColorMapGlobal = {
-            'TOP': 'text-blue-400',
-            'JG': 'text-purple-400',
-            'JGL': 'text-purple-400',
-            'MID': 'text-amber-400',
-            'ADC': 'text-rose-400',
-            'SUPP': 'text-teal-400',
-            'SUP': 'text-teal-400'
-        };
 
         function renderizarTarjetaEquipoGrid(eq) {
             const estado = eq.estado || 'Pendiente';
