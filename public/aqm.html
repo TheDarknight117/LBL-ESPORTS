@@ -38,16 +38,14 @@
             box-shadow: 0 0 25px rgba(225, 29, 72, 0.18);
         }
 
-        /* Fondo Cyber Gamer para AQUÍ ME QUEDO x LBL */
-        .bg-gamer-grid-aqm {
-            background-color: #060103;
+        /* Fondo con ligero tono verde y cuadrícula táctica sutil */
+        .bg-mural-verde {
+            background-color: #020a06;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.12) 0%, transparent 60%),
-                radial-gradient(circle at 100% 100%, rgba(190, 18, 60, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(136, 19, 55, 0.15) 0%, transparent 50%),
-                linear-gradient(rgba(225, 29, 72, 0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(225, 29, 72, 0.035) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 0%, rgba(2, 10, 6, 0.85) 65%, #010603 100%),
+                linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
         }
 
         .aqm-glow-hover:hover {
@@ -78,140 +76,87 @@
         }
     </style>
 </head>
-<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white bg-gamer-grid-aqm relative">
+<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white bg-mural-verde relative">
 
-    <!-- Fondo decorativo persistente con marcas de agua AQM & LBL -->
+    <!-- Patrón de Mural de Marcas de Agua LBL en el Fondo (Múltiples marcas en wallpaper / mural) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
-        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-red-600/5 rounded-full blur-[120px]"></div>
-        <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-rose-700/5 rounded-full blur-[120px]"></div>
-        <!-- Marca de agua Aquí Me Quedo LAN -->
-        <div class="absolute bottom-6 right-6 opacity-[0.03] transform rotate-6">
-            <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Watermark" class="w-80 h-80 object-contain">
-        </div>
-        <!-- Marca de agua LBL -->
-        <div class="absolute top-24 left-6 opacity-[0.025] transform -rotate-6">
-            <img src="/assets/LBL%20Circular.webp" alt="LBL Watermark" class="w-72 h-72 object-contain">
-        </div>
+        <svg class="w-full h-full opacity-[0.065]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="mural-lbl-pattern-aqm" width="180" height="220" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
+                    <image href="/assets/logo.webp" x="15" y="15" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                    <image href="/assets/logo.webp" x="105" y="125" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#mural-lbl-pattern-aqm)"/>
+        </svg>
     </div>
 
     <!-- ============================================================== -->
     <!-- 1. PANTALLA DE AUTENTICACIÓN AISLADA FIRESTORE (USUARIO/CLAVE)  -->
     <!-- ============================================================== -->
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-[#060103] bg-gamer-grid-aqm flex flex-col justify-between p-4 sm:p-6 overflow-hidden select-none">
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-mural-verde flex items-center justify-center p-4 overflow-hidden select-none">
         
-        <!-- Elementos decorativos de fondo: Marcas de agua LBL & AQM -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-            <!-- Glows atmosféricos -->
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-red-600/10 rounded-full blur-[100px]"></div>
-            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-700/10 rounded-full blur-[100px]"></div>
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-950/20 rounded-full blur-[140px]"></div>
-
-            <!-- Marca de agua gigante LBL (Superior Izquierda) -->
-            <div class="absolute -top-12 -left-12 sm:top-6 sm:left-6 flex items-center gap-4 opacity-[0.07] transform -rotate-6">
-                <img src="/assets/LBL%20Circular.webp" alt="LBL Watermark" class="w-48 h-48 sm:w-72 sm:h-72 object-contain">
-                <div class="hidden lg:block font-mono font-black text-white leading-none">
-                    <div class="text-6xl tracking-widest">LBL</div>
-                    <div class="text-lg tracking-wider text-red-500">ESPORTS BOLIVIA</div>
-                </div>
-            </div>
-
-            <!-- Marca de agua gigante AQM (Inferior Derecha) -->
-            <div class="absolute -bottom-12 -right-12 sm:bottom-6 sm:right-6 flex items-center gap-4 opacity-[0.08] transform rotate-6">
-                <div class="hidden lg:block font-mono font-black text-right text-white leading-none">
-                    <div class="text-6xl tracking-widest text-red-500">AQM</div>
-                    <div class="text-lg tracking-wider text-gray-400">AQUÍ ME QUEDO • LA PAZ</div>
-                </div>
-                <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Watermark" class="w-48 h-48 sm:w-72 sm:h-72 object-contain">
-            </div>
-
-            <!-- Siluetas LoL decorativas -->
-            <div class="absolute top-1/2 right-12 -translate-y-1/2 opacity-[0.04] hidden md:block">
-                <img src="/assets/BARON.webp" alt="Baron LoL" class="w-80 h-80 object-contain">
-            </div>
-            <div class="absolute top-1/2 left-12 -translate-y-1/2 opacity-[0.04] hidden md:block">
-                <img src="/assets/pentakill.webp" alt="Pentakill LoL" class="w-72 h-72 object-contain">
-            </div>
+        <!-- Mural de marcas de agua LBL para la pantalla de Login -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
+            <svg class="w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="mural-lbl-auth-aqm" width="180" height="220" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
+                        <image href="/assets/logo.webp" x="15" y="15" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                        <image href="/assets/logo.webp" x="105" y="125" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#mural-lbl-auth-aqm)"/>
+            </svg>
         </div>
 
-        <!-- Barra superior institucional -->
-        <div class="w-full max-w-5xl mx-auto flex items-center justify-between z-10 relative">
-            <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-500/20 backdrop-blur-md">
-                <img src="/assets/logo.webp" alt="LBL" class="w-5 h-5 object-contain">
-                <span class="text-[11px] font-black uppercase tracking-wider text-red-300">LIGA BOLIVIANA DE LOL</span>
-            </div>
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-500/20 backdrop-blur-md">
-                <i class="fas fa-map-pin text-red-500 text-xs"></i>
-                <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">SEDE LA PAZ</span>
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-            </div>
-        </div>
+        <!-- Tarjeta de Login (Diseño Original Limpio) -->
+        <div class="aqm-glass max-w-md w-full rounded-3xl p-7 sm:p-8 border border-red-600/50 aqm-border-glow relative overflow-hidden z-10 shadow-2xl">
+            <!-- Glow ambiental rojo interno -->
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-rose-700/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- Tarjeta Central de Login -->
-        <div class="w-full flex items-center justify-center my-auto z-10 relative py-4">
-            <div class="aqm-glass max-w-md w-full rounded-3xl p-7 sm:p-8 border border-red-600/50 aqm-border-glow relative overflow-hidden shadow-2xl">
-                <!-- Glow ambiental rojo interno -->
-                <div class="absolute -top-20 -right-20 w-44 h-44 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-rose-700/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="text-center space-y-3 mb-6 relative">
+                <div class="inline-block p-2 rounded-2xl bg-black border border-red-600/60 shadow-xl">
+                    <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-16 h-16 object-contain mx-auto">
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">AQM X LBL</h2>
+                </div>
+            </div>
 
-                <div class="text-center space-y-3 mb-6 relative">
-                    <!-- Dúo de logos AQM x LBL -->
-                    <div class="flex items-center justify-center gap-3">
-                        <div class="p-2 rounded-2xl bg-black border border-red-600/60 shadow-[0_0_15px_rgba(225,29,72,0.3)]">
-                            <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-14 h-14 object-contain mx-auto">
-                        </div>
-                        <span class="text-red-500/40 text-sm font-black font-mono">✕</span>
-                        <div class="p-2 rounded-2xl bg-black border border-red-600/40 shadow-[0_0_12px_rgba(225,29,72,0.2)]">
-                            <img src="/assets/logo.webp" alt="LBL Logo" class="w-14 h-14 object-contain mx-auto">
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">AQM X LBL</h2>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-red-950/80 border border-red-600/30 text-[10px] font-black uppercase tracking-wider text-red-400 mt-1">
-                            <i class="fas fa-shield-halved text-[9px]"></i> TERMINAL OFICIAL LAN • SCOUTING 3
-                        </div>
-                    </div>
+            <!-- Formulario de Login Aislado (Usuario + Contraseña) -->
+            <form id="form-login-lan" onsubmit="event.preventDefault(); procesarLoginLAN();" class="space-y-4 relative">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-user-shield text-red-500 mr-1"></i> Usuario de Encargado
+                    </label>
+                    <input type="text" id="login-usuario" required placeholder="ej: cajero_aqm o tu usuario"
+                        autocomplete="username" autofocus
+                        class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
                 </div>
 
-                <!-- Formulario de Login Aislado (Usuario + Contraseña) -->
-                <form id="form-login-lan" onsubmit="event.preventDefault(); procesarLoginLAN();" class="space-y-4 relative">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
-                            <i class="fas fa-user-shield text-red-500 mr-1"></i> Usuario de Encargado
-                        </label>
-                        <input type="text" id="login-usuario" required placeholder="ej: cajero_aqm o tu usuario"
-                            autocomplete="username" autofocus
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-key text-red-500 mr-1"></i> Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="login-password" required placeholder="••••••••"
+                            autocomplete="current-password"
                             class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
+                        <button type="button" onclick="togglePassVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white text-xs cursor-pointer">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
-                            <i class="fas fa-key text-red-500 mr-1"></i> Contraseña
-                        </label>
-                        <div class="relative">
-                            <input type="password" id="login-password" required placeholder="••••••••"
-                                autocomplete="current-password"
-                                class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
-                            <button type="button" onclick="togglePassVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white text-xs cursor-pointer">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
+                <div id="login-error" class="hidden p-3 rounded-xl bg-red-950/80 border border-red-600 text-red-200 text-xs font-semibold text-center">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> <span id="login-error-msg">Credenciales incorrectas.</span>
+                </div>
 
-                    <div id="login-error" class="hidden p-3 rounded-xl bg-red-950/80 border border-red-600 text-red-200 text-xs font-semibold text-center">
-                        <i class="fas fa-exclamation-triangle mr-1"></i> <span id="login-error-msg">Credenciales incorrectas.</span>
-                    </div>
-
-                    <button type="submit" id="btn-login" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-red-900/40 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
-                        <i class="fas fa-door-open"></i> Iniciar Turno de Verificación
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Footer institucional -->
-        <div class="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-500 z-10 relative gap-1 pt-2">
-            <span class="font-mono uppercase tracking-wider text-gray-400">AQUÍ ME QUEDO LAN • LA PAZ, BOLIVIA</span>
-            <span class="text-red-500/80 font-bold uppercase tracking-wider">CIRCUITO NACIONAL LBL ESPORTS 2026</span>
+                <button type="submit" id="btn-login" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-red-900/40 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fas fa-door-open"></i> Iniciar Turno de Verificación
+                </button>
+            </form>
         </div>
     </div>
 
@@ -357,19 +302,6 @@
                 <p class="text-xs text-gray-400 max-w-md mx-auto">Sincronizando el padrón de Scouting 3 para Aquí Me Quedo LAN Center.</p>
             </div>
         </div>
-
-        <!-- Footer de marca LAN x LBL -->
-        <footer class="pt-8 pb-4 border-t border-red-950/60 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
-            <div class="flex items-center gap-2">
-                <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM" class="w-4 h-4 object-contain">
-                <span>AQUÍ ME QUEDO LAN • La Paz, Bolivia</span>
-            </div>
-            <div class="flex items-center gap-3 text-[11px]">
-                <span class="text-red-500/80 font-bold">LBL eSports • Scouting Circuit 3</span>
-                <span>•</span>
-                <span class="text-gray-600">Sistema Oficial de Verificación</span>
-            </div>
-        </footer>
     </main>
 
     <!-- ============================================================== -->
