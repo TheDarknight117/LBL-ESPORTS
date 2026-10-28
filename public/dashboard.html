@@ -4095,6 +4095,8 @@
         // GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)
         // ==============================================================
         const DOC_LAN_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
+        const STORAGE_KEY_LAN_CUENTAS = 'lbl_lan_cuentas_cache_v2';
+        const FIRESTORE_REST_LAN_URL = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/lan_credenciales";
         let cuentasLANActuales = {};
         let passwordsVisiblesLAN = {};
 
@@ -4106,6 +4108,25 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        function parsearCuentasFirestoreRest(fields) {
+            if (!fields || !fields.cuentas || !fields.cuentas.mapValue || !fields.cuentas.mapValue.fields) return null;
+            const cuentasRaw = fields.cuentas.mapValue.fields;
+            const res = {};
+            Object.keys(cuentasRaw).forEach(k => {
+                const cFields = cuentasRaw[k].mapValue?.fields || {};
+                res[k] = {
+                    usuario: cFields.usuario?.stringValue || k,
+                    nombre: cFields.nombre?.stringValue || '--',
+                    password: cFields.password?.stringValue || '',
+                    sede: cFields.sede?.stringValue || 'AQM',
+                    activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
+                    modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
+                    updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
+                };
+            });
+            return res;
         }
 
         window.toggleLANPassVisibility = function(key) {
@@ -4126,47 +4147,102 @@
 
         async function cargarCredencialesLANFirestore() {
             const container = document.getElementById('contenedor-tabla-lan-cuentas');
-            if (container) {
-                container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando Firestore...</div>`;
+
+            // 1. Cargar inmediatamente de caché local para respuesta instantánea (0 ms)
+            const cached = localStorage.getItem(STORAGE_KEY_LAN_CUENTAS);
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                        cuentasLANActuales = parsed;
+                        renderizarTablaCredencialesLAN();
+                    }
+                } catch(e) {}
+            } else if (!cuentasLANActuales || Object.keys(cuentasLANActuales).length === 0) {
+                if (container) {
+                    container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando Firestore...</div>`;
+                }
             }
 
+            // 2. Intentar consultar SDK Firestore
             try {
                 const snap = await getDoc(DOC_LAN_CREDENCIALES);
                 if (snap.exists() && snap.data().cuentas) {
                     cuentasLANActuales = snap.data().cuentas;
-                } else {
-                    const nickStaff = (typeof getStaffNick === 'function' ? getStaffNick(auth.currentUser?.email) : 'Staff LBL') || 'Staff LBL';
-                    cuentasLANActuales = {
-                        "cajero_aqm": {
-                            usuario: "cajero_aqm",
-                            password: "aqm2026",
-                            nombre: "Cajero Principal AQM",
-                            sede: "AQM",
-                            activo: true,
-                            creadoPor: nickStaff,
-                            creadoEn: new Date().toISOString()
-                        },
-                        "cajero_smok": {
-                            usuario: "cajero_smok",
-                            password: "smok2026",
-                            nombre: "Cajero Principal SMOK",
-                            sede: "SMOK",
-                            activo: true,
-                            creadoPor: nickStaff,
-                            creadoEn: new Date().toISOString()
-                        }
-                    };
+                    localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                    renderizarTablaCredencialesLAN();
+                    return;
+                }
+            } catch (err) {
+                console.warn("Aviso SDK Firestore (intentando canal REST API):", err);
+            }
+
+            // 3. Fallback transparente a Firestore REST API (100% inmune a 'client is offline')
+            try {
+                const res = await fetch(FIRESTORE_REST_LAN_URL);
+                if (res.ok) {
+                    const json = await res.json();
+                    const parsed = parsearCuentasFirestoreRest(json.fields);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        cuentasLANActuales = parsed;
+                        localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                        renderizarTablaCredencialesLAN();
+                        return;
+                    }
+                }
+            } catch (restErr) {
+                console.warn("Aviso canal REST:", restErr);
+            }
+
+            // 4. Si aún no hay cuentas, usar el seed inicial
+            if (!cuentasLANActuales || Object.keys(cuentasLANActuales).length === 0) {
+                const nickStaff = (typeof getStaffNick === 'function' ? getStaffNick(auth.currentUser?.email) : 'Staff LBL') || 'Staff LBL';
+                cuentasLANActuales = {
+                    "smoklancenter": {
+                        usuario: "smoklancenter",
+                        password: "smok2026",
+                        nombre: "Encargado SMOK",
+                        sede: "SMOK",
+                        activo: true,
+                        modificadoPor: nickStaff,
+                        updatedAt: new Date().toISOString()
+                    },
+                    "aquimequedo": {
+                        usuario: "aquimequedo",
+                        password: "aqm2026",
+                        nombre: "Encargado AQM",
+                        sede: "AQM",
+                        activo: true,
+                        modificadoPor: nickStaff,
+                        updatedAt: new Date().toISOString()
+                    },
+                    "cajero_aqm": {
+                        usuario: "cajero_aqm",
+                        password: "aqm2026",
+                        nombre: "Cajero Principal AQM",
+                        sede: "AQM",
+                        activo: true,
+                        creadoPor: nickStaff,
+                        creadoEn: new Date().toISOString()
+                    },
+                    "cajero_smok": {
+                        usuario: "cajero_smok",
+                        password: "smok2026",
+                        nombre: "Cajero Principal SMOK",
+                        sede: "SMOK",
+                        activo: true,
+                        creadoPor: nickStaff,
+                        creadoEn: new Date().toISOString()
+                    }
+                };
+                localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                renderizarTablaCredencialesLAN();
+                try {
                     await setDoc(DOC_LAN_CREDENCIALES, {
                         cuentas: cuentasLANActuales,
                         updatedAt: Date.now()
                     }, { merge: true });
-                }
-                renderizarTablaCredencialesLAN();
-            } catch (err) {
-                console.error("Error al cargar credenciales LAN:", err);
-                if (container) {
-                    container.innerHTML = `<div class="p-6 text-center text-rose-400 text-xs">Error al consultar Firestore: ${escapeHTML(err.message)}</div>`;
-                }
+                } catch(e) {}
             }
         }
 
@@ -4286,6 +4362,8 @@
                     updatedAt: new Date().toISOString()
                 };
 
+                localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+
                 await setDoc(DOC_LAN_CREDENCIALES, {
                     cuentas: cuentasLANActuales,
                     updatedAt: Date.now()
@@ -4320,6 +4398,7 @@
             if (!confirm(`¿Eliminar la credencial "${k}"? El encargado ya no podrá acceder a su terminal.`)) return;
 
             delete cuentasLANActuales[k];
+            localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
 
             try {
                 await setDoc(DOC_LAN_CREDENCIALES, {

@@ -440,17 +440,72 @@
         // ==============================================================
         // 1. AUTENTICACIÓN AISLADA POR FIRESTORE (torneos_activos)
         // ==============================================================
+        const STORAGE_KEY_LAN_CUENTAS = 'lbl_lan_cuentas_cache_v2';
+        const FIRESTORE_REST_LAN_URL = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/lan_credenciales";
+
+        function parsearCuentasFirestoreRest(fields) {
+            if (!fields || !fields.cuentas || !fields.cuentas.mapValue || !fields.cuentas.mapValue.fields) return null;
+            const cuentasRaw = fields.cuentas.mapValue.fields;
+            const res = {};
+            Object.keys(cuentasRaw).forEach(k => {
+                const cFields = cuentasRaw[k].mapValue?.fields || {};
+                res[k] = {
+                    usuario: cFields.usuario?.stringValue || k,
+                    nombre: cFields.nombre?.stringValue || '--',
+                    password: cFields.password?.stringValue || '',
+                    sede: cFields.sede?.stringValue || 'AQM',
+                    activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
+                    modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
+                    updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
+                };
+            });
+            return res;
+        }
+
         async function obtenerCredencialesFirestore() {
+            // 1. Intentar SDK Firestore
             try {
                 const snap = await getDoc(DOC_CREDENCIALES);
                 if (snap.exists() && snap.data().cuentas) {
-                    return snap.data().cuentas;
+                    const c = snap.data().cuentas;
+                    try { localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(c)); } catch(e){}
+                    return c;
                 }
             } catch (e) {
-                console.warn("Aviso al consultar credenciales en Firestore:", e);
+                console.warn("Aviso al consultar credenciales en Firestore SDK (probando REST API):", e);
             }
-            // Fallback base
+
+            // 2. Intentar REST API directo (100% inmune a 'client is offline')
+            try {
+                const res = await fetch(FIRESTORE_REST_LAN_URL);
+                if (res.ok) {
+                    const json = await res.json();
+                    const parsed = parsearCuentasFirestoreRest(json.fields);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        try { localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(parsed)); } catch(e){}
+                        return parsed;
+                    }
+                }
+            } catch (restErr) {
+                console.warn("Aviso canal REST:", restErr);
+            }
+
+            // 3. Intentar caché local
+            try {
+                const cached = localStorage.getItem(STORAGE_KEY_LAN_CUENTAS);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                        return parsed;
+                    }
+                }
+            } catch(e){}
+
+            // 4. Fallback base integrado
             return {
+                "aquimequedo": { usuario: "aquimequedo", password: "aqm2026", nombre: "Encargado AQM", sede: "AQM", activo: true },
+                "smoklancenter": { usuario: "smoklancenter", password: "smok2026", nombre: "Encargado SMOK", sede: "SMOK", activo: true },
+                "smoklan": { usuario: "smoklan", password: "smok2026", nombre: "Cajero SMOK", sede: "SMOK", activo: true },
                 "cajero_aqm": { usuario: "cajero_aqm", password: "aqm2026", nombre: "Cajero Principal AQM", sede: "AQM", activo: true },
                 "cajero_smok": { usuario: "cajero_smok", password: "smok2026", nombre: "Cajero Principal SMOK", sede: "SMOK", activo: true },
                 "admin_lbl": { usuario: "admin_lbl", password: "lbl2026", nombre: "Administrador LBL", sede: "TODAS", activo: true }

@@ -6497,7 +6497,44 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
         // GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)
         // ==============================================================
         const DOC_LAN_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
+        const STORAGE_KEY_LAN_CUENTAS = 'lbl_lan_cuentas_cache_v2';
+        const FIRESTORE_REST_LAN_URL = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/lan_credenciales";
         let cuentasLANActuales = {};
+        let passwordsVisiblesLAN = {};
+
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function parsearCuentasFirestoreRest(fields) {
+            if (!fields || !fields.cuentas || !fields.cuentas.mapValue || !fields.cuentas.mapValue.fields) return null;
+            const cuentasRaw = fields.cuentas.mapValue.fields;
+            const res = {};
+            Object.keys(cuentasRaw).forEach(k => {
+                const cFields = cuentasRaw[k].mapValue?.fields || {};
+                res[k] = {
+                    usuario: cFields.usuario?.stringValue || k,
+                    nombre: cFields.nombre?.stringValue || '--',
+                    password: cFields.password?.stringValue || '',
+                    sede: cFields.sede?.stringValue || 'AQM',
+                    activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
+                    modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
+                    updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
+                };
+            });
+            return res;
+        }
+
+        window.toggleLANPassVisibility = function(key) {
+            passwordsVisiblesLAN[key] = !passwordsVisiblesLAN[key];
+            renderizarTablaCredencialesLAN();
+        };
 
         window.abrirModalCredencialesLAN = async function() {
             const modal = document.getElementById('modal-credenciales-lan');
@@ -6512,47 +6549,101 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
 
         async function cargarCredencialesLANFirestore() {
             const container = document.getElementById('contenedor-tabla-lan-cuentas');
-            if (container) {
-                container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando Firestore...</div>`;
+
+            // 1. Cargar inmediatamente de caché local para respuesta instantánea (0 ms)
+            const cached = localStorage.getItem(STORAGE_KEY_LAN_CUENTAS);
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                        cuentasLANActuales = parsed;
+                        renderizarTablaCredencialesLAN();
+                    }
+                } catch(e) {}
+            } else if (!cuentasLANActuales || Object.keys(cuentasLANActuales).length === 0) {
+                if (container) {
+                    container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando Firestore...</div>`;
+                }
             }
 
+            // 2. Intentar consultar SDK Firestore
             try {
                 const snap = await getDoc(DOC_LAN_CREDENCIALES);
                 if (snap.exists() && snap.data().cuentas) {
                     cuentasLANActuales = snap.data().cuentas;
-                } else {
-                    // Seed inicial en Firestore
-                    cuentasLANActuales = {
-                        "cajero_aqm": {
-                            usuario: "cajero_aqm",
-                            password: "aqm2026",
-                            nombre: "Cajero Principal AQM",
-                            sede: "AQM",
-                            activo: true,
-                            creadoPor: staffNickActual,
-                            creadoEn: new Date().toISOString()
-                        },
-                        "cajero_smok": {
-                            usuario: "cajero_smok",
-                            password: "smok2026",
-                            nombre: "Cajero Principal SMOK",
-                            sede: "SMOK",
-                            activo: true,
-                            creadoPor: staffNickActual,
-                            creadoEn: new Date().toISOString()
-                        }
-                    };
+                    localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                    renderizarTablaCredencialesLAN();
+                    return;
+                }
+            } catch (err) {
+                console.warn("Aviso SDK Firestore (intentando canal REST API):", err);
+            }
+
+            // 3. Fallback transparente a Firestore REST API (100% inmune a 'client is offline')
+            try {
+                const res = await fetch(FIRESTORE_REST_LAN_URL);
+                if (res.ok) {
+                    const json = await res.json();
+                    const parsed = parsearCuentasFirestoreRest(json.fields);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        cuentasLANActuales = parsed;
+                        localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                        renderizarTablaCredencialesLAN();
+                        return;
+                    }
+                }
+            } catch (restErr) {
+                console.warn("Aviso canal REST:", restErr);
+            }
+
+            // 4. Si aún no hay cuentas, usar el seed inicial
+            if (!cuentasLANActuales || Object.keys(cuentasLANActuales).length === 0) {
+                cuentasLANActuales = {
+                    "smoklancenter": {
+                        usuario: "smoklancenter",
+                        password: "smok2026",
+                        nombre: "Encargado SMOK",
+                        sede: "SMOK",
+                        activo: true,
+                        modificadoPor: staffNickActual || 'Staff LBL',
+                        updatedAt: new Date().toISOString()
+                    },
+                    "aquimequedo": {
+                        usuario: "aquimequedo",
+                        password: "aqm2026",
+                        nombre: "Encargado AQM",
+                        sede: "AQM",
+                        activo: true,
+                        modificadoPor: staffNickActual || 'Staff LBL',
+                        updatedAt: new Date().toISOString()
+                    },
+                    "cajero_aqm": {
+                        usuario: "cajero_aqm",
+                        password: "aqm2026",
+                        nombre: "Cajero Principal AQM",
+                        sede: "AQM",
+                        activo: true,
+                        creadoPor: staffNickActual || 'Staff LBL',
+                        creadoEn: new Date().toISOString()
+                    },
+                    "cajero_smok": {
+                        usuario: "cajero_smok",
+                        password: "smok2026",
+                        nombre: "Cajero Principal SMOK",
+                        sede: "SMOK",
+                        activo: true,
+                        creadoPor: staffNickActual || 'Staff LBL',
+                        creadoEn: new Date().toISOString()
+                    }
+                };
+                localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
+                renderizarTablaCredencialesLAN();
+                try {
                     await setDoc(DOC_LAN_CREDENCIALES, {
                         cuentas: cuentasLANActuales,
                         updatedAt: Date.now()
                     }, { merge: true });
-                }
-                renderizarTablaCredencialesLAN();
-            } catch (err) {
-                console.error("Error al cargar credenciales LAN:", err);
-                if (container) {
-                    container.innerHTML = `<div class="p-6 text-center text-rose-400 text-xs">Error al consultar Firestore: ${err.message}</div>`;
-                }
+                } catch(e) {}
             }
         }
 
@@ -6590,29 +6681,38 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
                 const esSmok = (c.sede || '').toUpperCase() === 'SMOK';
                 const badgeColor = esAqm ? 'bg-red-950 text-red-300 border-red-500/40' : (esSmok ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-purple-950 text-purple-300 border-purple-500/40');
                 const badgeTexto = esAqm ? 'AQM (La Paz)' : (esSmok ? 'SMOK (Cocha)' : 'Ambas Sedes');
+                const passVisible = !!passwordsVisiblesLAN[k];
+                const safeKey = escapeHTML(k);
+                const safeNombre = escapeHTML(c.nombre || '--');
+                const displayPass = passVisible ? escapeHTML(c.password || '') : '••••••••';
 
                 html += `
                     <tr class="hover:bg-white/[0.02] transition-colors">
                         <td class="p-3 font-mono font-bold text-white">
                             <div class="flex items-center gap-1.5">
                                 <i class="fas fa-user-circle text-purple-400"></i>
-                                <span>${c.usuario || k}</span>
+                                <span>${safeKey}</span>
                             </div>
                         </td>
                         <td class="p-3 font-mono text-gray-300">
-                            <span class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 font-bold select-all text-yellow-300">${c.password || '••••'}</span>
+                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-900 border border-gray-800">
+                                <span class="font-bold select-all text-yellow-300 tracking-wider">${displayPass}</span>
+                                <button type="button" onclick="toggleLANPassVisibility('${safeKey}')" class="text-gray-400 hover:text-white text-[10px] ml-1 cursor-pointer" title="${passVisible ? 'Ocultar contraseña' : 'Ver contraseña'}">
+                                    <i class="fas ${passVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                </button>
+                            </div>
                         </td>
-                        <td class="p-3 font-semibold text-gray-200">${c.nombre || '--'}</td>
+                        <td class="p-3 font-semibold text-gray-200">${safeNombre}</td>
                         <td class="p-3">
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${badgeColor}">
                                 ${badgeTexto}
                             </span>
                         </td>
                         <td class="p-3 text-right space-x-1">
-                            <button type="button" onclick="cargarParaEditarCredencialLAN('${k}')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold transition-colors cursor-pointer" title="Cargar datos en el formulario">
+                            <button type="button" onclick="cargarParaEditarCredencialLAN('${safeKey}')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold transition-colors cursor-pointer" title="Cargar datos en el formulario">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button type="button" onclick="eliminarCredencialLAN('${k}')" class="px-2 py-1 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 text-[11px] font-bold transition-colors cursor-pointer" title="Eliminar credencial">
+                            <button type="button" onclick="eliminarCredencialLAN('${safeKey}')" class="px-2 py-1 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 text-[11px] font-bold transition-colors cursor-pointer" title="Eliminar credencial">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
@@ -6636,6 +6736,17 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
                 return;
             }
 
+            const regexUsuario = /^[a-z0-9_]{3,25}$/;
+            if (!regexUsuario.test(uInput)) {
+                alert("El usuario debe contener únicamente letras minúsculas, números o guion bajo (_) y tener entre 3 y 25 caracteres.");
+                return;
+            }
+
+            if (pInput.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
 
@@ -6649,6 +6760,8 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
                     modificadoPor: staffNickActual,
                     updatedAt: new Date().toISOString()
                 };
+
+                localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
 
                 await setDoc(DOC_LAN_CREDENCIALES, {
                     cuentas: cuentasLANActuales,
@@ -6684,6 +6797,7 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
             if (!confirm(`¿Eliminar la credencial "${k}"? El encargado ya no podrá acceder a su terminal.`)) return;
 
             delete cuentasLANActuales[k];
+            localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(cuentasLANActuales));
 
             try {
                 await setDoc(DOC_LAN_CREDENCIALES, {
