@@ -38,13 +38,13 @@
             box-shadow: 0 0 25px rgba(225, 29, 72, 0.18);
         }
 
-        /* Fondo con ligero tono verde y cuadrícula táctica sutil */
-        .bg-mural-verde {
-            background-color: #020a06;
+        /* Fondo con ligero tono rojo y cuadrícula táctica sutil para AQM */
+        .bg-mural-rojo {
+            background-color: #0a0204;
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 0%, rgba(2, 10, 6, 0.85) 65%, #010603 100%),
-                linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+                radial-gradient(circle at 50% 50%, rgba(225, 29, 72, 0.14) 0%, rgba(10, 2, 4, 0.88) 65%, #050102 100%),
+                linear-gradient(rgba(225, 29, 72, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(225, 29, 72, 0.04) 1px, transparent 1px);
             background-size: 100% 100%, 36px 36px, 36px 36px;
         }
 
@@ -57,6 +57,15 @@
         .card-jugador-lan {
             content-visibility: auto;
             contain-intrinsic-size: 0 240px;
+        }
+
+        /* Mantener inputs oscuros en Autofill de navegadores */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff;
+            -webkit-box-shadow: 0 0 0px 1000px #080204 inset;
+            transition: background-color 5000s ease-in-out 0s;
         }
 
         /* Scrollbar temática roja */
@@ -76,7 +85,7 @@
         }
     </style>
 </head>
-<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white bg-mural-verde relative">
+<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white bg-mural-rojo relative">
 
     <!-- Patrón de Mural de Marcas de Agua LBL en el Fondo (Múltiples marcas en wallpaper / mural) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
@@ -94,7 +103,7 @@
     <!-- ============================================================== -->
     <!-- 1. PANTALLA DE AUTENTICACIÓN AISLADA FIRESTORE (USUARIO/CLAVE)  -->
     <!-- ============================================================== -->
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-mural-verde flex items-center justify-center p-4 overflow-hidden select-none">
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-mural-rojo flex items-center justify-center p-4 overflow-hidden select-none">
         
         <!-- Mural de marcas de agua LBL para la pantalla de Login -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
@@ -115,13 +124,9 @@
             <div class="absolute -top-20 -right-20 w-44 h-44 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-rose-700/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="text-center space-y-3 mb-6 relative">
-                <div class="inline-block p-2 rounded-2xl bg-black border border-red-600/60 shadow-xl">
-                    <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-16 h-16 object-contain mx-auto">
-                </div>
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">AQM X LBL</h2>
-                </div>
+            <div class="text-center mb-6 relative">
+                <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="h-20 sm:h-24 w-auto object-contain mx-auto filter drop-shadow-[0_0_18px_rgba(225,29,72,0.4)] transition-transform duration-300 hover:scale-105">
+                <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-3">AQM X LBL</h2>
             </div>
 
             <!-- Formulario de Login Aislado (Usuario + Contraseña) -->
