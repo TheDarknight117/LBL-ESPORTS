@@ -187,10 +187,16 @@
 
             <!-- Acciones y Estado de Sesión -->
             <div class="flex items-center gap-2">
+                <button type="button" onclick="abrirModalHistorial()" title="Ver y gestionar desglose de visitas"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-red-300 bg-red-950/70 hover:bg-red-900/80 border border-red-500/40 hover:border-red-400 transition-all cursor-pointer shadow-sm">
+                    <i class="fas fa-clipboard-list text-red-400 text-[11px]"></i>
+                    <span class="hidden sm:inline">Desglose de Visitas</span>
+                    <span id="badge-nav-visitas" class="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-black font-mono">0</span>
+                </button>
                 <button type="button" onclick="cerrarSesion()" title="Cerrar sesión"
                     class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer">
                     <i class="fas fa-power-off text-rose-500/80 text-[11px]"></i>
-                    <span>Cerrar Sesión</span>
+                    <span class="hidden sm:inline">Cerrar Sesión</span>
                 </button>
             </div>
         </div>
@@ -216,30 +222,42 @@
                 <p class="text-[11px] text-red-400 mt-2 font-medium">Jugadores Scouting 3 (La Paz / El Alto)</p>
             </div>
 
-            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+            <div onclick="abrirModalHistorial()" class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden cursor-pointer group hover:border-red-500/70 hover:shadow-[0_0_20px_rgba(225,29,72,0.2)] transition-all" title="Haz clic para ver el desglose completo de visitas">
                 <div class="flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Visitas Registradas</span>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
+                            Visitas Registradas
+                            <i class="fas fa-arrow-up-right-from-square text-[9px] text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </span>
                         <h2 id="metrica-visitas-total" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-0.5">0</h2>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-base">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-base group-hover:scale-110 transition-transform">
                         <i class="fas fa-users-viewfinder"></i>
                     </div>
                 </div>
-                <p class="text-[11px] text-emerald-400/80 mt-2 font-medium">Histórico general en esta sede</p>
+                <div class="flex items-center justify-between mt-2">
+                    <p class="text-[11px] text-emerald-400/80 font-medium">Histórico general en esta sede</p>
+                    <span class="text-[10px] text-red-400 font-bold underline group-hover:text-red-300">Ver desglose &rarr;</span>
+                </div>
             </div>
 
-            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+            <div onclick="abrirModalHistorial()" class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden cursor-pointer group hover:border-amber-500/70 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all" title="Haz clic para ver el desglose de visitas de hoy">
                 <div class="flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Visitas del Turno</span>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
+                            Visitas del Turno
+                            <i class="fas fa-arrow-up-right-from-square text-[9px] text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </span>
                         <h2 id="metrica-visitas-turno" class="text-2xl sm:text-3xl font-black text-amber-400 mt-0.5">0</h2>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-base">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-base group-hover:scale-110 transition-transform">
                         <i class="fas fa-clock-rotate-left"></i>
                     </div>
                 </div>
-                <p class="text-[11px] text-amber-400/80 mt-2 font-medium">Registradas hoy en caja</p>
+                <div class="flex items-center justify-between mt-2">
+                    <p class="text-[11px] text-amber-400/80 font-medium">Registradas hoy en caja</p>
+                    <span class="text-[10px] text-amber-400 font-bold underline group-hover:text-amber-300">Ver desglose &rarr;</span>
+                </div>
             </div>
 
             <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
@@ -396,40 +414,50 @@
     </div>
 
     <!-- ============================================================== -->
-    <!-- 5. MODAL DE HISTORIAL GENERAL DE VISITAS REGISTRADAS           -->
+    <!-- 5. MODAL DE HISTORIAL Y DESGLOSE DE VISITAS                    -->
     <!-- ============================================================== -->
     <div id="modal-historial" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="aqm-glass max-w-3xl w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative flex flex-col max-h-[90vh]">
+        <div class="aqm-glass max-w-4xl w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative flex flex-col max-h-[90vh]">
             <button type="button" onclick="cerrarModalHistorial()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-base cursor-pointer">
                 <i class="fas fa-times"></i>
             </button>
 
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 pr-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pr-8">
                 <div>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">HISTÓRICO GENERAL</span>
-                    <h3 class="text-xl font-black text-white uppercase mt-1">Beneficios y Visitas Registradas</h3>
-                    <p class="text-xs text-gray-400">Control de asistencia y canjes en Aquí Me Quedo LAN Center.</p>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">DESGLOSE EN TIEMPO REAL</span>
+                    <h3 class="text-xl font-black text-white uppercase mt-1">Histórico y Desglose de Visitas</h3>
+                    <p class="text-xs text-gray-400">Control de asistencia registrado en Aquí Me Quedo LAN Center. Puedes anular registros individuales si se marcaron por error.</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="exportarVisitasCSV()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow cursor-pointer">
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="exportarVisitasCSV()" class="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow cursor-pointer">
                         <i class="fas fa-file-excel"></i> Exportar CSV
                     </button>
-                    <button type="button" onclick="borrarHistorialTurno()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 text-red-400 border border-red-900/50 font-bold text-xs uppercase cursor-pointer" title="Limpiar historial local">
+                    <button type="button" onclick="borrarHistorialTurno()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 text-gray-400 hover:text-red-300 border border-gray-800 font-bold text-xs uppercase cursor-pointer" title="Vaciar todo el historial (Staff)">
                         <i class="fas fa-trash-alt"></i>
                     </button>
+                </div>
+            </div>
+
+            <!-- Buscador en tiempo real dentro del Historial -->
+            <div class="mb-4">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                    <input type="text" id="buscador-historial" oninput="filtrarTablaHistorial()" placeholder="Buscar por nombre de jugador, C.I., equipo o encargado..."
+                        class="w-full bg-black/80 border border-red-950 focus:border-red-500 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-red-500/40 font-mono transition-all">
                 </div>
             </div>
 
             <!-- Tabla de Registros -->
             <div class="flex-grow overflow-y-auto border border-red-950 rounded-2xl bg-black/60">
                 <table class="w-full text-left text-xs text-gray-300">
-                    <thead class="bg-red-950/70 text-[10px] font-black uppercase tracking-wider text-red-300 sticky top-0 border-b border-red-900/60">
+                    <thead class="bg-red-950/80 text-[10px] font-black uppercase tracking-wider text-red-300 sticky top-0 border-b border-red-900/60 z-10 backdrop-blur-sm">
                         <tr>
                             <th class="p-3">Fecha / Hora</th>
                             <th class="p-3">Jugador</th>
                             <th class="p-3">CI</th>
                             <th class="p-3">Equipo SC3</th>
                             <th class="p-3">Encargado</th>
+                            <th class="p-3 text-right">Acción</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-visitas-body" class="divide-y divide-red-950/50">
@@ -440,7 +468,7 @@
 
             <div class="mt-4 pt-3 border-t border-red-950 flex items-center justify-between text-xs text-gray-400">
                 <span>Total de visitas contabilizadas: <strong id="historial-total-count" class="text-red-400 font-mono">0</strong></span>
-                <span class="text-gray-500">Sincronizado con Firebase Firestore</span>
+                <span class="text-gray-500 flex items-center gap-1"><i class="fas fa-shield-halved text-red-500 text-[10px]"></i> Sincronizado en tiempo real con Firestore</span>
             </div>
         </div>
     </div>
@@ -1139,9 +1167,11 @@
         };
 
         // ==============================================================
-        // 8. HISTORIAL GENERAL DE VISITAS
+        // 8. HISTORIAL GENERAL DE VISITAS Y DESGLOSE DETALLADO
         // ==============================================================
         window.abrirModalHistorial = function() {
+            const inputBusq = document.getElementById('buscador-historial');
+            if (inputBusq) inputBusq.value = '';
             renderizarTablaHistorial();
             document.getElementById('modal-historial').classList.remove('hidden');
         };
@@ -1150,31 +1180,123 @@
             document.getElementById('modal-historial').classList.add('hidden');
         };
 
-        function renderizarTablaHistorial() {
-            const tbody = document.getElementById('tabla-visitas-body');
-            document.getElementById('historial-total-count').textContent = historialVisitas.length;
+        window.filtrarTablaHistorial = function() {
+            const inputBusq = document.getElementById('buscador-historial');
+            const term = (inputBusq?.value || '').trim().toLowerCase();
+            renderizarTablaHistorial(term);
+        };
 
-            if (historialVisitas.length === 0) {
+        function renderizarTablaHistorial(filtro = '') {
+            const tbody = document.getElementById('tabla-visitas-body');
+            const totalCountEl = document.getElementById('historial-total-count');
+            if (totalCountEl) totalCountEl.textContent = historialVisitas.length;
+
+            let lista = historialVisitas;
+            if (filtro) {
+                lista = historialVisitas.filter(v => {
+                    const norm = (str) => String(str || '').toLowerCase();
+                    return norm(v.nombre).includes(filtro) ||
+                           norm(v.ci).includes(filtro) ||
+                           norm(v.equipo).includes(filtro) ||
+                           norm(v.riotId).includes(filtro) ||
+                           norm(v.encargado).includes(filtro);
+                });
+            }
+
+            if (lista.length === 0) {
+                const mensajeVacio = filtro 
+                    ? `No se encontraron visitas que coincidan con "${escapeHTML(filtro)}".`
+                    : "No se ha registrado ninguna visita en este terminal todavía.";
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-gray-500">
-                            No se ha registrado ninguna visita en este terminal todavía.
+                        <td colspan="6" class="p-8 text-center text-gray-500 font-medium">
+                            <i class="fas fa-inbox text-2xl mb-2 block opacity-40"></i>
+                            ${mensajeVacio}
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = historialVisitas.map(v => `
-                <tr class="hover:bg-red-950/20 transition-colors">
-                    <td class="p-3 font-mono font-bold text-gray-400">${escapeHTML(v.fechaHora || '--')}</td>
-                    <td class="p-3 font-bold text-white">${escapeHTML(v.nombre)}</td>
-                    <td class="p-3 font-mono font-black text-red-400">${escapeHTML(v.ci || 'S/N')}</td>
-                    <td class="p-3 text-gray-300">${escapeHTML(v.equipo || '--')}</td>
-                    <td class="p-3 text-emerald-400 font-mono text-[11px]">${escapeHTML(v.encargado)}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = lista.map((v, i) => {
+                const safeId = v.id || ('vis_legacy_' + (v.timestamp || i));
+                const safeNombre = escapeHTML(v.nombre || 'Desconocido');
+                const safeCi = escapeHTML(v.ci || 'Sin C.I.');
+                const safeFecha = escapeHTML(v.fechaHora || '--');
+                const safeEquipo = escapeHTML(v.equipo || '--');
+                const safeEncargado = escapeHTML(v.encargado || 'Cajero');
+
+                return `
+                    <tr class="hover:bg-red-950/20 transition-colors">
+                        <td class="p-3 font-mono font-bold text-gray-400 whitespace-nowrap">${safeFecha}</td>
+                        <td class="p-3 font-bold text-white">${safeNombre}</td>
+                        <td class="p-3 font-mono font-black text-red-400 whitespace-nowrap">${safeCi}</td>
+                        <td class="p-3 text-gray-300">${safeEquipo}</td>
+                        <td class="p-3 text-emerald-400 font-mono text-[11px] whitespace-nowrap">${safeEncargado}</td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            <button type="button" onclick="eliminarRegistroVisita('${safeId}')" 
+                                class="px-2.5 py-1 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-500/40 hover:border-red-400 text-[11px] font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                                title="Anular y eliminar este registro de visita">
+                                <i class="fas fa-trash-alt text-[10px]"></i>
+                                <span>Borrar</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
+
+        window.eliminarRegistroVisita = async function(visitaId) {
+            const idx = historialVisitas.findIndex(v => (v.id === visitaId) || (v.timestamp && ('vis_legacy_' + v.timestamp === visitaId)));
+            if (idx === -1) {
+                alert("No se encontró el registro seleccionado en la memoria activa.");
+                return;
+            }
+
+            const visita = historialVisitas[idx];
+            const msgConfirm = `⚠️ ¿Deseas anular y ELIMINAR el registro de visita para:\n\n` +
+                               `• Jugador: ${visita.nombre}\n` +
+                               `• C.I.: ${visita.ci}\n` +
+                               `• Fecha/Hora: ${visita.fechaHora}\n` +
+                               `• Equipo: ${visita.equipo}\n\n` +
+                               `Esta acción restará 1 visita del total y del contador del jugador. ¿Continuar?`;
+
+            if (!confirm(msgConfirm)) return;
+
+            // 1. Eliminar del array en memoria
+            historialVisitas.splice(idx, 1);
+            localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
+
+            // 2. Sincronizar actualización en Firestore
+            try {
+                await setDoc(DOC_VISITAS_AQM, {
+                    sede: "AQUÍ ME QUEDO LAN CENTER",
+                    ciudad: "La Paz",
+                    visitas: historialVisitas.slice(0, 500),
+                    totalHistorico: historialVisitas.length,
+                    updatedAt: Date.now()
+                });
+            } catch (err) {
+                console.error("Error al actualizar Firestore al eliminar visita:", err);
+                alert("Aviso: Registro borrado localmente, pero falló la sincronización con Firestore: " + err.message);
+            }
+
+            // 3. Recalcular métricas e interfaces
+            actualizarMetricas();
+            const term = (document.getElementById('buscador-historial')?.value || '').trim().toLowerCase();
+            renderizarTablaHistorial(term);
+            renderizarTarjetas();
+
+            // Si el modal individual del jugador estuviera abierto, actualizar su contador
+            if (jugadorSeleccionado) {
+                const contVisitasEl = document.getElementById('modal-jugador-contador-visitas');
+                if (contVisitasEl) {
+                    contVisitasEl.textContent = `${contarVisitasDeJugador(jugadorSeleccionado)} Visitas`;
+                }
+            }
+
+            alert(`🗑️ Visita de "${visita.nombre}" eliminada con éxito.\nEl contador ha vuelto a sincronizarse.`);
+        };
 
         window.exportarVisitasCSV = function() {
             if (historialVisitas.length === 0) {
@@ -1206,13 +1328,23 @@
             URL.revokeObjectURL(url);
         };
 
-        window.borrarHistorialTurno = function() {
-            if (confirm("¿Estás seguro de vaciar el historial local de visitas? Recuerda exportar a CSV primero.")) {
+        window.borrarHistorialTurno = async function() {
+            if (confirm("⚠️ ¿Estás seguro de vaciar el historial COMPLETO de visitas de la sede en Firestore y localmente? Esta acción no se puede deshacer.")) {
                 historialVisitas = [];
                 localStorage.removeItem(STORAGE_KEY_VISITAS);
+                try {
+                    await setDoc(DOC_VISITAS_AQM, {
+                        sede: "AQUÍ ME QUEDO LAN CENTER",
+                        ciudad: "La Paz",
+                        visitas: [],
+                        totalHistorico: 0,
+                        updatedAt: Date.now()
+                    });
+                } catch(e) {}
                 actualizarMetricas();
                 renderizarTablaHistorial();
                 renderizarTarjetas();
+                alert("Historial vaciado correctamente.");
             }
         };
 
@@ -1227,6 +1359,8 @@
             document.getElementById('metrica-visitas-total').textContent = totalVisitas;
             const badgeVisitas = document.getElementById('badge-total-visitas');
             if (badgeVisitas) badgeVisitas.textContent = totalVisitas;
+            const badgeNav = document.getElementById('badge-nav-visitas');
+            if (badgeNav) badgeNav.textContent = totalVisitas;
 
             const hoyStr = new Date().toLocaleDateString('es-BO');
             const visitasHoy = historialVisitas.filter(v => (v.fechaHora || '').includes(hoyStr)).length;
