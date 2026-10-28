@@ -390,6 +390,33 @@
                 </div>
             </div>
 
+            <!-- ACCESO EXCLUSIVO: SEDES LAN CENTERS (AQUÍ ME QUEDO & SMOK GAME ZONE) -->
+            <div class="glass-panel p-4 sm:p-5 rounded-3xl mb-6 sm:mb-8 border-l-4 border-purple-500 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-purple-950/20 via-transparent to-transparent">
+                <div>
+                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <i class="fas fa-network-wired mr-1"></i> Control Presencial LAN
+                        </span>
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">La Paz & Cochabamba</span>
+                    </div>
+                    <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-gamepad text-purple-400"></i> LAN Centers Oficiales — Padrón de Sedes & Visitas
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1 max-w-2xl">Terminales independientes para registro de visitas y beneficios de jugadores. Administra usuarios y contraseñas aisladas de los cajeros en Firebase Firestore.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+                    <a href="/aqm" target="_blank" class="px-4 py-3 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-500/40 text-red-300 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fas fa-gamepad text-red-400"></i> AQM (La Paz)
+                    </a>
+                    <a href="/smok" target="_blank" class="px-4 py-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 text-emerald-300 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fas fa-circle-play text-emerald-400"></i> SMOK (Cocha)
+                    </a>
+                    <button type="button" onclick="abrirModalCredencialesLAN()" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/25 active:scale-95 cursor-pointer">
+                        <i class="fas fa-key"></i> Accesos LAN
+                    </button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
                 <div id="card-stat-total" onclick="filtrarPorEstado('')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500 cursor-pointer hover:border-blue-400 hover:bg-blue-950/20 transition-all select-none group" title="Ver todos los registros">
                     <p class="text-[10px] sm:text-xs text-gray-500 group-hover:text-blue-400 font-bold uppercase mb-1 transition-colors">Total Registros</p>
@@ -844,6 +871,118 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DE GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)     -->
+    <!-- ============================================================== -->
+    <div id="modal-credenciales-lan" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalCredencialesLAN()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-6 hidden">
+        <div class="bg-[#07090e] border border-purple-500/40 rounded-2xl sm:rounded-3xl w-full max-w-3xl max-h-[94dvh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            
+            <!-- Encabezado del Modal -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0d111a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-purple-500/20 border border-purple-500/50 flex items-center justify-center text-purple-400 text-xl shrink-0 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider truncate">Gestión de Credenciales LAN</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-purple-600/30 text-purple-300 border border-purple-500/40">Firebase Firestore</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">Crea, consulta y elimina usuarios y contraseñas para los encargados de caja de <strong>Aquí Me Quedo (La Paz)</strong> y <strong>SMOK Game Zone (Cochabamba)</strong>.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalCredencialesLAN()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Accesos directos a los sistemas LAN -->
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#0a0f19] flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-[10px] uppercase font-black text-gray-400">Ingreso directo Staff:</span>
+                    <a href="/aqm" target="_blank" class="px-3 py-1.5 rounded-xl bg-red-600/25 hover:bg-red-600/40 text-red-300 border border-red-500/40 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-gamepad text-red-400"></i> Terminal AQM (La Paz)
+                    </a>
+                    <a href="/smok" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-circle-play text-emerald-400"></i> Terminal SMOK (Cocha)
+                    </a>
+                </div>
+                <span class="text-[11px] text-gray-400">
+                    <i class="fas fa-shield-alt text-emerald-400 mr-1"></i> Sesión Staff vinculada
+                </span>
+            </div>
+
+            <!-- Cuerpo con Scroll: Formulario + Lista de Cuentas -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#05070c]">
+                
+                <!-- Formulario de Nueva Credencial -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-black/60 border border-purple-950/80 shadow-md">
+                    <h4 class="text-xs font-black uppercase text-purple-300 tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fas fa-user-plus text-purple-400"></i> Crear o Actualizar Credencial de Encargado
+                    </h4>
+                    <form id="form-staff-lan-cred" onsubmit="event.preventDefault(); guardarCredencialLAN();" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Usuario (Login):</label>
+                                <input type="text" id="lan-input-usuario" required placeholder="ej: cajero_aqm_tarde" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Contraseña:</label>
+                                <input type="text" id="lan-input-password" required placeholder="ej: aqm2026" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Nombre / Responsable:</label>
+                                <input type="text" id="lan-input-nombre" required placeholder="ej: Carlos (Turno Tarde)" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Sede Permitida:</label>
+                                <select id="lan-input-sede" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                                    <option value="AQM">AQM (La Paz)</option>
+                                    <option value="SMOK">SMOK (Cochabamba)</option>
+                                    <option value="TODAS">Ambas Sedes (Admin)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[11px] text-gray-500">Se almacena de forma aislada y persistente en Firebase Firestore.</span>
+                            <button type="submit" id="btn-lan-guardar" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
+                                <i class="fas fa-save"></i> Guardar Credencial
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tabla de Credenciales Existentes -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                            <i class="fas fa-id-badge text-purple-400"></i> Cuentas Activas Registradas
+                        </span>
+                        <span id="badge-total-lan-cuentas" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-900/40 text-purple-300 border border-purple-500/30">0 Cuentas</span>
+                    </div>
+
+                    <div id="contenedor-tabla-lan-cuentas" class="border border-gray-800/80 rounded-2xl bg-black/50 overflow-hidden">
+                        <div class="p-6 text-center text-gray-500 text-xs">
+                            <i class="fas fa-spinner fa-spin mr-1"></i> Cargando credenciales de Firebase Firestore...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer del Modal -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0d111a] flex justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-400">
+                    <i class="fas fa-info-circle text-purple-400 mr-1"></i> Los encargados de caja ingresarán directamente en su terminal asignado sin requerir cuentas de Google ni correos del Staff.
+                </span>
+                <button type="button" onclick="cerrarModalCredencialesLAN()" class="px-5 py-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1780,17 +1919,15 @@
                 btn.innerHTML = 'INICIAR SESIÓN';
             } catch (error) {
                 console.error("Firebase Auth Error:", error);
-                let mensaje = 'Credenciales incorrectas.';
+                let mensaje = 'Correo o contraseña incorrectos.';
                 if (error.code === 'auth/unauthorized-domain') {
-                    mensaje = 'Dominio localhost no autorizado en Firebase Auth Console.';
+                    mensaje = 'Dominio no autorizado en Firebase Auth Console.';
                 } else if (error.code === 'auth/network-request-failed') {
-                    mensaje = 'Error de conexión de red con Firebase.';
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    mensaje = 'Correo o contraseña incorrectos.';
+                    mensaje = 'Error de conexión de red con el servidor de autenticación.';
                 } else if (error.code === 'auth/too-many-requests') {
-                    mensaje = 'Demasiados intentos. Espera unos segundos.';
-                } else if (error.message) {
-                    mensaje = `Error (${error.code || 'Auth'}): ${error.message}`;
+                    mensaje = 'Demasiados intentos fallidos. Por seguridad, espera unos minutos.';
+                } else if (error.code === 'auth/user-disabled') {
+                    mensaje = 'Esta cuenta de Staff ha sido deshabilitada.';
                 }
                 errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> ${mensaje}`;
                 errorMsg.classList.remove('hidden');
@@ -3953,6 +4090,257 @@
             if (!confirm(`⚠️ ELIMINAR a "${nombreEquipo}" permanentemente. ¿Continuar?`)) return;
             try { await deleteDoc(doc(db, "inscripciones_pendientes", id)); alert("Eliminado."); cerrarModal(); cargarDatos(); } catch (error) { alert("Error."); }
         };
+
+        // ==============================================================
+        // GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)
+        // ==============================================================
+        const DOC_LAN_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
+        let cuentasLANActuales = {};
+        let passwordsVisiblesLAN = {};
+
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        window.toggleLANPassVisibility = function(key) {
+            passwordsVisiblesLAN[key] = !passwordsVisiblesLAN[key];
+            renderizarTablaCredencialesLAN();
+        };
+
+        window.abrirModalCredencialesLAN = async function() {
+            const modal = document.getElementById('modal-credenciales-lan');
+            if (modal) modal.classList.remove('hidden');
+            await cargarCredencialesLANFirestore();
+        };
+
+        window.cerrarModalCredencialesLAN = function() {
+            const modal = document.getElementById('modal-credenciales-lan');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        async function cargarCredencialesLANFirestore() {
+            const container = document.getElementById('contenedor-tabla-lan-cuentas');
+            if (container) {
+                container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando Firestore...</div>`;
+            }
+
+            try {
+                const snap = await getDoc(DOC_LAN_CREDENCIALES);
+                if (snap.exists() && snap.data().cuentas) {
+                    cuentasLANActuales = snap.data().cuentas;
+                } else {
+                    const nickStaff = (typeof getStaffNick === 'function' ? getStaffNick(auth.currentUser?.email) : 'Staff LBL') || 'Staff LBL';
+                    cuentasLANActuales = {
+                        "cajero_aqm": {
+                            usuario: "cajero_aqm",
+                            password: "aqm2026",
+                            nombre: "Cajero Principal AQM",
+                            sede: "AQM",
+                            activo: true,
+                            creadoPor: nickStaff,
+                            creadoEn: new Date().toISOString()
+                        },
+                        "cajero_smok": {
+                            usuario: "cajero_smok",
+                            password: "smok2026",
+                            nombre: "Cajero Principal SMOK",
+                            sede: "SMOK",
+                            activo: true,
+                            creadoPor: nickStaff,
+                            creadoEn: new Date().toISOString()
+                        }
+                    };
+                    await setDoc(DOC_LAN_CREDENCIALES, {
+                        cuentas: cuentasLANActuales,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                }
+                renderizarTablaCredencialesLAN();
+            } catch (err) {
+                console.error("Error al cargar credenciales LAN:", err);
+                if (container) {
+                    container.innerHTML = `<div class="p-6 text-center text-rose-400 text-xs">Error al consultar Firestore: ${escapeHTML(err.message)}</div>`;
+                }
+            }
+        }
+
+        function renderizarTablaCredencialesLAN() {
+            const container = document.getElementById('contenedor-tabla-lan-cuentas');
+            const badgeCount = document.getElementById('badge-total-lan-cuentas');
+            const keys = Object.keys(cuentasLANActuales);
+
+            if (badgeCount) badgeCount.textContent = `${keys.length} Cuentas`;
+
+            if (keys.length === 0) {
+                if (container) {
+                    container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs">No hay credenciales registradas. Usa el formulario superior para añadir una.</div>`;
+                }
+                return;
+            }
+
+            let html = `
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-[10px] uppercase font-black text-gray-400 bg-black/40">
+                            <th class="p-3">Usuario (Login)</th>
+                            <th class="p-3">Contraseña</th>
+                            <th class="p-3">Responsable</th>
+                            <th class="p-3">Sede</th>
+                            <th class="p-3 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800/60">
+            `;
+
+            keys.forEach(k => {
+                const c = cuentasLANActuales[k];
+                const esAqm = (c.sede || '').toUpperCase() === 'AQM';
+                const esSmok = (c.sede || '').toUpperCase() === 'SMOK';
+                const badgeColor = esAqm ? 'bg-red-950 text-red-300 border-red-500/40' : (esSmok ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-purple-950 text-purple-300 border-purple-500/40');
+                const badgeTexto = esAqm ? 'AQM (La Paz)' : (esSmok ? 'SMOK (Cocha)' : 'Ambas Sedes');
+                const passVisible = !!passwordsVisiblesLAN[k];
+                const displayPass = passVisible ? escapeHTML(c.password || '') : '••••••••';
+                const safeUsuario = escapeHTML(c.usuario || k);
+                const safeNombre = escapeHTML(c.nombre || '--');
+                const safeKey = escapeHTML(k);
+
+                html += `
+                    <tr class="hover:bg-white/[0.02] transition-colors">
+                        <td class="p-3 font-mono font-bold text-white">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-user-circle text-purple-400"></i>
+                                <span>${safeUsuario}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 font-mono text-gray-300">
+                            <div class="inline-flex items-center gap-1.5 bg-gray-900 border border-gray-800 rounded px-2 py-0.5">
+                                <span class="font-bold select-all ${passVisible ? 'text-yellow-300' : 'text-gray-400'}">${displayPass}</span>
+                                <button type="button" onclick="toggleLANPassVisibility('${safeKey}')" class="text-gray-400 hover:text-white text-[10px] ml-1 cursor-pointer" title="${passVisible ? 'Ocultar contraseña' : 'Ver contraseña'}">
+                                    <i class="fas ${passVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-3 font-semibold text-gray-200">${safeNombre}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${badgeColor}">
+                                ${badgeTexto}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            <button type="button" onclick="cargarParaEditarCredencialLAN('${safeKey}')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold transition-colors cursor-pointer" title="Cargar datos en el formulario">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" onclick="eliminarCredencialLAN('${safeKey}')" class="px-2 py-1 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 text-[11px] font-bold transition-colors cursor-pointer" title="Eliminar credencial">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            if (container) container.innerHTML = html;
+        }
+
+        window.guardarCredencialLAN = async function() {
+            const uInput = (document.getElementById('lan-input-usuario').value || '').trim().toLowerCase().replace(/\s+/g, '_');
+            const pInput = (document.getElementById('lan-input-password').value || '').trim();
+            const nInput = (document.getElementById('lan-input-nombre').value || '').trim();
+            const sInput = document.getElementById('lan-input-sede').value;
+            const btn = document.getElementById('btn-lan-guardar');
+
+            if (!uInput || !pInput || !nInput) {
+                alert("Por favor completa usuario, contraseña y nombre del responsable.");
+                return;
+            }
+
+            const regexUsuario = /^[a-z0-9_]{3,25}$/;
+            if (!regexUsuario.test(uInput)) {
+                alert("El usuario debe contener únicamente letras minúsculas, números o guion bajo (_) y tener entre 3 y 25 caracteres.");
+                return;
+            }
+
+            if (pInput.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
+
+            try {
+                const nickStaff = (typeof getStaffNick === 'function' ? getStaffNick(auth.currentUser?.email) : 'Staff LBL') || 'Staff LBL';
+                cuentasLANActuales[uInput] = {
+                    usuario: uInput,
+                    password: pInput,
+                    nombre: nInput,
+                    sede: sInput,
+                    activo: true,
+                    modificadoPor: nickStaff,
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(DOC_LAN_CREDENCIALES, {
+                    cuentas: cuentasLANActuales,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                document.getElementById('lan-input-usuario').value = '';
+                document.getElementById('lan-input-password').value = '';
+                document.getElementById('lan-input-nombre').value = '';
+
+                renderizarTablaCredencialesLAN();
+                alert(`✅ Credencial "${uInput}" guardada en Firestore para ${sInput}.`);
+            } catch (err) {
+                console.error("Error al guardar credencial LAN:", err);
+                alert("Error al guardar en Firestore: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Credencial';
+            }
+        };
+
+        window.cargarParaEditarCredencialLAN = function(k) {
+            const c = cuentasLANActuales[k];
+            if (!c) return;
+            document.getElementById('lan-input-usuario').value = c.usuario || k;
+            document.getElementById('lan-input-password').value = c.password || '';
+            document.getElementById('lan-input-nombre').value = c.nombre || '';
+            document.getElementById('lan-input-sede').value = c.sede || 'AQM';
+            document.getElementById('lan-input-usuario').focus();
+        };
+
+        window.eliminarCredencialLAN = async function(k) {
+            if (!confirm(`¿Eliminar la credencial "${k}"? El encargado ya no podrá acceder a su terminal.`)) return;
+
+            delete cuentasLANActuales[k];
+
+            try {
+                await setDoc(DOC_LAN_CREDENCIALES, {
+                    cuentas: cuentasLANActuales,
+                    updatedAt: Date.now()
+                });
+                renderizarTablaCredencialesLAN();
+                alert(`🗑️ Credencial "${k}" eliminada de Firestore.`);
+            } catch (err) {
+                alert("Error al eliminar credencial: " + err.message);
+            }
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modalLan = document.getElementById('modal-credenciales-lan');
+                if (modalLan && !modalLan.classList.contains('hidden')) {
+                    cerrarModalCredencialesLAN();
+                }
+            }
+        });
     </script>
     
     <!-- Register Service Worker for PWA -->

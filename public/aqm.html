@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#050002]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQM x LBL • Sistema de Gestión de Identidad LAN Center</title>
+    <meta name="description" content="Sistema de verificación de identidad, padrón de jugadores Scouting 3 y control de visitas para AQUÍ ME QUEDO LAN Center (La Paz).">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/Logos%20Sponsor/AQMlogo.png">
+    
+    <!-- Tailwind CSS Compilado & FontAwesome -->
+    <link rel="stylesheet" href="/dist/output.css?v=221">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Estilos personalizados para Aquí Me Quedo: Rojo Neón y Negro Profundo */
+        :root {
+            --aqm-red: #e11d48;
+            --aqm-red-dark: #881337;
+            --aqm-bg: #060103;
+        }
+
+        body {
+            background-color: var(--aqm-bg);
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .aqm-glass {
+            background: rgba(18, 4, 7, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(225, 29, 72, 0.25);
+        }
+
+        .aqm-border-glow {
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.18);
+        }
+
+        .aqm-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.35);
+            border-color: rgba(225, 29, 72, 0.7);
+        }
+
+        /* Scrollbar temática roja */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080204;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4c0519;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e11d48;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white">
+
+    <!-- ============================================================== -->
+    <!-- 1. PANTALLA DE AUTENTICACIÓN AISLADA FIRESTORE (USUARIO/CLAVE)  -->
+    <!-- ============================================================== -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-[#060103] flex items-center justify-center p-4">
+        <div class="aqm-glass max-w-md w-full rounded-3xl p-7 sm:p-8 border border-red-600/50 aqm-border-glow relative overflow-hidden">
+            
+            <!-- Glow ambiental rojo -->
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-rose-700/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center space-y-3 mb-6 relative">
+                <div class="inline-block p-2 rounded-2xl bg-black border border-red-600/60 shadow-xl">
+                    <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-16 h-16 object-contain mx-auto">
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">AQM x LBL</h2>
+                </div>
+            </div>
+
+            <!-- Formulario de Login Aislado (Usuario + Contraseña) -->
+            <form id="form-login-lan" onsubmit="event.preventDefault(); procesarLoginLAN();" class="space-y-4 relative">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-user-shield text-red-500 mr-1"></i> Usuario de Encargado
+                    </label>
+                    <input type="text" id="login-usuario" required placeholder="ej: cajero_aqm o tu usuario"
+                        autocomplete="username" autofocus
+                        class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-key text-red-500 mr-1"></i> Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="login-password" required placeholder="••••••••"
+                            autocomplete="current-password"
+                            class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
+                        <button type="button" onclick="togglePassVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white text-xs cursor-pointer">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="login-error" class="hidden p-3 rounded-xl bg-red-950/80 border border-red-600 text-red-200 text-xs font-semibold text-center">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> <span id="login-error-msg">Credenciales incorrectas.</span>
+                </div>
+
+                <button type="submit" id="btn-login" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-red-900/40 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fas fa-door-open"></i> Iniciar Turno de Verificación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 2. CABECERA PRINCIPAL (NAVBAR AQM)                              -->
+    <!-- ============================================================== -->
+    <header class="aqm-glass sticky top-0 z-40 border-b border-red-900/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Branding AQM x LBL -->
+            <div class="flex items-center gap-3.5 min-w-0">
+                <div class="p-1.5 rounded-2xl bg-black border border-red-600/50 shadow-md shrink-0">
+                    <img src="/assets/Logos%20Sponsor/AQMlogo.png" alt="AQM Logo" class="w-10 h-10 sm:w-11 sm:h-11 object-contain">
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base sm:text-lg font-black tracking-tight uppercase text-white truncate">AQUÍ ME QUEDO LAN</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shadow-sm">x LBL</span>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-red-400 font-semibold truncate flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Sede Exclusiva La Paz • Padrón Oficial Scouting 3</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Acciones y Estado de Sesión -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Botón de Sincronización Manual -->
+                <button type="button" onclick="cargarJugadoresDesdeAPI(true)" title="Forzar sincronización fresca con Google Sheets"
+                    class="px-3 py-2 rounded-xl bg-black/60 hover:bg-red-950/60 border border-red-900/60 text-gray-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                    <i id="sync-icon" class="fas fa-arrows-rotate text-red-500"></i>
+                    <span class="hidden md:inline">Actualizar</span>
+                </button>
+
+                <!-- Botón de Historial de Visitas -->
+                <button type="button" onclick="abrirModalHistorial()"
+                    class="px-3 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/50 border border-red-600/50 text-red-200 text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer">
+                    <i class="fas fa-receipt text-red-400"></i>
+                    <span class="hidden sm:inline">Visitas:</span>
+                    <span id="badge-total-visitas" class="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-mono">0</span>
+                </button>
+
+                <!-- Encargado & Cerrar Sesión -->
+                <div class="hidden lg:flex flex-col text-right pr-2 border-r border-red-950">
+                    <span class="text-[10px] uppercase tracking-wider text-gray-400">Encargado de Turno</span>
+                    <span id="display-encargado" class="text-xs font-black text-white truncate max-w-[150px]">Cajero AQM</span>
+                </div>
+
+                <button type="button" onclick="cerrarSesion()" title="Cerrar turno y salir"
+                    class="p-2 sm:px-3 sm:py-2 rounded-xl bg-gray-900 hover:bg-red-700 text-gray-400 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                    <i class="fas fa-power-off"></i>
+                    <span class="hidden sm:inline">Cerrar Turno</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================== -->
+    <!-- 3. CONTENIDO PRINCIPAL (EXCLUSIVO LA PAZ)                      -->
+    <!-- ============================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Métricas Rápidas Exclusivas de La Paz -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Acreditados La Paz</span>
+                        <h2 id="metrica-lapaz" class="text-2xl sm:text-3xl font-black text-white mt-0.5">--</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-600/40 flex items-center justify-center text-red-400 text-base">
+                        <i class="fas fa-location-dot"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-red-400 mt-2 font-medium">Jugadores Scouting 3 (La Paz / El Alto)</p>
+            </div>
+
+            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Visitas Registradas</span>
+                        <h2 id="metrica-visitas-total" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-0.5">0</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-base">
+                        <i class="fas fa-users-viewfinder"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-emerald-400/80 mt-2 font-medium">Histórico general en esta sede</p>
+            </div>
+
+            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Visitas del Turno</span>
+                        <h2 id="metrica-visitas-turno" class="text-2xl sm:text-3xl font-black text-amber-400 mt-0.5">0</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-base">
+                        <i class="fas fa-clock-rotate-left"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-amber-400/80 mt-2 font-medium">Registradas hoy en caja</p>
+            </div>
+
+            <div class="aqm-glass rounded-2xl p-4 border border-red-900/40 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Equipos SC3</span>
+                        <h2 id="metrica-equipos" class="text-2xl sm:text-3xl font-black text-white mt-0.5">--</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 text-base">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p id="metrica-sync-label" class="text-[11px] text-gray-400 mt-2 font-medium">Con jugadores de La Paz</p>
+            </div>
+        </div>
+
+        <!-- Barra de Búsqueda Express (Exclusiva La Paz) -->
+        <div class="aqm-glass rounded-3xl p-5 sm:p-6 border border-red-600/30 aqm-border-glow space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                        <i class="fas fa-id-card text-red-500 text-xl"></i>
+                        <span>Buscador y Verificador de Identidad (La Paz)</span>
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Ingresa el C.I., Nombre o Riot ID del jugador para consultar su ficha y registrar su visita.</p>
+                </div>
+
+                <!-- Indicador de Exclusividad Territorial -->
+                <div class="flex items-center gap-2">
+                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase bg-red-600 text-white shadow-md flex items-center gap-1.5">
+                        <i class="fas fa-location-dot"></i> Sede Exclusiva: La Paz
+                    </span>
+                </div>
+            </div>
+
+            <!-- Input Principal -->
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-red-500 text-lg sm:text-xl">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" id="input-busqueda" placeholder="Teclea el número de C.I. (ej: 8492011), Nombre o Riot ID..."
+                    autocomplete="off" autofocus
+                    class="w-full bg-black/80 border-2 border-red-900/60 hover:border-red-600 focus:border-red-500 rounded-2xl pl-12 sm:pl-14 pr-28 py-3.5 sm:py-4 text-base sm:text-lg text-white font-semibold placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-red-600/20 transition-all font-mono">
+                <div class="absolute inset-y-0 right-2 flex items-center gap-1.5">
+                    <button type="button" onclick="limpiarBusqueda()" id="btn-limpiar" class="hidden px-2.5 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold cursor-pointer">
+                        <i class="fas fa-times mr-1"></i> Borrar
+                    </button>
+                    <span class="hidden sm:inline px-3 py-1.5 rounded-xl bg-red-950/80 border border-red-900/50 text-[11px] font-mono text-red-300 font-bold">
+                        [ENTER]
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-xs text-gray-400 pt-1">
+                <span id="conteo-resultados">Cargando residentes de La Paz...</span>
+                <span class="text-gray-500">Padrón exclusivo La Paz • Conteo individual por jugador</span>
+            </div>
+        </div>
+
+        <!-- Contenedor de Jugadores (Grid) -->
+        <div id="contenedor-jugadores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Cargando Estado Inicial -->
+            <div class="col-span-full aqm-glass rounded-3xl p-12 text-center border border-red-900/40 space-y-4">
+                <i class="fas fa-circle-notch fa-spin text-red-500 text-4xl"></i>
+                <h4 class="text-lg font-bold text-white">Cargando Jugadores Acreditados de La Paz...</h4>
+                <p class="text-xs text-gray-400 max-w-md mx-auto">Sincronizando el padrón de Scouting 3 para Aquí Me Quedo LAN Center.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- 4. MODAL LIMPIO DE FICHA DE JUGADOR & REGISTRAR VISITA          -->
+    <!-- ============================================================== -->
+    <div id="modal-canje" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="aqm-glass max-w-lg w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative">
+            <button type="button" onclick="cerrarModalCanje()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-base cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Cabecera del Modal -->
+            <div class="flex items-center gap-3.5 mb-5 pb-4 border-b border-red-950/80">
+                <div class="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-600/50 flex items-center justify-center text-red-500 text-xl shrink-0">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">AQUÍ ME QUEDO x LBL</span>
+                    <h3 class="text-lg font-black text-white uppercase tracking-tight">Ficha & Registro de Visita</h3>
+                </div>
+            </div>
+
+            <!-- Ficha Limpia del Jugador -->
+            <div class="p-4 rounded-2xl bg-black/70 border border-red-950 space-y-3 mb-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Nombre Completo:</span>
+                    <span id="modal-jugador-nombre" class="text-sm font-black text-white text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Cédula de Identidad (CI):</span>
+                    <span id="modal-jugador-ci" class="text-sm font-black text-red-400 font-mono text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Riot ID LAS:</span>
+                    <span id="modal-jugador-riot" class="text-xs font-mono font-bold text-gray-200 text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Equipo en SC3:</span>
+                    <span id="modal-jugador-equipo" class="text-xs font-bold text-gray-300 text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Residencia Acreditada:</span>
+                    <span id="modal-jugador-ciudad" class="text-xs font-bold text-emerald-400 text-right">La Paz</span>
+                </div>
+            </div>
+
+            <!-- Contador Individual de Visitas de Este Jugador -->
+            <div class="p-4 rounded-2xl bg-red-950/30 border border-red-900/50 space-y-2 mb-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                        <i class="fas fa-chart-line text-red-400"></i> Visitas a este LAN Center:
+                    </span>
+                    <span id="modal-jugador-contador-visitas" class="px-3 py-1 rounded-full bg-red-600 text-white font-mono font-black text-xs shadow-md">
+                        0 Visitas
+                    </span>
+                </div>
+                <div id="modal-jugador-historial-mini" class="text-[11px] text-gray-400 space-y-1 pt-1 max-h-24 overflow-y-auto font-mono">
+                    <!-- Mini historial dinámico -->
+                </div>
+            </div>
+
+            <!-- Alerta e Input si el jugador no tiene C.I. registrado en la BD -->
+            <div id="modal-alerta-sin-ci" class="hidden p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/50 text-xs mb-4 space-y-2">
+                <div class="flex items-center gap-2 text-amber-300 font-black uppercase text-[11px]">
+                    <i class="fas fa-id-card-clip text-amber-400 text-sm"></i>
+                    <span>⚠️ Regularización: Jugador Sin C.I. en Base de Datos</span>
+                </div>
+                <p class="text-[11px] text-gray-300 leading-relaxed">
+                    Solicita su <strong>carnet físico original</strong> e ingresa el número para registrar la visita:
+                </p>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-amber-400 mb-1">C.I. Presentado:</label>
+                    <input type="text" id="canje-ci-manual" placeholder="Ej: 8492011 LP" class="w-full bg-black/90 border border-amber-500/70 rounded-xl px-3 py-2 text-xs text-white font-mono placeholder-gray-500 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+
+            <!-- Botón Principal Directo: REGISTRAR VISITA AL LAN CENTER -->
+            <div class="space-y-3 pt-1">
+                <button type="button" onclick="registrarVisitaJugadorDirecta()" class="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-red-900/50 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fas fa-check-circle text-lg"></i> Registrar Visita al Lan Center
+                </button>
+                <button type="button" onclick="cerrarModalCanje()" class="w-full py-2.5 px-4 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-white font-bold text-xs uppercase transition-all cursor-pointer">
+                    Cerrar Ficha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 5. MODAL DE HISTORIAL GENERAL DE VISITAS REGISTRADAS           -->
+    <!-- ============================================================== -->
+    <div id="modal-historial" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="aqm-glass max-w-3xl w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative flex flex-col max-h-[90vh]">
+            <button type="button" onclick="cerrarModalHistorial()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-base cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 pr-8">
+                <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">HISTÓRICO GENERAL</span>
+                    <h3 class="text-xl font-black text-white uppercase mt-1">Beneficios y Visitas Registradas</h3>
+                    <p class="text-xs text-gray-400">Control de asistencia y canjes en Aquí Me Quedo LAN Center.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportarVisitasCSV()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow cursor-pointer">
+                        <i class="fas fa-file-excel"></i> Exportar CSV
+                    </button>
+                    <button type="button" onclick="borrarHistorialTurno()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 text-red-400 border border-red-900/50 font-bold text-xs uppercase cursor-pointer" title="Limpiar historial local">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Registros -->
+            <div class="flex-grow overflow-y-auto border border-red-950 rounded-2xl bg-black/60">
+                <table class="w-full text-left text-xs text-gray-300">
+                    <thead class="bg-red-950/70 text-[10px] font-black uppercase tracking-wider text-red-300 sticky top-0 border-b border-red-900/60">
+                        <tr>
+                            <th class="p-3">Fecha / Hora</th>
+                            <th class="p-3">Jugador</th>
+                            <th class="p-3">CI</th>
+                            <th class="p-3">Equipo SC3</th>
+                            <th class="p-3">Encargado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-visitas-body" class="divide-y divide-red-950/50">
+                        <!-- Generado dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-red-950 flex items-center justify-between text-xs text-gray-400">
+                <span>Total de visitas contabilizadas: <strong id="historial-total-count" class="text-red-400 font-mono">0</strong></span>
+                <span class="text-gray-500">Sincronizado con Firebase Firestore</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 6. LÓGICA DE NEGOCIO Y AUTENTICACIÓN FIRESTORE                  -->
+    <!-- ============================================================== -->
+    <script type="module">
+        import { db } from "/firebase-config.js";
+        import { doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuración y Constantes
+        const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
+        const STORAGE_KEY_CACHE = "aqm_jugadores_lapaz_sc3_cache";
+        const STORAGE_KEY_VISITAS = "aqm_visitas_registro_v2";
+        const STORAGE_KEY_AUTH = "aqm_lan_sesion_v3";
+        const DOC_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
+        const DOC_VISITAS_AQM = doc(db, "torneos_activos", "lan_visitas_aqm");
+
+        // Estado en memoria
+        let todosLosJugadoresLaPaz = [];
+        let jugadoresFiltrados = [];
+        let jugadorSeleccionado = null;
+        let encargadoActual = "Encargado AQM";
+        let historialVisitas = [];
+
+        // Sanitización XSS estándar para renderizado seguro
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // ==============================================================
+        // 1. AUTENTICACIÓN AISLADA POR FIRESTORE (torneos_activos)
+        // ==============================================================
+        async function obtenerCredencialesFirestore() {
+            try {
+                const snap = await getDoc(DOC_CREDENCIALES);
+                if (snap.exists() && snap.data().cuentas) {
+                    return snap.data().cuentas;
+                }
+            } catch (e) {
+                console.warn("Aviso al consultar credenciales en Firestore:", e);
+            }
+            // Fallback base
+            return {
+                "cajero_aqm": { usuario: "cajero_aqm", password: "aqm2026", nombre: "Cajero Principal AQM", sede: "AQM", activo: true },
+                "cajero_smok": { usuario: "cajero_smok", password: "smok2026", nombre: "Cajero Principal SMOK", sede: "SMOK", activo: true },
+                "admin_lbl": { usuario: "admin_lbl", password: "lbl2026", nombre: "Administrador LBL", sede: "TODAS", activo: true }
+            };
+        }
+
+        window.procesarLoginLAN = async function() {
+            const usuarioInput = (document.getElementById('login-usuario').value || '').trim().toLowerCase();
+            const passInput = (document.getElementById('login-password').value || '').trim();
+            const btn = document.getElementById('btn-login');
+            const errDiv = document.getElementById('login-error');
+            const errMsg = document.getElementById('login-error-msg');
+
+            if (!usuarioInput || !passInput) {
+                errMsg.textContent = "Por favor ingresa usuario y contraseña.";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando credenciales...';
+            errDiv.classList.add('hidden');
+
+            try {
+                // 1. Acceso directo Staff LBL
+                const staffPins = ['lbl2026', 'darkcito2026', 'staff2026', 'scouting3', 'aqm2026'];
+                if ((usuarioInput === 'admin_lbl' || usuarioInput === 'staff' || usuarioInput === 'darkcito') && staffPins.includes(passInput)) {
+                    localStorage.setItem('lbl_staff_logged_in', 'true');
+                    desbloquearPanel(`Staff LBL (${usuarioInput})`);
+                    return;
+                }
+                if (staffPins.includes(passInput) && (usuarioInput === 'staff_lbl' || usuarioInput === 'admin')) {
+                    localStorage.setItem('lbl_staff_logged_in', 'true');
+                    desbloquearPanel("Staff LBL");
+                    return;
+                }
+
+                // 2. Consulta de cuentas autorizadas en Firestore (Previene Prototype Pollution)
+                const cuentas = await obtenerCredencialesFirestore();
+                const tieneCuenta = cuentas && Object.prototype.hasOwnProperty.call(cuentas, usuarioInput);
+                const cuenta = tieneCuenta ? cuentas[usuarioInput] : null;
+
+                // Estandarización de error OWASP ASVS (Evita enumeración de usuarios)
+                if (!cuenta) {
+                    if (usuarioInput === 'cajero_aqm' && passInput === 'aqm2026') {
+                        desbloquearPanel("Cajero AQM (Local)");
+                        return;
+                    }
+                    throw new Error("Usuario o contraseña incorrectos.");
+                }
+
+                if (cuenta.activo === false) {
+                    throw new Error("Esta cuenta ha sido desactivada por la administración de LBL.");
+                }
+
+                const sedeUser = (cuenta.sede || 'AQM').toUpperCase();
+                if (sedeUser !== 'AQM' && sedeUser !== 'TODAS' && sedeUser !== 'AMBAS') {
+                    throw new Error(`Esta credencial no tiene permisos para operar en la sede La Paz (AQM).`);
+                }
+
+                if (String(cuenta.password).trim() !== passInput) {
+                    throw new Error("Usuario o contraseña incorrectos.");
+                }
+
+                // Credenciales válidas!
+                const nombreFinal = cuenta.nombre || cuenta.usuario;
+                localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify({
+                    usuario: cuenta.usuario,
+                    nombre: nombreFinal,
+                    sede: sedeUser,
+                    loginAt: Date.now()
+                }));
+                desbloquearPanel(nombreFinal);
+            } catch (err) {
+                console.error("Error autenticación LAN:", err);
+                errMsg.textContent = err.message || "Error al validar credenciales.";
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-door-open"></i> Iniciar Turno de Verificación';
+            }
+        };
+
+        function desbloquearPanel(nombreEncargado) {
+            encargadoActual = nombreEncargado;
+            const displayEl = document.getElementById('display-encargado');
+            if (displayEl) displayEl.textContent = encargadoActual;
+            document.getElementById('auth-screen').classList.add('hidden');
+            iniciarApp();
+        }
+
+        window.cerrarSesion = function() {
+            if (confirm("¿Cerrar el turno actual y bloquear el acceso al sistema?")) {
+                localStorage.removeItem(STORAGE_KEY_AUTH);
+                location.reload();
+            }
+        };
+
+        window.togglePassVisibility = function(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        };
+
+        function verificarSesionPrevia() {
+            try {
+                // 1. Acceso Staff: si ya tiene sesión activa en este navegador
+                if (localStorage.getItem('lbl_staff_logged_in') === 'true') {
+                    const nick = localStorage.getItem('lbl_staff_nick') || 'Staff LBL';
+                    desbloquearPanel(`Staff LBL (${nick})`);
+                    return;
+                }
+                // 2. Sesión LAN del encargado (Vigencia máxima: 14 horas por turno)
+                const sesion = localStorage.getItem(STORAGE_KEY_AUTH);
+                if (sesion) {
+                    const data = JSON.parse(sesion);
+                    const MAX_SESSION_HOURS = 14;
+                    if (data && data.loginAt && (Date.now() - data.loginAt > MAX_SESSION_HOURS * 3600 * 1000)) {
+                        console.warn("Turno LAN vencido (>14h). Cerrando sesión automáticamente.");
+                        localStorage.removeItem(STORAGE_KEY_AUTH);
+                    } else if (data && data.nombre) {
+                        desbloquearPanel(data.nombre);
+                        return;
+                    }
+                }
+            } catch (e) {}
+            document.getElementById('auth-screen').classList.remove('hidden');
+        }
+
+        // ==============================================================
+        // 3. EXTRACCIÓN Y AISLAMIENTO EXCLUSIVO DE LA PAZ
+        // ==============================================================
+        function normalizarTexto(str) {
+            return String(str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        }
+
+        function esResidenteLaPaz(ciudadRaw) {
+            const norm = normalizarTexto(ciudadRaw);
+            if (!norm) return false;
+            return (
+                norm.includes("paz") ||
+                norm.includes("alto") ||
+                norm.includes("viacha") ||
+                norm.includes("achocalla") ||
+                norm.includes("caranavi") ||
+                norm.includes("copacabana") ||
+                norm.includes("coroico") ||
+                norm === "lp" ||
+                norm === "lpz"
+            );
+        }
+
+        function extraerCiYNombres(texto) {
+            if (!texto) return { nombre: "Sin Nombre", ci: "S/N" };
+            const str = String(texto).trim();
+            const matchCi = str.match(/\b(\d{6,9})\b/);
+            const ci = matchCi ? matchCi[1] : "";
+            let nombre = str;
+            if (ci) {
+                nombre = str.replace(ci, "").replace(/[-—_]/g, " ").replace(/\s+/g, " ").trim();
+            }
+            return {
+                nombre: nombre || "Jugador Registrado",
+                ci: ci || "Verificar Físico"
+            };
+        }
+
+        function procesarEquiposScouting3LaPaz(equipos) {
+            const lista = [];
+            if (!Array.isArray(equipos)) return lista;
+
+            equipos.forEach(eq => {
+                const nombreEquipo = eq.nombre || "Equipo Sin Nombre";
+                const tagEquipo = eq.tag || "SC3";
+                const logoEquipo = eq.logo || eq.logoRaw || "";
+                const estadoEquipo = eq.estado || "Aceptado";
+
+                // 1. Titulares
+                if (Array.isArray(eq.titulares)) {
+                    eq.titulares.forEach((t, i) => {
+                        if (!t || (!t.nombreCi && !t.riotIdLas)) return;
+                        if (!esResidenteLaPaz(t.ciudad)) return;
+
+                        const parsed = extraerCiYNombres(t.nombreCi);
+                        lista.push({
+                            id: `eq_${eq.rowId || '0'}_tit_${i}`,
+                            nombreCompleto: parsed.nombre,
+                            ci: parsed.ci,
+                            ciOriginal: t.nombreCi || "",
+                            ciudad: "La Paz",
+                            ciudadRaw: t.ciudad || "",
+                            posicion: t.posicion || ["TOP", "JG", "MID", "ADC", "SUPP"][i] || "TITULAR",
+                            tipoJugador: "Titular",
+                            riotIdLas: t.riotIdLas || "",
+                            rangoSoloQ: t.rangoSoloQ || "Unranked",
+                            telefono: t.telefono || "",
+                            discord: t.discord || "",
+                            equipoNombre: nombreEquipo,
+                            equipoTag: tagEquipo,
+                            equipoLogo: logoEquipo,
+                            equipoEstado: estadoEquipo
+                        });
+                    });
+                }
+
+                // 2. Suplentes
+                if (Array.isArray(eq.suplentes)) {
+                    eq.suplentes.forEach((s, j) => {
+                        if (!s || (!s.nombreCi && !s.riotIdLas)) return;
+                        if (!esResidenteLaPaz(s.ciudad)) return;
+
+                        const parsed = extraerCiYNombres(s.nombreCi);
+                        lista.push({
+                            id: `eq_${eq.rowId || '0'}_sup_${j}`,
+                            nombreCompleto: parsed.nombre,
+                            ci: parsed.ci,
+                            ciOriginal: s.nombreCi || "",
+                            ciudad: "La Paz",
+                            ciudadRaw: s.ciudad || "",
+                            posicion: s.rolPrincipal || s.posicion || "Suplente",
+                            tipoJugador: "Suplente",
+                            riotIdLas: s.riotIdLas || "",
+                            rangoSoloQ: s.rangoSoloQ || "Unranked",
+                            telefono: s.telefono || "",
+                            discord: s.discord || "",
+                            equipoNombre: nombreEquipo,
+                            equipoTag: tagEquipo,
+                            equipoLogo: logoEquipo,
+                            equipoEstado: estadoEquipo
+                        });
+                    });
+                }
+            });
+
+            return lista;
+        }
+
+        // ==============================================================
+        // 4. CONSUMO DE API Y CACHÉ
+        // ==============================================================
+        async function cargarJugadoresDesdeAPI(forzar = false) {
+            const icon = document.getElementById('sync-icon');
+            if (icon) icon.classList.add('fa-spin');
+
+            if (!forzar) {
+                const cached = localStorage.getItem(STORAGE_KEY_CACHE);
+                if (cached) {
+                    try {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            todosLosJugadoresLaPaz = parsed;
+                            aplicarFiltrosYRenderizar();
+                            actualizarMetricas();
+                            if (icon) icon.classList.remove('fa-spin');
+                            setTimeout(() => cargarJugadoresDesdeAPI(true), 2000);
+                            return;
+                        }
+                    } catch(e) {}
+                }
+            }
+
+            try {
+                const sep = DEFAULT_API_URL.includes('?') ? '&' : '?';
+                const url = `${DEFAULT_API_URL}${sep}_t=${Date.now()}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.equipos)) {
+                    todosLosJugadoresLaPaz = procesarEquiposScouting3LaPaz(data.equipos);
+                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresLaPaz));
+                    actualizarMetricas();
+                    document.getElementById('metrica-sync-label').textContent = `Actualizado ${new Date().toLocaleTimeString('es-BO', {hour: '2-digit', minute:'2-digit'})}`;
+                }
+            } catch (err) {
+                console.warn("Aviso: Conexión con Sheets operando con caché local:", err);
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+                aplicarFiltrosYRenderizar();
+            }
+        }
+        window.cargarJugadoresDesdeAPI = cargarJugadoresDesdeAPI;
+
+        // ==============================================================
+        // 5. BÚSQUEDA EXPRESS
+        // ==============================================================
+        function aplicarFiltrosYRenderizar() {
+            const query = normalizarTexto(document.getElementById('input-busqueda').value);
+
+            jugadoresFiltrados = todosLosJugadoresLaPaz.filter(j => {
+                if (query) {
+                    const matchCi = normalizarTexto(j.ci).includes(query);
+                    const matchNom = normalizarTexto(j.nombreCompleto).includes(query);
+                    const matchRiot = normalizarTexto(j.riotIdLas).includes(query);
+                    const matchEq = normalizarTexto(j.equipoNombre).includes(query);
+                    return matchCi || matchNom || matchRiot || matchEq;
+                }
+                return true;
+            });
+
+            renderizarTarjetas();
+        }
+
+        window.limpiarBusqueda = function() {
+            const input = document.getElementById('input-busqueda');
+            input.value = "";
+            document.getElementById('btn-limpiar').classList.add('hidden');
+            aplicarFiltrosYRenderizar();
+            input.focus();
+        };
+
+        document.getElementById('input-busqueda').addEventListener('input', (e) => {
+            const btnLimpiar = document.getElementById('btn-limpiar');
+            if (e.target.value.trim()) {
+                btnLimpiar.classList.remove('hidden');
+            } else {
+                btnLimpiar.classList.add('hidden');
+            }
+            aplicarFiltrosYRenderizar();
+        });
+
+        // ==============================================================
+        // 6. RENDERIZADO DE TARJETAS
+        // ==============================================================
+        function contarVisitasDeJugador(j) {
+            if (!j) return 0;
+            return historialVisitas.filter(v => {
+                if (j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico') {
+                    return v.ci === j.ci;
+                }
+                return v.jugadorId === j.id || (v.nombre && v.nombre.toLowerCase() === j.nombreCompleto.toLowerCase());
+            }).length;
+        }
+
+        function renderizarTarjetas() {
+            const container = document.getElementById('contenedor-jugadores');
+            const conteo = document.getElementById('conteo-resultados');
+            if (!container) return;
+
+            conteo.textContent = `Mostrando ${jugadoresFiltrados.length} jugadores acreditados de La Paz`;
+
+            if (jugadoresFiltrados.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full aqm-glass rounded-3xl p-12 text-center border border-red-900/30 space-y-3">
+                        <i class="fas fa-search text-gray-600 text-4xl mb-1 block"></i>
+                        <h4 class="text-base font-bold text-white">No se encontró ningún jugador con esos criterios</h4>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto">Verifica el número de C.I., Nombre o Riot ID ingresado.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = jugadoresFiltrados.map(j => {
+                const tieneCiValido = j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico';
+                const totalVisitas = contarVisitasDeJugador(j);
+                const safeNombre = escapeHTML(j.nombreCompleto);
+                const safeCi = escapeHTML(j.ci);
+                const safePos = escapeHTML(j.posicion);
+                const safeTag = escapeHTML(j.equipoTag);
+                const safeEquipo = escapeHTML(j.equipoNombre);
+                const safeRiot = escapeHTML(j.riotIdLas || 'No registrado');
+                const safeRango = escapeHTML(j.rangoSoloQ || 'Unranked');
+                const safeId = escapeHTML(j.id);
+
+                return `
+                    <div class="aqm-glass rounded-2xl p-5 border ${tieneCiValido ? 'border-red-900/40' : 'border-amber-500/50 bg-[#170608]'} aqm-glow-hover transition-all flex flex-col justify-between gap-4 relative overflow-hidden group">
+                        
+                        <div class="space-y-3">
+                            <!-- Cabecera de Tarjeta: CI y Rol -->
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    ${tieneCiValido ? `
+                                    <span class="px-2.5 py-1 rounded-lg bg-black border border-red-600/60 text-red-400 font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm">
+                                        <i class="fas fa-id-card text-red-500"></i> ${safeCi}
+                                    </span>` : `
+                                    <span class="px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500 text-amber-300 font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm animate-pulse" title="Sin CI en base de datos. Pedir documento físico">
+                                        <i class="fas fa-triangle-exclamation text-amber-400"></i> Sin C.I.
+                                    </span>`}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">
+                                        La Paz
+                                    </span>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-black/60 border border-red-950 text-gray-400 font-bold uppercase">
+                                    ${safePos}
+                                </span>
+                            </div>
+
+                            <!-- Nombre y Equipo -->
+                            <div>
+                                <h4 class="text-base font-black text-white group-hover:text-red-400 transition-colors leading-tight">
+                                    ${safeNombre}
+                                </h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs font-mono font-black text-red-500">[${safeTag}]</span>
+                                    <span class="text-xs text-gray-300 truncate">${safeEquipo}</span>
+                                </div>
+                            </div>
+
+                            <!-- Riot ID y Detalles -->
+                            <div class="p-2.5 rounded-xl bg-black/60 border border-red-950/80 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400 text-[11px]">Riot ID:</span>
+                                    <span class="font-mono font-bold text-gray-200 truncate max-w-[170px]">${safeRiot}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400 text-[11px]">Rango SoloQ:</span>
+                                    <span class="font-semibold text-amber-300 text-[11px]">${safeRango}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer con Contador Individual y Botón -->
+                        <div class="pt-2 border-t border-red-950 flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold ${totalVisitas > 0 ? 'text-emerald-400' : 'text-gray-400'}">
+                                <i class="fas fa-history mr-1"></i> ${totalVisitas} Visita${totalVisitas === 1 ? '' : 's'}
+                            </span>
+                            <button type="button" onclick="abrirModalJugador('${safeId}')"
+                                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-red-900/30 transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer">
+                                <i class="fas fa-id-badge"></i> Ficha & Visita
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==============================================================
+        // 7. MODAL DE JUGADOR & REGISTRO DE VISITA DIRECTO
+        // ==============================================================
+        window.abrirModalJugador = function(jugadorId) {
+            const j = todosLosJugadoresLaPaz.find(item => item.id === jugadorId);
+            if (!j) return;
+            jugadorSeleccionado = j;
+
+            const tieneCi = j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico';
+            const totalVisitas = contarVisitasDeJugador(j);
+
+            document.getElementById('modal-jugador-nombre').textContent = j.nombreCompleto;
+            document.getElementById('modal-jugador-ci').textContent = tieneCi ? j.ci : '⚠️ Sin C.I. (Pedir Carnet Físico)';
+            document.getElementById('modal-jugador-ci').className = tieneCi ? 'text-sm font-black text-red-400 font-mono text-right' : 'text-sm font-black text-amber-400 font-mono text-right';
+            document.getElementById('modal-jugador-riot').textContent = `${j.riotIdLas || 'No registrado'} (${j.rangoSoloQ})`;
+            document.getElementById('modal-jugador-equipo').textContent = `[${j.equipoTag}] ${j.equipoNombre}`;
+            document.getElementById('modal-jugador-ciudad').textContent = 'La Paz';
+            document.getElementById('modal-jugador-contador-visitas').textContent = `${totalVisitas} Visita${totalVisitas === 1 ? '' : 's'} Registrada${totalVisitas === 1 ? '' : 's'}`;
+
+            // Mini historial
+            const visitasDeEste = historialVisitas.filter(v => {
+                if (tieneCi) return v.ci === j.ci;
+                return v.jugadorId === j.id;
+            });
+            const miniHistDiv = document.getElementById('modal-jugador-historial-mini');
+            if (visitasDeEste.length > 0) {
+                miniHistDiv.innerHTML = visitasDeEste.slice(0, 3).map(v => `
+                    <div class="flex items-center justify-between py-0.5 border-b border-red-950/40">
+                        <span><i class="fas fa-check text-emerald-400 mr-1"></i> ${escapeHTML(v.fechaHora || '--')}</span>
+                        <span class="text-gray-500">${escapeHTML(v.encargado || 'Staff')}</span>
+                    </div>
+                `).join('');
+            } else {
+                miniHistDiv.innerHTML = '<span class="text-gray-500 italic">Primera visita registrada para este jugador.</span>';
+            }
+
+            // Input manual si falta CI
+            const alertaSinCi = document.getElementById('modal-alerta-sin-ci');
+            const inputCiManual = document.getElementById('canje-ci-manual');
+            if (alertaSinCi) {
+                if (!tieneCi) {
+                    alertaSinCi.classList.remove('hidden');
+                    if (inputCiManual) {
+                        inputCiManual.value = "";
+                        setTimeout(() => inputCiManual.focus(), 100);
+                    }
+                } else {
+                    alertaSinCi.classList.add('hidden');
+                }
+            }
+
+            document.getElementById('modal-canje').classList.remove('hidden');
+        };
+
+        window.cerrarModalCanje = function() {
+            document.getElementById('modal-canje').classList.add('hidden');
+            jugadorSeleccionado = null;
+        };
+
+        window.registrarVisitaJugadorDirecta = async function() {
+            if (!jugadorSeleccionado) return;
+
+            let ciFinal = jugadorSeleccionado.ci;
+            const inputCiManual = document.getElementById('canje-ci-manual');
+            if (inputCiManual && inputCiManual.value.trim()) {
+                ciFinal = inputCiManual.value.trim();
+                jugadorSeleccionado.ci = ciFinal;
+                localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresLaPaz));
+            }
+
+            const nuevaVisita = {
+                id: 'vis_' + Date.now(),
+                jugadorId: jugadorSeleccionado.id,
+                nombre: jugadorSeleccionado.nombreCompleto,
+                ci: ciFinal || 'Sin C.I.',
+                riotId: jugadorSeleccionado.riotIdLas || '--',
+                equipo: `[${jugadorSeleccionado.equipoTag}] ${jugadorSeleccionado.equipoNombre}`,
+                fechaHora: new Date().toLocaleString('es-BO'),
+                timestamp: Date.now(),
+                encargado: encargadoActual,
+                sede: 'AQUÍ ME QUEDO LAN (La Paz)'
+            };
+
+            // 1. Guardar localmente
+            historialVisitas.unshift(nuevaVisita);
+            localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
+
+            // 2. Sincronizar en Firestore (Colección permitida torneos_activos)
+            try {
+                // Protección de cuota: máximo 500 registros recientes en Firestore para no saturar el límite de 1MB por documento
+                const visitasRecientes = historialVisitas.slice(0, 500);
+                await setDoc(DOC_VISITAS_AQM, {
+                    sede: "AQUÍ ME QUEDO LAN CENTER",
+                    ciudad: "La Paz",
+                    visitas: visitasRecientes,
+                    totalHistorico: historialVisitas.length,
+                    updatedAt: Date.now()
+                });
+            } catch (err) {
+                console.warn("Aviso: Visita guardada localmente, sincronizará con Firestore:", err);
+            }
+
+            actualizarMetricas();
+            renderizarTarjetas();
+            cerrarModalCanje();
+            alert(`✅ ¡Visita registrada para ${nuevaVisita.nombre} (CI: ${nuevaVisita.ci})!\nTotal de visitas acumuladas: ${contarVisitasDeJugador(jugadorSeleccionado)}`);
+        };
+
+        // ==============================================================
+        // 8. HISTORIAL GENERAL DE VISITAS
+        // ==============================================================
+        window.abrirModalHistorial = function() {
+            renderizarTablaHistorial();
+            document.getElementById('modal-historial').classList.remove('hidden');
+        };
+
+        window.cerrarModalHistorial = function() {
+            document.getElementById('modal-historial').classList.add('hidden');
+        };
+
+        function renderizarTablaHistorial() {
+            const tbody = document.getElementById('tabla-visitas-body');
+            document.getElementById('historial-total-count').textContent = historialVisitas.length;
+
+            if (historialVisitas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-gray-500">
+                            No se ha registrado ninguna visita en este terminal todavía.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = historialVisitas.map(v => `
+                <tr class="hover:bg-red-950/20 transition-colors">
+                    <td class="p-3 font-mono font-bold text-gray-400">${escapeHTML(v.fechaHora || '--')}</td>
+                    <td class="p-3 font-bold text-white">${escapeHTML(v.nombre)}</td>
+                    <td class="p-3 font-mono font-black text-red-400">${escapeHTML(v.ci || 'S/N')}</td>
+                    <td class="p-3 text-gray-300">${escapeHTML(v.equipo || '--')}</td>
+                    <td class="p-3 text-emerald-400 font-mono text-[11px]">${escapeHTML(v.encargado)}</td>
+                </tr>
+            `).join('');
+        }
+
+        window.exportarVisitasCSV = function() {
+            if (historialVisitas.length === 0) {
+                alert("No hay visitas registradas para exportar.");
+                return;
+            }
+
+            let csv = "ID,FechaHora,Jugador,CI,RiotID,Equipo,Encargado,Sede\n";
+            historialVisitas.forEach(v => {
+                const fila = [
+                    v.id,
+                    `"${v.fechaHora}"`,
+                    `"${(v.nombre || '').replace(/"/g, '""')}"`,
+                    `"${v.ci}"`,
+                    `"${(v.riotId || '').replace(/"/g, '""')}"`,
+                    `"${(v.equipo || '').replace(/"/g, '""')}"`,
+                    `"${v.encargado}"`,
+                    `"AQUÍ ME QUEDO LAN"`
+                ].join(",");
+                csv += fila + "\n";
+            });
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `visitas_aqm_lapaz_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        window.borrarHistorialTurno = function() {
+            if (confirm("¿Estás seguro de vaciar el historial local de visitas? Recuerda exportar a CSV primero.")) {
+                historialVisitas = [];
+                localStorage.removeItem(STORAGE_KEY_VISITAS);
+                actualizarMetricas();
+                renderizarTablaHistorial();
+                renderizarTarjetas();
+            }
+        };
+
+        // ==============================================================
+        // 9. MÉTRICAS Y SINCRONIZACIÓN FIRESTORE
+        // ==============================================================
+        function actualizarMetricas() {
+            const lapazCount = todosLosJugadoresLaPaz.length;
+            document.getElementById('metrica-lapaz').textContent = lapazCount;
+
+            const totalVisitas = historialVisitas.length;
+            document.getElementById('metrica-visitas-total').textContent = totalVisitas;
+            document.getElementById('badge-total-visitas').textContent = totalVisitas;
+
+            const hoyStr = new Date().toLocaleDateString('es-BO');
+            const visitasHoy = historialVisitas.filter(v => (v.fechaHora || '').includes(hoyStr)).length;
+            document.getElementById('metrica-visitas-turno').textContent = visitasHoy;
+
+            const eqsUnicos = new Set(todosLosJugadoresLaPaz.map(j => j.equipoNombre)).size;
+            document.getElementById('metrica-equipos').textContent = eqsUnicos || "--";
+        }
+
+        function iniciarListenerFirestoreVisitas() {
+            try {
+                onSnapshot(DOC_VISITAS_AQM, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (Array.isArray(data.visitas) && data.visitas.length > 0) {
+                            historialVisitas = data.visitas;
+                            localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
+                            actualizarMetricas();
+                            renderizarTarjetas();
+                        }
+                    }
+                });
+            } catch(e) {
+                console.warn("Aviso Firestore Listener:", e);
+            }
+        }
+
+        // ==============================================================
+        // 10. ARRANQUE
+        // ==============================================================
+        function iniciarApp() {
+            try {
+                const localVisitas = localStorage.getItem(STORAGE_KEY_VISITAS);
+                if (localVisitas) historialVisitas = JSON.parse(localVisitas);
+            } catch(e) {}
+
+            cargarJugadoresDesdeAPI(false);
+            actualizarMetricas();
+            iniciarListenerFirestoreVisitas();
+        }
+
+        verificarSesionPrevia();
+    </script>
+</body>
+</html>
