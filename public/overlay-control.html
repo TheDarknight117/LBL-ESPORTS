@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=232">
+    <link rel="stylesheet" href="/dist/output.css?v=233">
 
     <style>
         @font-face {
@@ -595,6 +595,11 @@
             "voiden abyss": "/assets/Equipos%20SC3/Voiden%20Abyss%20club.png",
             "las cabras de lugano": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
             "cabras de lugano": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "las cabras de laguno": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "cabras de laguno": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "laguno": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "lugano": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "cabras": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
             "los 420": "/assets/Equipos%20SC3/Los%20420.png",
             "patitos gaming": "/assets/Equipos%20SC3/PATITOS%20GAMING.png",
             "rift rangers (omega)": "/assets/Equipos%20SC3/RIFT%20RANGERS%20(OMEGA).png",
@@ -665,7 +670,10 @@
             "tlp": "/assets/Equipos%20SC3/The%20Low%20Project.png",
             "smp": "/assets/Equipos%20SC3/The%20Simpson.png",
             "lcl": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
-            "420": "/assets/Equipos%20SC3/Los%20420.png"
+            "420": "/assets/Equipos%20SC3/Los%20420.png",
+            "las": "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png",
+            "twd": "/assets/Equipos%20SC3/THE%20SAVIORS.png",
+            "tsn": "/assets/Equipos%20SC3/The%20Simpson.png"
         };
 
         function findLocalSc3Logo(name, tag) {
@@ -712,6 +720,18 @@
             }
             if (cleanName.includes('patitos') && !cleanName.includes('postrecitos')) {
                 return "/assets/Equipos%20SC3/PATITOS%20GAMING.png";
+            }
+            // Las cabras de lugano / laguno (LAS / LCL)
+            if (cleanTag === 'las' || cleanTag === 'lcl' || cleanName.includes('cabras') || cleanName.includes('laguno') || cleanName.includes('lugano')) {
+                return "/assets/Equipos%20SC3/Las%20cabras%20de%20lugano.png";
+            }
+            // The Saviors (TWD / TSV)
+            if (cleanTag === 'twd' || cleanTag === 'tsv' || cleanName.includes('saviors')) {
+                return "/assets/Equipos%20SC3/THE%20SAVIORS.png";
+            }
+            // The Simpson (TSN / SMP)
+            if (cleanTag === 'tsn' || cleanTag === 'smp' || cleanName.includes('simpson')) {
+                return "/assets/Equipos%20SC3/The%20Simpson.png";
             }
 
             // 2. Coincidencia por tabla directa
