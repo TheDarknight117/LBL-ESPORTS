@@ -11,10 +11,11 @@
  * 5. Mapear equipos con Firestore (Logos HD, Rosters, TAGs, Podios y Standings).
  */
 
-// POOL MULTI-KEY OFICIAL LBL (1,000 requests/mes combinados)
+// POOL MULTI-KEY OFICIAL LBL (1,500 requests/mes combinados con failover automático)
 export const CHALLONGE_API_KEYS = [
-    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 1: LBL Activa (200 OK, cuota disponible)
-    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 2: LBL Backup (Límite 429 alcanzado)
+    '9addea784754ed234a45d394f064050c7c2309c2d183731b', // Llave 1: Luico / LBL Activa (200 OK, cuota disponible)
+    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 2: LBL Principal (Se reactiva al reiniciar ciclo mensual)
+    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 3: LBL Backup (Se reactiva al reiniciar ciclo mensual)
 ];
 
 export const DEFAULT_CHALLONGE_API_KEY = CHALLONGE_API_KEYS[0];
