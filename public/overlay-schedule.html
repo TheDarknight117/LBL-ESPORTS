@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=233">
+    <link rel="stylesheet" href="/dist/output.css?v=237">
 
     <style>
         @font-face {
@@ -939,13 +939,71 @@
             renderMatchesPage(currentMatchPage);
         }
 
+        // Formateador minimalista de horarios: HORA • DIA (ej. "17:00 • HOY", "20:30 • 31 OCT")
+        function formatMinimizedTimeDisplay(raw) {
+            if (!raw) return '19:00 • HOY';
+            const str = String(raw).trim();
+            if (!str) return '19:00 • HOY';
+            if (/^\d{1,2}:\d{2}\s*•\s*.+$/i.test(str)) return str.toUpperCase();
+            const timeMatch = str.match(/(\d{1,2}:\d{2})/);
+            const time = timeMatch ? timeMatch[1] : '19:00';
+            if (/HOY/i.test(str)) return `${time} • HOY`;
+            const dateMatch = str.match(/\(?(\d{1,2}\s+[A-Za-zÁÉÍÓÚáéíóú]{3,4})\)?/i) || str.match(/\(?([A-Za-zÁÉÍÓÚáéíóú]{3,4}\.?\s*\d{1,2})\)?/i);
+            if (dateMatch) {
+                const dia = dateMatch[1].replace('.', '').trim().toUpperCase();
+                return `${time} • ${dia}`;
+            }
+            return `${time} • HOY`;
+        }
+
+        // Badges oficiales para Bracket y Formato
+        function renderBracketBadge(bracket) {
+            if (!bracket) return '';
+            const b = bracket.trim().toUpperCase();
+            if (b.includes('WINNER') || b === 'WB' || b === 'UPPER') {
+                return `
+                    <div class="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-rajdhani font-black text-xs tracking-wider uppercase shadow-sm">
+                        <i class="fa-solid fa-crown text-[10px] text-emerald-400"></i>
+                        <span>WINNER BRACKET</span>
+                    </div>
+                `;
+            }
+            if (b.includes('LOSER') || b.includes('LOSSER') || b === 'LB' || b === 'LOWER') {
+                return `
+                    <div class="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-rose-950/80 border border-rose-500/50 text-rose-300 font-rajdhani font-black text-xs tracking-wider uppercase shadow-sm">
+                        <i class="fa-solid fa-shield-halved text-[10px] text-rose-400"></i>
+                        <span>LOSER BRACKET</span>
+                    </div>
+                `;
+            }
+            return `
+                <div class="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-zinc-900 border border-zinc-700 text-amber-300 font-rajdhani font-black text-xs tracking-wider uppercase shadow-sm">
+                    <span>${bracket.toUpperCase()}</span>
+                </div>
+            `;
+        }
+
+        function renderBestOfBadge(bestOf) {
+            const bo = (bestOf || 'BO1').trim().toUpperCase();
+            let colorClasses = "bg-blue-950/80 border-blue-500/50 text-cyan-300";
+            if (bo === 'BO3') colorClasses = "bg-purple-950/80 border-purple-500/50 text-purple-300";
+            if (bo === 'BO5') colorClasses = "bg-amber-950/80 border-amber-500/50 text-amber-300";
+            return `
+                <div class="flex items-center gap-1 px-2 py-0.5 rounded-md ${colorClasses} border font-rajdhani font-black text-xs tracking-wider uppercase shadow-sm">
+                    <i class="fa-solid fa-gamepad text-[10px]"></i>
+                    <span>${bo}</span>
+                </div>
+            `;
+        }
+
         // Partidas reales exactas del cronograma de TS3LBL (Copa Legion x Scouting 3)
         let state = {
             stageTitle: "SWISS STAGE",
             subTitle: "ROUND 1 - BEST OF 1S",
             headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
-            timerSeconds: 52 * 60 + 26,
-            timerRunning: true,
+            timerSeconds: 10 * 60,
+            timerRunning: false,
+            timerTargetTimestamp: null,
             matches: [
                 {
                     matchNumber: "MATCH 1",
@@ -1096,18 +1154,24 @@
                 matchCard.innerHTML = `
                     <!-- Encabezado de Partida: Número + Horario Oficial -->
                     <div class="flex items-center justify-between pb-1.5 border-b border-white/10">
-                        <span class="font-rajdhani font-black text-sm tracking-[0.2em] text-red-500 uppercase flex items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-rajdhani font-black text-sm tracking-[0.2em] text-red-500 uppercase flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></span>
                             ${match.matchNumber || `MATCH ${globalIdx + 1}`}
                         </span>
-                        <div class="flex items-center gap-2.5">
+                        ${renderBracketBadge(match.bracket)}
+                        ${renderBestOfBadge(match.bestOf)}
+                    </div>
+                    <span class="hidden">
+                        </span>
+                        <div class="flex items-center gap-2">
                             ${timeString ? `
-                                <div class="flex items-center gap-2 px-3 py-1 rounded-md bg-[#111116] border border-red-500/40 text-white font-rajdhani font-black text-sm tracking-wider uppercase shadow-md">
+                                <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#111116] border border-red-500/40 text-white font-rajdhani font-black text-sm tracking-wider uppercase shadow-md">
                                     <i class="fa-regular fa-clock text-red-500 text-xs"></i>
-                                    <span class="tracking-widest text-zinc-100">${timeString}</span>
+                                    <span class="tracking-widest text-zinc-100">${formatMinimizedTimeDisplay(timeString)}</span>
                                 </div>
                             ` : ''}
-                            ${isLive ? `<span class="px-3 py-1 text-xs font-black uppercase tracking-widest bg-red-600 text-white rounded-md shadow-md live-pulse-badge">EN VIVO</span>` : ''}
+                            ${isLive ? `<span class="px-3 py-0.5 text-xs font-black uppercase tracking-widest bg-red-600 text-white rounded-md shadow-md live-pulse-badge">EN VIVO</span>` : ''}
                         </div>
                     </div>
 
@@ -1468,12 +1532,31 @@
         const stageTitleEl = document.getElementById('stage-title');
         const stageSubtitleEl = document.getElementById('stage-subtitle');
 
-        setInterval(() => {
-            if (state.timerRunning && state.timerSeconds > 0) {
+        // Temporizador de alta precisión basado en Timestamp Absoluto (Evita retrasos en OBS Browser Source)
+        function tickTimer() {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const diffMs = state.timerTargetTimestamp - Date.now();
+                const rem = Math.max(0, Math.ceil(diffMs / 1000));
+                state.timerSeconds = rem;
+                if (rem <= 0) {
+                    state.timerRunning = false;
+                    state.timerTargetTimestamp = null;
+                }
+            }
+            if (headerTimerEl) {
+                const text = formatTimer(state.timerSeconds);
+                if (headerTimerEl.textContent !== text) {
+                    headerTimerEl.textContent = text;
+                }
+            }
+        }
+        setInterval(tickTimer, 200);
+        /* legacy timer removed
+        if (false) {
                 state.timerSeconds--;
                 if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
             }
-        }, 1000);
+        */
 
         function updateSecondarySponsorLogo(url) {
             const secImg = document.getElementById('secondary-sponsor-logo');
@@ -1552,8 +1635,24 @@
                 renderFooter(state.footerMode);
             }
 
-            if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
-            if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
+            if (typeof data.timerRunning === 'boolean') {
+                state.timerRunning = data.timerRunning;
+            }
+            if (typeof data.timerTargetTimestamp === 'number' && state.timerRunning) {
+                state.timerTargetTimestamp = data.timerTargetTimestamp;
+            } else if (state.timerRunning && typeof data.timerSeconds === 'number') {
+                state.timerTargetTimestamp = Date.now() + (data.timerSeconds * 1000);
+            } else if (!state.timerRunning) {
+                state.timerTargetTimestamp = null;
+            }
+            if (typeof data.timerSeconds === 'number') {
+                state.timerSeconds = data.timerSeconds;
+            }
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const diffMs = state.timerTargetTimestamp - Date.now();
+                state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+            }
+            // timer synced via timestamp
             if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
             if (channelBadgeEl) channelBadgeEl.textContent = formatChannelDisplayName(data.channelId || channelId);
         }
@@ -1562,7 +1661,28 @@
         try {
             const syncChannel = new BroadcastChannel('lbl_overlay_sync');
             syncChannel.onmessage = (event) => {
-                if (event.data && (!event.data.channelId || event.data.channelId === channelId)) {
+                if (!event.data) return;
+                if (event.data.channelId && event.data.channelId !== channelId) return;
+
+                if (event.data.type === 'TIMER_HEARTBEAT') {
+                    if (typeof event.data.timerRunning === 'boolean') {
+                        state.timerRunning = event.data.timerRunning;
+                    }
+                    if (typeof event.data.timerTargetTimestamp === 'number') {
+                        state.timerTargetTimestamp = event.data.timerTargetTimestamp;
+                    }
+                    if (typeof event.data.timerSeconds === 'number') {
+                        state.timerSeconds = event.data.timerSeconds;
+                    }
+                    if (state.timerRunning && state.timerTargetTimestamp) {
+                        const diffMs = state.timerTargetTimestamp - Date.now();
+                        state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+                    }
+                    if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+                    return;
+                }
+
+                if (true) {
                     applyData(event.data);
                 }
             };

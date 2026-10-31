@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=233">
+    <link rel="stylesheet" href="/dist/output.css?v=237">
 
     <style>
         @font-face {
@@ -780,10 +780,29 @@
         } catch(e) {}
 
         // Partidas de referencia inmediata de TS3LBL (Copa Legion x Scouting 3) - Sin asignación forzada
+        // Formateador minimalista de horarios: HORA • DIA (ej. "17:00 • HOY", "20:30 • 31 OCT")
+        function formatMinimizedTimeDisplay(raw) {
+            if (!raw) return '19:00 • HOY';
+            const str = String(raw).trim();
+            if (!str) return '19:00 • HOY';
+            if (/^\d{1,2}:\d{2}\s*•\s*.+$/i.test(str)) return str.toUpperCase();
+            const timeMatch = str.match(/(\d{1,2}:\d{2})/);
+            const time = timeMatch ? timeMatch[1] : '19:00';
+            if (/HOY/i.test(str)) return `${time} • HOY`;
+            const dateMatch = str.match(/\(?(\d{1,2}\s+[A-Za-zÁÉÍÓÚáéíóú]{3,4})\)?/i) || str.match(/\(?([A-Za-zÁÉÍÓÚáéíóú]{3,4}\.?\s*\d{1,2})\)?/i);
+            if (dateMatch) {
+                const dia = dateMatch[1].replace('.', '').trim().toUpperCase();
+                return `${time} • ${dia}`;
+            }
+            return `${time} • HOY`;
+        }
+
         const INITIAL_TS3LBL_MATCHES = [
             {
                 id: "ts3-m1",
-                timeDisplay: "19:00 BOL (HOY)",
+                timeDisplay: "19:00 • HOY",
+                bracket: "WINNER BRACKET",
+                bestOf: "BO1",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -792,7 +811,9 @@
             },
             {
                 id: "ts3-m2",
-                timeDisplay: "21:00 BOL (HOY)",
+                timeDisplay: "21:00 • HOY",
+                bracket: "WINNER BRACKET",
+                bestOf: "BO1",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -801,7 +822,9 @@
             },
             {
                 id: "ts3-m3",
-                timeDisplay: "21:00 BOL (HOY)",
+                timeDisplay: "21:00 • HOY",
+                bracket: "WINNER BRACKET",
+                bestOf: "BO1",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -810,7 +833,9 @@
             },
             {
                 id: "ts3-m4",
-                timeDisplay: "21:00 BOL (HOY)",
+                timeDisplay: "21:00 • HOY",
+                bracket: "WINNER BRACKET",
+                bestOf: "BO1",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -823,8 +848,9 @@
             stageTitle: "SWISS STAGE",
             subTitle: "ROUND 1 - BEST OF 1S",
             headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
-            timerSeconds: 52 * 60 + 26,
-            timerRunning: true,
+            timerSeconds: 10 * 60,
+            timerRunning: false,
+            timerTargetTimestamp: null,
             flyerUrl: "",
             mediaType: "video",
             mediaUrl: "/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4",
@@ -957,7 +983,7 @@
                         isFuture: !isDefaultToday,
                         isPast: false,
                         dateFmt: isDefaultToday ? todayStr : '2026-10-24',
-                        timeDisplay: idx === 0 ? '19:00 BOL (HOY)' : (idx <= 6 ? '21:00 BOL (HOY)' : 'HORARIO TBD'),
+                        timeDisplay: idx === 0 ? '19:00 • HOY' : (idx <= 6 ? '21:00 • HOY' : 'HORARIO TBD'),
                         timestamp: now.getTime() + (idx * 3600000)
                     };
                 }
@@ -991,7 +1017,7 @@
                     if (p.type === 'minute') min = p.value;
                 });
 
-                const timeDisplay = `${hora}:${min} BOL (${dia} ${mes})${isToday ? ' • HOY' : ''}`;
+                const timeDisplay = isToday ? `${hora}:${min} • HOY` : `${hora}:${min} • ${dia} ${mes}`;
 
                 return {
                     isToday,
@@ -1054,7 +1080,9 @@
                         id: String(m.id || `m-${idx + 1}`),
                         matchNumber: `MATCH ${idx + 1}`,
                         timeDisplay: sched.timeDisplay,
-                        rondaDisplay: m.round ? `RONDA ${m.round} - DOBLE ELIMINACIÓN` : 'RONDA 1',
+                        bracket: (typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET',
+                        bestOf: m.best_of ? `BO${m.best_of}` : (typeof m.round === 'number' && Math.abs(m.round) >= 4 ? 'BO3' : 'BO1'),
+                        rondaDisplay: m.round ? `${(typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET'} (R${Math.abs(m.round)})` : 'RONDA 1',
                         state: m.state || 'upcoming',
                         score1: m.scores_csv ? parseInt(m.scores_csv.split('-')[0]) : (m.score1 || 0),
                         score2: m.scores_csv ? parseInt(m.scores_csv.split('-')[1]) : (m.score2 || 0),
@@ -1169,7 +1197,7 @@
                         <input type="checkbox" data-id="${m.id}" class="chk-cronograma-item rounded bg-black text-red-600 focus:ring-0 w-4 h-4 cursor-pointer" ${isAssignedToActive ? 'checked' : ''}>
                     </td>
                     <td class="py-2.5 px-3 font-worlds text-sm text-red-400 font-bold uppercase whitespace-nowrap">
-                        ${m.timeDisplay || '19:00 BOL'}
+                        ${formatMinimizedTimeDisplay(m.timeDisplay || '19:00 • HOY')}
                     </td>
                     <td class="py-2.5 px-3">
                         <div class="flex items-center gap-2">
@@ -1189,7 +1217,7 @@
                         </div>
                     </td>
                     <td class="py-2.5 px-3 text-center text-xs font-bold text-zinc-400 whitespace-nowrap">
-                        ${m.rondaDisplay || 'DOBLE ELIMINACIÓN'}
+                        <div class="flex flex-col items-center gap-0.5"><span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${m.bracket === 'LOSER BRACKET' ? 'bg-rose-950/80 text-rose-300 border border-rose-500/40' : 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40'}">${m.bracket === 'LOSER BRACKET' ? 'LOSER BRACKET' : 'WINNER BRACKET'}</span><span class="text-[10px] text-zinc-400 font-rajdhani font-bold">${m.rondaDisplay || 'DOBLE ELIMINACIÓN'} • ${m.bestOf || 'BO1'}</span></div>
                     </td>
                     <td class="py-2.5 px-3 text-center">
                         <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${m.state === 'live' ? 'bg-red-600 text-white animate-pulse' : m.state === 'completed' ? 'bg-zinc-800 text-zinc-300' : 'bg-black text-amber-400 border border-amber-500/40'}">
@@ -1357,7 +1385,9 @@
 
             state.matches = selected.map((m, idx) => ({
                 matchNumber: `MATCH ${idx + 1}`,
-                timeDisplay: m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)'),
+                timeDisplay: formatMinimizedTimeDisplay(m.timeDisplay || (idx === 0 ? '19:00 • HOY' : '21:00 • HOY')),
+                bracket: m.bracket || (m.round < 0 ? 'LOSER BRACKET' : 'WINNER BRACKET'),
+                bestOf: m.bestOf || 'BO1',
                 team1: { name: m.p1.name.toUpperCase().trim(), tag: m.p1.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p1, scouting3TeamsMap[m.p1.name.toLowerCase()]), score: m.score1 || 0 },
                 team2: { name: m.p2.name.toUpperCase().trim(), tag: m.p2.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p2, scouting3TeamsMap[m.p2.name.toLowerCase()]), score: m.score2 || 0 },
                 status: m.state === 'live' ? 'LIVE' : m.state === 'completed' ? 'COMPLETED' : 'UPCOMING',
@@ -1383,7 +1413,9 @@
             const idx = state.matches.length;
             state.matches.push({
                 matchNumber: `MATCH ${idx + 1}`,
-                timeDisplay: "19:00 BOL (HOY)",
+                timeDisplay: "19:00 • HOY",
+                bracket: "WINNER BRACKET",
+                bestOf: "BO1",
                 team1: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
                 team2: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
                 status: "UPCOMING",
@@ -1424,10 +1456,21 @@
                                 ${idx + 1}
                             </span>
                             <span class="px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase bg-zinc-900 border border-zinc-700 text-red-400">Pág ${pageNum}</span>
-                            <input type="text" value="${m.matchNumber || `MATCH ${idx + 1}`}" id="match-number-${idx}" class="bg-zinc-900 font-worlds font-bold text-sm text-white px-2.5 py-1 rounded border border-zinc-700 w-28 uppercase">
+                            <input type="text" value="${m.matchNumber || `MATCH ${idx + 1}`}" id="match-number-${idx}" class="bg-zinc-900 font-worlds font-bold text-sm text-white px-2.5 py-1 rounded border border-zinc-700 w-24 uppercase">
+                            <select id="match-bracket-${idx}" class="bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-zinc-200" title="Fase o Bracket">
+                                <option value="WINNER BRACKET" ${(m.bracket || '').includes('WINNER') ? 'selected' : ''}>🏆 Winner Bracket</option>
+                                <option value="LOSER BRACKET" ${(m.bracket || '').includes('LOSER') ? 'selected' : ''}>🛡️ Loser Bracket</option>
+                                <option value="SWISS STAGE" ${(m.bracket || '').includes('SWISS') ? 'selected' : ''}>⚔️ Swiss Stage</option>
+                                <option value="" ${!m.bracket ? 'selected' : ''}>Sin Bracket</option>
+                            </select>
+                            <select id="match-bestof-${idx}" class="bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-cyan-300" title="Formato de Partida">
+                                <option value="BO1" ${(m.bestOf || 'BO1') === 'BO1' ? 'selected' : ''}>BO1</option>
+                                <option value="BO3" ${m.bestOf === 'BO3' ? 'selected' : ''}>BO3</option>
+                                <option value="BO5" ${m.bestOf === 'BO5' ? 'selected' : ''}>BO5</option>
+                            </select>
                             <div class="flex items-center gap-1.5 bg-zinc-900 px-2.5 py-1 rounded border border-zinc-700">
                                 <i class="fa-regular fa-clock text-red-400 text-xs"></i>
-                                <input type="text" value="${m.timeDisplay || (idx === 0 ? '19:00 BOL (HOY)' : '21:00 BOL (HOY)')}" id="match-time-${idx}" placeholder="Hora y Día (Ej: 19:00 BOL • HOY)" class="bg-transparent font-rajdhani font-bold text-xs text-zinc-100 focus:outline-none w-44">
+                                <input type="text" value="${formatMinimizedTimeDisplay(m.timeDisplay || (idx === 0 ? '19:00 • HOY' : '21:00 • HOY'))}" id="match-time-${idx}" placeholder="19:00 • HOY" class="bg-transparent font-rajdhani font-bold text-xs text-zinc-100 focus:outline-none w-28" title="Hora y Día en formato HORA • DIA (ej. 17:00 • HOY)">
                             </div>
                         </div>
 
@@ -1626,6 +1669,15 @@
             if (data.secondarySponsorUrl) document.getElementById('select-secondary-sponsor').value = data.secondarySponsorUrl;
             if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
             if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
+            if (state.timerRunning && typeof data.timerTargetTimestamp === 'number') {
+                state.timerTargetTimestamp = data.timerTargetTimestamp;
+                const diffMs = state.timerTargetTimestamp - Date.now();
+                state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+            } else if (state.timerRunning && typeof data.timerSeconds === 'number') {
+                state.timerTargetTimestamp = Date.now() + (data.timerSeconds * 1000);
+            } else {
+                state.timerTargetTimestamp = null;
+            }
             if (data.matches && data.matches.length > 0) state.matches = data.matches;
             if (data.spotlight) {
                 state.spotlight = data.spotlight;
@@ -1746,21 +1798,69 @@
             }
         }
 
+        // Ticking de alta frecuencia (200ms) basado en Date.now() y timerTargetTimestamp
+        function tickControlTimer() {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const diffMs = state.timerTargetTimestamp - Date.now();
+                state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+                if (state.timerSeconds <= 0) {
+                    state.timerRunning = false;
+                    state.timerTargetTimestamp = null;
+                    updateTimerDisplay();
+                }
+            }
+            const text = formatTimerDisplay(state.timerSeconds);
+            const dispEl = document.getElementById('control-timer-display');
+            if (dispEl && dispEl.textContent !== text) {
+                dispEl.textContent = text;
+            }
+        }
+        setInterval(tickControlTimer, 200);
+
+        // Heartbeat de sincronización para OBS y pestañas (cada 3s)
+        setInterval(() => {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                try {
+                    syncChannel.postMessage({
+                        type: 'TIMER_HEARTBEAT',
+                        channelId: currentChannel,
+                        timerRunning: state.timerRunning,
+
+                        timerTargetTimestamp: state.timerTargetTimestamp,
+                        timerSeconds: state.timerSeconds,
+                        timerUpdatedAt: Date.now()
+                    });
+                } catch(e) {}
+            }
+        }, 3000);
+
+        /*
+            }
+        }
+
         setInterval(() => {
             if (state.timerRunning && state.timerSeconds > 0) {
                 state.timerSeconds--;
                 document.getElementById('control-timer-display').textContent = formatTimerDisplay(state.timerSeconds);
             }
-        }, 1000);
+            */
 
         document.getElementById('btn-timer-toggle').addEventListener('click', () => {
             state.timerRunning = !state.timerRunning;
+            if (state.timerRunning) {
+                state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000);
+            } else {
+                state.timerTargetTimestamp = null;
+            }
             updateTimerDisplay();
             saveChanges(false);
         });
 
         document.getElementById('btn-timer-reset').addEventListener('click', () => {
             state.timerSeconds = 10 * 60;
+            if (state.timerRunning) {
+                state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000);
+            }
             updateTimerDisplay();
             saveChanges(false);
         });
@@ -1769,6 +1869,9 @@
             b.addEventListener('click', () => {
                 const add = parseInt(b.dataset.addSec);
                 state.timerSeconds = Math.min(59 * 60 + 59, Math.max(0, state.timerSeconds + add));
+                if (state.timerRunning) {
+                    state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000);
+                }
                 updateTimerDisplay();
                 saveChanges(false);
             });
@@ -1778,6 +1881,9 @@
             const min = Math.min(59, Math.max(0, parseInt(document.getElementById('input-manual-minutes').value) || 0));
             const sec = Math.min(59, Math.max(0, parseInt(document.getElementById('input-manual-seconds').value) || 0));
             state.timerSeconds = (min * 60) + sec;
+            if (state.timerRunning) {
+                state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000);
+            }
             updateTimerDisplay();
             saveChanges(false);
         });
@@ -1792,7 +1898,9 @@
 
             state.matches.forEach((m, idx) => {
                 m.matchNumber = document.getElementById(`match-number-${idx}`)?.value || `MATCH ${idx + 1}`;
-                m.timeDisplay = document.getElementById(`match-time-${idx}`)?.value.trim() || m.timeDisplay || '19:00 BOL (HOY)';
+                m.timeDisplay = formatMinimizedTimeDisplay(document.getElementById(`match-time-${idx}`)?.value.trim() || m.timeDisplay || '19:00 • HOY');
+                m.bracket = document.getElementById(`match-bracket-${idx}`)?.value ?? m.bracket ?? 'WINNER BRACKET';
+                m.bestOf = document.getElementById(`match-bestof-${idx}`)?.value ?? m.bestOf ?? 'BO1';
                 m.status = document.getElementById(`match-status-${idx}`)?.value || 'UPCOMING';
             });
 
@@ -1843,6 +1951,9 @@
                 headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
                 timerSeconds: state.timerSeconds,
                 timerRunning: state.timerRunning,
+
+                timerTargetTimestamp: state.timerTargetTimestamp,
+                timerUpdatedAt: Date.now(),
                 matches: state.matches,
                 mediaType: state.mediaType,
                 mediaUrl: state.mediaUrl,
@@ -2074,6 +2185,16 @@
             // 2. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
             try {
                 syncChannel.onmessage = (event) => {
+                    if (event.data?.type === 'TIMER_HEARTBEAT' && event.data.channelId === currentChannel) {
+                        if (event.data.timerRunning && event.data.timerTargetTimestamp) {
+                            state.timerRunning = true;
+                            state.timerTargetTimestamp = event.data.timerTargetTimestamp;
+                            const diffMs = state.timerTargetTimestamp - Date.now();
+                            state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+                            updateTimerDisplay();
+                        }
+                        return;
+                    }
                     if (event.data?.type === 'MATCH_ASSIGNMENTS_UPDATE' && event.data.assignments) {
                         matchChannelAssignments = { ...matchChannelAssignments, ...event.data.assignments };
                         liveCronogramaMatches.forEach(m => {
