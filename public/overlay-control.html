@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=238">
+    <link rel="stylesheet" href="/dist/output.css?v=239">
 
     <style>
         @font-face {
@@ -804,7 +804,7 @@
                 id: "ts3-m1",
                 timeDisplay: "19:00 • HOY",
                 bracket: "WINNER BRACKET",
-                bestOf: "BO1",
+                bestOf: "BO3",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -815,7 +815,7 @@
                 id: "ts3-m2",
                 timeDisplay: "21:00 • HOY",
                 bracket: "WINNER BRACKET",
-                bestOf: "BO1",
+                bestOf: "BO3",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -826,7 +826,7 @@
                 id: "ts3-m3",
                 timeDisplay: "21:00 • HOY",
                 bracket: "WINNER BRACKET",
-                bestOf: "BO1",
+                bestOf: "BO3",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -837,7 +837,7 @@
                 id: "ts3-m4",
                 timeDisplay: "21:00 • HOY",
                 bracket: "WINNER BRACKET",
-                bestOf: "BO1",
+                bestOf: "BO3",
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
@@ -1081,6 +1081,22 @@
                     const mIdStr = String(m.id || `m-${idx + 1}`);
                     const defaultChannel = matchChannelAssignments[mIdStr] || '';
 
+                    // Detección precisa de Bo1 / Bo3 / Bo5 oficial de Challonge
+                    let computedBestOf = 'BO1';
+                    if (m.best_of) {
+                        computedBestOf = `BO${m.best_of}`;
+                    } else if (typeof m.match?.best_of === 'number') {
+                        computedBestOf = `BO${m.match.best_of}`;
+                    } else if (m.scores_csv && typeof m.scores_csv === 'string' && m.scores_csv.split(',').length >= 2) {
+                        computedBestOf = m.scores_csv.split(',').length >= 4 ? 'BO5' : 'BO3';
+                    } else if (typeof m.round === 'number') {
+                        if (m.round > 0) {
+                            computedBestOf = (m.round >= 6) ? 'BO5' : 'BO3';
+                        } else {
+                            computedBestOf = (Math.abs(m.round) >= 5) ? 'BO3' : 'BO1';
+                        }
+                    }
+
                     return {
                         id: String(m.id || `m-${idx + 1}`),
                         matchNumber: `MATCH ${idx + 1}`,
@@ -1088,7 +1104,7 @@
                         bracket: (typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET',
                         roundNumber: typeof m.round === 'number' ? Math.abs(m.round) : 1,
                         rawRound: m.round,
-                        bestOf: m.best_of ? `BO${m.best_of}` : (typeof m.match?.best_of === 'number' ? `BO${m.match.best_of}` : (typeof m.round === 'number' && Math.abs(m.round) >= 4 ? 'BO3' : 'BO1')),
+                        bestOf: computedBestOf,
                         rondaDisplay: m.round ? `${(typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET'} (R${Math.abs(m.round)})` : 'RONDA 1',
                         state: m.state || 'upcoming',
                         score1: m.scores_csv ? parseInt(m.scores_csv.split('-')[0]) : (m.score1 || 0),
@@ -1440,7 +1456,7 @@
                 matchNumber: `MATCH ${idx + 1}`,
                 timeDisplay: "19:00 • HOY",
                 bracket: "WINNER BRACKET",
-                bestOf: "BO1",
+                bestOf: "BO3",
                 team1: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
                 team2: { name: "POR DEFINIR", tag: "TBD", seed: "Scouting 3", logo: "", score: 0 },
                 status: "UPCOMING",

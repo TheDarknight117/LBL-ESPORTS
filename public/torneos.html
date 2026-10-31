@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=238">
+    <link rel="stylesheet" href="/dist/output.css?v=239">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -3302,7 +3302,35 @@
                     } else {
                         rondaText = `RONDA ${m.round}`;
                     }
-                    // Detección universal de Bo1, Bo3 o Bo5 desde Challonge y reglas de rondas de torneo
+                    const isDoubleElim = matches.some(x => !x.group_id && x.round < 0);
+                    let matchBo = 'BO1';
+                    if (m.best_of) {
+                        matchBo = `BO${m.best_of}`;
+                    } else if (typeof m.match?.best_of === 'number') {
+                        matchBo = `BO${m.match.best_of}`;
+                    } else if (m.scores_csv && typeof m.scores_csv === 'string' && m.scores_csv.split(',').length >= 2) {
+                        const sets = m.scores_csv.split(',').length;
+                        matchBo = sets >= 4 ? 'BO5' : 'BO3';
+                    } else if (isDoubleElim) {
+                        if (maxPlayoffRound && m.round === maxPlayoffRound) {
+                            matchBo = 'BO5';
+                        } else if (m.round > 0) {
+                            matchBo = 'BO3';
+                        } else {
+                            const loserRound = Math.abs(m.round || 1);
+                            matchBo = (loserRound >= 5 || (minPlayoffRound && m.round === minPlayoffRound)) ? 'BO3' : 'BO1';
+                        }
+                    } else {
+                        if (maxPlayoffRound && m.round === maxPlayoffRound) {
+                            matchBo = 'BO5';
+                        } else if (m.round >= 3) {
+                            matchBo = 'BO3';
+                        } else if (docTorneo?.formatoLabel && /\b(BO1|BO3|BO5)\b/i.test(docTorneo.formatoLabel)) {
+                            const boFound = docTorneo.formatoLabel.match(/\b(BO1|BO3|BO5)\b/i);
+                            matchBo = boFound ? boFound[1].toUpperCase() : 'BO1';
+                        }
+                    }
+                    /* legacy check
                     let matchBo = 'BO1';
                     if (m.best_of) {
                         matchBo = `BO${m.best_of}`;
@@ -3316,7 +3344,7 @@
                         matchBo = 'BO3';
                     } else if (docTorneo?.formatoLabel && /\b(BO1|BO3|BO5)\b/i.test(docTorneo.formatoLabel)) {
                         const boFound = docTorneo.formatoLabel.match(/\b(BO1|BO3|BO5)\b/i);
-                        matchBo = boFound ? boFound[1].toUpperCase() : 'BO1';
+                        matchBo = boFound ? boFound[1].toUpperCase() : 'BO1'; */
                     }
                     const formatoText = `MEJOR DE ${matchBo.replace('BO', '')} (${matchBo})`;
 
