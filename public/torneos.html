@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=239">
+    <link rel="stylesheet" href="/dist/output.css?v=240">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -3344,8 +3344,9 @@
                         matchBo = 'BO3';
                     } else if (docTorneo?.formatoLabel && /\b(BO1|BO3|BO5)\b/i.test(docTorneo.formatoLabel)) {
                         const boFound = docTorneo.formatoLabel.match(/\b(BO1|BO3|BO5)\b/i);
-                        matchBo = boFound ? boFound[1].toUpperCase() : 'BO1'; */
+                        matchBo = boFound ? boFound[1].toUpperCase() : 'BO1';
                     }
+                    */
                     const formatoText = `MEJOR DE ${matchBo.replace('BO', '')} (${matchBo})`;
 
                     const cardAnimClass = animateCards ? 'match-card-anim' : '';
