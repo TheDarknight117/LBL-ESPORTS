@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=237">
+    <link rel="stylesheet" href="/dist/output.css?v=238">
 
     <style>
         @font-face {
@@ -108,7 +108,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
-                        <h2 class="font-worlds font-black text-2xl tracking-wider text-white uppercase">
+                        <h2 id="cronograma-tournament-title" class="font-worlds font-black text-2xl tracking-wider text-white uppercase">
                             Cronograma de Partidas Oficiales (Copa Legion x Scouting 3 • TS3LBL)
                         </h2>
                         <span id="detected-matches-count" class="px-2.5 py-0.5 text-xs font-bold bg-zinc-900 border border-zinc-700 text-red-400 rounded font-rajdhani">
@@ -223,9 +223,11 @@
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
                                 Título Principal:
                             </label>
-                            <input id="input-stage-title" type="text" value="SWISS STAGE" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                            <input id="input-stage-title" type="text" value="RONDA 2" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
                             <div class="flex gap-1.5 mt-2 flex-wrap">
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">SWISS STAGE</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 1</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 2</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 3</button>
                                 <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">FASE DE GRUPOS</button>
                                 <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">PLAYOFFS</button>
                                 <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">GRAN FINAL</button>
@@ -236,7 +238,7 @@
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
                                 Subtítulo / Ribbon Rojo:
                             </label>
-                            <input id="input-stage-subtitle" type="text" value="ROUND 1 - BEST OF 1S" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
+                            <input id="input-stage-subtitle" type="text" value="COPA LEGION • TORNEO SCOUTING 3" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
                             <div class="flex gap-1.5 mt-2 flex-wrap">
                                 <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 1 - BEST OF 1S</button>
                                 <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 2 - BEST OF 1S</button>
@@ -845,8 +847,8 @@
         ];
 
         let state = {
-            stageTitle: "SWISS STAGE",
-            subTitle: "ROUND 1 - BEST OF 1S",
+            stageTitle: "RONDA 2",
+            subTitle: "COPA LEGION • TORNEO SCOUTING 3",
             headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
             timerSeconds: 10 * 60,
             timerRunning: false,
@@ -944,7 +946,10 @@
                     const data = docSnap.data();
                     const slug = String(data.slug || data.id || '').toUpperCase();
                     const name = String(data.nombre || '').toLowerCase();
-                    if (slug === 'TS3LBL' || data.challongeId === '18498275' || name.includes('scouting 3') || docSnap.id === 'scouting3') {
+                    const estado = String(data.estado || '').toLowerCase();
+                    if (data.activo === true || estado === 'en_curso' || estado === 'en_vivo' || estado === 'activo') {
+                        tournamentData = { ...data, id: docSnap.id };
+                    } else if (!tournamentData && (slug === 'TS3LBL' || data.challongeId === '18498275' || name.includes('scouting 3') || docSnap.id === 'scouting3')) {
                         tournamentData = { ...data, id: docSnap.id };
                     }
                 });
@@ -1081,7 +1086,9 @@
                         matchNumber: `MATCH ${idx + 1}`,
                         timeDisplay: sched.timeDisplay,
                         bracket: (typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET',
-                        bestOf: m.best_of ? `BO${m.best_of}` : (typeof m.round === 'number' && Math.abs(m.round) >= 4 ? 'BO3' : 'BO1'),
+                        roundNumber: typeof m.round === 'number' ? Math.abs(m.round) : 1,
+                        rawRound: m.round,
+                        bestOf: m.best_of ? `BO${m.best_of}` : (typeof m.match?.best_of === 'number' ? `BO${m.match.best_of}` : (typeof m.round === 'number' && Math.abs(m.round) >= 4 ? 'BO3' : 'BO1')),
                         rondaDisplay: m.round ? `${(typeof m.round === 'number' && m.round < 0) ? 'LOSER BRACKET' : 'WINNER BRACKET'} (R${Math.abs(m.round)})` : 'RONDA 1',
                         state: m.state || 'upcoming',
                         score1: m.scores_csv ? parseInt(m.scores_csv.split('-')[0]) : (m.score1 || 0),
@@ -1113,10 +1120,14 @@
                 const todayMatches = liveCronogramaMatches.filter(m => m.isToday);
                 if (todayMatches.length > 0) {
                     currentFilter = 'hoy';
-                    document.getElementById('detected-matches-count').textContent = `Hoy: ${todayMatches.length} Partidas Programadas (SLUG: TS3LBL)`;
+                    document.getElementById('detected-matches-count').textContent = `Hoy: ${todayMatches.length} Partidas (${tournamentData?.slug || 'LBL'})`;
+                    if (tournamentData?.nombre) {
+                        const tTitle = document.getElementById('cronograma-tournament-title');
+                        if (tTitle) tTitle.textContent = `Cronograma Oficial (${tournamentData.nombre})`;
+                    }
                 } else {
                     currentFilter = 'proximos';
-                    document.getElementById('detected-matches-count').textContent = `Detectadas: ${liveCronogramaMatches.length} Partidas (SLUG: TS3LBL)`;
+                    document.getElementById('detected-matches-count').textContent = `Detectadas: ${liveCronogramaMatches.length} Partidas (${tournamentData?.slug || 'LBL'})`;
                 }
             } else {
                 // Fallback exacto con las partidas activas del cronograma oficial
@@ -1393,6 +1404,20 @@
                 status: m.state === 'live' ? 'LIVE' : m.state === 'completed' ? 'COMPLETED' : 'UPCOMING',
                 winner: m.winner || null
             }));
+
+            // Auto-detectar automáticamente la ronda y fase del torneo para el overlay
+            const primaryMatch = selected[0];
+            if (primaryMatch && primaryMatch.roundNumber) {
+                const detectedStageTitle = primaryMatch.bracket === 'GRAN FINAL' ? 'GRAN FINAL' : `RONDA ${primaryMatch.roundNumber}`;
+                state.stageTitle = detectedStageTitle;
+                const stageInput = document.getElementById('input-stage-title');
+                if (stageInput) stageInput.value = detectedStageTitle;
+            }
+            if (tournamentData && tournamentData.nombre) {
+                state.subTitle = tournamentData.nombre.toUpperCase();
+                const subInput = document.getElementById('input-stage-subtitle');
+                if (subInput) subInput.value = state.subTitle;
+            }
 
             // Auto-detectar roster del juego que va a comenzar inmediatamente
             autoDetectUpcomingRoster();

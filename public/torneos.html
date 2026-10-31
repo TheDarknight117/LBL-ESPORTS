@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=235">
+    <link rel="stylesheet" href="/dist/output.css?v=238">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -3295,11 +3295,30 @@
                     } else if (minPlayoffRound && m.round === minPlayoffRound && playoffNegRounds.length > 1) {
                         rondaText = 'FINAL LOWER BRACKET';
                     } else if (m.round < 0) {
-                        rondaText = `LOWER BRACKET • RONDA ${Math.abs(m.round)}`;
+                        rondaText = `LOSER BRACKET • RONDA ${Math.abs(m.round)}`; /*
+                    } else {
+                    */ } else if (matches.some(x => !x.group_id && x.round < 0)) {
+                        rondaText = `WINNER BRACKET • RONDA ${m.round}`;
                     } else {
                         rondaText = `RONDA ${m.round}`;
                     }
-                    const formatoText = (docTorneo.formatoLabel || 'MEJOR DE 1 (BO1)').split(',').map(s => s.trim()).filter(Boolean).pop() || 'MEJOR DE 1 (BO1)';
+                    // Detección universal de Bo1, Bo3 o Bo5 desde Challonge y reglas de rondas de torneo
+                    let matchBo = 'BO1';
+                    if (m.best_of) {
+                        matchBo = `BO${m.best_of}`;
+                    } else if (typeof m.match?.best_of === 'number') {
+                        matchBo = `BO${m.match.best_of}`;
+                    } else if (maxPlayoffRound && m.round === maxPlayoffRound) {
+                        matchBo = 'BO5';
+                    } else if (minPlayoffRound && m.round === minPlayoffRound && playoffNegRounds.length > 1) {
+                        matchBo = 'BO3';
+                    } else if (m.round && Math.abs(m.round) >= 4) {
+                        matchBo = 'BO3';
+                    } else if (docTorneo?.formatoLabel && /\b(BO1|BO3|BO5)\b/i.test(docTorneo.formatoLabel)) {
+                        const boFound = docTorneo.formatoLabel.match(/\b(BO1|BO3|BO5)\b/i);
+                        matchBo = boFound ? boFound[1].toUpperCase() : 'BO1';
+                    }
+                    const formatoText = `MEJOR DE ${matchBo.replace('BO', '')} (${matchBo})`;
 
                     const cardAnimClass = animateCards ? 'match-card-anim' : '';
                     const animStyle = (animateCards && idx < 8) ? `style="animation-delay: ${Math.min(idx * 0.03, 0.24)}s;"` : '';
