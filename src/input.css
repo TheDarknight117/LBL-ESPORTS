@@ -34,6 +34,44 @@
     font-family: 'CustomFont', sans-serif !important;
 }
 
+/* Gradientes con protección contra cortes en glifos itálicos */
+.text-gradient-blue {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+.text-gradient-gold {
+    background: linear-gradient(to right, #eab308, #facc15);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+.text-gradient-cyan {
+    background: linear-gradient(to right, #22d3ee, #0891b2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+.text-gradient-purple {
+    background: linear-gradient(to right, #c084fc, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
+
 
 
 /* Estilos de Trapecio e Interactividad de la Directiva */
@@ -43,7 +81,7 @@
     align-items: center;
     gap: 2rem;
     width: 100%;
-    min-height: 420px;
+    min-height: auto;
 }
 @media (min-width: 1024px) {
     .staff-section-layout {
@@ -57,7 +95,7 @@
     flex-direction: row;
     align-items: stretch;
     gap: 0.75rem;
-    height: 400px;
+    height: 360px;
     width: auto;
     flex-shrink: 0;
     justify-content: center;
@@ -65,15 +103,15 @@
 @media (min-width: 1024px) {
     .staff-accordion-wrap {
         justify-content: flex-start;
-        height: 420px;
+        height: clamp(340px, 44vh, 390px);
     }
 }
 @media (max-width: 768px) {
     .staff-accordion-wrap {
         width: 100% !important;
         max-width: 100% !important;
-        height: 280px !important;
-        gap: 0.35rem !important;
+        height: clamp(200px, 30vh, 230px) !important;
+        gap: 0.3rem !important;
         padding: 0 4px;
     }
 }
@@ -265,4 +303,169 @@
     overflow: hidden;
     min-height: 0;
 }
+
+/* ==========================================================================
+   ESTRUCTURA DE AFICHE POR SECCIONES (FULL-VIEWPORT POSTER SECTIONS)
+   ========================================================================== */
+.section-afiche {
+    min-height: calc(100svh - 60px);
+    min-height: calc(100dvh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding-top: clamp(14px, 2.5vh, 28px);
+    padding-bottom: clamp(14px, 2.5vh, 28px);
+    scroll-margin-top: 60px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+    .section-afiche {
+        min-height: calc(100vh - 68px);
+        min-height: calc(100dvh - 68px);
+        scroll-margin-top: 68px;
+        padding-top: clamp(20px, 3.5vh, 40px);
+        padding-bottom: clamp(20px, 3.5vh, 40px);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-afiche {
+        min-height: calc(100svh - 60px);
+        min-height: calc(100dvh - 60px);
+        padding-top: clamp(12px, 2vh, 22px);
+        padding-bottom: clamp(12px, 2vh, 22px);
+        justify-content: center;
+    }
+}
+
+/* Botón indicador de navegación entre afiches (centrado, protegido contra solapamiento) */
+.afiche-scroll-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+    margin-top: clamp(1.25rem, 2.5vh, 2rem);
+}
+
+/* Luces focales ambientales por sección */
+.glow-spot-ambient {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(780px, 92vw);
+    height: min(520px, 75vh);
+    border-radius: 9999px;
+    filter: blur(70px);
+    pointer-events: none;
+    z-index: 0;
+}
+.glow-cyan {
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(37, 99, 235, 0.08) 45%, transparent 70%);
+}
+.glow-gold-dual {
+    background: radial-gradient(circle at 30% 50%, rgba(234, 179, 8, 0.14) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.14) 0%, transparent 50%);
+}
+.glow-purple {
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.20) 0%, rgba(126, 34, 206, 0.10) 45%, transparent 70%);
+}
+.glow-yellow {
+    background: radial-gradient(circle, rgba(234, 179, 8, 0.14) 0%, rgba(202, 138, 4, 0.05) 45%, transparent 70%);
+}
+
+/* ==========================================================================
+   FONDO SECCIÓN SPONSORS: PATRÓN DE PANAL / HEXÁGONOS Y REFLEJOS METÁLICOS
+   ========================================================================== */
+.bg-sponsors-honeycomb {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #03060c;
+}
+
+/* ==========================================================================
+   FONDO SECCIÓN CLASIFICACIONES: PATRÓN DE PANAL / HEXÁGONOS EN TONO AMARILLO TENUE
+   ========================================================================== */
+.bg-clasificaciones-honeycomb {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #060502;
+}
+
+.metallic-reflection-yellow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 28%, rgba(255, 255, 255, 0.02) 42%, rgba(234, 179, 8, 0.06) 52%, transparent 68%),
+        radial-gradient(ellipse 80% 55% at 50% 38%, rgba(234, 179, 8, 0.12) 0%, transparent 75%);
+}
+
+/* ==========================================================================
+   FONDO SECCIÓN STAFF: PATRÓN DE PANAL / HEXÁGONOS EN TONO MORADO
+   ========================================================================== */
+.bg-staff-honeycomb {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #05020c;
+}
+
+.metallic-reflection-purple {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 28%, rgba(255, 255, 255, 0.02) 42%, rgba(168, 85, 247, 0.08) 52%, transparent 68%),
+        radial-gradient(ellipse 80% 55% at 50% 38%, rgba(168, 85, 247, 0.16) 0%, transparent 75%);
+}
+
+.honeycomb-svg-mesh {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.95;
+}
+
+.honeycomb-svg-mesh path {
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 1;
+}
+
+.metallic-reflection-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 28%, rgba(255, 255, 255, 0.02) 42%, rgba(6, 182, 212, 0.05) 52%, transparent 68%),
+        radial-gradient(ellipse 80% 55% at 50% 38%, rgba(6, 182, 212, 0.10) 0%, transparent 75%);
+}
+
+.section-vignette-blend {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, #030712 0%, transparent 16%, transparent 84%, #030712 100%);
+}
+
+
+
+
+
+
 

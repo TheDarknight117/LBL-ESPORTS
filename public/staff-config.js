@@ -11,7 +11,7 @@
 
 export const STAFF_DIRECTORY = {
     // Cuenta Principal / Fundador
-    "jhonatan123progame@gmail.com": "Darkcito",
+    "jhonatan123progame@gmail.com": "elDarkcito",
 
     // Agrega o edita los correos del resto del Staff aquí abajo:
     "iluigi.xd@gmail.com": "LBL Luico",

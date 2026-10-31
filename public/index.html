@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=191">
-    <script type="module" src="/app-version.js?v=191"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=236">
+    <script type="module" src="/app-version.js?v=236"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -123,11 +123,11 @@
             border: 1px solid rgba(255, 255, 255, 0.05); 
         }
         
-        /* Textos Brillantes y Gradientes */
+        /* Textos Brillantes y Gradientes (con padding para evitar cortes en fuentes itálicas) */
         .glow-text { text-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
-        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient-blue { background: linear-gradient(to right, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
+        .text-gradient-gold { background: linear-gradient(to right, #eab308, #facc15); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
+        .text-gradient-cyan { background: linear-gradient(to right, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding-right: 0.22em; margin-right: -0.22em; }
         
         /* Animaciones Épicas */
         .float-anim { animation: float 6s ease-in-out infinite; }
@@ -165,6 +165,77 @@
         }
         @media (max-width: 640px) {
             .hero-halo-light { width: 220px; height: 220px; filter: blur(35px); }
+        }
+
+        /* ====================================================================
+           ESTRUCTURA DE AFICHE SECCIONAL (FULL-VIEWPORT POSTER LAYOUT)
+           ==================================================================== */
+        html {
+            scroll-behavior: smooth;
+        }
+        .section-afiche {
+            min-height: calc(100svh - 60px);
+            min-height: calc(100dvh - 60px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding-top: clamp(14px, 2.5vh, 28px);
+            padding-bottom: clamp(14px, 2.5vh, 28px);
+            scroll-margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            box-sizing: border-box;
+        }
+        @media (min-width: 768px) {
+            .section-afiche {
+                min-height: calc(100vh - 68px);
+                min-height: calc(100dvh - 68px);
+                scroll-margin-top: 68px;
+                padding-top: clamp(20px, 3.5vh, 40px);
+                padding-bottom: clamp(20px, 3.5vh, 40px);
+            }
+        }
+        @media (max-width: 768px) {
+            .section-afiche {
+                min-height: calc(100svh - 60px);
+                min-height: calc(100dvh - 60px);
+                padding-top: clamp(12px, 2vh, 22px);
+                padding-bottom: clamp(12px, 2vh, 22px);
+                justify-content: center;
+            }
+        }
+        /* Botón indicador de navegación entre afiches (centrado, protegido contra solapamiento) */
+        .afiche-scroll-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            margin-top: clamp(1.25rem, 2.5vh, 2rem);
+        }
+        .glow-spot-ambient {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(780px, 92vw);
+            height: min(520px, 75vh);
+            border-radius: 9999px;
+            filter: blur(75px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glow-cyan {
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(37, 99, 235, 0.08) 45%, transparent 70%);
+        }
+        .glow-gold-dual {
+            background: radial-gradient(circle at 30% 50%, rgba(234, 179, 8, 0.14) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.14) 0%, transparent 50%);
+        }
+        .glow-purple {
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.08) 45%, transparent 70%);
         }
 
         /* Drawer Móvil Desplegable */
@@ -234,8 +305,8 @@
             .staff-accordion-wrap {
                 width: 100% !important;
                 max-width: 100% !important;
-                height: 280px !important;
-                gap: 0.35rem !important;
+                height: clamp(200px, 30vh, 230px) !important;
+                gap: 0.3rem !important;
                 padding: 0 4px;
                 touch-action: manipulation;
             }
@@ -406,223 +477,505 @@
         </div>
     </div>
 
-    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 pt-10 md:pt-20 pb-20 z-10 relative">
-        
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 font-bold text-xs md:text-sm tracking-widest uppercase mb-8 fade-in-up" style="animation-delay: 0.1s;">
-            <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
-            </span>
-            Temporada Oficial 2026
+    <!-- ====================================================================
+         AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
+         ==================================================================== -->
+    <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden">
+        <!-- CAPA DE VIDEO CINEMATOGRÁFICO DE FONDO -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+            <video 
+                autoplay 
+                muted 
+                loop 
+                playsinline 
+                preload="auto"
+                class="w-full h-full object-cover bg-black">
+                <source src="assets/v4Hero.mp4" type="video/mp4">
+            </video>
         </div>
 
-        <div class="relative mb-8 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
-            <div class="hero-halo-light"></div>
-            <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-48 md:h-64 w-auto object-contain" alt="Logo LBL Central">
-        </div>
-
-        <!-- TÍTULO ORIGINAL CON GLOW-TEXT INTACTO -->
-        <h1 class="text-4xl md:text-7xl lg:text-8xl font-black uppercase italic tracking-tighter mb-6 fade-in-up glow-text leading-[1.1]" style="animation-delay: 0.3s;">
-            LIGA BOLIVIANA <br class="hidden md:block">DE <span class="text-gradient-blue">LEAGUE OF LEGENDS</span>
-        </h1>
+        <!-- Luz focal ambiental azul centrado -->
+        <div class="glow-spot-ambient glow-cyan"></div>
         
-        <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg mb-10 fade-in-up leading-relaxed px-2" style="animation-delay: 0.4s;">
-            El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
-        </p>
+        <div class="max-w-5xl mx-auto w-full relative z-10 flex flex-col items-center">
+            <div class="relative mb-2 sm:mb-3 md:mb-4 float-anim fade-in-up flex items-center justify-center" style="animation-delay: 0.2s;">
+                <div class="hero-halo-light"></div>
+                <img src="assets/logo.webp" fetchpriority="high" decoding="async" onerror="this.src='assets/logo.png'" class="h-20 xs:h-24 sm:h-28 md:h-36 lg:h-44 w-auto object-contain" alt="Logo LBL Central">
+            </div>
 
-        <div class="max-w-4xl mx-auto w-full px-4 mb-10 z-10 relative">
+            <!-- TÍTULO EN 2 LÍNEAS EXACTAS (RESPONSIVE MOBILE FIRST) -->
+            <h1 class="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[5.2rem] xl:text-[6rem] font-black uppercase italic tracking-tighter mb-2 sm:mb-3 md:mb-4 fade-in-up glow-text leading-[1.04]" style="animation-delay: 0.3s;">
+                <span class="block">LIGA BOLIVIANA</span>
+                <span class="block whitespace-nowrap">DE <span class="text-gradient-blue inline-block pr-[0.25em] -mr-[0.25em]">LEAGUE OF LEGENDS</span></span>
+            </h1>
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in-up mb-6 flex-wrap" style="animation-delay: 0.5s;">
-                <button onclick="abrirAdvertencia()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer">
-                    <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                    <i class="fas fa-ticket-alt"></i> INSCRIBIR EQUIPO
-                </button>
-                <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3">
-                    <i class="fas fa-users"></i> VER ROSTERS
-                </a>
-                <a href="torneos" class="px-8 py-4 md:py-5 rounded-2xl font-black text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-3 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
-                    <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
-                    <i class="fas fa-trophy" style="color: #000000 !important;"></i> 
-                    <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
-                </a>
-            </div>
+            <p class="text-gray-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] max-w-xl mx-auto text-xs sm:text-sm md:text-base mb-3 sm:mb-4 md:mb-6 fade-in-up leading-relaxed px-3" style="animation-delay: 0.4s;">
+                El mayor circuito competitivo del país. Demuestra el nivel de tu equipo y forja tu legado en la Grieta del Invocador.
+            </p>
 
-            <!-- BOTÓN INSTALAR APLICACIÓN (PWA INSTALL) - Debajo de los CTAs -->
-            <div id="pwa-install-container" class="fade-in-up flex justify-center mt-2 mb-4" style="animation-delay: 0.55s;">
-                <button id="pwa-install-btn" onclick="installPWA()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600/25 via-cyan-500/20 to-blue-600/25 hover:from-blue-600 hover:to-cyan-500 text-cyan-300 hover:text-white border border-cyan-400/40 hover:border-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] font-black text-xs md:text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-105 cursor-pointer flex items-center gap-2">
-                    <i class="fas fa-download mr-2"></i> INSTALAR APLICACIÓN
-                </button>
-            </div>
-
-            <!-- NUESTROS TORNEOS SECTION (Carrusel Infinito e Interactivo) -->
-            <div class="max-w-5xl mx-auto w-full px-4 fade-in-up mt-6 text-center" style="animation-delay: 0.65s;">
-                <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-3">NUESTRAS CLASIFICACIONES</h2>
-                <p class="text-gray-400 text-sm md:text-base mb-6 max-w-xl mx-auto">
-                    ¿Quieres buscar equipo o algún jugador?<br>
-                    Accede a la información de nuestros anteriores torneos clasificatorios.
-                </p>
-                
-                <!-- Contenedor del Carrusel Infinito con Fading Mask -->
-                <div class="relative w-full overflow-hidden mask-gradient py-2">
-                    <div id="marquee-track" class="flex flex-row gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-4 pt-2">
-                        <!-- Set 1 -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+            <div class="w-full px-2 z-10 relative">
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-2.5 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto mb-2 sm:mb-3 fade-in-up" style="animation-delay: 0.5s;">
+                    <button onclick="abrirAdvertencia()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] hover:brightness-110 active:scale-95 flex items-center justify-center gap-2.5 relative overflow-hidden group cursor-pointer border border-blue-400/40">
+                        <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                        <i class="fas fa-ticket-alt text-xs sm:text-sm"></i> INSCRIBIR EQUIPO
+                    </button>
+                    <div class="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:gap-4">
+                        <a href="equipos" class="glass-panel text-gray-300 hover:text-white hover:border-gray-400 hover:bg-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:brightness-110 px-4 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2.5 relative overflow-hidden group cursor-pointer border border-white/10">
+                            <div class="absolute inset-0 bg-white/20 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                            <i class="fas fa-users text-xs sm:text-sm"></i> VER ROSTERS
                         </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        
-                        <!-- Set 2 (Duplicado para loop infinito) -->
-                        <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
-                        </a>
-                        <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-4 rounded-3xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-rose-500/30 transition-all duration-300 w-56 md:w-[340px] aspect-[2.2/1] shadow-lg">
-                            <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-10 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]" draggable="false">
+                        <a href="torneos" class="px-4 sm:px-8 py-2.5 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base md:text-lg transition-all duration-200 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.9)] hover:brightness-110 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2.5 relative overflow-hidden group cursor-pointer" style="background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%) !important; color: #000000 !important; border: 1px solid #fde047 !important;">
+                            <div class="absolute inset-0 bg-white/30 w-full h-full -translate-x-full group-hover:animate-[shimmer_0.75s_forwards] skew-x-12 pointer-events-none"></div>
+                            <i class="fas fa-trophy text-xs sm:text-sm" style="color: #000000 !important;"></i> 
+                            <span style="color: #000000 !important; font-weight: 900;">TORNEOS</span>
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6" style="animation-delay: 0.6s;">
+                <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
+                        Explora la Liga
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/30 border border-yellow-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-yellow-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
     </main>
 
-    <section class="max-w-5xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.7s;">
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/40 border border-blue-500/30 text-blue-400 font-black text-[10px] tracking-widest uppercase mb-3">
-                <i class="fas fa-layer-group text-[9px]"></i> DIVISIONES OFICIALES
-            </div>
-            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">CIRCUITO <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">COMPETITIVO</span></h2>
-            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
-                Estructura por divisiones: desde la máxima gloria nacional hasta la lucha por el ascenso.
-            </p>
+    <!-- ====================================================================
+         AFICHE 2: CLASIFICATORIOS & SCOUTING (VITRINA HISTÓRICA)
+         ==================================================================== -->
+    <section id="clasificaciones" class="section-afiche w-full text-center px-4 md:px-6 relative z-10 overflow-hidden">
+        <!-- Fondo Atmosférico: Patrón de panal/hexágonos en tono amarillo tenue idéntico a sponsors con viñetas y reflejo metálico -->
+        <div class="bg-clasificaciones-honeycomb">
+            <!-- Malla Vectorial Hexagonal Seamless (Modelo Limpio Sin Ruido Visual) -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern-clasificaciones" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern-clasificaciones)"/>
+            </svg>
+
+            <!-- Capa de Reflejos Metálicos en Amarillo Tenue / Dorado -->
+            <div class="metallic-reflection-yellow"></div>
+
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Card Tier 1: Premier League -->
-            <a href="equipos?tier=Tier 1" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-gold relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
-                <div class="absolute -top-12 -right-12 w-44 h-44 bg-yellow-500/10 rounded-full blur-[50px] group-hover:bg-yellow-500/20 transition-colors"></div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="bg-yellow-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-yellow-500/25 group-hover:scale-110 group-hover:border-yellow-400/50 transition-all duration-300">
-                        <i class="fas fa-trophy text-3xl text-yellow-400 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]"></i>
-                    </div>
-                    <span class="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[10px] font-black uppercase tracking-wider">
-                        PRIMERA DIVISIÓN
-                    </span>
+
+        <!-- Luz focal ambiental amarillo tenue -->
+        <div class="glow-spot-ambient glow-yellow"></div>
+
+        <!-- CONTENIDO PRINCIPAL EN PLANO SUPERIOR (Z-20) POR ENCIMA DE BRACKETS Y FONDO -->
+        <div class="max-w-5xl mx-auto w-full relative z-20 flex flex-col items-center">
+            <div class="text-center mb-3 sm:mb-5 md:mb-7">
+                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-yellow-950/40 border border-yellow-500/30 text-yellow-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2">
+                    <i class="fas fa-trophy text-[9px] text-yellow-400"></i> TORNEOS DE CLASIFICACIÓN
                 </div>
-                <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
-                    <span><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</span>
-                    <i class="fas fa-arrow-right text-base text-yellow-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
-                </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-                    La élite del circuito competitivo de la LBL. Aquí convergen los mejores equipos del país por el campeonato oficial y la gloria nacional.
+                <h2 class="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-1.5 sm:mb-2">
+                    NUESTRAS <span class="text-gradient-gold">CLASIFICACIONES</span>
+                </h2>
+                <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed px-2">
+                    ¿Quieres buscar equipo o algún jugador? Accede a la información de nuestros torneos clasificatorios oficiales.
                 </p>
-            </a>
+            </div>
             
-            <!-- Card Tier 2: Circuito Ascenso -->
-            <a href="equipos?tier=Tier 2" class="glass-panel p-8 md:p-10 rounded-3xl tier-card-blue relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/70 to-[#030712]/90 block cursor-pointer">
-                <div class="absolute -top-12 -right-12 w-44 h-44 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-colors"></div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-blue-500/25 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
-                        <i class="fas fa-level-up-alt text-3xl text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"></i>
-                    </div>
-                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider">
-                        CIRCUITO ASCENSO
-                    </span>
+            <!-- Contenedor del Carrusel Infinito con Fading Mask -->
+            <div class="relative w-full overflow-hidden mask-gradient py-1 sm:py-2">
+                <div id="marquee-track" class="flex flex-row gap-4 sm:gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-3 sm:pb-4 pt-1 sm:pt-2 touch-pan-y overscroll-x-contain">
+                    <!-- Set 1 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    
+                    <!-- Set 2 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+
+                    <!-- Set 3 (Amplitud para monitores Ultra-Wide) -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+
+                    <!-- Set 4 -->
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
+                        <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
+                    <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
+                        <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" onerror="this.src='assets/open_qualifier.png'" alt="Open Qualifier" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
+                    </a>
                 </div>
-                <h3 class="text-2xl md:text-3xl font-black mb-3 text-white flex items-center justify-between">
-                    <span><span class="text-gradient-blue">TIER 2</span> (Ascenso Oficial)</span>
-                    <i class="fas fa-arrow-right text-base text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
-                </h3>
-                <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-                    La segunda división oficial de la LBL. Escuadras emergentes batallan ronda a ronda para conseguir su cupo directo a la máxima categoría.
+            </div>
+
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
+                <a onclick="scrollToSection('circuito')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Circuito Competitivo">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
+                        Circuito Oficial
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/30 border border-yellow-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-yellow-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         AFICHE 3: CIRCUITO COMPETITIVO (TIER 1 VS TIER 2)
+         ==================================================================== -->
+    <section id="circuito" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center overflow-hidden">
+        <!-- CAPA DE VIDEO DE FONDO: CIRCUITO COMPETITIVO (SIN FILTROS NI VIÑETA) -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+            <video 
+                id="circuito-video"
+                muted 
+                loop 
+                playsinline 
+                preload="metadata"
+                class="w-full h-full object-cover">
+                <source src="assets/overlaylol.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- Luz focal dual ambiental: Oro a la izquierda y Azul a la derecha -->
+        <div class="glow-spot-ambient glow-gold-dual"></div>
+
+        <div class="max-w-5xl mx-auto w-full relative z-10">
+            <div class="text-center mb-4 sm:mb-6 md:mb-7">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/40 border border-blue-500/30 text-blue-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2 md:mb-2.5">
+                    <i class="fas fa-layer-group text-[9px]"></i> DIVISIONES OFICIALES
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-1.5 sm:mb-2">
+                    CIRCUITO <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">COMPETITIVO</span>
+                </h2>
+                <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+                    Estructura por divisiones: desde la máxima gloria nacional hasta la lucha por el ascenso.
                 </p>
-            </a>
-        </div>
-    </section>
-
-    <!-- SECCIÓN DE SPONSORS OFICIALES -->
-    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-20 z-10 fade-in-up" style="animation-delay: 0.75s;">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[10px] tracking-widest uppercase mb-3">
-                <i class="fas fa-handshake text-[9px]"></i> PARTNERS & ACTIVACIONES
             </div>
-            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase mb-2">
-                NUESTROS <span class="text-gradient-cyan">SPONSORS</span>
-            </h2>
-            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
-                Las primeras marcas que confiaron en este proyecto, <br class="hidden sm:block"> e impulsan la competencia en el país.
-            </p>
-        </div>
-
-
-        <!-- Contenedor del Slideshow de Sponsors (Diseño Abierto y Sin Bounding Boxes) -->
-        <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-4 md:py-8 px-2 md:px-4">
-            <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[340px] md:min-h-[220px]">
-                <!-- Se inyecta dinámicamente con JavaScript -->
-            </div>
-
-            <!-- Barra de Progreso Delgada Minimalista (2px) -->
-            <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-8 pointer-events-none max-w-3xl mx-auto">
-                <div id="sponsor-progress-bar" class="h-full transition-all duration-300 w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN DE DIRECTIVA Y STAFF EJECUTIVO -->
-    <section class="max-w-7xl mx-auto w-full px-4 md:px-6 pb-24 z-10 fade-in-up" style="animation-delay: 0.8s;">
-      
-        <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha (Sin Box Global) -->
-        <div class="staff-section-layout">
             
-            <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas de 72px a 320px) -->
-            <div id="executives-accordion" class="staff-accordion-wrap">
-                <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 items-stretch text-left">
+                <!-- Card Tier 1: Premier League -->
+                <a href="equipos?tier=Tier 1" class="glass-panel p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl md:rounded-3xl tier-card-gold relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/45 to-[#030712]/60 hover:from-[#0a0f1d]/85 hover:to-[#030712]/95 block cursor-pointer border border-yellow-500/20 hover:border-yellow-400/50 transition-all duration-300">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-yellow-500/10 rounded-full blur-[50px] group-hover:bg-yellow-500/20 transition-colors"></div>
+                    <div class="flex items-center justify-between mb-2.5 sm:mb-4 md:mb-5">
+                        <div class="bg-yellow-500/10 w-10 sm:w-12 md:w-14 h-10 sm:h-12 md:h-14 rounded-lg sm:rounded-xl flex items-center justify-center border border-yellow-500/25 group-hover:scale-110 group-hover:border-yellow-400/50 transition-all duration-300">
+                            <i class="fas fa-trophy text-lg sm:text-2xl md:text-3xl text-yellow-400 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]"></i>
+                        </div>
+                        <span class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
+                            PRIMERA DIVISIÓN
+                        </span>
+                    </div>
+                    <h3 class="text-base sm:text-xl md:text-2xl lg:text-3xl font-black mb-1 sm:mb-2 md:mb-2.5 text-white flex items-center justify-between">
+                        <span><span class="text-gradient-gold">TIER 1</span> (Liga Principal)</span>
+                        <i class="fas fa-arrow-right text-sm sm:text-base text-yellow-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    </h3>
+                    <p class="text-gray-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-xs sm:text-xs md:text-sm leading-relaxed">
+                        La élite del circuito competitivo de la LBL. Aquí convergen los mejores equipos del país por el campeonato oficial y la gloria nacional.
+                    </p>
+                </a>
+                
+                <!-- Card Tier 2: Circuito Ascenso -->
+                <a href="equipos?tier=Tier 2" class="glass-panel p-4 sm:p-5 md:p-7 rounded-xl sm:rounded-2xl md:rounded-3xl tier-card-blue relative overflow-hidden group bg-gradient-to-b from-[#0a0f1d]/45 to-[#030712]/60 hover:from-[#0a0f1d]/85 hover:to-[#030712]/95 block cursor-pointer border border-blue-500/20 hover:border-cyan-400/50 transition-all duration-300">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-colors"></div>
+                    <div class="flex items-center justify-between mb-2.5 sm:mb-4 md:mb-5">
+                        <div class="bg-blue-500/10 w-10 sm:w-12 md:w-14 h-10 sm:h-12 md:h-14 rounded-lg sm:rounded-xl flex items-center justify-center border border-blue-500/25 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+                            <i class="fas fa-level-up-alt text-lg sm:text-2xl md:text-3xl text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"></i>
+                        </div>
+                        <span class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
+                            CIRCUITO ASCENSO
+                        </span>
+                    </div>
+                    <h3 class="text-base sm:text-xl md:text-2xl lg:text-3xl font-black mb-1 sm:mb-2 md:mb-2.5 text-white flex items-center justify-between">
+                        <span><span class="text-gradient-blue">TIER 2</span> (Ascenso Oficial)</span>
+                        <i class="fas fa-arrow-right text-sm sm:text-base text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    </h3>
+                    <p class="text-gray-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-xs sm:text-xs md:text-sm leading-relaxed">
+                        La segunda división oficial de la LBL. Escuadras emergentes batallan ronda a ronda para conseguir su cupo directo a la máxima categoría.
+                    </p>
+                </a>
             </div>
 
-            <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
-            <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-2 px-2 md:px-6">
-                <div id="exec-active-badge-container" class="mb-3">
-                    <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
-                        STAFF LBL
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
+                <a onclick="scrollToSection('sponsors')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Sponsors">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
+                        Nuestros Sponsors
                     </span>
-                </div>
-                
-                <h3 id="exec-active-name" class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-4 exec-text-fade">
-                    NUESTRO STAFF
-                </h3>
-                
-                <p id="exec-active-desc" class="text-gray-300 text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
-                    Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración, regulación y dirección creativa de la Liga Boliviana de League of Legends.
-                </p>
+                    <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
             </div>
-
         </div>
     </section>
 
-    <footer class="w-full border-t border-gray-800/50 bg-[#020202] py-10 text-center mt-auto z-10 relative">
-        <div class="flex justify-center flex-wrap gap-4 sm:gap-6 mb-6">
-            <a href="https://discord.gg/4RgbnQJ79G" target="_blank" class="social-btn-discord w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="Discord"><i class="fab fa-discord"></i></a>
-            <a href="https://www.instagram.com/lbl.esports/" target="_blank" class="social-btn-instagram w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@lbl.esports" target="_blank" class="social-btn-tiktok w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="TikTok"><i class="fab fa-tiktok"></i></a>
-            <a href="https://www.twitch.tv/lbl_esports" target="_blank" class="social-btn-twitch w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="Twitch"><i class="fab fa-twitch"></i></a>
-            <a href="https://www.youtube.com/@LBLEsports" target="_blank" class="social-btn-youtube w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="YouTube"><i class="fab fa-youtube"></i></a>
-            <a href="https://kick.com/lbl-esports" target="_blank" class="social-btn-kick w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-500 transition-all" title="Kick">
-                <svg role="img" viewBox="0 0 24 24" class="w-4 h-4 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg"><path d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/></svg>
-            </a>
+    <!-- ====================================================================
+         AFICHE 4: PARTNERS & SPONSORS OFICIALES
+         ==================================================================== -->
+    <section id="sponsors" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center overflow-hidden">
+        <!-- Fondo Atmosférico: Patrón geométrico sutil de panal/hexágonos oscuros con reflejos metálicos mínimos -->
+        <div class="bg-sponsors-honeycomb">
+            <!-- Malla Vectorial Hexagonal Seamless (Modelo Limpio Sin Ruido Visual) -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern)"/>
+            </svg>
+
+            <!-- Capa de Reflejos Metálicos Mínimos -->
+            <div class="metallic-reflection-layer"></div>
+
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
         </div>
-        <p class="text-gray-600 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-6">Somos pasión, somos competición, somos la LIGA BOLIVIANA DE LEAGUE OF LEGENDS.</p>
-        
-        <div class="flex items-center justify-center gap-4">
-            <a href="dashboard" class="inline-flex items-center gap-2 text-gray-800 hover:text-red-500 text-[10px] font-black tracking-widest uppercase transition-colors px-4 py-2 rounded-full hover:bg-red-500/10">
-                <i class="fas fa-shield-alt"></i> Staff LBL
-            </a>
+
+        <!-- Luz focal ambiental cian -->
+        <div class="glow-spot-ambient glow-cyan"></div>
+
+        <div class="max-w-7xl mx-auto w-full relative z-10">
+            <div class="text-center mb-4 sm:mb-6 md:mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2 md:mb-2.5">
+                    <i class="fas fa-handshake text-[9px]"></i> PARTNERS & ACTIVACIONES
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black italic tracking-tighter text-white uppercase mb-1.5 sm:mb-2">
+                    NUESTROS <span class="text-gradient-cyan">SPONSORS</span>
+                </h2>
+                <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+                    Las primeras marcas que confiaron en este proyecto, e impulsan la competencia en el país.
+                </p>
+            </div>
+
+            <!-- Contenedor del Slideshow de Sponsors (+30% Escala, Pre-renderizado para Cero Parpadeos) -->
+            <div id="sponsor-spotlight-card" onmouseenter="pauseSponsor()" onmouseleave="resumeSponsor()" class="relative group w-full py-1 sm:py-2 md:py-4 px-1 sm:px-2 md:px-4">
+                <div id="sponsor-slide-container" class="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-12 transition-opacity duration-300 opacity-100 w-full py-1 min-h-[300px] sm:min-h-[340px] md:min-h-[280px]">
+                    <a href="https://www.instagram.com/voltbolivia" target="_blank" rel="noopener noreferrer" class="w-full max-w-[280px] xs:max-w-[320px] sm:max-w-md md:max-w-none md:w-[520px] lg:w-[560px] mx-auto md:mx-0 shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl group/banner block" title="Visitar VOLT">
+                        <img src="assets/BARON.webp" fetchpriority="high" decoding="async" alt="VOLT" class="w-full h-full object-contain rounded-xl sm:rounded-2xl drop-shadow-[0_14px_32px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='assets/BARON.png'">
+                    </a>
+                    <div class="text-left w-full min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
+                        <p class="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-1 sm:mb-2">Barón Nashor traído a ustedes gracias a VOLT...</p>
+                        <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.12] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4 flex flex-col gap-0.5 sm:gap-1">
+                            <span class="block">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span></span>
+                            <span class="block">QUE DEFINE CAMPEONES...</span>
+                        </h3>
+                        <p class="text-[11px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider sm:tracking-widest uppercase mb-3 sm:mb-4 md:mb-5">VOLT ® Patrocinador Oficial de la Liga Boliviana de League of Legends</p>
+                        <div>
+                            <a href="https://www.instagram.com/voltbolivia" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 sm:gap-2.5 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/40">
+                                <span>Destapa la Energía</span>
+                                <i class="fas fa-arrow-right text-[10px] sm:text-xs transition-transform group-hover/btn:translate-x-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Progreso Delgada Minimalista (2px) -->
+                <div class="w-full h-[2px] bg-white/10 rounded-full overflow-hidden mt-3 sm:mt-6 md:mt-8 pointer-events-none max-w-4xl mx-auto">
+                    <div id="sponsor-progress-bar" class="h-full w-0" style="background: linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8);"></div>
+                </div>
+            </div>
+
+            <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
+                <a onclick="scrollToSection('staff')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Staff">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
+                        Directiva & Staff
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-purple-500/20 group-hover:bg-purple-500/30 border border-purple-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-purple-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         AFICHE 5: NUESTRO STAFF & COMUNIDAD
+         ==================================================================== -->
+    <section id="staff" class="section-afiche w-full px-4 md:px-6 relative z-10 overflow-hidden">
+        <!-- Fondo Atmosférico: Patrón de panal/hexágonos en tono morado idéntico a sponsors con viñetas y reflejo metálico -->
+        <div class="bg-staff-honeycomb">
+            <!-- Malla Vectorial Hexagonal Seamless (Modelo Limpio Sin Ruido Visual) -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern-staff" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern-staff)"/>
+            </svg>
+
+            <!-- Capa de Reflejos Metálicos Morados -->
+            <div class="metallic-reflection-purple"></div>
+
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
+        </div>
+
+        <!-- Luz focal ambiental violeta/hextech -->
+        <div class="glow-spot-ambient glow-purple"></div>
+
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha -->
+            <div class="staff-section-layout">
+                
+                <!-- Izquierda: Acordeón de Displays Trapezoidales (6 Cajas de 72px a 320px) -->
+                <div id="executives-accordion" class="staff-accordion-wrap">
+                    <!-- Se renderizan las 6 cajas trapezoidales dinámicamente -->
+                </div>
+
+                <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
+                <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-1 sm:py-2 px-2 md:px-6">
+                    <div id="exec-active-badge-container" class="mb-2 sm:mb-3">
+                        <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-purple-500/30 text-purple-400 bg-purple-500/10 hidden">
+                            STAFF LBL
+                        </span>
+                    </div>
+                    
+                    <h3 id="exec-active-name" class="text-2xl sm:text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-2 sm:mb-4 exec-text-fade">
+                        NUESTRO <span class="text-gradient-purple">STAFF</span>
+                    </h3>
+                    
+                    <p id="exec-active-desc" class="text-gray-300 text-xs sm:text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
+                        Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración, regulación y dirección creativa de la Liga Boliviana de League of Legends.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Indicador de scroll: Volver al inicio (Centrado, ordenado y sin solapamiento) -->
+            <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
+                <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
+                        Volver al Inicio
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-purple-500/20 group-hover:bg-purple-500/30 border border-purple-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-up text-[11px] text-purple-400 group-hover:-translate-y-0.5 transition-transform duration-300"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         FOOTER INSTITUCIONAL LBL ESPORTS (ESTÁNDAR INTERNACIONAL TIER 1)
+         ==================================================================== -->
+    <footer class="w-full border-t border-white/10 bg-[#020408] text-left pt-14 pb-10 px-4 md:px-8 z-10 relative overflow-hidden">
+        <!-- Resplandor ambiental de base -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-blue-600/5 blur-[120px] pointer-events-none -z-10"></div>
+
+        <div class="max-w-7xl mx-auto">
+            <!-- Fila Superior: Marca, Propósito y Redes Sociales -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+                <!-- Columna Marca / Identidad (5 cols) -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <img src="assets/LBL Circular.webp" decoding="async" loading="lazy" onerror="this.src='assets/LBL Circular.png'" alt="LBL Esports" class="w-12 h-12 rounded-xl object-contain border border-blue-500/30 p-1 bg-black/80 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <div>
+                            <span class="text-xl md:text-2xl font-black italic tracking-tighter text-white block">LBL <span class="text-gradient-blue">ESPORTS</span></span>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 block">Liga Boliviana de League of Legends</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md">
+                        El ecosistema competitivo oficial de League of Legends en Bolivia. Impulsamos el talento nacional, la disciplina deportiva y la gloria en la Grieta del Invocador.
+                    </p>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider text-cyan-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                        Circuito Oficial • Temporada 2026
+                    </div>
+                </div>
+
+                <!-- Columnas de Navegación Rápida (7 cols) -->
+                <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+                    <!-- Columna: Competición -->
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-200 mb-4 flex items-center gap-2">
+                            <i class="fas fa-trophy text-yellow-400 text-[11px]"></i> Competición
+                        </h4>
+                        <ul class="space-y-2.5 text-xs text-slate-400 font-medium">
+                            <li><a href="torneos" class="hover:text-cyan-300 transition-colors">Torneos en Curso</a></li>
+                            <li><a onclick="scrollToSection('circuito')" role="button" class="hover:text-cyan-300 transition-colors cursor-pointer">Tier 1: Primera División</a></li>
+                            <li><a onclick="scrollToSection('circuito')" role="button" class="hover:text-cyan-300 transition-colors cursor-pointer">Tier 2: Circuito Ascenso</a></li>
+                            <li><a href="scouting?torneo=qualifier" class="hover:text-cyan-300 transition-colors">Open Qualifiers</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna: Ecosistema -->
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-200 mb-4 flex items-center gap-2">
+                            <i class="fas fa-users text-blue-400 text-[11px]"></i> Ecosistema
+                        </h4>
+                        <ul class="space-y-2.5 text-xs text-slate-400 font-medium">
+                            <li><a href="equipos" class="hover:text-cyan-300 transition-colors">Rosters & Equipos</a></li>
+                            <li><a href="scouting" class="hover:text-cyan-300 transition-colors">Scouting & Talentos</a></li>
+                            <li><a onclick="scrollToSection('staff')" role="button" class="hover:text-cyan-300 transition-colors cursor-pointer">Directiva & Staff</a></li>
+                            <li><a href="editar" class="hover:text-cyan-300 transition-colors">Portal de Capitanes</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna: Redes Oficiales -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-200 mb-4 flex items-center gap-2">
+                            <i class="fas fa-satellite-dish text-red-400 text-[11px]"></i> Transmisión
+                        </h4>
+                        <div class="flex flex-wrap gap-2.5 mb-4">
+                            <a href="https://discord.gg/4RgbnQJ79G" target="_blank" rel="noopener noreferrer" class="social-btn-discord w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="Discord Oficial"><i class="fab fa-discord text-sm"></i></a>
+                            <a href="https://www.twitch.tv/lbl_esports" target="_blank" rel="noopener noreferrer" class="social-btn-twitch w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="Twitch Oficial"><i class="fab fa-twitch text-sm"></i></a>
+                            <a href="https://kick.com/lbl-esports" target="_blank" rel="noopener noreferrer" class="social-btn-kick w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="Kick Oficial">
+                                <svg role="img" viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg"><path d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/></svg>
+                            </a>
+                            <a href="https://www.youtube.com/@LBLEsports" target="_blank" rel="noopener noreferrer" class="social-btn-youtube w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="YouTube Oficial"><i class="fab fa-youtube text-sm"></i></a>
+                            <a href="https://www.instagram.com/lbl.esports/" target="_blank" rel="noopener noreferrer" class="social-btn-instagram w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="Instagram Oficial"><i class="fab fa-instagram text-sm"></i></a>
+                            <a href="https://www.tiktok.com/@lbl.esports" target="_blank" rel="noopener noreferrer" class="social-btn-tiktok w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:scale-105" title="TikTok Oficial"><i class="fab fa-tiktok text-sm"></i></a>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-medium">Transmisiones en vivo los fines de semana.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Fila Inferior: Copyright, Créditos y Acceso Staff -->
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+                <div class="flex items-center gap-2">
+                    <span>© 2026 LBL Esports. Todos los derechos reservados.</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="dashboard" class="inline-flex items-center gap-2 text-slate-500 hover:text-red-400 text-[11px] font-black tracking-widest uppercase transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/20">
+                        <i class="fas fa-shield-alt text-[10px]"></i> Portal Staff
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -676,6 +1029,28 @@
     </div>
 
     <script>
+        // Al recargar o navegar, forzar inicio en la parte superior (Hero)
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+        window.addEventListener('beforeunload', () => {
+            window.scrollTo(0, 0);
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!window.location.hash) {
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            }
+        });
+
+        // Navegación suave por secciones sin alterar la URL (evita hashes como #clasificaciones)
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function abrirAdvertencia() {
             const modal = document.getElementById('scouting-modal');
             modal.classList.remove('hidden');
@@ -736,21 +1111,25 @@
             const marquee = document.getElementById('marquee-track');
             if (!marquee) return;
 
-            let scrollSpeed = 0.8; // Velocidad de auto-desplazamiento
+            let currentScrollPos = marquee.scrollLeft;
+            let scrollSpeed = 0.70; // Desplazamiento visible, continuo y fluido (evita truncado de subpíxeles)
             let isDown = false;
-            let startX;
-            let scrollLeft;
+            let startX = 0;
+            let scrollLeft = 0;
             let isHovered = false;
 
             function step() {
                 if (!isDown && !isHovered) {
-                    marquee.scrollLeft += scrollSpeed;
+                    currentScrollPos += scrollSpeed;
                     
-                    // Si nos pasamos de la mitad de la anchura total (que contiene los elementos duplicados)
-                    // volvemos al inicio para hacer un loop sin fin
-                    if (marquee.scrollLeft >= (marquee.scrollWidth / 2)) {
-                        marquee.scrollLeft -= (marquee.scrollWidth / 2);
+                    // Si nos pasamos de la mitad de la anchura total volvemos al inicio para un loop continuo
+                    const loopBoundary = marquee.scrollWidth / 2;
+                    if (loopBoundary > 0 && currentScrollPos >= loopBoundary) {
+                        currentScrollPos -= loopBoundary;
                     }
+                    marquee.scrollLeft = Math.round(currentScrollPos);
+                } else {
+                    currentScrollPos = marquee.scrollLeft;
                 }
                 requestAnimationFrame(step);
             }
@@ -763,6 +1142,7 @@
                 isDown = true;
                 startX = e.pageX - marquee.offsetLeft;
                 scrollLeft = marquee.scrollLeft;
+                currentScrollPos = marquee.scrollLeft;
             });
 
             marquee.addEventListener('mouseleave', () => {
@@ -779,6 +1159,7 @@
                 const x = e.pageX - marquee.offsetLeft;
                 const walk = (x - startX) * 1.5; // Ajustar velocidad de arrastre
                 marquee.scrollLeft = scrollLeft - walk;
+                currentScrollPos = marquee.scrollLeft;
             });
 
             // Eventos táctiles (Swipe en móvil)
@@ -786,6 +1167,7 @@
                 isDown = true;
                 startX = e.touches[0].pageX - marquee.offsetLeft;
                 scrollLeft = marquee.scrollLeft;
+                currentScrollPos = marquee.scrollLeft;
             }, { passive: true });
 
             marquee.addEventListener('touchend', () => {
@@ -797,6 +1179,7 @@
                 const x = e.touches[0].pageX - marquee.offsetLeft;
                 const walk = (x - startX) * 1.5;
                 marquee.scrollLeft = scrollLeft - walk;
+                currentScrollPos = marquee.scrollLeft;
             }, { passive: true });
 
             // Pausar ligeramente en Hover (1 segundo) y luego reanudar automáticamente
@@ -814,6 +1197,8 @@
             });
         });
 
+
+
         // Script del Carrusel y Módulo Interactivo de Sponsors LBL
         const sponsorsData = [
             {
@@ -823,8 +1208,8 @@
                 image: "assets/BARON.webp",
                 imageFallback: "assets/BARON.png",
                 sub: "Barón Nashor traído a ustedes gracias a VOLT...",
-                title: 'DESTAPA LA <span class="text-yellow-400">ENERGÍA</span> QUE DEFINE CAMPEONES...',
-                desc: "VOLT ® Patrocinador oficial de la Liga Boliviana de League of Legends...",
+                title: '<span class="block">DESTAPA LA <span class="text-yellow-400">ENERGÍA</span></span><span class="block">QUE DEFINE CAMPEONES...</span>',
+                desc: "VOLT ® Patrocinador Oficial de la Liga Boliviana de League of Legends",
                 barGradient: "linear-gradient(90deg, #2563eb, #06b6d4, #38bdf8)",
                 tabActiveClasses: "border-cyan-400 bg-cyan-500/15 text-white",
                 ctaText: "Destapa la Energía",
@@ -838,7 +1223,7 @@
                 image: "assets/pentakill.webp",
                 imageFallback: "assets/pentakill.png",
                 sub: "Legion Store presenta el Pentakill en la Grieta...",
-                title: '<span class="text-red-500">PENTAKILL</span> CON EL PODER DE <span class="text-cyan-400">LEGION STORE</span>...',
+                title: '<span class="block"><span class="text-red-500">PENTAKILL</span> CON EL PODER</span><span class="block">DE <span class="text-cyan-400">LEGION STORE</span>...</span>',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
                 tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
@@ -853,7 +1238,7 @@
                 image: "assets/legion_store.webp",
                 imageFallback: "assets/legion_store.png",
                 sub: "Legion Store presenta el Exterminio definitivo...",
-                title: '<span class="text-rose-500">EXTERMINIO</span> TOTAL CON EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...',
+                title: '<span class="block"><span class="text-rose-500">EXTERMINIO</span> TOTAL CON</span><span class="block">EL MEJOR <span class="text-amber-400">EQUIPAMIENTO</span>...</span>',
                 desc: "Patrocinador Oficial de Hardware y Gaming Gear de la LBL",
                 barGradient: "linear-gradient(90deg, #b91c1c, #ef4444, #f87171)",
                 tabActiveClasses: "border-red-500 bg-red-600/15 text-white",
@@ -868,7 +1253,7 @@
                 image: "assets/ICONIC3.webp",
                 imageFallback: "assets/ICONIC3.png",
                 sub: "Moda Urbana Oficial de la LBL...",
-                title: 'PARA SER CAMPEÓN TIENES QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span>',
+                title: '<span class="block">PARA SER CAMPEÓN TIENES</span><span class="block">QUE SER <span class="font-square-one tracking-wider neon-text-iconic not-italic px-1">ICONIC</span></span>',
                 desc: "Patrocinador Oficial de Moda Urbana & Streetwear de la LBL",
                 barGradient: "linear-gradient(90deg, #94a3b8, #ffffff, #e2e8f0)",
                 tabActiveClasses: "border-white/80 bg-white/15 text-white",
@@ -883,7 +1268,7 @@
                 image: "assets/AQM.webp",
                 imageFallback: "assets/AQM.png",
                 sub: "Aquí me Quedo 📍 presenta...",
-                title: 'BIENVENIDOS A LA <span class="text-red-500">GRIETA DEL INVOCADOR</span>',
+                title: '<span class="block">BIENVENIDOS A LA</span><span class="block text-red-500">GRIETA DEL INVOCADOR</span>',
                 desc: "Aquí me Quedo LAN CENTER - Patrocinador Oficial de la LBL",
                 barGradient: "linear-gradient(90deg, #be123c, #fb7185, #f43f5e)",
                 tabActiveClasses: "border-rose-400 bg-rose-500/15 text-white",
@@ -899,8 +1284,6 @@
         let slideRemainingTime = 6000;
         let isSponsorPaused = false;
         let isSlideTransitioning = false; // Cerrojo anti-spam para evitar recargas ante clics repetidos
-        let sponsorHoverResumeTimeout = null;
-        let hasPausedCurrentSlide = false; // Permite únicamente una pausa por ciclo de diapositiva
         const SPONSOR_DURATION = 6000;
 
 
@@ -927,50 +1310,62 @@
             slideStartTime = Date.now();
             slideRemainingTime = duration;
             isSponsorPaused = false;
-            if (!resume) {
-                hasPausedCurrentSlide = false;
-            }
 
             startSponsorProgressBar(duration, resume);
+
+            // Si el cursor ya está sobre el card (ej. tras cambio de slide o click), pausar limpiamente
+            const card = document.getElementById('sponsor-spotlight-card');
+            if (card && card.matches(':hover')) {
+                pauseSponsor();
+                return;
+            }
 
             sponsorTimeout = setTimeout(() => {
                 nextSponsorSlide(false);
             }, duration);
         }
 
-        function renderSponsorSlide(index) {
+        function renderSponsorSlide(index, skipFade = false) {
             const container = document.getElementById('sponsor-slide-container');
             if (!container) return;
 
             const data = sponsorsData[index];
             if (!data) return;
             
-            // Imagen limpia sin resplandor difuso agresivo, con animación hover de zoom suave en el banner y enlace oficial
+            // Imagen limpia escalada (+30%), con animación hover de zoom suave y enlace oficial
             const imgHTML = `
-                <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="w-full md:w-[480px] shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-2xl group/banner block" title="Visitar ${data.brand}">
-                    <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_12px_28px_rgba(0,0,0,0.8)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
+                <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="w-full max-w-[280px] xs:max-w-[320px] sm:max-w-md md:max-w-none md:w-[520px] lg:w-[560px] mx-auto md:mx-0 shrink-0 aspect-[2.2/1] relative flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl group/banner block" title="Visitar ${data.brand}">
+                    <img src="${data.image}" loading="lazy" decoding="async" alt="${data.brand}" class="w-full h-full object-contain rounded-xl sm:rounded-2xl drop-shadow-[0_14px_32px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-out group-hover/banner:scale-105 group-hover:scale-105 cursor-pointer" draggable="false" onerror="this.src='${data.imageFallback || 'assets/BARON.png'}'">
                 </a>`;
 
-            const subHTML = data.sub ? `<p class="text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-2">${data.sub}</p>` : '';
+            const subHTML = data.sub ? `<p class="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider text-gray-400 mb-1 sm:mb-2">${data.sub}</p>` : '';
+
+            const contentHTML = `
+                ${imgHTML}
+                <div class="text-left w-full min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
+                    ${subHTML}
+                    <h3 class="text-xl sm:text-2xl md:text-[2.5rem] lg:text-[2.85rem] font-black italic uppercase leading-[1.12] tracking-tighter text-white mb-2 sm:mb-3 md:mb-4 flex flex-col gap-0.5 sm:gap-1">${data.title}</h3>
+                    <p class="text-[11px] sm:text-xs md:text-sm text-gray-400 font-bold tracking-wider sm:tracking-widest uppercase mb-3 sm:mb-4 md:mb-5">${data.desc}</p>
+                    <div>
+                        <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 sm:gap-2.5 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none ${data.ctaClasses}">
+                            <span>${data.ctaText}</span>
+                            <i class="fas fa-arrow-right text-[10px] sm:text-xs transition-transform group-hover/btn:translate-x-1"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            if (skipFade) {
+                container.innerHTML = contentHTML;
+                container.style.opacity = '1';
+                return;
+            }
 
             // Fade suave sin mover layout
             container.style.opacity = '0';
             
             setTimeout(() => {
-                container.innerHTML = `
-                    ${imgHTML}
-                    <div class="text-left w-full min-h-[110px] flex flex-col justify-center">
-                        ${subHTML}
-                        <h3 class="text-2xl md:text-5xl font-black italic uppercase leading-none tracking-tighter text-white mb-3">${data.title}</h3>
-                        <p class="text-[10px] md:text-xs text-gray-400 font-bold tracking-widest uppercase mb-4">${data.desc}</p>
-                        <div>
-                            <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-lg group/btn select-none ${data.ctaClasses}">
-                                <span>${data.ctaText}</span>
-                                <i class="fas fa-arrow-right text-[10px] transition-transform group-hover/btn:translate-x-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                `;
+                container.innerHTML = contentHTML;
                 container.style.opacity = '1';
             }, 120);
         }
@@ -1035,7 +1430,6 @@
         function resetSponsorTimer() {
             try {
                 clearTimeout(sponsorTimeout);
-                clearTimeout(sponsorHoverResumeTimeout);
                 isSponsorPaused = false;
                 runSponsorTimer(SPONSOR_DURATION, false);
             } catch (err) {
@@ -1045,30 +1439,22 @@
 
         function pauseSponsor() {
             try {
-                // Solo detectar y pausar UNA vez por diapositiva activa (evita pausar múltiples veces al pasar el cursor)
-                if (isSponsorPaused || hasPausedCurrentSlide) return;
+                if (isSponsorPaused) return;
                 
                 isSponsorPaused = true;
-                hasPausedCurrentSlide = true; // Queda registrado que ya se aplicó la pausa en este ciclo
                 clearTimeout(sponsorTimeout);
-                clearTimeout(sponsorHoverResumeTimeout);
 
                 // Calcular tiempo restante exacto de la diapositiva en curso
                 const elapsed = Date.now() - slideStartTime;
-                slideRemainingTime = Math.max(500, slideRemainingTime - elapsed);
+                slideRemainingTime = Math.max(0, slideRemainingTime - elapsed);
 
-                // Congelar la barra de progreso en su ancho actual
+                // Congelar la barra de progreso limpiamente en su porcentaje actual
                 const bar = document.getElementById('sponsor-progress-bar');
                 if (bar) {
-                    const computedWidth = window.getComputedStyle(bar).width;
+                    const progressPercent = Math.min(100, Math.max(0, ((SPONSOR_DURATION - slideRemainingTime) / SPONSOR_DURATION) * 100));
                     bar.style.transition = 'none';
-                    bar.style.width = computedWidth;
+                    bar.style.width = `${progressPercent}%`;
                 }
-
-                // Pausar por 1 segundo y luego reanudar automáticamente desde donde estaba
-                sponsorHoverResumeTimeout = setTimeout(() => {
-                    resumeSponsor();
-                }, 1000);
             } catch (err) {
                 console.warn('[LBL Sponsors] Error en pauseSponsor:', err);
             }
@@ -1076,11 +1462,16 @@
 
         function resumeSponsor() {
             try {
-                clearTimeout(sponsorHoverResumeTimeout);
-                if (!isSponsorPaused) return; // Si ya se reanudó, descartar llamadas redundantes
+                if (!isSponsorPaused) return;
                 isSponsorPaused = false;
 
-                // Reanudar con el tiempo restante exacto
+                // Si queda muy poco tiempo (< 200ms), avanzar de forma suave
+                if (slideRemainingTime <= 200) {
+                    nextSponsorSlide(false);
+                    return;
+                }
+
+                // Reanudar con el tiempo restante exacto y transición continua
                 runSponsorTimer(slideRemainingTime, true);
             } catch (err) {
                 console.warn('[LBL Sponsors] Error en resumeSponsor:', err);
@@ -1253,21 +1644,21 @@
 
                 if (activeExecIndex === -1) {
                     // Estado 1: Todas acopladas uniformemente (nombre oculto)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/50 opacity-85 hover:opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
-                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-purple-500/50 opacity-85 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-purple-500/40 group-hover:bg-purple-400 transition-colors";
+                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-purple-400`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                     if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-100 filter brightness-90 contrast-100 group-hover:scale-105 group-hover:brightness-100";
                 } else if (isActive) {
                     // Estado 2: Tarjeta Seleccionada Expandida (nombre visible con fade-in y zoom de imagen)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
-                    if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-purple-500 shadow-[0_0_35px_rgba(168,85,247,0.45)] ring-1 ring-purple-400/40 opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-purple-400 animate-pulse shadow-[0_0_10px_#c084fc]";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-purple-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]`;
                     if (title) title.className = "text-sm md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-1 md:px-2 block drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]";
                     if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-110 filter brightness-105 contrast-105";
                 } else {
                     // Estado 2: Tarjetas Inactivas Condensadas (nombre oculto y atenuación)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-purple-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
                     if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-gray-700/60";
                     if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
@@ -1295,13 +1686,13 @@
                     // Texto del Estado 1 Predeterminado
                     roleEl.innerText = '';
                     roleEl.className = 'hidden';
-                    nameEl.innerText = 'NUESTRO STAFF';
+                    nameEl.innerHTML = 'NUESTRO <span class="text-gradient-purple">STAFF</span>';
                     descEl.innerHTML = '<span class="text-gray-300 text-sm md:text-base font-medium leading-relaxed block">Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.</span>';
                 } else {
                     // Texto del Estado 2 (Miembro Seleccionado con salto de línea)
                     const exec = executivesData[activeExecIndex];
                     roleEl.innerText = exec.role;
-                    roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 inline-block';
+                    roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-purple-500/30 text-purple-400 bg-purple-500/10 inline-block';
                     nameEl.innerText = exec.name;
                     descEl.innerHTML = `
                         <span class="block text-gray-200 text-sm md:text-base font-medium leading-relaxed mb-3">${exec.background}</span>
@@ -1317,7 +1708,7 @@
         }
 
         window.addEventListener('load', () => {
-            renderSponsorSlide(0);
+            // Slide inicial pre-renderizado en el DOM para eliminar parpadeos de carga
             resetSponsorTimer();
             renderExecutives();
             window.addEventListener('resize', updateExecStateUI);
@@ -1338,6 +1729,22 @@
             if (isStaff && mobileStaffLink) {
                 mobileStaffLink.classList.remove('hidden');
                 mobileStaffLink.classList.add('flex');
+            }
+
+            // Reproducir video de Circuito Competitivo ÚNICAMENTE al llegar a su sección
+            const circuitoSec = document.getElementById('circuito');
+            const circuitoVid = document.getElementById('circuito-video');
+            if (circuitoSec && circuitoVid) {
+                const circuitoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            circuitoVid.play().catch(() => {});
+                        } else {
+                            circuitoVid.pause();
+                        }
+                    });
+                }, { threshold: 0.15 });
+                circuitoObserver.observe(circuitoSec);
             }
         });
     </script>
