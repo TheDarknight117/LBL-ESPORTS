@@ -43,8 +43,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=216">
-    <script type="module" src="/app-version.js?v=216"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=236">
+    <script type="module" src="/app-version.js?v=236"></script>
+    <script src="/sc3-logos.js?v=236"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #020202; color: #e5e7eb; -webkit-tap-highlight-color: transparent; }
@@ -1024,6 +1025,7 @@
             const tagEquipo = String(rawEq.tag || '').trim();
             const rawLogo = String(rawEq.logoRaw || rawEq.logo || '').trim();
             const notasStaffStr = String(rawEq.notasStaff || rawEq.staffNotes || '').trim();
+            const localLogo = (typeof window.findLocalSc3Logo === 'function') ? window.findLocalSc3Logo(nombreEquipo, tagEquipo) : null;
 
             return {
                 id: rawEq.rowId || rawEq.id || (idx + 1),
@@ -1031,7 +1033,7 @@
                 isScouting3: true,
                 name: nombreEquipo,
                 tag: tagEquipo,
-                logo: normalizarUrlDriveImagen(rawLogo, 's800'),
+                logo: localLogo || normalizarUrlDriveImagen(rawLogo, 's800'),
                 logoRaw: rawLogo,
                 estado: estadoEq,
                 repPhone: String(rawEq.capitan?.telefono || rawEq.repPhone || '').trim(),

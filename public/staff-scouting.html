@@ -13,7 +13,8 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=221">
+    <link rel="stylesheet" href="/dist/output.css?v=236">
+    <script src="/sc3-logos.js?v=236"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -1876,7 +1877,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { collection, query, where, getDocs, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=225";
+        import "/app-version.js?v=236";
 
         // ==============================================================
         // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
@@ -2031,7 +2032,8 @@
         window.abrirVisorLogo = function() {
             if (!equipoSeleccionado) return;
             const rawLogo = equipoSeleccionado.logoRaw || equipoSeleccionado.logo || '';
-            const imgUrl = normalizarUrlDriveImagen(rawLogo, 's1000');
+            const localLogo = (typeof window.findLocalSc3Logo === 'function') ? window.findLocalSc3Logo(equipoSeleccionado.nombre, equipoSeleccionado.tag) : null;
+            const imgUrl = localLogo || normalizarUrlDriveImagen(rawLogo, 's1000');
             const driveUrl = obtenerUrlDirectaDrive(rawLogo);
 
             document.getElementById('visor-logo-equipo').textContent = equipoSeleccionado.nombre || 'Logo Oficial';
@@ -3186,7 +3188,8 @@
             const estado = eq.estado || 'Pendiente';
             const badgeCls = `badge-${estado.toLowerCase()}`;
             const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-            const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo, 's128') || fallbackLogo;
+            const localLogo = (typeof window.findLocalSc3Logo === 'function') ? window.findLocalSc3Logo(eq.nombre, eq.tag) : null;
+            const logoSrc = localLogo || normalizarUrlDriveImagen(eq.logoRaw || eq.logo, 's128') || fallbackLogo;
             const procCorta = normalizarProcedenciaCorta(eq.procedencia);
 
             const tieneCuentasExt = (eq.titulares || []).some(t => esCuentaExtDistinta(t.riotIdMain, t.riotIdLas)) ||
@@ -3319,7 +3322,8 @@
             const estado = eq.estado || 'Pendiente';
             const badgeCls = `badge-${estado.toLowerCase()}`;
             const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
-            const logoSrc = normalizarUrlDriveImagen(eq.logoRaw || eq.logo, 's128') || fallbackLogo;
+            const localLogo = (typeof window.findLocalSc3Logo === 'function') ? window.findLocalSc3Logo(eq.nombre, eq.tag) : null;
+            const logoSrc = localLogo || normalizarUrlDriveImagen(eq.logoRaw || eq.logo, 's128') || fallbackLogo;
             const procCorta = normalizarProcedenciaCorta(eq.procedencia);
 
             const capTel = eq.capitan?.telefono || '';
@@ -3570,7 +3574,8 @@
 
                 const fallbackLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'LBL')}&background=0B1320&color=34d399&size=128&bold=true`;
                 const logoVal = eq.logoRaw || eq.logo || '';
-                const logoDriveUrl = normalizarUrlDriveImagen(logoVal) || fallbackLogo;
+                const localLogo = (typeof window.findLocalSc3Logo === 'function') ? window.findLocalSc3Logo(eq.nombre, eq.tag) : null;
+                const logoDriveUrl = localLogo || normalizarUrlDriveImagen(logoVal) || fallbackLogo;
 
                 const elLogo = document.getElementById('m-logo');
                 if (elLogo) elLogo.src = logoDriveUrl;

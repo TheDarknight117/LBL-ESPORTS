@@ -174,7 +174,7 @@ const server = http.createServer((req, res) => {
     }
 
     // PROXY CON CACHÉ PARA IMÁGENES DE GOOGLE DRIVE (Elimina Rate Limit 429)
-    if (pathname === '/api/drive-proxy') {
+    if (pathname === '/api/drive-proxy' || pathname === '/drive-proxy') {
         const id = urlObj.searchParams.get('id');
         const size = urlObj.searchParams.get('sz') || 's800';
         if (!id) {
@@ -185,8 +185,9 @@ const server = http.createServer((req, res) => {
         fetchDriveImage(id, size, (err, item) => {
             if (res.headersSent || res.writableEnded) return;
             if (err || !item) {
-                res.writeHead(302, { 'Location': `https://lh3.googleusercontent.com/d/${id}=${size}` });
-                return res.end();
+                // Si Google Drive no permite la descarga directa o da 500, responder 404 limpio
+                res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                return res.end('Logo no disponible en Drive');
             }
 
             res.writeHead(200, {

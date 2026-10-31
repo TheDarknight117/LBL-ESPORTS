@@ -13,6 +13,7 @@ const ASSETS = [
   '/assets/qualifier.json',
   '/auditoria-core.js',
   '/staff-config.js',
+  '/sc3-logos.js',
   '/challonge-core.js',
   '/image-optimizer.js',
   '/app-version.js',
