@@ -62,6 +62,15 @@
     padding-right: 0.22em;
     margin-right: -0.22em;
 }
+.text-gradient-purple {
+    background: linear-gradient(to right, #c084fc, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.22em;
+    margin-right: -0.22em;
+}
 
 
 
@@ -365,7 +374,10 @@
                 radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.14) 0%, transparent 50%);
 }
 .glow-purple {
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.08) 45%, transparent 70%);
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.20) 0%, rgba(126, 34, 206, 0.10) 45%, transparent 70%);
+}
+.glow-yellow {
+    background: radial-gradient(circle, rgba(234, 179, 8, 0.14) 0%, rgba(202, 138, 4, 0.05) 45%, transparent 70%);
 }
 
 /* ==========================================================================
@@ -378,6 +390,48 @@
     z-index: 0;
     overflow: hidden;
     background-color: #03060c;
+}
+
+/* ==========================================================================
+   FONDO SECCIÓN CLASIFICACIONES: PATRÓN DE PANAL / HEXÁGONOS EN TONO AMARILLO TENUE
+   ========================================================================== */
+.bg-clasificaciones-honeycomb {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #060502;
+}
+
+.metallic-reflection-yellow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 28%, rgba(255, 255, 255, 0.02) 42%, rgba(234, 179, 8, 0.06) 52%, transparent 68%),
+        radial-gradient(ellipse 80% 55% at 50% 38%, rgba(234, 179, 8, 0.12) 0%, transparent 75%);
+}
+
+/* ==========================================================================
+   FONDO SECCIÓN STAFF: PATRÓN DE PANAL / HEXÁGONOS EN TONO MORADO
+   ========================================================================== */
+.bg-staff-honeycomb {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #05020c;
+}
+
+.metallic-reflection-purple {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 28%, rgba(255, 255, 255, 0.02) 42%, rgba(168, 85, 247, 0.08) 52%, transparent 68%),
+        radial-gradient(ellipse 80% 55% at 50% 38%, rgba(168, 85, 247, 0.16) 0%, transparent 75%);
 }
 
 .honeycomb-svg-mesh {

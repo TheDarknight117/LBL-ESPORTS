@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=192">
-    <script type="module" src="/app-version.js?v=192"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=198">
+    <script type="module" src="/app-version.js?v=198"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -535,12 +535,12 @@
 
             <!-- Indicador de scroll al siguiente afiche (Centrado, ordenado y sin solapamiento) -->
             <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6" style="animation-delay: 0.6s;">
-                <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-cyan-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
-                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-cyan-300 transition-colors">
+                <a onclick="scrollToSection('clasificaciones')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-yellow-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Ir a Clasificaciones">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-yellow-300 transition-colors">
                         Explora la Liga
                     </span>
-                    <span class="w-6 h-6 rounded-full bg-cyan-500/20 group-hover:bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center transition-all">
-                        <i class="fas fa-chevron-down text-[11px] text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
+                    <span class="w-6 h-6 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/30 border border-yellow-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-down text-[11px] text-yellow-400 group-hover:translate-y-0.5 transition-transform duration-300"></i>
                     </span>
                 </a>
             </div>
@@ -551,175 +551,36 @@
          AFICHE 2: CLASIFICATORIOS & SCOUTING (VITRINA HISTÓRICA)
          ==================================================================== -->
     <section id="clasificaciones" class="section-afiche w-full text-center px-4 md:px-6 relative z-10 overflow-hidden">
-        <!-- Luz focal ambiental cian centrado -->
-        <div class="glow-spot-ambient glow-cyan"></div>
-
-        <!-- FONDO COMBINADO: MURAL TIPOGRÁFICO DISPERSO + BRACKETS PLAYOFFS -->
-        <div class="clasificaciones-backdrop">
-            <!-- Capa 1: Malla Isométrica / Retícula Técnica Sutil -->
-            <div class="clasificaciones-iso-grid"></div>
-
-            <!-- Capa 2: Mural de Telemetría Tipográfica en Fuente Técnica de los Bordes (Typewriter) (Solo Desktop) -->
-            <div class="clasificaciones-mural-wrap hidden md:block">
-                <!-- 1. LBL ESPORTS (Superior Izquierda) -->
-                <div class="absolute top-4 sm:top-8 left-3 sm:left-12 lg:left-16 mural-terminal-text text-sm sm:text-lg md:text-xl lg:text-2xl">
-                    <span id="mural-text-1">> LBL ESPORTS</span><span class="mural-cursor">_</span>
-                </div>
-
-                <!-- 2. SCOUTING (Superior Derecha) -->
-                <div class="absolute top-6 sm:top-10 right-3 sm:right-12 lg:right-20 mural-terminal-text text-sm sm:text-lg md:text-xl lg:text-2xl">
-                    <span id="mural-text-2">> SCOUTING</span><span class="mural-cursor">_</span>
-                </div>
-
-                <!-- 3. SOMOS PASIÓN (Flanco Central Izquierdo) -->
-                <div class="absolute top-[44%] -translate-y-1/2 left-2 sm:left-8 lg:left-14 mural-terminal-text text-xs sm:text-base md:text-lg lg:text-xl">
-                    <span id="mural-text-3">// SOMOS PASIÓN</span><span class="mural-cursor">_</span>
-                </div>
-
-                <!-- 4. SOMOS COMPETICIÓN (Flanco Central Derecho) -->
-                <div class="absolute top-[46%] -translate-y-1/2 right-2 sm:right-8 lg:right-14 mural-terminal-text text-xs sm:text-base md:text-lg lg:text-xl">
-                    <span id="mural-text-4">// SOMOS COMPETICIÓN</span><span class="mural-cursor">_</span>
-                </div>
-
-                <!-- 5. SOMOS LBL (Zona Inferior Izquierda para liberar el centro) -->
-                <div class="absolute bottom-6 sm:bottom-10 left-3 sm:left-12 lg:left-16 mural-terminal-text text-xs sm:text-base md:text-lg">
-                    <span id="mural-text-5">// SOMOS LBL</span><span class="mural-cursor">_</span>
-                </div>
-            </div>
-
-            <!-- Capa 3: Esquema Vectorial Asimétrico (Izquierda: Bracket con flujo punteado | Derecha: Radar y Telemetría HUD) -->
-            <svg class="clasificaciones-brackets-svg hidden md:block" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- ══════════════════════════════════════════════════════
-                     FLANCO IZQUIERDO: BRACKET CON CONECTORES PUNTEADOS ANIMADOS
-                     ══════════════════════════════════════════════════════ -->
-                <g class="bracket-playoffs-left">
-                    <!-- Tarjeta Match 01 (RO8 - Superior) -->
-                    <rect x="30" y="130" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="30" y1="153" x2="150" y2="153" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="146" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 01 // RO8</text>
-                    <text x="38" y="169" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED A vs SEED B</text>
-
-                    <!-- Tarjeta Match 02 (RO8 - Inferior) -->
-                    <rect x="30" y="210" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="30" y1="233" x2="150" y2="233" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="226" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 02 // RO8</text>
-                    <text x="38" y="249" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED C vs SEED D</text>
-
-                    <!-- Conector Base Sutil (Match 01 & 02 -> Semifinales) -->
-                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 150 233 H 195 V 193" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-                    <!-- Conector Punteado Animado (Indica la ruta del flujo hacia la box de Semifinales) -->
-                    <path d="M 150 153 H 195 V 193 H 230" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <path d="M 150 233 H 195 V 193" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <circle cx="195" cy="193" r="3.5" fill="#38bdf8"/>
-
-                    <!-- Tarjeta Match Semifinales A -->
-                    <rect x="230" y="170" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.75)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
-                    <line x1="230" y1="193" x2="360" y2="193" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="238" y="186" fill="rgba(56, 189, 248, 0.9)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="238" y="209" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
-
-                    <!-- Tarjeta Match 03 (RO8 B - Superior) -->
-                    <rect x="30" y="340" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="30" y1="363" x2="150" y2="363" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="356" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 03 // RO8</text>
-                    <text x="38" y="379" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED E vs SEED F</text>
-
-                    <!-- Tarjeta Match 04 (RO8 B - Inferior) -->
-                    <rect x="30" y="420" width="120" height="46" rx="6" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.28)" stroke-width="1.2"/>
-                    <line x1="30" y1="443" x2="150" y2="443" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="38" y="436" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5" font-weight="700">MATCH 04 // RO8</text>
-                    <text x="38" y="459" fill="rgba(255, 255, 255, 0.55)" font-family="ui-monospace, monospace" font-size="7.5">SEED G vs SEED H</text>
-
-                    <!-- Conectores Base Sutiles (Match 03 & 04 -> Semifinal B) -->
-                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 150 443 H 195 V 403" fill="none" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-                    <!-- Conectores Punteados Animados Semifinal B -->
-                    <path d="M 150 363 H 195 V 403 H 230" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <path d="M 150 443 H 195 V 403" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <circle cx="195" cy="403" r="3.5" fill="#38bdf8"/>
-
-                    <!-- Tarjeta Semifinales B -->
-                    <rect x="230" y="380" width="130" height="46" rx="6" fill="rgba(6, 11, 22, 0.75)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.4"/>
-                    <line x1="230" y1="403" x2="360" y2="403" stroke="rgba(6, 182, 212, 0.22)" stroke-width="1"/>
-                    <text x="238" y="396" fill="rgba(56, 189, 248, 0.9)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">SEMIFINALS // BO3</text>
-                    <text x="238" y="419" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">WINNER ADVANCES</text>
-
-                    <!-- Conector de Semifinales -> Gran Final -->
-                    <path d="M 360 193 H 415 V 298 H 455" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 360 403 H 415 V 298" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 360 193 H 415 V 298 H 455" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <path d="M 360 403 H 415 V 298" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <circle cx="415" cy="298" r="4.5" fill="#38bdf8"/>
-                </g>
-
-                <!-- ══════════════════════════════════════════════════════
-                     FLANCO DERECHO: RADAR TÁCTICO & TELEMETRÍA HUD ESPORTS
-                     ══════════════════════════════════════════════════════ -->
-                <g class="radar-telemetry-right">
-                    <!-- Anillos Concéntricos de Radar -->
-                    <circle cx="1240" cy="240" r="105" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1.2" stroke-dasharray="4 4"/>
-                    <circle cx="1240" cy="240" r="75" stroke="rgba(6, 182, 212, 0.35)" stroke-width="1.3"/>
-                    <circle cx="1240" cy="240" r="45" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" stroke-dasharray="2 3"/>
-                    <circle cx="1240" cy="240" r="15" stroke="rgba(56, 189, 248, 0.6)" stroke-width="1.4"/>
-                    <circle cx="1240" cy="240" r="3" fill="#38bdf8"/>
-
-                    <!-- Retícula Cruzada de Ejes X e Y -->
-                    <line x1="1120" y1="240" x2="1360" y2="240" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1"/>
-                    <line x1="1240" y1="120" x2="1240" y2="360" stroke="rgba(6, 182, 212, 0.25)" stroke-width="1"/>
-
-                    <!-- Haz Giratorio de Radar Animado -->
-                    <line x1="1240" y1="240" x2="1340" y2="200" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" class="radar-sweep-anim"/>
-
-                    <!-- Puntos de Detección en el Radar -->
-                    <circle cx="1210" cy="190" r="3" fill="#06b6d4"/>
-                    <circle cx="1275" cy="285" r="3" fill="#38bdf8"/>
-                    <circle cx="1185" cy="265" r="2.5" fill="#22c55e"/>
-
-                    <!-- Panel HUD de Telemetría Inferior -->
-                    <rect x="1110" y="380" width="260" height="90" rx="8" fill="rgba(6, 11, 22, 0.65)" stroke="rgba(6, 182, 212, 0.3)" stroke-width="1.2"/>
-                    <line x1="1110" y1="405" x2="1370" y2="405" stroke="rgba(6, 182, 212, 0.18)" stroke-width="1"/>
-                    <text x="1122" y="398" fill="rgba(56, 189, 248, 0.85)" font-family="ui-monospace, monospace" font-size="8" font-weight="700">CIRCUIT MATRIX // LIVE TELEMETRY</text>
-                    <text x="1122" y="423" fill="rgba(255, 255, 255, 0.65)" font-family="ui-monospace, monospace" font-size="7.5">ACTIVE SEEDS: 16 TEAMS [QUALIFIED]</text>
-                    <text x="1122" y="440" fill="rgba(6, 182, 212, 0.7)" font-family="ui-monospace, monospace" font-size="7.5">STATUS: SCANNING TALENT DATASTREAM</text>
-                    <text x="1122" y="457" fill="rgba(34, 197, 94, 0.85)" font-family="ui-monospace, monospace" font-size="7.5">SYSTEM HEALTH: 100% // NO ANOMALIES</text>
-
-                    <!-- Conector Punteado hacia el Centro -->
-                    <path d="M 1110 425 H 1050 V 300 H 1010" fill="none" stroke="#06b6d4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="bracket-flow-dash"/>
-                    <circle cx="1050" cy="300" r="3.5" fill="#38bdf8"/>
-                </g>
+        <!-- Fondo Atmosférico: Patrón de panal/hexágonos en tono amarillo tenue idéntico a sponsors con viñetas y reflejo metálico -->
+        <div class="bg-clasificaciones-honeycomb">
+            <!-- Malla Vectorial Hexagonal Seamless (Modelo Limpio Sin Ruido Visual) -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern-clasificaciones" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern-clasificaciones)"/>
             </svg>
 
-            <!-- Micro-etiquetas de Bracket y Telemetría Histórica (Solo Desktop) -->
-            <div class="absolute top-7 left-6 md:left-10 hidden md:flex items-center gap-2 font-mono text-[9px] md:text-[10px] text-cyan-400/70 uppercase select-none tracking-wider">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span>BRACKET.STAGE // PLAYOFFS_DOUBLE_ELIM</span>
-            </div>
+            <!-- Capa de Reflejos Metálicos en Amarillo Tenue / Dorado -->
+            <div class="metallic-reflection-yellow"></div>
 
-            <div class="absolute top-7 right-6 md:right-10 hidden md:flex items-center gap-2 font-mono text-[9px] md:text-[10px] text-cyan-400/70 uppercase select-none tracking-wider">
-                <span>HISTORICAL RECORD // 2024-2026</span>
-                <span class="text-cyan-400/60 font-bold">⌖</span>
-            </div>
-
-            <div class="absolute bottom-6 left-6 md:left-10 hidden md:flex items-center gap-2 font-mono text-[9px] text-slate-400/60 uppercase select-none tracking-widest">
-                <span>PLAYOFFS: [RO8 ──► SEMIFINALS ──► GRAND FINALS]</span>
-            </div>
-
-            <div class="absolute bottom-6 right-6 md:right-10 hidden md:flex items-center gap-2 font-mono text-[9px] text-slate-400/60 uppercase select-none tracking-widest">
-                <span>DB_QUERY: TALENT_DISCOVERY // OK</span>
-            </div>
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
         </div>
+
+        <!-- Luz focal ambiental amarillo tenue -->
+        <div class="glow-spot-ambient glow-yellow"></div>
 
         <!-- CONTENIDO PRINCIPAL EN PLANO SUPERIOR (Z-20) POR ENCIMA DE BRACKETS Y FONDO -->
         <div class="max-w-5xl mx-auto w-full relative z-20 flex flex-col items-center">
             <div class="text-center mb-3 sm:mb-5 md:mb-7">
-                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2">
-                    <i class="fas fa-trophy text-[9px]"></i> TORNEOS DE CLASIFICACIÓN
+                <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 rounded-full bg-yellow-950/40 border border-yellow-500/30 text-yellow-400 font-black text-[9px] sm:text-[10px] tracking-widest uppercase mb-1.5 sm:mb-2">
+                    <i class="fas fa-trophy text-[9px] text-yellow-400"></i> TORNEOS DE CLASIFICACIÓN
                 </div>
                 <h2 class="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-1.5 sm:mb-2">
-                    NUESTRAS <span class="text-gradient-cyan">CLASIFICACIONES</span>
+                    NUESTRAS <span class="text-gradient-gold">CLASIFICACIONES</span>
                 </h2>
                 <p class="text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed px-2">
                     ¿Quieres buscar equipo o algún jugador? Accede a la información de nuestros torneos clasificatorios oficiales.
@@ -730,10 +591,10 @@
             <div class="relative w-full overflow-hidden mask-gradient py-1 sm:py-2">
                 <div id="marquee-track" class="flex flex-row gap-4 sm:gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-3 sm:pb-4 pt-1 sm:pt-2 touch-pan-y overscroll-x-contain">
                     <!-- Set 1 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                     <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
@@ -741,10 +602,10 @@
                     </a>
                     
                     <!-- Set 2 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                     <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
@@ -752,10 +613,10 @@
                     </a>
 
                     <!-- Set 3 (Amplitud para monitores Ultra-Wide) -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                     <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
@@ -763,10 +624,10 @@
                     </a>
 
                     <!-- Set 4 -->
-                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
-                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-cyan-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <a href="scouting?torneo=scouting2" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/logo2.webp" loading="lazy" decoding="async" onerror="this.src='assets/logo2.png'" alt="Scouting Tournament 2" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
                     <a href="scouting?torneo=qualifier" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-rose-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(244,63,94,0.25)]">
@@ -963,117 +824,27 @@
          AFICHE 5: NUESTRO STAFF & COMUNIDAD
          ==================================================================== -->
     <section id="staff" class="section-afiche w-full px-4 md:px-6 relative z-10 overflow-hidden">
+        <!-- Fondo Atmosférico: Patrón de panal/hexágonos en tono morado idéntico a sponsors con viñetas y reflejo metálico -->
+        <div class="bg-staff-honeycomb">
+            <!-- Malla Vectorial Hexagonal Seamless (Modelo Limpio Sin Ruido Visual) -->
+            <svg class="honeycomb-svg-mesh" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hex-grid-pattern-staff" patternUnits="userSpaceOnUse" width="52" height="90">
+                        <path fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" d="m0,15 26-15 26,15v30l-26,15-26-15zM26,60v30"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hex-grid-pattern-staff)"/>
+            </svg>
+
+            <!-- Capa de Reflejos Metálicos Morados -->
+            <div class="metallic-reflection-purple"></div>
+
+            <!-- Viñetas de Fundido Superior e Inferior para Transición Limpia entre Afiches -->
+            <div class="section-vignette-blend"></div>
+        </div>
+
         <!-- Luz focal ambiental violeta/hextech -->
         <div class="glow-spot-ambient glow-purple"></div>
-
-        <!-- FONDO HUD TÁCTICO: TELEMETRÍA, COORDENADAS Y DETALLES ESTILO VALORANT -->
-        <div class="staff-hud-backdrop">
-            <!-- Malla táctica de micro-puntos en todo el fondo (Dot Grid) -->
-            <div class="hud-dot-grid"></div>
-
-            <!-- Marcadores angulares de esquina más nítidos -->
-            <div class="hud-bracket hud-bracket-tl hidden sm:block"></div>
-            <div class="hud-bracket hud-bracket-tr hidden sm:block"></div>
-            <div class="hud-bracket hud-bracket-bl hidden sm:block"></div>
-            <div class="hud-bracket hud-bracket-br hidden sm:block"></div>
-
-            <!-- Cruces tácticas de calibración esparcidas -->
-            <span class="hud-crosshair top-8 left-12 hidden md:block">+</span>
-            <span class="hud-crosshair top-8 right-12 hidden md:block">+</span>
-            <span class="hud-crosshair bottom-10 left-12 hidden md:block">+</span>
-            <span class="hud-crosshair bottom-10 right-12 hidden md:block">+</span>
-            <span class="hud-crosshair top-1/2 left-16 hidden xl:block opacity-70">+</span>
-            <span class="hud-crosshair top-1/2 right-16 hidden xl:block opacity-70">+</span>
-
-            <!-- Flechas y coordenadas métricas esparcidas -->
-            <span class="absolute top-16 left-1/3 text-[9px] font-mono text-cyan-400/60 hidden lg:block select-none">▲ [X: 412]</span>
-            <span class="absolute top-16 right-1/3 text-[9px] font-mono text-purple-400/60 hidden lg:block select-none">▼ [Y: 890]</span>
-
-            <!-- Esquina Superior Izquierda: Coordenadas y Ubicación de Bolivia (Solo Desktop) -->
-            <div class="absolute top-4 sm:top-6 left-4 sm:left-7 hidden md:flex flex-col gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-cyan-400/70 uppercase select-none hud-pulse-glow">
-                <div class="flex items-center gap-2">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
-                    </span>
-                    <span>LOC // 16.5000° S, 68.1500° W</span>
-                </div>
-                <span class="text-[8px] sm:text-[9px] text-slate-400/60 pl-4">REGION // LATAM-SOUTH · BOLIVIA</span>
-            </div>
-
-            <!-- Centro Superior Izquierdo: Badges técnicos estilo Valorant -->
-            <div class="absolute top-6 left-[28%] hidden xl:flex items-center gap-2 select-none">
-                <span class="hud-tech-badge">
-                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>CALIB: 99.8%</span>
-                </span>
-                <span class="text-[8px] font-mono text-slate-400/55">SEC_05A</span>
-            </div>
-
-            <!-- Centro Superior Derecho: Badges de Gobernanza estilo Valorant -->
-            <div class="absolute top-6 right-[28%] hidden xl:flex items-center gap-2 select-none">
-                <span class="text-[8px] font-mono text-purple-400/70">SEC // CORE</span>
-                <span class="hud-tech-badge-purple">
-                    <i class="fas fa-shield-alt text-[8px]"></i>
-                    <span>BOARD_ACTIVE</span>
-                </span>
-            </div>
-
-            <!-- Esquina Superior Derecha: Índice de Sección y Estado de Gobernanza (Solo Desktop) -->
-            <div class="absolute top-4 sm:top-6 right-4 sm:right-7 hidden md:flex flex-col items-end gap-0.5 text-[9px] sm:text-[10px] font-mono tracking-wider text-purple-400/75 uppercase select-none hud-pulse-glow">
-                <span class="flex items-center gap-1.5">
-                    <span>SEC.05 // MANAGEMENT & DIRECTORS</span>
-                    <span class="w-1.5 h-1.5 rounded-sm bg-purple-400 animate-pulse"></span>
-                </span>
-                <span class="text-[8px] sm:text-[9px] text-slate-400/60">STATUS // ACTIVE GOVERNANCE</span>
-            </div>
-
-            <!-- Lateral Izquierdo (Centro): Regla táctica milimétrica vertical -->
-            <div class="hud-tick-ruler left-4 sm:left-6 top-1/2 -translate-y-1/2 hidden lg:flex">
-                <span class="hud-tick-lg"></span>
-                <span class="hud-tick"></span>
-                <span class="hud-tick"></span>
-                <span class="hud-tick-lg"></span>
-                <span class="hud-tick"></span>
-                <span class="hud-tick"></span>
-                <span class="hud-tick-lg"></span>
-                <span class="text-[8px] font-mono text-cyan-400/70 mt-1 pl-0.5">AXIS_Y</span>
-            </div>
-
-            <!-- Lateral Derecho (Centro): Micro-radar concéntrico giratorio estilo Champions -->
-            <div class="absolute top-1/2 -translate-y-1/2 right-6 hidden lg:flex flex-col items-center gap-1.5 opacity-80 select-none">
-                <svg class="w-7 h-7 text-purple-400 hud-spin-reticle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-                    <circle cx="12" cy="12" r="10" stroke-opacity="0.45" stroke-dasharray="2 3"/>
-                    <circle cx="12" cy="12" r="5" stroke-opacity="0.75"/>
-                    <line x1="12" y1="2" x2="12" y2="7"/>
-                    <line x1="12" y1="17" x2="12" y2="22"/>
-                    <line x1="2" y1="12" x2="7" y2="12"/>
-                    <line x1="17" y1="12" x2="22" y2="12"/>
-                </svg>
-                <span class="text-[7.5px] font-mono tracking-widest text-purple-300/80 uppercase">RADAR // 24Hz</span>
-            </div>
-
-            <!-- Esquina Inferior Izquierda: Telemetría de Operaciones (+20% opacidad) -->
-            <div class="absolute bottom-5 left-7 hidden md:flex flex-col gap-0.5 text-[9px] font-mono tracking-widest text-slate-400/55 uppercase select-none">
-                <span>DIR.OPS // LBL_EXEC_BOARD</span>
-                <span>COMMISSION // PROTOCOL VER.2026</span>
-            </div>
-
-            <!-- Barra de Telemetría Inferior Central (Estilo Valorant HUD) -->
-            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 hidden md:flex items-center gap-4 text-[8px] sm:text-[9px] font-mono tracking-wider text-slate-400/60 uppercase select-none">
-                <span>SIG: ■■■■□</span>
-                <span class="text-cyan-400/50">•</span>
-                <span>CHAMPIONSHIP CIRCUIT 2026</span>
-                <span class="text-cyan-400/50">•</span>
-                <span>PKT_STREAM: OK</span>
-            </div>
-
-            <!-- Esquina Inferior Derecha: Matriz de Retícula (+20% opacidad) -->
-            <div class="absolute bottom-5 right-7 hidden md:flex items-center gap-2 text-[9px] font-mono tracking-wider text-slate-400/55 uppercase select-none">
-                <span>GRID.REF // 84-77-ALPHA</span>
-                <span class="text-cyan-400/60 font-bold">+</span>
-            </div>
-        </div>
 
         <div class="max-w-6xl mx-auto w-full relative z-10">
             <!-- Layout Principal: Acordeón de Trapecios a la Izquierda + Texto de Información a la Derecha -->
@@ -1087,13 +858,13 @@
                 <!-- Derecha: Texto Detallado del Ejecutivo con Animación Fade -->
                 <div class="w-full lg:flex-1 flex flex-col justify-center text-left py-1 sm:py-2 px-2 md:px-6">
                     <div id="exec-active-badge-container" class="mb-2 sm:mb-3">
-                        <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 hidden">
+                        <span id="exec-active-role" class="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-purple-500/30 text-purple-400 bg-purple-500/10 hidden">
                             STAFF LBL
                         </span>
                     </div>
                     
                     <h3 id="exec-active-name" class="text-2xl sm:text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-2 sm:mb-4 exec-text-fade">
-                        NUESTRO STAFF
+                        NUESTRO <span class="text-gradient-purple">STAFF</span>
                     </h3>
                     
                     <p id="exec-active-desc" class="text-gray-300 text-xs sm:text-sm md:text-base font-medium leading-relaxed max-w-xl exec-text-fade">
@@ -1105,12 +876,12 @@
 
             <!-- Indicador de scroll: Volver al inicio (Centrado, ordenado y sin solapamiento) -->
             <div class="afiche-scroll-wrap fade-in-up mt-3 sm:mt-5 md:mt-6">
-                <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-blue-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
-                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-blue-300 transition-colors">
+                <a onclick="scrollToSection('hero')" role="button" class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-950/80 hover:bg-slate-900 border border-white/20 hover:border-purple-400/60 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 cursor-pointer active:scale-95 select-none" aria-label="Volver al Inicio">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-widest text-slate-100 group-hover:text-purple-300 transition-colors">
                         Volver al Inicio
                     </span>
-                    <span class="w-6 h-6 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 border border-blue-400/40 flex items-center justify-center transition-all">
-                        <i class="fas fa-chevron-up text-[11px] text-blue-400 group-hover:-translate-y-0.5 transition-transform duration-300"></i>
+                    <span class="w-6 h-6 rounded-full bg-purple-500/20 group-hover:bg-purple-500/30 border border-purple-400/40 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-up text-[11px] text-purple-400 group-hover:-translate-y-0.5 transition-transform duration-300"></i>
                     </span>
                 </a>
             </div>
@@ -1424,59 +1195,9 @@
                 clearTimeout(marqueeHoverTimeout);
                 isHovered = false;
             });
-
-            // Iniciar animación de telemetría de teletipo para el mural técnico
-            initMuralTypewriters();
         });
 
-        // Telemetría Typewriter: Animación de escritura letra por letra para el mural de Clasificaciones
-        function initMuralTypewriters() {
-            const muralItems = [
-                { id: 'mural-text-1', fullText: 'LBL ESPORTS', prefix: '> ' },
-                { id: 'mural-text-2', fullText: 'SCOUTING', prefix: '> ' },
-                { id: 'mural-text-3', fullText: 'SOMOS PASIÓN', prefix: '// ' },
-                { id: 'mural-text-4', fullText: 'SOMOS COMPETICIÓN', prefix: '// ' },
-                { id: 'mural-text-5', fullText: 'SOMOS LBL', prefix: '// ' }
-            ];
 
-            muralItems.forEach((item, index) => {
-                const el = document.getElementById(item.id);
-                if (!el) return;
-
-                let charIndex = 0;
-                let isDeleting = false;
-                const total = item.fullText.length;
-
-                function typeStep() {
-                    try {
-                        if (!isDeleting) {
-                            charIndex++;
-                            el.textContent = item.prefix + item.fullText.substring(0, charIndex);
-                            if (charIndex === total) {
-                                isDeleting = true;
-                                setTimeout(typeStep, 3400 + (index * 400));
-                                return;
-                            }
-                            setTimeout(typeStep, 75 + Math.random() * 35);
-                        } else {
-                            charIndex--;
-                            el.textContent = item.prefix + item.fullText.substring(0, charIndex);
-                            if (charIndex === 0) {
-                                isDeleting = false;
-                                setTimeout(typeStep, 1000 + (index * 300));
-                                return;
-                            }
-                            setTimeout(typeStep, 35);
-                        }
-                    } catch (e) {
-                        console.warn('[LBL Mural] Error en typeStep:', e);
-                    }
-                }
-
-                // Iniciar desfasados para generar ritmo orgánico de consola
-                setTimeout(typeStep, index * 650);
-            });
-        }
 
         // Script del Carrusel y Módulo Interactivo de Sponsors LBL
         const sponsorsData = [
@@ -1923,21 +1644,21 @@
 
                 if (activeExecIndex === -1) {
                     // Estado 1: Todas acopladas uniformemente (nombre oculto)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/50 opacity-85 hover:opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-500/40 group-hover:bg-blue-400 transition-colors";
-                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-blue-400`;
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-purple-500/50 opacity-85 hover:opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-purple-500/40 group-hover:bg-purple-400 transition-colors";
+                    if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-400 group-hover:text-purple-400`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
                     if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-100 filter brightness-90 contrast-100 group-hover:scale-105 group-hover:brightness-100";
                 } else if (isActive) {
                     // Estado 2: Tarjeta Seleccionada Expandida (nombre visible con fade-in y zoom de imagen)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-blue-500 shadow-[0_0_35px_rgba(59,130,246,0.45)] ring-1 ring-blue-400/40 opacity-100 scale-100 flex flex-col justify-between group";
-                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_#60a5fa]";
-                    if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]`;
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-purple-500 shadow-[0_0_35px_rgba(168,85,247,0.45)] ring-1 ring-purple-400/40 opacity-100 scale-100 flex flex-col justify-between group";
+                    if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-purple-400 animate-pulse shadow-[0_0_10px_#c084fc]";
+                    if (icon) icon.className = `${exec.icon} text-4xl md:text-6xl mb-2 md:mb-3 transition-all duration-700 group-hover:scale-110 text-purple-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]`;
                     if (title) title.className = "text-sm md:text-xl font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-100 translate-y-0 w-full px-1 md:px-2 block drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]";
                     if (img) img.className = "w-full h-full object-cover object-center transition-all duration-700 ease-out scale-110 filter brightness-105 contrast-105";
                 } else {
                     // Estado 2: Tarjetas Inactivas Condensadas (nombre oculto y atenuación)
-                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-blue-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
+                    card.className = "trapezoid-card cursor-pointer relative overflow-hidden rounded-2xl border border-white/10 hover:border-purple-500/30 opacity-40 hover:opacity-80 scale-[0.98] flex flex-col justify-between group";
                     if (dot) dot.className = "w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-gray-700/60";
                     if (icon) icon.className = `${exec.icon} text-2xl md:text-4xl mb-2 md:mb-3 transition-all duration-500 group-hover:scale-110 text-gray-500`;
                     if (title) title.className = "text-xs md:text-lg font-black text-white uppercase tracking-tight leading-none transition-all duration-500 truncate opacity-0 translate-y-2 pointer-events-none";
@@ -1965,13 +1686,13 @@
                     // Texto del Estado 1 Predeterminado
                     roleEl.innerText = '';
                     roleEl.className = 'hidden';
-                    nameEl.innerText = 'NUESTRO STAFF';
+                    nameEl.innerHTML = 'NUESTRO <span class="text-gradient-purple">STAFF</span>';
                     descEl.innerHTML = '<span class="text-gray-300 text-sm md:text-base font-medium leading-relaxed block">Un equipo multidisciplinario y apasionado al mando de la gestión, desarrollo operativo, administración financiera, regulación legal y dirección creativa de la Liga Boliviana de League of Legends.</span>';
                 } else {
                     // Texto del Estado 2 (Miembro Seleccionado con salto de línea)
                     const exec = executivesData[activeExecIndex];
                     roleEl.innerText = exec.role;
-                    roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-blue-500/30 text-blue-400 bg-blue-500/10 inline-block';
+                    roleEl.className = 'text-xs font-black tracking-widest uppercase px-3 py-1 rounded-lg border border-purple-500/30 text-purple-400 bg-purple-500/10 inline-block';
                     nameEl.innerText = exec.name;
                     descEl.innerHTML = `
                         <span class="block text-gray-200 text-sm md:text-base font-medium leading-relaxed mb-3">${exec.background}</span>
