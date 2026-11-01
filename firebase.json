@@ -5,7 +5,10 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "backups/**",
+      "**/*.xlsx",
+      "**/uploads/**"
     ],
     "headers": [
       {
@@ -148,7 +151,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=3600, must-revalidate"
+            "value": "public, max-age=2592000, stale-while-revalidate=86400"
           }
         ]
       },
@@ -157,7 +160,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=86400, must-revalidate"
+            "value": "public, max-age=2592000, stale-while-revalidate=86400"
           }
         ]
       }

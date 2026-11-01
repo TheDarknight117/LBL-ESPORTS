@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=241">
+    <link rel="stylesheet" href="/dist/output.css?v=242">
 
     <style>
         @font-face {
@@ -670,6 +670,22 @@
             "eie": "/assets/Equipos%20SC3/Sindicato%20de%20EIE.png",
             "swc": "/assets/Equipos%20SC3/Sindicato%20wilcard.png",
             "sr": "/assets/Equipos%20SC3/Souls%20Reaper.png",
+            "slr": "/assets/Equipos%20SC3/Souls%20Reaper.png",
+            "kxs": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "ppt": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "tbb": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tnl": "/assets/Equipos%20SC3/Turnalia.png",
+            "rng": "/assets/Equipos%20SC3/RIFT%20RANGERS%20(OMEGA).png",
+            "feh": "/assets/Equipos%20SC3/iron%20hells.png",
+            "dsd": "/assets/Equipos%20SC3/dissidents.png",
+            "pre": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "pis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "tla": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "pro": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "t4": "/assets/Equipos%20SC3/tragedy.png",
+            "nbs": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "kxl": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "skn": "/assets/Equipos%20SC3/snake%20nest.png",
             "tsv": "/assets/Equipos%20SC3/THE%20SAVIORS.png",
             "tlp": "/assets/Equipos%20SC3/The%20Low%20Project.png",
             "smp": "/assets/Equipos%20SC3/The%20Simpson.png",
@@ -771,7 +787,204 @@
         }
 
         // Directorio de equipos de Scouting 3 (con logos subidos y rosters)
-        let scouting3TeamsMap = {}; 
+        let scouting3TeamsMap = {};
+        let scouting3TagsMap = {};
+
+        const SCOUTING3_OFFICIAL_TAGS = {
+            'souls reaper': 'SLR',
+            'soul reaper': 'SLR',
+            'kaoxitos skyblue (academy)': 'KXS',
+            'kaoxitos skyblue': 'KXS',
+            'kaoxitos academy': 'KXS',
+            'pisa patitos gaming': 'PPT',
+            'pisa patitos': 'PPT',
+            'team blood': 'TBB',
+            'las cabras de lugano': 'LCL',
+            'las cabras de laguno': 'LCL',
+            'cabras de lugano': 'LCL',
+            'postrecitos gaming': 'PTG',
+            'postrecitos': 'PTG',
+            'asociacion de troncos expertos': 'ATE',
+            'asociacion de troncos': 'ATE',
+            'turnalia': 'TNL',
+            'rift rangers (omega)': 'RNG',
+            'rift rangers omega': 'RNG',
+            'rift rangers (alpha)': 'RNG',
+            'rift rangers alpha': 'RNG',
+            'rift rangers': 'RNG',
+            'dead players gaming': 'DPG',
+            'dead players': 'DPG',
+            'bolitas': 'BOL',
+            'bolitoons': 'BLT',
+            'sindicato wildcard': 'SWC',
+            'sindicato wilcard': 'SWC',
+            'sindicato de eie': 'EIE',
+            'sindicato eie': 'EIE',
+            'proyecto q': 'PRO',
+            'pent-hexch': 'PHX',
+            'pent hexch': 'PHX',
+            'new rapture sport': 'NRS',
+            'new rapture sports': 'NRS',
+            'new rapture esports': 'NRS',
+            'new rapture': 'NRS',
+            'the simpson': 'TSN',
+            'the simpsons': 'TSN',
+            'camino a laja reformed': 'CLR',
+            'camino a laja': 'CLR',
+            'los chipis': 'PIS',
+            'chipis': 'PIS',
+            'iron hells academy': 'IHA',
+            'iron hells': 'FEH',
+            'the low project': 'TLP',
+            'low project': 'TLP',
+            'los 420': '420',
+            'pasteurizados gaming': 'PTG',
+            'patitos gaming': 'PTG',
+            'dissidents': 'DSD',
+            'phoenix rampage': 'PRE',
+            'voiden abyss club': 'VAC',
+            'voiden abyss': 'VAC',
+            'shadowborns gaming': 'SBG',
+            'shadowborns': 'SBG',
+            'triple alianza': 'TLA',
+            'b1 lol sport': 'B1',
+            'pacha lovers': 'PLF',
+            'revelation gaming': 'RVG',
+            'revelation': 'RVG',
+            'ctk gaming': 'CTK',
+            'tr4gedy': 'T4',
+            'tragedy': 'T4',
+            'itsd zaun': 'ITSD',
+            'the saviors': 'TWD',
+            'saviors': 'TWD',
+            'nexus breakers': 'NBS',
+            'siloko': 'SLK',
+            'kaox las': 'KXL',
+            'nothing cash': 'NTC',
+            'inka warriors gaming': 'IWG',
+            'pura paloma gaming': 'PPG',
+            'snake nest': 'SKN',
+            'md esports': 'MD',
+            'cementerio de elefantes': 'CDE',
+            'armeros gaming': 'ARG',
+            'phoenix rising gaming': 'PRG',
+            'legion': 'LEG',
+            'rgb': 'RGB'
+        };
+
+        function normalizarTextoParaMatch(str) {
+            if (!str) return '';
+            return str
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/\[[^\]]*\]/g, '')
+                .replace(/\([^)]*\)/g, '')
+                .replace(/[^a-z0-9]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function stemPalabras(str) {
+            if (!str) return '';
+            return normalizarTextoParaMatch(str)
+                .split(' ')
+                .map(w => w.endsWith('s') && w.length > 3 ? w.slice(0, -1) : w)
+                .join(' ');
+        }
+
+        function resolveScouting3Team(rawName, rawTag = '') {
+            const name = String(rawName || '').trim();
+            if (!name) return { name: '', tag: '', logo: '', titulares: [] };
+
+            const clean = name.toLowerCase();
+            const norm = normalizarTextoParaMatch(clean);
+            const stem = stemPalabras(clean);
+            const tagCandidate = String(rawTag || '').trim().toUpperCase();
+
+            // 1. Coincidencia exacta o normalizada en el mapa dinámico de Scouting 3
+            if (scouting3TeamsMap[clean]) return scouting3TeamsMap[clean];
+            if (scouting3TeamsMap[norm]) return scouting3TeamsMap[norm];
+            if (scouting3TeamsMap[stem]) return scouting3TeamsMap[stem];
+
+            // 2. Coincidencia por alias conocidos (ej. "soul reaper" <-> "souls reaper")
+            const aliasMap = {
+                'soul reaper': 'souls reaper',
+                'souls reaper': 'souls reaper',
+                'kaoxitos skyblue': 'kaoxitos skyblue (academy)',
+                'kaoxitos skyblue (academy)': 'kaoxitos skyblue (academy)',
+                'pisa patitos': 'pisa patitos gaming',
+                'pisa patitos gaming': 'pisa patitos gaming',
+                'las cabras de laguno': 'las cabras de lugano',
+                'cabras de laguno': 'las cabras de lugano',
+                'cabras de lugano': 'las cabras de lugano',
+                'las cabras de lugano': 'las cabras de lugano',
+                'asociacion de troncos': 'asociacion de troncos expertos',
+                'asociacion de troncos expertos': 'asociacion de troncos expertos',
+                'sindicato wilcard': 'sindicato wildcard',
+                'sindicato wildcard': 'sindicato wildcard',
+                'new rapture': 'new rapture sport',
+                'new rapture sports': 'new rapture sport',
+                'new rapture esports': 'new rapture sport',
+                'new rapture sport': 'new rapture sport',
+                'dead players': 'dead players gaming',
+                'dead players gaming': 'dead players gaming',
+                'postrecitos': 'postrecitos gaming',
+                'postrecitos gaming': 'postrecitos gaming',
+                'camino a laja': 'camino a laja reformed',
+                'the simpsons': 'the simpson',
+                'the simpson': 'the simpson'
+            };
+            const mapped = aliasMap[clean] || aliasMap[norm] || aliasMap[stem];
+            if (mapped) {
+                if (scouting3TeamsMap[mapped]) return scouting3TeamsMap[mapped];
+                const mappedNorm = normalizarTextoParaMatch(mapped);
+                if (scouting3TeamsMap[mappedNorm]) return scouting3TeamsMap[mappedNorm];
+            }
+
+            // 3. Fallback directo a la tabla oficial de tags de Scouting 3
+            if (SCOUTING3_OFFICIAL_TAGS[clean]) {
+                const offTag = SCOUTING3_OFFICIAL_TAGS[clean];
+                return {
+                    name: name,
+                    tag: offTag,
+                    logo: findLocalSc3Logo(clean, offTag) || '',
+                    titulares: []
+                };
+            }
+            if (mapped && SCOUTING3_OFFICIAL_TAGS[mapped]) {
+                const offTag = SCOUTING3_OFFICIAL_TAGS[mapped];
+                return {
+                    name: name,
+                    tag: offTag,
+                    logo: findLocalSc3Logo(mapped, offTag) || '',
+                    titulares: []
+                };
+            }
+
+            // 4. Búsqueda por subcadena en scouting3TeamsMap
+            for (const [k, item] of Object.entries(scouting3TeamsMap)) {
+                if (k.length >= 4 && (clean.includes(k) || k.includes(clean) || norm.includes(k) || k.includes(norm))) {
+                    return item;
+                }
+            }
+
+            // 5. Coincidencia por tag si existe en scouting3TagsMap
+            if (tagCandidate && tagCandidate.length >= 2 && scouting3TagsMap[tagCandidate.toLowerCase()]) {
+                return scouting3TagsMap[tagCandidate.toLowerCase()];
+            }
+
+            // 6. Tag original si es válido y no un substring genérico roto
+            const fallbackTag = (tagCandidate && tagCandidate.length <= 4 && tagCandidate.length >= 2)
+                ? tagCandidate
+                : name.substring(0, 3).toUpperCase();
+
+            return {
+                name: name,
+                tag: fallbackTag,
+                logo: findLocalSc3Logo(clean, fallbackTag) || '',
+                titulares: []
+            };
+        }
 
         // Partidas detectadas desde el torneo en curso
         let liveCronogramaMatches = [];
@@ -844,7 +1057,7 @@
                 rondaDisplay: "RONDA 1 - DOBLE ELIMINACIÓN",
                 state: "upcoming",
                 channel: "",
-                p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
+                p1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXS", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
                 p2: { name: "PHOENIX RISING GAMING", tag: "PRG", logo: "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png" }
             }
         ];
@@ -895,10 +1108,13 @@
         // 1. Cargar Equipos y Logos Oficiales de Scouting 3 (de https://lbl-esports.web.app/scouting?torneo=scouting3)
         async function fetchScouting3RegisteredTeams() {
             try {
-                // A. Primero intentar leer torneos_activos/scouting3_live_sync de Firestore
+                const cachedEarly = localStorage.getItem('lbl_scouting3_public_sanitized_v214') || localStorage.getItem('lbl_scouting3_public_sanitized_v210') || localStorage.getItem('lbl_scouting_equipos_cache');
+                if (cachedEarly) { try { const p = JSON.parse(cachedEarly); if (Array.isArray(p) && p.length > 0) processScoutingTeams(p); } catch(e){} }
+                let fetchedLive = false;
                 const snap = await getDoc(doc(db, "torneos_activos", "scouting3_live_sync"));
                 if (snap.exists() && Array.isArray(snap.data().equipos)) {
                     processScoutingTeams(snap.data().equipos);
+                    fetchedLive = true;
                 } else {
                     // B. Leer de localStorage o de la API de Apps Script de Scouting 3
                     const cached = localStorage.getItem('lbl_scouting3_public_sanitized_v214');
@@ -915,6 +1131,16 @@
             } catch (err) {
                 console.warn("[Scouting 3 Teams] Aviso al consultar equipos de Scouting 3:", err);
             }
+            if (!fetchedLive) {
+                try {
+                    const res = await fetch("https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec");
+                    const json = await res.json();
+                    if (json.success && Array.isArray(json.equipos) && json.equipos.length > 0) {
+                        processScoutingTeams(json.equipos);
+                        try { localStorage.setItem('lbl_scouting3_public_sanitized_v214', JSON.stringify(json.equipos)); } catch(e) {}
+                    }
+                } catch(e) {}
+            }
         }
 
         function processScoutingTeams(equipos) {
@@ -925,13 +1151,23 @@
 
                 const rawLogo = eq.logoRaw || eq.logo || '';
                 const logoNorm = normalizarUrlDriveImagen(rawLogo, 's800');
-                const localPng = findLocalSc3Logo(name, eq.tag);
+                const cleanTag = String(eq.tag || SCOUTING3_OFFICIAL_TAGS[key] || name.substring(0, 3)).trim().toUpperCase();
+                const localPng = findLocalSc3Logo(name, cleanTag);
 
                 scouting3TeamsMap[key] = {
                     name: name,
-                    tag: eq.tag || name.substring(0, 3).toUpperCase(),
+                    tag: cleanTag,
                     logo: localPng || logoNorm,
                     titulares: eq.titulares || []
+                };
+                scouting3TeamsMap[normalizarTextoParaMatch(name)] = scouting3TeamsMap[key];
+                scouting3TeamsMap[stemPalabras(name)] = scouting3TeamsMap[key];
+                if (key.includes('souls')) scouting3TeamsMap[key.replace('souls', 'soul')] = scouting3TeamsMap[key];
+                if (key.includes('soul') && !key.includes('souls')) scouting3TeamsMap[key.replace('soul', 'souls')] = scouting3TeamsMap[key];
+                if (key.includes('laguno')) scouting3TeamsMap[key.replace('laguno', 'lugano')] = scouting3TeamsMap[key];
+                if (key.includes('wilcard')) scouting3TeamsMap[key.replace('wilcard', 'wildcard')] = scouting3TeamsMap[key];
+                if (cleanTag) scouting3TagsMap[cleanTag.toLowerCase()] = scouting3TeamsMap[key];
+                if (false) {
                 };
             });
         }
@@ -1072,8 +1308,8 @@
                     const p1Name = String(p1Ch.name || p1Ch.display_name || p1Ch.nombre || 'TBD').toUpperCase().trim();
                     const p2Name = String(p2Ch.name || p2Ch.display_name || p2Ch.nombre || 'TBD').toUpperCase().trim();
 
-                    const p1S3 = scouting3TeamsMap[p1Name.toLowerCase()] || {};
-                    const p2S3 = scouting3TeamsMap[p2Name.toLowerCase()] || {};
+                    const p1S3 = resolveScouting3Team(p1Name, p1Ch.tag);
+                    const p2S3 = resolveScouting3Team(p2Name, p2Ch.tag);
 
                     const p1Tag = p1S3.tag || p1Ch.tag || p1Name.substring(0, 3).toUpperCase();
                     const p2Tag = p2S3.tag || p2Ch.tag || p2Name.substring(0, 3).toUpperCase();
@@ -1151,16 +1387,16 @@
             } else {
                 // Fallback exacto con las partidas activas del cronograma oficial
                 liveCronogramaMatches = INITIAL_TS3LBL_MATCHES.map((m, idx) => {
-                    const s1 = scouting3TeamsMap[m.p1.name.toLowerCase()] || {};
-                    const s2 = scouting3TeamsMap[m.p2.name.toLowerCase()] || {};
+                    const s1 = resolveScouting3Team(m.p1.name, m.p1.tag);
+                    const s2 = resolveScouting3Team(m.p2.name, m.p2.tag);
                     return {
                         ...m,
                         channel: matchChannelAssignments[m.id] || m.channel || '',
                         isToday: idx < 8,
                         isFuture: idx >= 8,
                         isPast: false,
-                        p1: { ...m.p1, logo: resolveTeamLogo(m.p1, s1) },
-                        p2: { ...m.p2, logo: resolveTeamLogo(m.p2, s2) }
+                        p1: { ...m.p1, tag: s1.tag || m.p1.tag, logo: s1.logo || resolveTeamLogo(m.p1, s1) },
+                        p2: { ...m.p2, tag: s2.tag || m.p2.tag, logo: s2.logo || resolveTeamLogo(m.p2, s2) }
                     };
                 });
                 document.getElementById('detected-matches-count').textContent = `Hoy: ${liveCronogramaMatches.length} Partidas Oficiales TS3LBL`;
@@ -1418,8 +1654,8 @@
                 timeDisplay: formatMinimizedTimeDisplay(m.timeDisplay || (idx === 0 ? '19:00 • HOY' : '21:00 • HOY')),
                 bracket: m.bracket || (m.round < 0 ? 'LOSER BRACKET' : 'WINNER BRACKET'),
                 bestOf: m.bestOf || 'BO1',
-                team1: { name: m.p1.name.toUpperCase().trim(), tag: m.p1.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p1, scouting3TeamsMap[m.p1.name.toLowerCase()]), score: m.score1 || 0 },
-                team2: { name: m.p2.name.toUpperCase().trim(), tag: m.p2.tag.toUpperCase(), seed: "Scouting 3", logo: resolveTeamLogo(m.p2, scouting3TeamsMap[m.p2.name.toLowerCase()]), score: m.score2 || 0 },
+                team1: { name: m.p1.name.toUpperCase().trim(), tag: (resolveScouting3Team(m.p1.name, m.p1.tag).tag || m.p1.tag).toUpperCase(), seed: "Scouting 3", logo: resolveScouting3Team(m.p1.name, m.p1.tag).logo || resolveTeamLogo(m.p1, resolveScouting3Team(m.p1.name, m.p1.tag)), score: m.score1 || 0 },
+                team2: { name: m.p2.name.toUpperCase().trim(), tag: (resolveScouting3Team(m.p2.name, m.p2.tag).tag || m.p2.tag).toUpperCase(), seed: "Scouting 3", logo: resolveScouting3Team(m.p2.name, m.p2.tag).logo || resolveTeamLogo(m.p2, resolveScouting3Team(m.p2.name, m.p2.tag)), score: m.score2 || 0 },
                 status: m.state === 'live' ? 'LIVE' : m.state === 'completed' ? 'COMPLETED' : 'UPCOMING',
                 winner: m.winner || null
             }));
@@ -1467,7 +1703,15 @@
             saveChanges(true);
         });
 
-        */ }); document.getElementById('btn-sync-cronograma').addEventListener('click', () => {
+        */ }); 
+        document.getElementById('btn-sync-cronograma').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-sync-cronograma');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate fa-spin text-red-400"></i> Sincronizando...';
+            await fetchScouting3RegisteredTeams();
+            await detectActiveTournamentFromGestor();
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate text-red-400"></i> Revalidar';
+        });
+        if (false) (() => {
             detectActiveTournamentFromGestor();
         });
 
@@ -1588,11 +1832,11 @@
 
                 row.querySelector(`#input-team1-${idx}`).addEventListener('input', (e) => {
                     m.team1.name = e.target.value.toUpperCase();
-                    m.team1.tag = e.target.value.substring(0, 3).toUpperCase();
+                    m.team1.tag = (resolveScouting3Team(e.target.value).tag || e.target.value.substring(0, 3)).toUpperCase();
                 });
                 row.querySelector(`#input-team2-${idx}`).addEventListener('input', (e) => {
                     m.team2.name = e.target.value.toUpperCase();
-                    m.team2.tag = e.target.value.substring(0, 3).toUpperCase();
+                    m.team2.tag = (resolveScouting3Team(e.target.value).tag || e.target.value.substring(0, 3)).toUpperCase();
                 });
             });
 
@@ -1789,7 +2033,7 @@
         }
 
         function autoFillSpotlight(teamName) {
-            const s3 = scouting3TeamsMap[teamName.toLowerCase()];
+            const s3 = resolveScouting3Team(teamName);
             if (s3 && Array.isArray(s3.titulares) && s3.titulares.length > 0) {
                 const top = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'TOP');
                 const jg = s3.titulares.find(t => String(t.posicion).toUpperCase() === 'JG' || String(t.posicion).toUpperCase() === 'JUNGLE');
@@ -1984,7 +2228,7 @@
             state.secondarySponsorUrl = document.getElementById('select-secondary-sponsor').value;
 
             const spotName = document.getElementById('select-spotlight-team').value;
-            const s3Obj = scouting3TeamsMap[spotName.toLowerCase()] || {};
+            const s3Obj = resolveScouting3Team(spotName);
             state.spotlight = {
                 teamName: spotName,
                 teamTag: s3Obj.tag || spotName.substring(0, 3).toUpperCase(),
@@ -2001,12 +2245,12 @@
 
             // Asegurar que todas las partidas lleven los logos PNG locales sin fondo de Equipos SC3
             state.matches = (state.matches || []).map(m => {
-                const s1 = scouting3TeamsMap[m.team1?.name?.toLowerCase()] || {};
-                const s2 = scouting3TeamsMap[m.team2?.name?.toLowerCase()] || {};
+                const s1 = resolveScouting3Team(m.team1?.name, m.team1?.tag);
+                const s2 = resolveScouting3Team(m.team2?.name, m.team2?.tag);
                 return {
                     ...m,
-                    team1: { ...m.team1, logo: resolveTeamLogo(m.team1, s1) },
-                    team2: { ...m.team2, logo: resolveTeamLogo(m.team2, s2) }
+                    team1: { ...m.team1, tag: s1.tag || m.team1.tag, logo: s1.logo || resolveTeamLogo(m.team1, s1) },
+                    team2: { ...m.team2, tag: s2.tag || m.team2.tag, logo: s2.logo || resolveTeamLogo(m.team2, s2) }
                 };
             });
 

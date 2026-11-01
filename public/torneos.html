@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=240">
+    <link rel="stylesheet" href="/dist/output.css?v=242">
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -454,7 +454,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=235";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=235";
+        import "/app-version.js?v=242";
 
         // ══════════════════════════════════════════════════════════════════
         //  SINCRONIZACIÓN EN TIEMPO REAL: EQUIPOS Y TAGS DE SCOUTING 3
@@ -522,6 +522,43 @@
                 return nomNorm === normRaw;
             });
             if (found) return found;
+
+            // 2b. Coincidencia por Stemming (plurales/singulares ej: souls reaper <-> soul reaper)
+            const stemPalabras = (s) => normalizarTextoParaMatch(s).split(' ').map(w => w.endsWith('s') && w.length > 3 ? w.slice(0, -1) : w).join(' ');
+            const stemRaw = stemPalabras(raw);
+            found = scouting3EquiposCache.find(eq => {
+                const nomStem = stemPalabras(eq.nombre);
+                return nomStem && nomStem === stemRaw;
+            });
+            if (found) return found;
+
+            // 2c. Diccionario de Alias específicos para Challonge vs Scouting 3
+            const ALIAS_S3 = {
+                'soul reaper': 'souls reaper',
+                'souls reaper': 'souls reaper',
+                'las cabras de laguno': 'las cabras de lugano',
+                'cabras de laguno': 'las cabras de lugano',
+                'cabras de lugano': 'las cabras de lugano',
+                'sindicato wilcard': 'sindicato wildcard',
+                'asociacion de troncos': 'asociacion de troncos expertos',
+                'kaoxitos skyblue': 'kaoxitos skyblue (academy)',
+                'new rapture': 'new rapture sport',
+                'new rapture sports': 'new rapture sport',
+                'new rapture esports': 'new rapture sport',
+                'dead players': 'dead players gaming',
+                'pisa patitos': 'pisa patitos gaming',
+                'postrecitos': 'postrecitos gaming',
+                'armeros': 'armeros gaming',
+                'the simpsons': 'the simpson'
+            };
+            const mappedAlias = ALIAS_S3[cleanRaw] || ALIAS_S3[normRaw] || ALIAS_S3[stemRaw];
+            if (mappedAlias) {
+                found = scouting3EquiposCache.find(eq => {
+                    const n = (eq.nombre || '').toLowerCase().trim();
+                    return n === mappedAlias || normalizarTextoParaMatch(n) === mappedAlias;
+                });
+                if (found) return found;
+            }
 
             // 3. Coincidencia si el nombre contiene [TAG] explícito o si rawTag coincide
             if (rawTag && rawTag.length >= 2) {
@@ -623,6 +660,86 @@
         //  Valor: tag de máximo 3 letras en MAYÚSCULAS
         // ══════════════════════════════════════════════════════════════════
         const TAG_OVERRIDES = {
+            // --- OFICIALES SCOUTING 3 (Sincronización Garantizada) ---
+            'souls reaper':       'SLR',
+            'soul reaper':        'SLR',
+            'kaoxitos skyblue':   'KXS',
+            'kaoxitos skyblue (academy)': 'KXS',
+            'kaoxitos academy':   'KXS',
+            'pisa patitos gaming':'PPT',
+            'pisa patitos':       'PPT',
+            'team blood':         'TBB',
+            'las cabras de lugano':'LCL',
+            'las cabras de laguno':'LCL',
+            'cabras de lugano':   'LCL',
+            'postrecitos gaming': 'PTG',
+            'postrecitos':        'PTG',
+            'asociacion de troncos expertos':'ATE',
+            'asociacion de troncos': 'ATE',
+            'turnalia':           'TNL',
+            'rift rangers (omega)':'RNG',
+            'rift rangers omega': 'RNG',
+            'rift rangers (alpha)':'RNG',
+            'rift rangers alpha': 'RNG',
+            'rift rangers':       'RNG',
+            'dead players gaming':'DPG',
+            'dead players':       'DPG',
+            'bolitas':            'BOL',
+            'bolitoons':          'BLT',
+            'sindicato wildcard': 'SWC',
+            'sindicato wilcard':  'SWC',
+            'sindicato de eie':   'EIE',
+            'sindicato eie':      'EIE',
+            'proyecto q':         'PRO',
+            'pent-hexch':         'PHX',
+            'pent hexch':         'PHX',
+            'new rapture sport':  'NRS',
+            'new rapture sports': 'NRS',
+            'new rapture esports':'NRS',
+            'new rapture':        'NRS',
+            'the simpson':        'TSN',
+            'the simpsons':       'TSN',
+            'camino a laja reformed': 'CLR',
+            'camino a laja':      'CLR',
+            'los chipis':         'PIS',
+            'chipis':             'PIS',
+            'iron hells academy': 'IHA',
+            'iron hells':         'FEH',
+            'the low project':    'TLP',
+            'low project':        'TLP',
+            'los 420':            '420',
+            'pasteurizados gaming':'PTG',
+            'patitos gaming':     'PTG',
+            'dissidents':         'DSD',
+            'phoenix rampage':    'PRE',
+            'voiden abyss club':  'VAC',
+            'voiden abyss':       'VAC',
+            'shadowborns gaming': 'SBG',
+            'shadowborns':        'SBG',
+            'triple alianza':     'TLA',
+            'b1 lol sport':       'B1',
+            'pacha lovers':       'PLF',
+            'revelation gaming':  'RVG',
+            'revelation':         'RVG',
+            'ctk gaming':         'CTK',
+            'tr4gedy':            'T4',
+            'tragedy':            'T4',
+            'itsd zaun':          'ITSD',
+            'the saviors':        'TWD',
+            'saviors':            'TWD',
+            'nexus breakers':     'NBS',
+            'siloko':             'SLK',
+            'kaox las':           'KXL',
+            'nothing cash':       'NTC',
+            'inka warriors gaming':'IWG',
+            'pura paloma gaming': 'PPG',
+            'snake nest':         'SKN',
+            'md esports':         'MD',
+            'cementerio de elefantes': 'CDE',
+            'armeros gaming':     'ARG',
+            'phoenix rising gaming': 'PRG',
+            'legion':             'LEG',
+            'rgb':                'RGB',
             'kaox pink':          'KPK',
             'condor nexus':       'CRN',
             'crimson weasels':    'CRW',

@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=241">
+    <link rel="stylesheet" href="/dist/output.css?v=242">
 
     <style>
         @font-face {
@@ -309,7 +309,7 @@
                                loop 
                                muted 
                                playsinline 
-                               preload="auto"
+                               preload="metadata"
                                class="w-full h-full object-contain rounded-xl bg-black">
                         </video>
 
@@ -780,6 +780,22 @@
             "eie": "/assets/Equipos%20SC3/Sindicato%20de%20EIE.png",
             "swc": "/assets/Equipos%20SC3/Sindicato%20wilcard.png",
             "sr": "/assets/Equipos%20SC3/Souls%20Reaper.png",
+            "slr": "/assets/Equipos%20SC3/Souls%20Reaper.png",
+            "kxs": "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png",
+            "ppt": "/assets/Equipos%20SC3/PISA%20PATITOS%20GAMING.png",
+            "tbb": "/assets/Equipos%20SC3/Team%20Blood.png",
+            "tnl": "/assets/Equipos%20SC3/Turnalia.png",
+            "rng": "/assets/Equipos%20SC3/RIFT%20RANGERS%20(OMEGA).png",
+            "feh": "/assets/Equipos%20SC3/iron%20hells.png",
+            "dsd": "/assets/Equipos%20SC3/dissidents.png",
+            "pre": "/assets/Equipos%20SC3/Phoenix%20Rampage.png",
+            "pis": "/assets/Equipos%20SC3/LOS%20CHIPIS.png",
+            "tla": "/assets/Equipos%20SC3/TRIPLE%20ALIANZA.png",
+            "pro": "/assets/Equipos%20SC3/proyecto%20Q.png",
+            "t4": "/assets/Equipos%20SC3/tragedy.png",
+            "nbs": "/assets/Equipos%20SC3/Nexus%20breakers.png",
+            "kxl": "/assets/Equipos%20SC3/KAOX%20LAS.png",
+            "skn": "/assets/Equipos%20SC3/snake%20nest.png",
             "tsv": "/assets/Equipos%20SC3/THE%20SAVIORS.png",
             "tlp": "/assets/Equipos%20SC3/The%20Low%20Project.png",
             "smp": "/assets/Equipos%20SC3/The%20Simpson.png",
@@ -878,6 +894,112 @@
             if (s3Data?.logo) return s3Data.logo;
 
             return '';
+        }
+
+        const SCOUTING3_OFFICIAL_TAGS = {
+            'souls reaper': 'SLR',
+            'soul reaper': 'SLR',
+            'kaoxitos skyblue (academy)': 'KXS',
+            'kaoxitos skyblue': 'KXS',
+            'kaoxitos academy': 'KXS',
+            'pisa patitos gaming': 'PPT',
+            'pisa patitos': 'PPT',
+            'team blood': 'TBB',
+            'las cabras de lugano': 'LCL',
+            'las cabras de laguno': 'LCL',
+            'cabras de lugano': 'LCL',
+            'postrecitos gaming': 'PTG',
+            'postrecitos': 'PTG',
+            'asociacion de troncos expertos': 'ATE',
+            'asociacion de troncos': 'ATE',
+            'turnalia': 'TNL',
+            'rift rangers (omega)': 'RNG',
+            'rift rangers omega': 'RNG',
+            'rift rangers (alpha)': 'RNG',
+            'rift rangers alpha': 'RNG',
+            'rift rangers': 'RNG',
+            'dead players gaming': 'DPG',
+            'dead players': 'DPG',
+            'bolitas': 'BOL',
+            'bolitoons': 'BLT',
+            'sindicato wildcard': 'SWC',
+            'sindicato wilcard': 'SWC',
+            'sindicato de eie': 'EIE',
+            'sindicato eie': 'EIE',
+            'proyecto q': 'PRO',
+            'pent-hexch': 'PHX',
+            'pent hexch': 'PHX',
+            'new rapture sport': 'NRS',
+            'new rapture sports': 'NRS',
+            'new rapture esports': 'NRS',
+            'new rapture': 'NRS',
+            'the simpson': 'TSN',
+            'the simpsons': 'TSN',
+            'camino a laja reformed': 'CLR',
+            'camino a laja': 'CLR',
+            'los chipis': 'PIS',
+            'chipis': 'PIS',
+            'iron hells academy': 'IHA',
+            'iron hells': 'FEH',
+            'the low project': 'TLP',
+            'low project': 'TLP',
+            'los 420': '420',
+            'pasteurizados gaming': 'PTG',
+            'patitos gaming': 'PTG',
+            'dissidents': 'DSD',
+            'phoenix rampage': 'PRE',
+            'voiden abyss club': 'VAC',
+            'voiden abyss': 'VAC',
+            'shadowborns gaming': 'SBG',
+            'shadowborns': 'SBG',
+            'triple alianza': 'TLA',
+            'b1 lol sport': 'B1',
+            'pacha lovers': 'PLF',
+            'revelation gaming': 'RVG',
+            'revelation': 'RVG',
+            'ctk gaming': 'CTK',
+            'tr4gedy': 'T4',
+            'tragedy': 'T4',
+            'itsd zaun': 'ITSD',
+            'the saviors': 'TWD',
+            'saviors': 'TWD',
+            'nexus breakers': 'NBS',
+            'siloko': 'SLK',
+            'kaox las': 'KXL',
+            'nothing cash': 'NTC',
+            'inka warriors gaming': 'IWG',
+            'pura paloma gaming': 'PPG',
+            'snake nest': 'SKN',
+            'md esports': 'MD',
+            'cementerio de elefantes': 'CDE',
+            'armeros gaming': 'ARG',
+            'phoenix rising gaming': 'PRG',
+            'legion': 'LEG',
+            'rgb': 'RGB'
+        };
+
+        function resolveScouting3Tag(name, fallbackTag = '') {
+            const clean = String(name || '').toLowerCase().trim();
+            if (SCOUTING3_OFFICIAL_TAGS[clean]) return SCOUTING3_OFFICIAL_TAGS[clean];
+            const norm = clean.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+            if (SCOUTING3_OFFICIAL_TAGS[norm]) return SCOUTING3_OFFICIAL_TAGS[norm];
+            if (clean.includes('souls reaper') || clean.includes('soul reaper')) return 'SLR';
+            if (clean.includes('pisa patitos')) return 'PPT';
+            if (clean.includes('team blood')) return 'TBB';
+            if (clean.includes('cabras') || clean.includes('lugano') || clean.includes('laguno')) return 'LCL';
+            if (clean.includes('postrecitos')) return 'PTG';
+            if (clean.includes('kaoxitos')) return 'KXS';
+            if (clean.includes('tronco')) return 'ATE';
+            if (clean.includes('turnalia')) return 'TNL';
+            if (clean.includes('omega') || clean.includes('alpha') || clean.includes('rift rangers')) return 'RNG';
+            if (clean.includes('dead player')) return 'DPG';
+            if (clean.includes('wilcard') || clean.includes('wildcard')) return 'SWC';
+            if (clean.includes('pent-hexch') || clean.includes('pent hexch')) return 'PHX';
+            if (clean.includes('bolitas')) return 'BOL';
+            if (clean.includes('proyecto q')) return 'PRO';
+            if (clean.includes('rapture')) return 'NRS';
+            if (fallbackTag && fallbackTag.length <= 4 && fallbackTag.length >= 2) return fallbackTag.toUpperCase();
+            return clean.substring(0, 3).toUpperCase();
         }
 
         // Directorio de equipos y jugadores registrados en Scouting 3
@@ -1070,7 +1192,7 @@
                     timeDisplay: "21:00 • HOY",
                     bracket: "WINNER BRACKET",
                     bestOf: "BO3",
-                    team1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXA", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
+                    team1: { name: "KAOXITOS SKYBLUE (ACADEMY)", tag: "KXS", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Kaoxitos%20Skyblue.png" },
                     team2: { name: "PHOENIX RISING GAMING", tag: "PRG", seed: "Scouting 3", logo: "/assets/Equipos%20SC3/Phoenix%20Rising%20Gaming.png" },
                     status: "UPCOMING",
                     score1: 0,
@@ -1174,8 +1296,8 @@
                 const s3Team1 = scouting3TeamsMap[rawName1.toLowerCase()] || {};
                 const s3Team2 = scouting3TeamsMap[rawName2.toLowerCase()] || {};
 
-                const tag1 = (match.team1?.tag || s3Team1.tag || rawName1.substring(0, 4)).toUpperCase().trim();
-                const tag2 = (match.team2?.tag || s3Team2.tag || rawName2.substring(0, 4)).toUpperCase().trim();
+                const tag1 = resolveScouting3Tag(rawName1, match.team1?.tag || s3Team1.tag);
+                const tag2 = resolveScouting3Tag(rawName2, match.team2?.tag || s3Team2.tag);
 
                 const logo1 = resolveTeamLogo(match.team1, s3Team1);
                 const logo2 = resolveTeamLogo(match.team2, s3Team2);
@@ -1371,7 +1493,7 @@
             const vsName = String(vsTeamObj?.name || 'TBD').toUpperCase().trim();
 
             const s3Data = scouting3TeamsMap[teamName.toLowerCase()] || {};
-            const teamTag = (s3Data.tag || teamObj.tag || teamName.substring(0, 3)).toUpperCase();
+            const teamTag = resolveScouting3Tag(teamName, s3Data.tag || teamObj.tag);
             const teamLogo = resolveTeamLogo(teamObj, s3Data);
 
             // Jugadores titulares del roster de Scouting 3
