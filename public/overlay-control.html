@@ -2617,7 +2617,7 @@
             // 2. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
             try {
                 syncChannel.onmessage = (event) => {
-                    if ((event.data?.type === 'TIMER_HEARTBEAT' || event.data?.type === 'TIMER_SYNC') && event.data.channelId === currentChannel) { return; } /*
+                    if ((event.data?.type === 'TIMER_HEARTBEAT' || event.data?.type === 'TIMER_SYNC') && event.data.channelId === currentChannel) {
                         if (event.data.timerRunning && event.data.timerTargetTimestamp) {
                             state.timerRunning = true;
                             state.timerTargetTimestamp = event.data.timerTargetTimestamp;
@@ -2625,7 +2625,7 @@
                             state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                             updateTimerDisplay();
                         }
-                        return; */
+                        return;
                     }
                     if (event.data?.type === 'MATCH_ASSIGNMENTS_UPDATE' && event.data.assignments) {
                         matchChannelAssignments = { ...matchChannelAssignments, ...event.data.assignments };
