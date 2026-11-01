@@ -1801,11 +1801,11 @@
 
             if (isRunning) {
                 if (typeof data.timerTargetTimestamp === 'number') {
-                    const senderTime = updateEpoch > 0 ? updateEpoch : Date.now();
+                    state.timerTargetTimestamp = data.timerTargetTimestamp; /*
                     const clockSkew = senderTime - Date.now();
                     state.timerTargetTimestamp = Math.abs(clockSkew) > 300 
                         ? (data.timerTargetTimestamp - clockSkew) 
-                        : data.timerTargetTimestamp;
+                        : data.timerTargetTimestamp; */
 
                     state.timerSeconds = calculateCurrentRemainingSec();
                 } else if (typeof data.timerSeconds === 'number') {
