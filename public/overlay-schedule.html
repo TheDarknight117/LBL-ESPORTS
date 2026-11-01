@@ -1065,12 +1065,12 @@
 
         // Formateador minimalista de horarios: HORA • DIA (ej. "17:00 • HOY", "20:30 • 31 OCT")
         function formatMinimizedTimeDisplay(raw) {
-            if (!raw) return '19:00 • HOY';
+            if (!raw) return 'HORARIO TBD';
             const str = String(raw).trim();
-            if (!str) return '19:00 • HOY';
+            if (!str || /TBD|POR DEFINIR|PENDIENTE/i.test(str)) return 'HORARIO TBD';
             if (/^\d{1,2}:\d{2}\s*•\s*.+$/i.test(str)) return str.toUpperCase();
             const timeMatch = str.match(/(\d{1,2}:\d{2})/);
-            const time = timeMatch ? timeMatch[1] : '19:00';
+            if (!timeMatch) return str.toUpperCase(); const time = timeMatch[1];
             if (/HOY/i.test(str)) return `${time} • HOY`;
             const dateMatch = str.match(/\(?(\d{1,2}\s+[A-Za-zÁÉÍÓÚáéíóú]{3,4})\)?/i) || str.match(/\(?([A-Za-zÁÉÍÓÚáéíóú]{3,4}\.?\s*\d{1,2})\)?/i);
             if (dateMatch) {
@@ -1689,7 +1689,7 @@
         const stageTitleEl = document.getElementById('stage-title');
         const stageSubtitleEl = document.getElementById('stage-subtitle');
 
-        // Temporizador de alta precisión basado en Timestamp Absoluto (Evita retrasos en OBS Browser Source)
+        /* OBS LEGACY TIMER REPLACED
         function tickTimer() {
             if (state.timerRunning && state.timerTargetTimestamp) {
                 const diffMs = state.timerTargetTimestamp - Date.now();
@@ -1711,9 +1711,116 @@
         /* legacy timer removed
         if (false) {
                 state.timerSeconds--;
-                if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+                forceRenderTimerUI();
             }
         */
+        // ====================================================================
+        // MOTOR DE TEMPORIZADOR BLINDADO PARA OBS (Zero-Jitter / Zero-Freeze)
+        // Sincronizado por VSync con requestAnimationFrame + Interval de respaldo
+        // ====================================================================
+        let lastRenderedTimerSec = -1;
+        let lastReceivedTimerUpdateEpoch = 0;
+
+        function forceRenderTimerUI() {
+            if (!headerTimerEl) return;
+            const text = formatTimer(state.timerSeconds);
+            if (headerTimerEl.textContent !== text) {
+                headerTimerEl.textContent = text;
+            }
+            lastRenderedTimerSec = state.timerSeconds;
+        }
+
+        function calculateCurrentRemainingSec() {
+            if (!state.timerRunning || !state.timerTargetTimestamp) {
+                return state.timerSeconds;
+            }
+            const now = Date.now();
+            const diffMs = state.timerTargetTimestamp - now;
+            if (diffMs <= 0) {
+                state.timerRunning = false;
+                state.timerTargetTimestamp = null;
+                state.timerSeconds = 0;
+                return 0;
+            }
+            return Math.ceil(diffMs / 1000);
+        }
+
+        function tickTimerFrame() {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const rem = calculateCurrentRemainingSec();
+                if (rem !== state.timerSeconds) {
+                    state.timerSeconds = rem;
+                    forceRenderTimerUI();
+                }
+            } else if (state.timerSeconds !== lastRenderedTimerSec) {
+                forceRenderTimerUI();
+            }
+            requestAnimationFrame(tickTimerFrame);
+        }
+        requestAnimationFrame(tickTimerFrame);
+
+        // Interval de respaldo (1s) por si Chromium en OBS suspende requestAnimationFrame en segundo plano
+        setInterval(() => {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const rem = calculateCurrentRemainingSec();
+                if (rem !== state.timerSeconds) {
+                    state.timerSeconds = rem;
+                    forceRenderTimerUI();
+                }
+            }
+        }, 1000);
+
+        // Despertar instantáneo cuando la escena de OBS pasa a activa / visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                if (state.timerRunning && state.timerTargetTimestamp) {
+                    state.timerSeconds = calculateCurrentRemainingSec();
+                }
+                forceRenderTimerUI();
+                const matchBox = document.getElementById('matches-container');
+                if (matchBox) matchBox.style.opacity = '1';
+            }
+        });
+        window.addEventListener('focus', () => {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                state.timerSeconds = calculateCurrentRemainingSec();
+            }
+            forceRenderTimerUI();
+        });
+
+        function syncTimerFromPayload(data) {
+            if (!data) return;
+            const updateEpoch = typeof data.timerUpdatedAt === 'number' ? data.timerUpdatedAt : (data.updatedAt ? new Date(data.updatedAt).getTime() : 0);
+            if (updateEpoch > 0 && updateEpoch < lastReceivedTimerUpdateEpoch) {
+                return;
+            }
+            if (updateEpoch > 0) lastReceivedTimerUpdateEpoch = updateEpoch;
+
+            const isRunning = Boolean(data.timerRunning);
+            state.timerRunning = isRunning;
+
+            if (isRunning) {
+                if (typeof data.timerTargetTimestamp === 'number') {
+                    const senderTime = updateEpoch > 0 ? updateEpoch : Date.now();
+                    const clockSkew = senderTime - Date.now();
+                    state.timerTargetTimestamp = Math.abs(clockSkew) > 300 
+                        ? (data.timerTargetTimestamp - clockSkew) 
+                        : data.timerTargetTimestamp;
+
+                    state.timerSeconds = calculateCurrentRemainingSec();
+                } else if (typeof data.timerSeconds === 'number') {
+                    state.timerSeconds = Math.max(0, data.timerSeconds);
+                    state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000);
+                }
+            } else {
+                state.timerTargetTimestamp = null;
+                if (typeof data.timerSeconds === 'number') {
+                    state.timerSeconds = Math.max(0, data.timerSeconds);
+                }
+            }
+
+            forceRenderTimerUI();
+        }
 
         function updateSecondarySponsorLogo(url) {
             const secImg = document.getElementById('secondary-sponsor-logo');
@@ -1792,7 +1899,7 @@
                 renderFooter(state.footerMode);
             }
 
-            if (typeof data.timerRunning === 'boolean') {
+            syncTimerFromPayload(data); /*
                 state.timerRunning = data.timerRunning;
             }
             if (typeof data.timerTargetTimestamp === 'number' && state.timerRunning) {
@@ -1809,8 +1916,8 @@
                 const diffMs = state.timerTargetTimestamp - Date.now();
                 state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
             }
-            // timer synced via timestamp
-            if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+            */ // timer synced via timestamp
+            forceRenderTimerUI();
             if (channelBadgeEl) channelBadgeEl.textContent = formatChannelDisplayName(data.channelId || channelId);
         }
 
@@ -1821,7 +1928,7 @@
                 if (!event.data) return;
                 if (event.data.channelId && event.data.channelId !== channelId) return;
 
-                if (event.data.type === 'TIMER_HEARTBEAT') {
+                if (event.data.type === 'TIMER_HEARTBEAT' || event.data.type === 'TIMER_SYNC') { syncTimerFromPayload(event.data); return; } /*
                     if (typeof event.data.timerRunning === 'boolean') {
                         state.timerRunning = event.data.timerRunning;
                     }
@@ -1835,11 +1942,11 @@
                         const diffMs = state.timerTargetTimestamp - Date.now();
                         state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                     }
-                    if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+                    forceRenderTimerUI();
                     return;
                 }
 
-                if (true) {
+                */ if (event.data) {
                     applyData(event.data);
                 }
             };
@@ -1881,7 +1988,7 @@
         }
 
         // Render e inicialización
-        updateJornadaDate();
+        updateJornadaDate(); setInterval(updateJornadaDate, 60000);
         lastMatchesJson = JSON.stringify(state.matches);
         lastMediaUrl = state.mediaUrl;
         lastMediaType = state.mediaType;

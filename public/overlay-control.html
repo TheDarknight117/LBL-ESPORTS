@@ -1024,12 +1024,12 @@
         // Partidas de referencia inmediata de TS3LBL (Copa Legion x Scouting 3) - Sin asignación forzada
         // Formateador minimalista de horarios: HORA • DIA (ej. "17:00 • HOY", "20:30 • 31 OCT")
         function formatMinimizedTimeDisplay(raw) {
-            if (!raw) return '19:00 • HOY';
+            if (!raw) return 'HORARIO TBD';
             const str = String(raw).trim();
-            if (!str) return '19:00 • HOY';
+            if (!str || /TBD|POR DEFINIR|PENDIENTE/i.test(str)) return 'HORARIO TBD';
             if (/^\d{1,2}:\d{2}\s*•\s*.+$/i.test(str)) return str.toUpperCase();
             const timeMatch = str.match(/(\d{1,2}:\d{2})/);
-            const time = timeMatch ? timeMatch[1] : '19:00';
+            if (!timeMatch) return str.toUpperCase(); const time = timeMatch[1];
             if (/HOY/i.test(str)) return `${time} • HOY`;
             const dateMatch = str.match(/\(?(\d{1,2}\s+[A-Za-zÁÉÍÓÚáéíóú]{3,4})\)?/i) || str.match(/\(?([A-Za-zÁÉÍÓÚáéíóú]{3,4}\.?\s*\d{1,2})\)?/i);
             if (dateMatch) {
@@ -2002,7 +2002,7 @@
             }
 
             if (data.secondarySponsorUrl) document.getElementById('select-secondary-sponsor').value = data.secondarySponsorUrl;
-            if (typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
+            if (!data.timerRunning && typeof data.timerSeconds === 'number') state.timerSeconds = data.timerSeconds;
             if (typeof data.timerRunning === 'boolean') state.timerRunning = data.timerRunning;
             if (state.timerRunning && typeof data.timerTargetTimestamp === 'number') {
                 state.timerTargetTimestamp = data.timerTargetTimestamp;
@@ -2133,7 +2133,69 @@
             }
         }
 
-        // Ticking de alta frecuencia (200ms) basado en Date.now() y timerTargetTimestamp
+        let lastRenderedControlSec = -1;
+
+        function calculateControlRemainingSec() {
+            if (!state.timerRunning || !state.timerTargetTimestamp) {
+                return state.timerSeconds;
+            }
+            const now = Date.now();
+            const diffMs = state.timerTargetTimestamp - now;
+            if (diffMs <= 0) {
+                state.timerRunning = false;
+                state.timerTargetTimestamp = null;
+                state.timerSeconds = 0;
+                updateTimerDisplay();
+                return 0;
+            }
+            return Math.ceil(diffMs / 1000);
+        }
+
+        // Ticking sincronizado con requestAnimationFrame
+        function tickControlFrame() {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const rem = calculateControlRemainingSec();
+                if (rem !== state.timerSeconds) {
+                    state.timerSeconds = rem;
+                    const dispEl = document.getElementById('control-timer-display');
+                    if (dispEl) dispEl.textContent = formatTimerDisplay(rem);
+                    lastRenderedControlSec = rem;
+                }
+            }
+            requestAnimationFrame(tickControlFrame);
+        }
+        requestAnimationFrame(tickControlFrame);
+
+        // Interval de respaldo (1s) para cuando la pestaña está en segundo plano
+        setInterval(() => {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                const rem = calculateControlRemainingSec();
+                if (rem !== state.timerSeconds) {
+                    state.timerSeconds = rem;
+                    const dispEl = document.getElementById('control-timer-display');
+                    if (dispEl) dispEl.textContent = formatTimerDisplay(rem);
+                    lastRenderedControlSec = rem;
+                }
+            }
+        }, 1000);
+
+        // Despertar instantáneo al volver a la pestaña
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                if (state.timerRunning && state.timerTargetTimestamp) {
+                    state.timerSeconds = calculateControlRemainingSec();
+                }
+                updateTimerDisplay();
+            }
+        });
+        window.addEventListener('focus', () => {
+            if (state.timerRunning && state.timerTargetTimestamp) {
+                state.timerSeconds = calculateControlRemainingSec();
+            }
+            updateTimerDisplay();
+        });
+
+        /* OBS TIMER ENGINE MIGRATED
         function tickControlTimer() {
             if (state.timerRunning && state.timerTargetTimestamp) {
                 const diffMs = state.timerTargetTimestamp - Date.now();
@@ -2169,7 +2231,7 @@
             }
         }, 3000);
 
-        /*
+        // legacy
             }
         }
 
@@ -2178,7 +2240,7 @@
                 state.timerSeconds--;
                 document.getElementById('control-timer-display').textContent = formatTimerDisplay(state.timerSeconds);
             }
-            */
+        */
 
         document.getElementById('btn-timer-toggle').addEventListener('click', () => {
             state.timerRunning = !state.timerRunning;
@@ -2303,7 +2365,7 @@
             try { localStorage.setItem(`lbl_overlay_${currentChannel}`, JSON.stringify(payload)); } catch(e) {}
 
             try {
-                await setDoc(doc(db, "torneos_activos", `overlay_${currentChannel}`), payload, { merge: true });
+                triggerFirestoreSync(payload, showFeedback); return;
                 if (showFeedback) {
                     statusEl.textContent = "✓ ¡Actualizado en OBS (<100ms)!";
                     statusEl.className = "text-xs font-bold text-emerald-400";
@@ -2316,6 +2378,41 @@
                     setTimeout(() => { statusEl.textContent = ""; }, 4000);
                 }
             }
+        }
+
+        let isSavingFirestore = false;
+        let pendingSavePayload = null;
+        let lastFeedbackEpoch = 0;
+
+        async function triggerFirestoreSync(payload, showFeedback = true) {
+            pendingSavePayload = payload;
+            if (showFeedback) lastFeedbackEpoch = Date.now();
+
+            if (isSavingFirestore) return;
+            isSavingFirestore = true;
+
+            const statusEl = document.getElementById('save-status-text');
+
+            while (pendingSavePayload) {
+                const toSave = pendingSavePayload;
+                pendingSavePayload = null;
+
+                try {
+                    await setDoc(doc(db, "torneos_activos", `overlay_${currentChannel}`), toSave, { merge: true });
+                    if (statusEl && (Date.now() - lastFeedbackEpoch < 4000)) {
+                        statusEl.textContent = "✓ ¡Actualizado en OBS (<100ms)!";
+                        statusEl.className = "text-xs font-bold text-emerald-400";
+                        setTimeout(() => { if (statusEl && statusEl.textContent.includes('Actualizado')) statusEl.textContent = ""; }, 3000);
+                    }
+                } catch(err) {
+                    if (statusEl) {
+                        statusEl.textContent = "✓ ¡Sincronizado localmente con OBS!";
+                        statusEl.className = "text-xs font-bold text-emerald-400";
+                    }
+                }
+            }
+
+            isSavingFirestore = false;
         }
 
         // Botones de control rápido de Roster
@@ -2520,7 +2617,7 @@
             // 2. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
             try {
                 syncChannel.onmessage = (event) => {
-                    if (event.data?.type === 'TIMER_HEARTBEAT' && event.data.channelId === currentChannel) {
+                    if ((event.data?.type === 'TIMER_HEARTBEAT' || event.data?.type === 'TIMER_SYNC') && event.data.channelId === currentChannel) { return; } /*
                         if (event.data.timerRunning && event.data.timerTargetTimestamp) {
                             state.timerRunning = true;
                             state.timerTargetTimestamp = event.data.timerTargetTimestamp;
@@ -2528,7 +2625,7 @@
                             state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                             updateTimerDisplay();
                         }
-                        return;
+                        return; */
                     }
                     if (event.data?.type === 'MATCH_ASSIGNMENTS_UPDATE' && event.data.assignments) {
                         matchChannelAssignments = { ...matchChannelAssignments, ...event.data.assignments };
