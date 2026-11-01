@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind Compilado de LBL -->
-    <link rel="stylesheet" href="/dist/output.css?v=240">
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="stylesheet" href="/dist/output.css?v=241">
 
     <style>
         @font-face {
@@ -773,6 +775,7 @@
 
         // Partidas detectadas desde el torneo en curso
         let liveCronogramaMatches = [];
+        let tournamentData = null;
 
         // Registro reactivo de asignaciones de canales ({ [matchId]: 'darkcito' | 'lbl_oficial' | 'ambos' | '' })
         let matchChannelAssignments = {};
@@ -937,7 +940,7 @@
         async function detectActiveTournamentFromGestor() {
             document.getElementById('detected-matches-count').textContent = "Consultando Gestor de Torneos...";
 
-            let tournamentData = null;
+            tournamentData = null;
 
             // Intento A: Leer de Firestore torneos_registrados
             try {
@@ -1429,7 +1432,12 @@
                 const stageInput = document.getElementById('input-stage-title');
                 if (stageInput) stageInput.value = detectedStageTitle;
             }
-            if (tournamentData && tournamentData.nombre) {
+            if ((typeof tournamentData !== 'undefined' && tournamentData && tournamentData.nombre) || !state.subTitle) {
+                state.subTitle = ((typeof tournamentData !== 'undefined' && tournamentData && tournamentData.nombre) ? tournamentData.nombre : 'COPA LEGION X TORNEO SCOUTING 3').toUpperCase();
+                const subInput = document.getElementById('input-stage-subtitle');
+                if (subInput) subInput.value = state.subTitle;
+            }
+            if (false) {
                 state.subTitle = tournamentData.nombre.toUpperCase();
                 const subInput = document.getElementById('input-stage-subtitle');
                 if (subInput) subInput.value = state.subTitle;
@@ -1437,12 +1445,29 @@
 
             // Auto-detectar roster del juego que va a comenzar inmediatamente
             autoDetectUpcomingRoster();
+            renderMatchesEditor();
+            saveChanges(true);
+
+            // Feedback visual en el botón
+            const btnLoad = document.getElementById('btn-load-selected-to-overlay');
+            if (btnLoad) {
+                const origHtml = btnLoad.innerHTML;
+                btnLoad.innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> ¡CARGADAS EN TU OBS!';
+                btnLoad.classList.remove('bg-red-600', 'hover:bg-red-700');
+                btnLoad.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                setTimeout(() => {
+                    btnLoad.innerHTML = origHtml;
+                    btnLoad.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                    btnLoad.classList.add('bg-red-600', 'hover:bg-red-700');
+                }, 3000);
+            } /*
+            autoDetectUpcomingRoster();
 
             renderMatchesEditor();
             saveChanges(true);
         });
 
-        document.getElementById('btn-sync-cronograma').addEventListener('click', () => {
+        */ }); document.getElementById('btn-sync-cronograma').addEventListener('click', () => {
             detectActiveTournamentFromGestor();
         });
 
