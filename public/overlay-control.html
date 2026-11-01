@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=242">
+    <link rel="stylesheet" href="/dist/output.css?v=243">
 
     <style>
         @font-face {
@@ -1107,10 +1107,11 @@
 
         // 1. Cargar Equipos y Logos Oficiales de Scouting 3 (de https://lbl-esports.web.app/scouting?torneo=scouting3)
         async function fetchScouting3RegisteredTeams() {
+            let fetchedLive = false;
             try {
                 const cachedEarly = localStorage.getItem('lbl_scouting3_public_sanitized_v214') || localStorage.getItem('lbl_scouting3_public_sanitized_v210') || localStorage.getItem('lbl_scouting_equipos_cache');
                 if (cachedEarly) { try { const p = JSON.parse(cachedEarly); if (Array.isArray(p) && p.length > 0) processScoutingTeams(p); } catch(e){} }
-                let fetchedLive = false;
+
                 const snap = await getDoc(doc(db, "torneos_activos", "scouting3_live_sync"));
                 if (snap.exists() && Array.isArray(snap.data().equipos)) {
                     processScoutingTeams(snap.data().equipos);
