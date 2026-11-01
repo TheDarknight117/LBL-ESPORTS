@@ -353,17 +353,41 @@
                         </div>
 
                         <!-- Ficha de Dimensiones y Especificaciones Técnicas Recomendadas -->
-                        <div class="p-3 bg-red-950/20 border border-red-900/30 rounded-xl space-y-1 text-xs">
-                            <div class="font-bold text-red-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-                                <i class="fa-solid fa-circle-info"></i> Guía Técnica de Formatos y Dimensiones
+                        <div class="p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl space-y-2.5 text-xs">
+                            <div class="font-black text-red-400 flex items-center justify-between text-[11px] uppercase tracking-wider border-b border-zinc-800/80 pb-1.5">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-red-500"></i> Guía Técnica de Formatos y Dimensiones (OBS)</span><span class="text-[10px] text-zinc-500 font-medium">Layout 1920×1080</span>
                             </div>
-                            <div class="text-zinc-300 grid grid-cols-2 gap-2 text-[11px] pt-1">
-                                <div><b>Resolución Ideal:</b> 940 × 530 px (16:9)</div>
-                                <div><b>Resolución Full HD:</b> 1920 × 1080 px</div>
-                                <div><b>Formatos Video:</b> MP4 (H.264), WebM</div>
-                                <div><b>Formatos Imagen:</b> PNG, JPG, WebP</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
+                                <div class="bg-black/40 border border-zinc-800/70 rounded-lg p-2.5 flex flex-col justify-between">
+                                    <div class="font-bold text-red-400 flex items-center gap-1.5 text-[11px] mb-1">
+                                        <i class="fa-solid fa-video text-red-500"></i> Video Horizontal (16:9)
+                                    </div>
+                                    <div class="text-[11px] text-zinc-300 space-y-0.5">
+                                        <div><b>Resolución:</b> 1920 × 1080 px (o 940 × 530)</div>
+                                        <div><b>Tasa de cuadros:</b> 30 fps (recomendado)</div>
+                                        <div><b>Formatos:</b> MP4 (H.264), WebM</div>
+                                        <div class="text-[10px] text-zinc-400 pt-0.5">Auto-loop infinito y silenciado en OBS.</div>
+                                    </div>
+                                </div>
+                                <div class="bg-black/40 border border-emerald-900/40 rounded-lg p-2.5 flex flex-col justify-between">
+                                    <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-[11px] mb-1">
+                                        <i class="fa-solid fa-image text-emerald-500"></i> Imagen / Ads Completo
+                                    </div>
+                                    <div class="text-[11px] text-zinc-300 space-y-0.5">
+                                        <div><b>Dimensión Exacta:</b> <span class="text-white font-black bg-emerald-950/80 border border-emerald-500/30 px-1 py-0.5 rounded">980 × 720 px</span></div>
+                                        <div><b>Alta Nitidez (2X):</b> 1960 × 1440 px (~4:3)</div>
+                                        <div><b>Formatos:</b> PNG, JPG, WebP</div>
+                                        <div class="text-[10px] text-emerald-400/90 pt-0.5">Ocupa el 100% del cuadro publicitario sin bordes negros, idéntico a los ads por código.</div><!--
+                                    </div>
+                                </div>
                             </div>
-                            <p class="text-[10px] text-zinc-400 mt-1">Los videos se reproducen en bucle infinito automático, optimizados para aceleración por hardware en OBS CEF.</p>
+
+
+
+
+
+                            </div>
+--></div></div><p class="text-[10px] text-zinc-400 mt-1">💡 <b>Recomendación OBS CEF:</b> Para imágenes, la medida <b>980 × 720 px</b> (o 1960 × 1440 px) llena el 100% del cuadro sin bordes negros. Para videos, 16:9 a <b>30 fps</b> garantiza reproducción fluida y bajo consumo de CPU.</p>
                         </div>
 
                         <!-- Configuración de Barra Inferior (Worlds vs Spotlight) -->
