@@ -13,8 +13,8 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#10b981">
 
-    <link rel="stylesheet" href="/dist/output.css?v=236">
-    <script src="/sc3-logos.js?v=236"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=241">
+    <script src="/sc3-logos.js?v=241"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -1877,7 +1877,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { collection, query, where, getDocs, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStaffNick } from "/staff-config.js";
-        import "/app-version.js?v=236";
+        import "/app-version.js?v=241";
 
         // ==============================================================
         // CONFIGURACIÓN OFICIAL INMUTABLE: GOOGLE APPS SCRIPT (SCOUTING T3)
@@ -2225,7 +2225,7 @@
             publicarSincronizacionPublicaScouting3();
             actualizarMetricas();
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
 
             mostrarToastNotificacion(`✅ Pago verificado. Equipo "${eq.nombre}" dictaminado como "${nuevoEstado}".`);
 
@@ -2530,13 +2530,13 @@
             // Renderizar inmediatamente desde caché para arranque instantáneo (0 ms)
             actualizarMetricas();
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
 
             // Cargar jugadores de la Liga LBL Oficial y auditoría de irregularidades en segundo plano
             try {
                 await cargarJugadoresLigaLBLOficial();
                 ejecutarAuditoriaIrregularidades();
-                renderizarTarjetasEquipos();
+                renderizarTarjetasEquipos(true);
             } catch (errLiga) {
                 console.warn("Aviso al auditar Liga LBL:", errLiga);
             }
@@ -2889,7 +2889,7 @@
                     if (datosCambiaron || !silencioso) {
                         ejecutarAuditoriaIrregularidades();
                         actualizarMetricas();
-                        renderizarTarjetasEquipos();
+                        renderizarTarjetasEquipos(true);
                     }
 
                     // Si el usuario pidió sincronizar manualmente con un modal abierto (y no está editando), refrescar manteniendo su pestaña
@@ -3102,6 +3102,16 @@
         }
 
         // 3.8 MOTOR DE INDEXACIÓN DE BÚSQUEDA ULTRARRÁPIDA (SUB-MILISEGUNDO)
+        function normalizarTextoBusqueda(str) {
+            if (!str) return '';
+            return String(str)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^\w\s#+@-]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
         function indexarEquipoParaBusqueda(eq) {
             if (!eq) return;
             const tokens = [
@@ -3150,7 +3160,7 @@
             (eq.titulares || []).forEach(procesarP);
             (eq.suplentes || []).forEach(procesarP);
 
-            eq._searchIndex = tokens.join(' ').toLowerCase();
+            eq._searchIndex = normalizarTextoBusqueda(tokens.join(' '));
         }
 
         function indexarTodosLosEquipos() {
@@ -3167,7 +3177,7 @@
             vistaActivaEquipos = vista;
             localStorage.setItem('lbl_staff_vista_scouting', vista);
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
         };
 
         function actualizarBotonesSelectorVista() {
@@ -3243,7 +3253,7 @@
                 </a>` : '';
 
             return `
-                <div onclick="abrirModalDetalle(${eq.rowId})" class="staff-card p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group cursor-pointer hover:-translate-y-0.5">
+                <div data-team-id="${eq.rowId}" onclick="abrirModalDetalle(${eq.rowId})" class="equipo-item-dom staff-card p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-emerald-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg hover:shadow-emerald-950/20 group cursor-pointer hover:-translate-y-0.5">
                     <div>
                         <!-- Header de Tarjeta -->
                         <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
@@ -3352,7 +3362,7 @@
             }).join('') || '<span class="text-gray-600 italic text-[10px]">Sin titulares</span>';
 
             return `
-                <tr onclick="abrirModalDetalle(${eq.rowId})" class="hover:bg-emerald-950/20 cursor-pointer transition-colors group">
+                <tr data-team-id="${eq.rowId}" onclick="abrirModalDetalle(${eq.rowId})" class="equipo-item-dom hover:bg-emerald-950/20 cursor-pointer transition-colors group">
                     <td class="py-3 px-3.5 text-center font-mono font-bold text-gray-500 text-[11px] group-hover:text-emerald-400">
                         #${eq.rowId || '-'}
                         ${tieneIrreg ? `<span title="${conflictosEq.length} infracción(es) de reglamento" class="inline-block ml-1"><i class="fas fa-exclamation-triangle text-rose-500 text-[9px] animate-pulse"></i></span>` : ''}
@@ -3411,14 +3421,95 @@
             `;
         }
 
-        // 4. Renderizado Central de Equipos (Cuadrícula o Tabla según vistaActivaEquipos)
-        function renderizarTarjetasEquipos() {
+        // 4. Renderizado Central y Filtrado de Alta Frecuencia (Sub-milisegundo 60fps)
+        let ultimaVistaRenderizada = null;
+        let ultimoHashEquiposRenderizados = '';
+
+        function filtrarVisibilidadEquipos() {
             const contenedor = document.getElementById('contenedor-equipos');
             const estadoVacio = document.getElementById('estado-vacio');
-            const rawQuery = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-            const queryTokens = rawQuery ? rawQuery.split(/\s+/).filter(Boolean) : [];
+            if (!contenedor) return;
 
-            const filtrados = equiposScouting.filter(eq => {
+            const domItems = contenedor.querySelectorAll('.equipo-item-dom');
+            if (domItems.length === 0 && Array.isArray(equiposScouting) && equiposScouting.length > 0) {
+                renderizarTarjetasEquipos(true);
+                return;
+            }
+
+            const rawQuery = (document.getElementById('searchInput')?.value || '').trim();
+            const queryTokens = rawQuery ? normalizarTextoBusqueda(rawQuery).split(/\s+/).filter(Boolean) : [];
+            const estadoFiltro = (filtroEstadoActivo || '').toLowerCase().trim();
+
+            const matchRowIds = new Set();
+            let totalVisibles = 0;
+
+            for (let i = 0; i < equiposScouting.length; i++) {
+                const eq = equiposScouting[i];
+                if (estadoFiltro && (eq.estado || 'Pendiente').toLowerCase() !== estadoFiltro) {
+                    continue;
+                }
+
+                if (queryTokens.length > 0) {
+                    if (!eq._searchIndex) {
+                        indexarEquipoParaBusqueda(eq);
+                    }
+                    const sIndex = eq._searchIndex || '';
+                    let match = true;
+                    for (let t = 0; t < queryTokens.length; t++) {
+                        if (!sIndex.includes(queryTokens[t])) {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (!match) continue;
+                }
+
+                matchRowIds.add(String(eq.rowId));
+                totalVisibles++;
+            }
+
+            domItems.forEach(el => {
+                const rowId = el.getAttribute('data-team-id');
+                const visible = matchRowIds.has(rowId);
+                el.style.display = visible ? '' : 'none';
+            });
+
+            const tableWrapper = contenedor.querySelector('.tabla-scouting-wrapper');
+            if (totalVisibles === 0) {
+                if (estadoVacio) estadoVacio.classList.remove('hidden');
+                if (tableWrapper) tableWrapper.classList.add('hidden');
+            } else {
+                if (estadoVacio) estadoVacio.classList.add('hidden');
+                if (tableWrapper) tableWrapper.classList.remove('hidden');
+            }
+        }
+        function renderizarTarjetasEquipos(forzarRebuild = false) {
+            const contenedor = document.getElementById('contenedor-equipos');
+            const estadoVacio = document.getElementById('estado-vacio');
+            if (!contenedor) return;
+
+            if (!Array.isArray(equiposScouting) || equiposScouting.length === 0) {
+                contenedor.innerHTML = "";
+                if (estadoVacio) estadoVacio.classList.remove('hidden');
+                return;
+            }
+
+            const hashActual = `${vistaActivaEquipos}_${equiposScouting.length}_` + equiposScouting.map(e => `${e.rowId}-${e.estado || ''}-${e.nombre || ''}`).join(';');
+            const domItems = contenedor.querySelectorAll('.equipo-item-dom');
+            const necesitaRebuild = forzarRebuild ||
+                                   (vistaActivaEquipos !== ultimaVistaRenderizada) ||
+                                   (hashActual !== ultimoHashEquiposRenderizados) ||
+                                   (domItems.length !== equiposScouting.length);
+
+            if (necesitaRebuild) {
+                ultimaVistaRenderizada = vistaActivaEquipos;
+                ultimoHashEquiposRenderizados = hashActual;
+            const contenedor = document.getElementById('contenedor-equipos');
+            const estadoVacio = document.getElementById('estado-vacio');
+            // query y filtrado delegado a filtrarVisibilidadEquipos
+            // tokens delegados
+
+            /* filtrado delegado
                 if (filtroEstadoActivo && (eq.estado || 'Pendiente').toLowerCase() !== filtroEstadoActivo.toLowerCase()) {
                     return false;
                 }
@@ -3443,12 +3534,12 @@
                 return;
             }
 
-            estadoVacio.classList.add('hidden');
+            */
 
             if (vistaActivaEquipos === 'tabla') {
                 contenedor.className = "p-0 overflow-x-auto";
                 contenedor.innerHTML = `
-                    <div class="min-w-[920px]">
+                        <div class="tabla-scouting-wrapper min-w-[920px]">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-[#070b13] text-[10px] uppercase font-black tracking-wider text-gray-400 border-b border-gray-800 select-none">
@@ -3462,9 +3553,23 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800/40">
-                                ${filtrados.map(renderizarFilaTablaEquipo).join('')}
+                                    ${equiposScouting.map(renderizarFilaTablaEquipo).join('')}
                             </tbody>
                         </table>
+                    </div>
+                `;
+                } else {
+                    // Vista Cuadrícula (Grid de Tarjetas)
+                    contenedor.className = "p-3.5 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4";
+                    contenedor.innerHTML = equiposScouting.map(renderizarTarjetaEquipoGrid).join('');
+                }
+            }
+            filtrarVisibilidadEquipos();
+            return;
+            if (false) {
+                const dummyOldTable = ''; } /*
+                    <div class="dummy">
+                        <table>
                     </div>
                 `;
                 return;
@@ -3472,7 +3577,7 @@
 
             // Vista Cuadrícula (Grid de Tarjetas)
             contenedor.className = "p-3.5 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4";
-            contenedor.innerHTML = filtrados.map(renderizarTarjetaEquipoGrid).join('');
+            */
         }
 
         // 5. Métricas KPI
@@ -3500,8 +3605,10 @@
             });
             const activeTab = document.getElementById(estado ? `tab-filtro-${estado.toLowerCase()}` : 'tab-filtro-todos');
             if (activeTab) activeTab.classList.add('active');
+            filtrarVisibilidadEquipos();
+            return;
 
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
         };
 
         let debounceFiltrosTimer = null;
@@ -3513,8 +3620,11 @@
             }
             if (debounceFiltrosTimer) clearTimeout(debounceFiltrosTimer);
             debounceFiltrosTimer = setTimeout(() => {
-                renderizarTarjetasEquipos();
-            }, 120);
+                filtrarVisibilidadEquipos();
+            }, 35); /*
+            return;
+                renderizarTarjetasEquipos(true);
+            */
         };
 
         window.limpiarBusqueda = function() {
@@ -3524,7 +3634,9 @@
                 if (debounceFiltrosTimer) clearTimeout(debounceFiltrosTimer);
                 const btnClear = document.getElementById('btnClearSearch');
                 if (btnClear) btnClear.classList.add('hidden');
-                renderizarTarjetasEquipos();
+                filtrarVisibilidadEquipos();
+                return;
+                renderizarTarjetasEquipos(true);
             }
         };
 
@@ -4400,7 +4512,7 @@
                     publicarSincronizacionPublicaScouting3();
             actualizarMetricas();
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
             abrirModalDetalle(equipoSeleccionado.rowId, 'verificacion');
 
             if (!apiUrl) {
@@ -4639,7 +4751,7 @@
             ejecutarAuditoriaIrregularidades();
             actualizarMetricas();
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
 
             const restablecerBotonesEdicion = () => {
                 if (btn) {
@@ -4712,7 +4824,7 @@
                     publicarSincronizacionPublicaScouting3();
             actualizarMetricas();
             actualizarBotonesSelectorVista();
-            renderizarTarjetasEquipos();
+            renderizarTarjetasEquipos(true);
 
             if (!apiUrl) {
                 cerrarModalDetalle();
@@ -4839,7 +4951,7 @@
                 localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
                     publicarSincronizacionPublicaScouting3();
                 actualizarMetricas();
-                renderizarTarjetasEquipos();
+                renderizarTarjetasEquipos(true);
                 cerrarModalCrearEquipo();
                 btn.innerHTML = '<i class="fas fa-check mr-1"></i> Inscribir en Google Sheets';
                 btn.disabled = false;
@@ -4868,7 +4980,7 @@
                     localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(equiposScouting));
                     publicarSincronizacionPublicaScouting3();
                     actualizarMetricas();
-                    renderizarTarjetasEquipos();
+                    renderizarTarjetasEquipos(true);
                     cerrarModalCrearEquipo();
                     alert(`✅ ¡Equipo "${nombre}" [${tag}] inscrito en la fila ${json.rowId} de Google Sheets!`);
                 } else {
@@ -6403,7 +6515,7 @@ Por favor responder a este mensaje con los datos corregidos. ¡Muchas gracias!`;
             try {
                 await cargarJugadoresLigaLBLOficial(true);
                 ejecutarAuditoriaIrregularidades();
-                renderizarTarjetasEquipos();
+                renderizarTarjetasEquipos(true);
             } finally {
                 if (icon) icon.classList.remove('fa-spin');
             }
