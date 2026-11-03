@@ -54,5 +54,23 @@ service cloud.firestore {
     match /broadcast_overlays/{document} {
       allow read, write: if true;
     }
+
+    // Colección de Usuarios LBL (Google Auth + Roles ADMIN/USER + Riot ID Nick#TAG)
+    match /usuarios_lbl/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email != null);
+    }
+
+    // Colección de Predicciones Pick'em Scouting 3
+    match /pickems_scouting3/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Configuración y Control Maestro del Pick'em (Bloqueos y Estado Oficial)
+    match /pickem_config/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }

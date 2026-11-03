@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pick'em Copa Legion | LBL Esports</title>
+    <meta name="description" content="Participa en el Pick'em Copa Legion (Scouting Tournament 3 - LBL Esports). Predice los ganadores del bracket de Doble Eliminación desde Octavos de Final y compite en el Ranking Global.">
+
+    <!-- OpenGraph -->
+    <meta property="og:site_name" content="LBL Esports">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pick'em Copa Legion | LBL Esports">
+    <meta property="og:description" content="Arma tus predicciones del bracket de Doble Eliminación de la Copa Legion y compite por el Top 1 del Ranking.">
+    <meta property="og:image" content="https://lbl-esports.web.app/assets/SEO%20LBL%20etiqueta.png">
+
+    <!-- Favicon & Fonts -->
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Squada+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/dist/output.css?v=251">
+    <script src="/sc3-logos.js?v=251"></script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #02050b;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .bg-cyber-grid {
+            background-size: 44px 44px;
+            background-image:
+                linear-gradient(to right, rgba(6, 182, 212, 0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.035) 1px, transparent 1px);
+        }
+
+        .glass-panel {
+            background: #070c16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* =====================================================================
+           RETÍCULA GEOMÉTRICA SIMÉTRICA DEL BRACKET PICK'EM (FUERA DE CAJA)
+           ===================================================================== */
+        .pickem-viewport {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            cursor: grab;
+            user-select: none;
+            padding-bottom: 16px;
+        }
+        .pickem-viewport:active {
+            cursor: grabbing;
+        }
+
+        .pickem-canvas {
+            position: relative;
+            transform-origin: 0 0;
+            transition: transform 0.15s ease-out;
+        }
+
+        .pickem-round-header {
+            position: absolute;
+            top: 16px;
+            width: 248px;
+            height: 46px;
+            border-radius: 0.875rem;
+            background: linear-gradient(180deg, #0c1526 0%, #060b14 100%);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+        }
+        .pickem-round-header.loser-header {
+            border-color: rgba(249, 115, 22, 0.32);
+            background: linear-gradient(180deg, #200e0a 0%, #0c0707 100%);
+        }
+        .pickem-round-header.final-header {
+            border-color: rgba(234, 179, 8, 0.55);
+            background: linear-gradient(180deg, #281e06 0%, #100c04 100%);
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.2);
+        }
+
+        /* Tarjeta de Partida Simétrica (248px x 92px exactos) */
+        .pickem-match-card {
+            position: absolute;
+            width: 248px;
+            height: 92px;
+            border-radius: 0.85rem;
+            background: #070d19;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .pickem-match-card:hover {
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 10px 28px rgba(6, 182, 212, 0.15);
+        }
+        .pickem-match-card.card-has-pick {
+            border-color: rgba(6, 182, 212, 0.5);
+        }
+        .pickem-match-card.card-hit-winner {
+            border-color: rgba(16, 185, 129, 0.75) !important;
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.22) !important;
+        }
+        .pickem-match-card.card-miss {
+            border-color: rgba(244, 63, 94, 0.65) !important;
+        }
+        .pickem-match-card.card-grand-final {
+            border-color: rgba(234, 179, 8, 0.5);
+            box-shadow: 0 0 30px rgba(234, 179, 8, 0.18);
+        }
+
+        .pickem-card-topbar {
+            height: 22px;
+            padding: 0 8px;
+            background: #03060d;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .pickem-team-slot {
+            height: 35px;
+            padding: 0 8px 0 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+            position: relative;
+        }
+        .pickem-team-slot:first-of-type {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .pickem-team-slot:hover:not(.slot-disabled) {
+            background: rgba(6, 182, 212, 0.12);
+        }
+        .pickem-team-slot.slot-selected {
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.26) 0%, rgba(6, 182, 212, 0.06) 100%);
+            color: #ffffff;
+        }
+        .pickem-team-slot.slot-selected::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #06b6d4;
+            box-shadow: 0 0 8px #06b6d4;
+        }
+        .pickem-team-slot.slot-selected-gold {
+            background: linear-gradient(90deg, rgba(234, 179, 8, 0.3) 0%, rgba(234, 179, 8, 0.06) 100%);
+            color: #fef08a;
+        }
+        .pickem-team-slot.slot-selected-gold::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #eab308;
+            box-shadow: 0 0 10px #eab308;
+        }
+        .pickem-team-slot.slot-eliminated {
+            opacity: 0.42;
+        }
+        .pickem-team-slot.slot-disabled {
+            cursor: default;
+        }
+
+        /* Caja de Seed estilo Challonge */
+        .seed-badge {
+            min-width: 19px;
+            height: 19px;
+            padding: 0 3px;
+            border-radius: 4px;
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #9ca3af;
+            font-size: 9px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .slot-selected .seed-badge {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: rgba(6, 182, 212, 0.6);
+            color: #ffffff;
+        }
+
+        /* Conectores SVG Ortogonales */
+        .pickem-svg-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .connector-path {
+            fill: none;
+            stroke: rgba(148, 163, 184, 0.25);
+            stroke-width: 2;
+            stroke-linejoin: round;
+            transition: stroke 0.25s ease, stroke-width 0.25s ease;
+        }
+        .connector-path.path-picked {
+            stroke: #06b6d4;
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.55));
+        }
+        .connector-path.path-correct {
+            stroke: #10b981;
+            stroke-width: 2.8;
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
+        }
+        .connector-path.path-wrong {
+            stroke: #f43f5e;
+            stroke-width: 2.2;
+            stroke-dasharray: 4 3;
+        }
+
+        /* Scrollbars elegantes */
+        .pickem-viewport::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .pickem-viewport::-webkit-scrollbar-track {
+            background: #02050b;
+        }
+        .pickem-viewport::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 2px solid #02050b;
+        }
+        .pickem-viewport::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-cyber-grid selection:bg-cyan-500 selection:text-black">
+
+    <!-- NAVBAR SUPERIOR -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/[0.08] px-4 md:px-8 h-16 flex justify-between items-center" style="background-color: #040811;">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                <div class="flex flex-col text-left">
+                    <span class="text-base sm:text-lg md:text-xl font-black tracking-wider uppercase italic leading-none text-white">
+                        LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-cyan-400">PICK'EM</span>
+                    </span>
+                    <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
+                        Copa Legion
+                    </span>
+                </div>
+            </a>
+            <span id="staff-badge" class="hidden items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/80 text-red-400 border border-red-500/40 text-[10px] font-black uppercase tracking-wider ml-1">
+                <i class="fas fa-shield-alt text-[9px]"></i> <span class="hidden md:inline">ADMIN</span>
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+            <a href="/" class="text-slate-300 hover:text-white font-bold text-xs px-3 py-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all hidden md:flex items-center gap-1.5">
+                <i class="fas fa-home text-slate-400 text-xs"></i> <span>Inicio</span>
+            </a>
+            <a href="/torneos/TS3LBL" class="text-slate-300 hover:text-cyan-300 font-bold text-xs px-3 py-2 rounded-xl hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/25 transition-all flex items-center gap-1.5">
+                <i class="fas fa-trophy text-yellow-400 text-xs"></i> <span class="hidden sm:inline">Torneo Scouting 3</span>
+            </a>
+            <!-- Contenedor de Login / ID Registrado -->
+            <div id="lbl-auth-nav-desktop"></div>
+        </div>
+    </header>
+
+    <!-- BARRA DE CONTROL EXCLUSIVA PARA ADMIN (ROL === 'ADMIN') -->
+    <div id="admin-pickem-control-bar" class="hidden w-full border-b border-red-500/35 px-4 md:px-8 py-2.5" style="background-color: #11070b;">
+        <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-1 rounded-lg bg-red-500/20 border border-red-500/50 text-red-300 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-user-shield"></i> Control Staff Pick'em
+                </span>
+                <span id="admin-lock-status-text" class="text-xs font-bold text-gray-300">
+                    Estado: <strong class="text-emerald-400">Abierto para Predicciones</strong>
+                </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="window.toggleModoPruebasAdmin()" id="btn-admin-unlock-played" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5">
+                    <i class="fas fa-unlock-alt"></i> <span id="label-admin-unlock-played">Permitir Editar Partidas Jugadas: OFF</span>
+                </button>
+                <button onclick="window.toggleBloqueoGlobalPickem()" id="btn-admin-global-lock" class="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5">
+                    <i class="fas fa-lock"></i> <span>Bloquear Pick'em Global</span>
+                </button>
+                <button onclick="window.sincronizarChallongeYRecalcularAdmin()" id="btn-admin-sync-challonge" class="px-3.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                    <i class="fas fa-sync-alt"></i> <span>Sync Challonge & Recalcular Puntos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-grow w-full px-3 sm:px-6 py-5 space-y-5">
+
+        <!-- HERO DE ESTADO Y RESUMEN DE PUNTOS (INDICADOR EN BOX) -->
+        <section class="max-w-[1640px] mx-auto glass-panel rounded-3xl p-4 sm:p-6 border-t-4 border-cyan-500 shadow-2xl relative overflow-hidden">
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <!-- Título y Descripción (Sin las etiquetas superiores, con título PICK'EM COPA LEGION) -->
+                <div class="space-y-1.5 max-w-2xl">
+                    <h1 class="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-white leading-none">
+                        PICK'EM <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-yellow-400">COPA LEGION</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
+                        Haz clic en los equipos para elegir al ganador de cada llave y simular el avance en cascada por Winner y Loser Bracket hasta coronar a tu Campeón.
+                    </p>
+                </div>
+
+                <!-- Tarjetas de Estadísticas del Jugador + Botones Guardar y Clear -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                    <div class="grid grid-cols-3 gap-2.5 w-full sm:w-auto">
+                        <div class="px-3.5 py-2.5 rounded-2xl bg-[#040811] border border-white/10 text-center min-w-[95px]">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 block">Mis Puntos</span>
+                            <span id="stat-user-points" class="text-xl sm:text-2xl font-black text-yellow-400 leading-tight">0</span>
+                            <span class="text-[9px] font-bold text-gray-500 block">PTS</span>
+                        </div>
+                        <div class="px-3.5 py-2.5 rounded-2xl bg-[#040811] border border-white/10 text-center min-w-[95px]">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 block">Aciertos</span>
+                            <span id="stat-user-hits" class="text-xl sm:text-2xl font-black text-emerald-400 leading-tight">0</span>
+                            <span class="text-[9px] font-bold text-gray-500 block">Ganadores</span>
+                        </div>
+                        <div class="px-3.5 py-2.5 rounded-2xl bg-[#040811] border border-white/10 text-center min-w-[105px]">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 block">Progreso</span>
+                            <span id="stat-user-progress" class="text-xl sm:text-2xl font-black text-white leading-tight">0/0</span>
+                            <span id="stat-save-badge" class="text-[9px] font-bold text-gray-400 block">Sincronizado</span>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción: GUARDAR PREDICCIONES + CLEAR -->
+                    <div class="w-full sm:w-auto flex items-center gap-2.5">
+                        <button id="btn-save-pickem" onclick="window.guardarPrediccionesPickem()" class="flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-400 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i class="fas fa-cloud-upload-alt text-sm"></i>
+                            <span id="btn-save-pickem-text">Guardar Predicciones</span>
+                        </button>
+                        <button onclick="window.reiniciarMisPicks()" title="Limpiar y rehacer predicciones" style="background-color: #160b11; border: 1px solid rgba(244,63,94,0.4);" class="px-4 py-3.5 rounded-2xl hover:bg-rose-950 text-rose-300 hover:text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap">
+                            <i class="fas fa-trash-restore-alt text-xs"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner de Modo Inspección (Cuando se está viendo el bracket de otro jugador del Ranking) -->
+            <div id="inspector-mode-banner" class="hidden mt-4 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <i class="fas fa-eye text-amber-400 text-base"></i>
+                    <span class="text-xs font-bold text-amber-200">
+                        Viendo el Bracket de: <strong id="inspector-target-name" class="text-white font-black uppercase">Jugador</strong>
+                        (<span id="inspector-target-pts" class="text-yellow-300 font-black">0 PTS</span>)
+                    </span>
+                </div>
+                <button onclick="window.salirModoInspeccion()" class="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider cursor-pointer transition-all">
+                    <i class="fas fa-arrow-left mr-1"></i> Volver a Mi Bracket
+                </button>
+            </div>
+        </section>
+
+        <!-- BARRA DE PESTAÑAS DE NAVEGACIÓN + CONTROLES (FUERA DE CAJA) -->
+        <div class="max-w-[1640px] mx-auto pt-1 flex flex-wrap items-center justify-between gap-3">
+            <!-- Selector de Vistas -->
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                <button onclick="window.cambiarVistaPickem('completa')" id="tab-pickem-completa" class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.25)] whitespace-nowrap">
+                    <i class="fas fa-sitemap"></i> Vista Completa (WB + LB)
+                </button>
+                <button onclick="window.cambiarVistaPickem('wb')" id="tab-pickem-wb" class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 border border-transparent whitespace-nowrap">
+                    <i class="fas fa-trophy text-cyan-400"></i> Winner Bracket (Desde 8vos)
+                </button>
+                <button onclick="window.cambiarVistaPickem('lb')" id="tab-pickem-lb" class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 border border-transparent whitespace-nowrap">
+                    <i class="fas fa-fire-alt text-orange-400"></i> Loser Bracket (Desde R3)
+                </button>
+                <button onclick="window.cambiarVistaPickem('leaderboard')" id="tab-pickem-leaderboard" class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-yellow-300 hover:bg-yellow-500/15 border border-yellow-500/30 whitespace-nowrap">
+                    <i class="fas fa-medal text-yellow-400"></i> Ranking Global (<span id="leaderboard-count-badge">0</span>)
+                </button>
+            </div>
+
+            <!-- Controles de Zoom & Reglas de Puntuación (Sin botón Mi Cuenta aquí) -->
+            <div class="flex items-center gap-2 ml-auto">
+                <button onclick="window.toggleModalReglasPickem()" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-cyan-300 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors">
+                    <i class="fas fa-info-circle text-cyan-400"></i> <span class="hidden sm:inline">Tabla de Puntos</span>
+                </button>
+                <div id="zoom-controls-wrap" class="flex items-center gap-1 bg-[#070c16] p-1 rounded-xl border border-white/10">
+                    <button onclick="window.ajustarZoomBracket(-0.1)" class="w-7 h-7 rounded-lg hover:bg-white/10 text-gray-300 flex items-center justify-center text-xs cursor-pointer" title="Alejar">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span id="zoom-level-label" class="text-[11px] font-black text-cyan-300 px-2 min-w-[46px] text-center">100%</span>
+                    <button onclick="window.ajustarZoomBracket(0.1)" class="w-7 h-7 rounded-lg hover:bg-white/10 text-gray-300 flex items-center justify-center text-xs cursor-pointer" title="Acercar">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button onclick="window.resetearZoomBracket()" class="px-2 h-7 rounded-lg hover:bg-white/10 text-[10px] font-black text-gray-400 hover:text-white uppercase cursor-pointer" title="Restaurar vista">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR 1: LIENZO INTERACTIVO DEL BRACKET SIMÉTRICO (FUERA DE CAJA) -->
+        <div id="section-bracket-view" class="space-y-3">
+            <!-- Leyenda rápida -->
+            <div class="max-w-[1640px] mx-auto flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] font-bold text-gray-400">
+                <div class="flex flex-wrap items-center gap-4">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span> Ganador Elegido</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span> Acertado (+Pts)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Eliminado / Fallado</span>
+                    <span class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded bg-orange-500/15 text-orange-300 text-[9px] font-black">⬇#M</span> Cae desde Winner Bracket</span>
+                </div>
+                <span class="text-gray-500 hidden md:inline"><i class="fas fa-hand-paper mr-1"></i> Arrastra horizontalmente para desplazarte por las llaves</span>
+            </div>
+
+            <!-- Lienzo Libre Fuera de Caja -->
+            <div id="pickem-viewport" class="pickem-viewport">
+                <div id="pickem-canvas" class="pickem-canvas mx-auto">
+                    <div class="flex flex-col items-center justify-center h-[600px] text-center p-8">
+                        <i class="fas fa-circle-notch fa-spin text-4xl text-cyan-400 mb-3"></i>
+                        <p class="text-sm font-black uppercase tracking-widest text-white">Cargando Llaves Oficiales de Copa Legion...</p>
+                        <p class="text-xs text-gray-500 mt-1">Sincronizando Octavos de Winner Bracket y Ronda 3 de Loser Bracket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR 2: TABLA DE CLASIFICACIÓN (LEADERBOARD PICK'EM) -->
+        <div id="section-leaderboard-view" class="hidden max-w-[1640px] mx-auto space-y-6">
+            <!-- Podio Top 3 -->
+            <div id="leaderboard-podium-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+            <!-- Tabla Completa de Participantes -->
+            <div class="glass-panel rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                <div class="p-4 sm:p-6 border-b border-white/10 flex flex-wrap items-center justify-between gap-4 bg-[#050a14]">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-black uppercase italic text-white flex items-center gap-2">
+                            <i class="fas fa-trophy text-yellow-400"></i> Tabla de Posiciones Oficial • Pick'em Copa Legion
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-0.5">Clasificación actualizada según los ganadores oficiales del bracket en Challonge.</p>
+                    </div>
+                    <div class="relative w-full sm:w-64">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                        <input type="text" id="input-search-leaderboard" oninput="window.filtrarLeaderboard()" placeholder="Buscar jugador o Riot ID..."
+                            class="w-full bg-[#02050b] text-white text-xs font-bold pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-800 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 bg-[#030712] text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                <th class="py-3.5 px-4 w-16 text-center">Pos.</th>
+                                <th class="py-3.5 px-4">Jugador / ID Registrado</th>
+                                <th class="py-3.5 px-4 text-center">Campeón Elegido</th>
+                                <th class="py-3.5 px-4 text-center">Aciertos</th>
+                                <th class="py-3.5 px-4 text-center">Puntos Totales</th>
+                                <th class="py-3.5 px-4 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-table-body" class="divide-y divide-white/5 text-xs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL DE REGLAS Y TABLA DE PUNTUACIÓN (SOLO GANADORES) -->
+    <div id="modal-reglas-pickem" onclick="if(event.target === this) window.toggleModalReglasPickem()" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/85 p-4">
+        <div class="w-full max-w-xl rounded-3xl overflow-hidden border border-cyan-500/40 shadow-2xl" style="background-color: #070c16;">
+            <div class="p-5 sm:p-6 border-b border-gray-800 flex items-center justify-between bg-[#040810]">
+                <div class="flex items-center gap-2.5">
+                    <i class="fas fa-award text-yellow-400 text-xl"></i>
+                    <h3 class="text-lg font-black uppercase italic text-white">Puntuación Oficial • Pick'em Copa Legion</h3>
+                </div>
+                <button onclick="window.toggleModalReglasPickem()" class="w-8 h-8 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            <div class="p-5 sm:p-6 space-y-4 text-xs text-gray-300">
+                <p class="leading-relaxed">
+                    Suma puntos por cada equipo ganador que aciertes en las llaves de Winner Bracket, Loser Bracket y Gran Final:
+                </p>
+                <div class="overflow-x-auto rounded-2xl border border-gray-800">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-[#030712] text-[10px] font-black uppercase tracking-wider text-cyan-400 border-b border-gray-800">
+                                <th class="p-3">Fase / Ronda del Torneo</th>
+                                <th class="p-3 text-center">Puntos por Ganador</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800 font-bold">
+                            <tr>
+                                <td class="p-3 text-white">8vos Winner Bracket (R3) / Loser R3 y R4</td>
+                                <td class="p-3 text-center text-emerald-400">+10 PTS</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 text-white">4tos Winner Bracket (R4) / Loser R5 y R6</td>
+                                <td class="p-3 text-center text-emerald-400">+20 PTS</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 text-white">Semifinales WB (R5) / Loser R7 y R8</td>
+                                <td class="p-3 text-center text-emerald-400">+40 PTS</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 text-white">Final WB (R6) / Semifinal y Final LB (R9 y R10)</td>
+                                <td class="p-3 text-center text-emerald-400">+60 PTS</td>
+                            </tr>
+                            <tr class="bg-yellow-500/10">
+                                <td class="p-3 text-yellow-300 font-black">🏆 GRAN FINAL COPA LEGION (Campeón)</td>
+                                <td class="p-3 text-center text-yellow-400 font-black">+100 PTS</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="w-full glass-panel border-t border-gray-800/80 p-5 text-center text-xs text-gray-500 font-bold uppercase tracking-widest mt-8">
+        Liga Boliviana de Esports &copy; 2026 — Pick'em Copa Legion
+    </footer>
+
+    <!-- MOTOR LÓGICO DEL PICK'EM EN CASCADA + ORDENAMIENTO DE ÁRBOL CHALLONGE -->
+    <script type="module">
+        import { db } from "/firebase-config.js";
+        import {
+            collection,
+            doc,
+            getDoc,
+            setDoc,
+            onSnapshot,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { procesarTorneoChallonge } from "/challonge-core.js?v=251";
+        import {
+            obtenerUsuarioActual,
+            obtenerIdRegistradoUsuario,
+            abrirModalLoginFlotante,
+            mostrarToastAuth
+        } from "/auth-core.js?v=251";
+        import "/app-version.js?v=251";
+
+        // =========================================================================
+        // 1. CONSTANTES DE GEOMETRÍA Y TAGS
+        // =========================================================================
+        const CARD_W = 248;
+        const CARD_H = 92;
+        const COL_GAP = 64;
+        const ROW_GAP_BASE = 22;
+        const TOP_OFFSET = 80;
+        const LEFT_OFFSET = 32;
+
+        const TAG_OVERRIDES = {
+            'souls reaper': 'SLR',
+            'soul reaper': 'SLR',
+            'kaoxitos skyblue': 'KXS',
+            'kaoxitos skyblue (academy)': 'KXS',
+            'kaoxitos academy': 'KXS',
+            'pisa patitos gaming': 'PPT',
+            'pisa patitos': 'PPT',
+            'team blood': 'TBB',
+            'las cabras de lugano': 'LCL',
+            'las cabras de laguno': 'LCL',
+            'cabras de lugano': 'LCL',
+            'postrecitos gaming': 'PTG',
+            'postrecitos': 'PTG',
+            'asociacion de troncos expertos': 'ATE',
+            'asociacion de troncos': 'ATE',
+            'turnalia': 'TNL',
+            'rift rangers (omega)': 'RRO',
+            'rift rangers omega': 'RRO',
+            'rift rangers (alpha)': 'RRA',
+            'rift rangers alpha': 'RRA',
+            'rift rangers': 'RNG',
+            'dead players gaming': 'DPG',
+            'dead players': 'DPG',
+            'bolitas': 'BOL',
+            'bolitoons': 'BLT',
+            'sindicato wildcard': 'SWC',
+            'sindicato wilcard': 'SWC',
+            'sindicato de eie': 'EIE',
+            'sindicato eie': 'EIE',
+            'proyecto q': 'PRO',
+            'pent-hexch': 'PHX',
+            'pent hexch': 'PHX',
+            'new rapture sport': 'NRS',
+            'new rapture sports': 'NRS',
+            'new rapture esports': 'NRS',
+            'new rapture': 'NRS',
+            'the simpson': 'TSN',
+            'the simpsons': 'TSN',
+            'camino a laja reformed': 'CLR',
+            'camino a laja': 'CLR',
+            'los chipis': 'PIS',
+            'chipis': 'PIS',
+            'iron hells academy': 'IHA',
+            'iron academy': 'IHA',
+            'iron hells': 'FEH',
+            'the low project': 'TLP',
+            'low project': 'TLP',
+            'los 420': '420',
+            'pasteurizados gaming': 'PTZ',
+            'patitos gaming': 'PTG',
+            'dissidents': 'DSD',
+            'phoenix rampage': 'PRE',
+            'voiden abyss club': 'VAC',
+            'voiden abyss': 'VAC',
+            'shadowborns gaming': 'SBG',
+            'shadowborns': 'SBG',
+            'triple alianza': 'TLA',
+            'b1 lol sport': 'B1',
+            'pacha lovers': 'PLF',
+            'revelation gaming': 'RVG',
+            'revelation': 'RVG',
+            'ctk gaming': 'CTK',
+            'tr4gedy': 'T4',
+            'tragedy': 'T4',
+            'itsd zaun': 'ITSD',
+            'the saviors': 'TWD',
+            'saviors': 'TWD',
+            'nexus breakers': 'NBS',
+            'siloko': 'SLK',
+            'kaox las': 'KXL',
+            'nothing cash': 'NTC',
+            'inka warriors gaming': 'IWG',
+            'snake nest': 'SKN',
+            'armeros gaming': 'ARG',
+            'phoenix rising gaming': 'PRG',
+            'legion': 'LEG',
+            'rgb': 'RGB',
+            'nox reign esports': 'NRE',
+            'nox reign': 'NRE',
+            'sword art online': 'SAO'
+        };
+
+        // =========================================================================
+        // 2. ESTADO REACTIVO DEL MOTOR PICK'EM
+        // =========================================================================
+        let allMatchesMap = new Map(); // id -> match
+        let participantsById = new Map(); // participantId -> { id, nombre, tag, logo, seed }
+        let orderedMatchesByRound = new Map(); // roundNumber -> [match, ...] ordenados exactamente como el árbol de Challonge
+
+        let wbStartRound = 3; // Octavos WB (8 partidas)
+        let lbStartRound = -3; // Ronda 3 LB (8 partidas)
+        let grandFinalRound = 7;
+
+        let pickemMatchIds = new Set();
+        let wbRoundsList = []; // [3, 4, 5, 6]
+        let lbRoundsList = []; // [-3, -4, -5, -6, -7, -8, -9, -10]
+        let grandFinalMatch = null;
+
+        // Predicciones del usuario actual: { [matchId]: { winnerId: string } }
+        let myPicks = {};
+        let hasUnsavedChanges = false;
+        let inspectedUser = null;
+
+        let pickemConfig = {
+            globalLocked: false,
+            allowEditPlayedAdmin: false
+        };
+
+        let leaderboardEntries = [];
+        let currentViewMode = 'completa';
+        let currentZoom = 1;
+
+        // =========================================================================
+        // 3. RESOLUCIÓN DE LOGOS, TAGS, SEEDS Y EQUIPOS
+        // =========================================================================
+        function resolverTagEquipo(nombreRaw, tagRaw = '') {
+            const clean = (nombreRaw || '').toString().toLowerCase().trim();
+            if (!clean || clean === 'tbd') return 'TBD';
+            if (TAG_OVERRIDES[clean]) return TAG_OVERRIDES[clean];
+            const sortedKeys = Object.keys(TAG_OVERRIDES).sort((a, b) => b.length - a.length);
+            for (const k of sortedKeys) {
+                if (clean.includes(k)) return TAG_OVERRIDES[k];
+            }
+            if (tagRaw && tagRaw.length >= 2 && tagRaw.length <= 4 && tagRaw.toUpperCase() !== 'TBD') {
+                return tagRaw.toUpperCase();
+            }
+            return nombreRaw.replace(/[^a-zA-Z0-9]/g, '').substring(0, 3).toUpperCase() || 'EQP';
+        }
+
+        function resolverLogoSc3(nombreRaw, tagResuelto) {
+            if (!nombreRaw || nombreRaw === 'TBD') return '/assets/logo.webp';
+            if (typeof window.findLocalSc3Logo === 'function') {
+                const localLogo = window.findLocalSc3Logo(nombreRaw, tagResuelto);
+                if (localLogo) return localLogo;
+            }
+            return '/assets/logo.webp';
+        }
+
+        function construirObjetoEquipo(id, nombreRaw, seed = null) {
+            if (!id || !nombreRaw || nombreRaw === 'TBD') return null;
+            const cleanName = nombreRaw.toString().trim();
+            const tag = resolverTagEquipo(cleanName);
+            const logo = resolverLogoSc3(cleanName, tag);
+            return {
+                id: String(id),
+                nombre: cleanName,
+                tag,
+                logo,
+                seed: seed !== null && seed !== undefined ? seed : null
+            };
+        }
+
+        // =========================================================================
+        // 4. REGLAS DE FORMATO Y PUNTOS (SOLO GANADORES)
+        // =========================================================================
+        function obtenerFormatoSerie(match) {
+            if (!match) return 'BO1';
+            if (grandFinalMatch && String(match.id) === String(grandFinalMatch.id)) return 'BO5';
+            if (match.round === grandFinalRound) return 'BO5';
+            if (match.round > 0) {
+                const offset = match.round - wbStartRound;
+                if (offset >= 3) return 'BO5'; // Final Winner es BO5
+                return 'BO3';
+            }
+            const absLb = Math.abs(match.round || 1);
+            if (absLb >= 9) return 'BO5'; // Semifinal LB (R9) y Final Loser (R10) son BO5
+            return absLb >= 5 ? 'BO3' : 'BO1';
+        }
+
+        function obtenerReglaPuntos(match) {
+            const r = match.round;
+            if (grandFinalMatch && String(match.id) === String(grandFinalMatch.id)) {
+                return { base: 100, faseLabel: 'GRAN FINAL' };
+            }
+            if (r === wbStartRound || r === -3 || r === -4) {
+                return { base: 10, faseLabel: r > 0 ? '8vos WB' : `LB R${Math.abs(r)}` };
+            }
+            if (r === wbStartRound + 1 || r === -5 || r === -6) {
+                return { base: 20, faseLabel: r > 0 ? '4tos WB' : `LB R${Math.abs(r)}` };
+            }
+            if (r === wbStartRound + 2 || r === -7 || r === -8) {
+                return { base: 40, faseLabel: r > 0 ? 'Semis WB' : `LB R${Math.abs(r)}` };
+            }
+            if (r === wbStartRound + 3 || r === -9 || r === -10) {
+                return { base: 60, faseLabel: r > 0 ? 'Final WB' : (r === -9 ? 'Semis LB' : 'Final LB') };
+            }
+            return { base: 20, faseLabel: `Ronda ${r}` };
+        }
+
+        function obtenerNombreRondaColumna(round, isGrandFinal = false) {
+            if (isGrandFinal) return { title: 'GRAN FINAL', sub: 'BO5 • +100 PTS', type: 'final' };
+            if (round > 0) {
+                const offset = round - wbStartRound;
+                if (offset === 0) return { title: 'OCTAVOS WB', sub: 'BO3 • +10 PTS', type: 'wb' };
+                if (offset === 1) return { title: 'CUARTOS WB', sub: 'BO3 • +20 PTS', type: 'wb' };
+                if (offset === 2) return { title: 'SEMIFINALES WB', sub: 'BO3 • +40 PTS', type: 'wb' };
+                if (offset === 3) return { title: 'FINAL WINNER', sub: 'BO5 • +60 PTS', type: 'wb' };
+                return { title: `WINNER R${round}`, sub: 'BO3', type: 'wb' };
+            } else {
+                const absR = Math.abs(round);
+                const ptsInfo = obtenerReglaPuntos({ id: 0, round });
+                const bo = obtenerFormatoSerie({ id: 0, round });
+                if (absR === 9) return { title: 'SEMIFINAL LB', sub: `${bo} • +${ptsInfo.base} PTS`, type: 'lb' };
+                if (absR === 10) return { title: 'FINAL LOSER', sub: `${bo} • +${ptsInfo.base} PTS`, type: 'lb' };
+                return {
+                    title: `LOSER RONDA ${absR}`,
+                    sub: `${bo} • +${ptsInfo.base} PTS`,
+                    type: 'lb'
+                };
+            }
+        }
+
+        // =========================================================================
+        // 5. CARGA DEL TORNEO Y ORDENAMIENTO EXACTO DEL ÁRBOL CHALLONGE
+        // =========================================================================
+        async function cargarDatosTorneoScouting3() {
+            let tDoc = null;
+
+            try {
+                const snap = await getDoc(doc(db, "torneos_registrados", "scouting3"));
+                if (snap.exists()) {
+                    tDoc = snap.data();
+                }
+            } catch (e) {}
+
+            const matchesExistentes = tDoc?.datosChallonge?.matches || tDoc?.matches || [];
+            if (!matchesExistentes || matchesExistentes.length === 0) {
+                try {
+                    const fresh = await procesarTorneoChallonge('18498275');
+                    if (fresh && Array.isArray(fresh.matches) && fresh.matches.length > 0) {
+                        tDoc = fresh;
+                    }
+                } catch (err) {
+                    console.error("[Pick'em] Error consultando Challonge 18498275:", err);
+                }
+            }
+
+            if (!tDoc) return;
+            procesarEstructuraBracket(tDoc);
+        }
+
+        /**
+         * Ordena cada ronda de Winner Bracket y Loser Bracket siguiendo exactamente
+         * el árbol de prerrequisitos de Challonge (player1_prereq_match_id arriba y player2_prereq_match_id abajo),
+         * garantizando que las llaves invertidas de Challonge (ej. 68, 67, 66, 65 -> 82, 81) queden 100% alineadas.
+         */
+        function construirOrdenArbolRondas(matches) {
+            orderedMatchesByRound.clear();
+
+            // 1. Winner Bracket: construir desde la Final WB hacia atrás hasta 8vos WB
+            const wbTopRound = wbRoundsList[wbRoundsList.length - 1]; // R6 (Final WB)
+            if (wbTopRound !== undefined) {
+                const topMatches = matches
+                    .filter(m => m.round === wbTopRound && !m.optional)
+                    .sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id));
+                orderedMatchesByRound.set(wbTopRound, topMatches);
+
+                for (let idx = wbRoundsList.length - 1; idx > 0; idx--) {
+                    const rightRound = wbRoundsList[idx];
+                    const leftRound = wbRoundsList[idx - 1];
+                    const rightOrdered = orderedMatchesByRound.get(rightRound) || [];
+                    const leftOrdered = [];
+                    const usedIds = new Set();
+
+                    rightOrdered.forEach(parentMatch => {
+                        const p1Id = parentMatch.player1_prereq_match_id ? String(parentMatch.player1_prereq_match_id) : null;
+                        const p2Id = parentMatch.player2_prereq_match_id ? String(parentMatch.player2_prereq_match_id) : null;
+                        const m1 = p1Id ? allMatchesMap.get(p1Id) : null;
+                        const m2 = p2Id ? allMatchesMap.get(p2Id) : null;
+
+                        if (m1 && m1.round === leftRound && !usedIds.has(String(m1.id))) {
+                            leftOrdered.push(m1);
+                            usedIds.add(String(m1.id));
+                        }
+                        if (m2 && m2.round === leftRound && !usedIds.has(String(m2.id))) {
+                            leftOrdered.push(m2);
+                            usedIds.add(String(m2.id));
+                        }
+                    });
+
+                    // Agregar cualquier partida restante de esa ronda por si acaso
+                    matches
+                        .filter(m => m.round === leftRound && !m.optional && !usedIds.has(String(m.id)))
+                        .sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id))
+                        .forEach(m => leftOrdered.push(m));
+
+                    orderedMatchesByRound.set(leftRound, leftOrdered);
+                }
+            }
+
+            // 2. Loser Bracket: construir desde la Final LB (ej. R-10) hacia atrás hasta LB R-3
+            // Así cada columna izquierda queda alineada al píxel con el partido al que avanza en la columna derecha
+            const lbLastRound = lbRoundsList[lbRoundsList.length - 1]; // R-10 (Final LB)
+            if (lbLastRound !== undefined) {
+                const lastLbMatches = matches
+                    .filter(m => m.round === lbLastRound && !m.optional)
+                    .sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id));
+                orderedMatchesByRound.set(lbLastRound, lastLbMatches);
+
+                for (let idx = lbRoundsList.length - 1; idx > 0; idx--) {
+                    const rightRound = lbRoundsList[idx];     // ej. -10, -9, -8...
+                    const leftRound = lbRoundsList[idx - 1];  // ej. -9, -8, -7...
+                    const rightOrdered = orderedMatchesByRound.get(rightRound) || [];
+                    const leftOrdered = [];
+                    const usedIds = new Set();
+
+                    rightOrdered.forEach(parentMatch => {
+                        const p1Id = parentMatch.player1_prereq_match_id ? String(parentMatch.player1_prereq_match_id) : null;
+                        const p2Id = parentMatch.player2_prereq_match_id ? String(parentMatch.player2_prereq_match_id) : null;
+                        const m1 = p1Id ? allMatchesMap.get(p1Id) : null;
+                        const m2 = p2Id ? allMatchesMap.get(p2Id) : null;
+
+                        // Solo seguir los prerrequisitos que vienen del propio Loser Bracket (round === leftRound y !is_prereq_match_loser)
+                        if (m1 && m1.round === leftRound && !parentMatch.player1_is_prereq_match_loser && !usedIds.has(String(m1.id))) {
+                            leftOrdered.push(m1);
+                            usedIds.add(String(m1.id));
+                        }
+                        if (m2 && m2.round === leftRound && !parentMatch.player2_is_prereq_match_loser && !usedIds.has(String(m2.id))) {
+                            leftOrdered.push(m2);
+                            usedIds.add(String(m2.id));
+                        }
+                    });
+
+                    matches
+                        .filter(m => m.round === leftRound && !m.optional && !usedIds.has(String(m.id)))
+                        .sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id))
+                        .forEach(m => leftOrdered.push(m));
+
+                    orderedMatchesByRound.set(leftRound, leftOrdered);
+                }
+            }
+        }
+
+        function procesarEstructuraBracket(tDoc) {
+            const participantes = tDoc.datosChallonge?.participantes || tDoc.participantes || [];
+            const matches = (tDoc.datosChallonge?.matches || tDoc.matches || []).filter(m => !m.group_id);
+
+            participantsById.clear();
+            participantes.forEach(p => {
+                if (!p) return;
+                const nombre = p.lblInfo?.nombre || p.name || p.nombre || 'TBD';
+                const eqObj = construirObjetoEquipo(p.id, nombre, p.seed);
+                if (eqObj) {
+                    participantsById.set(String(p.id), eqObj);
+                    if (Array.isArray(p.group_player_ids)) {
+                        p.group_player_ids.forEach(gid => participantsById.set(String(gid), eqObj));
+                    }
+                }
+            });
+
+            matches.forEach(m => {
+                if (m.player1_id && m.player1 && (m.player1.nombre || m.player1.name) && !participantsById.has(String(m.player1_id))) {
+                    const eq1 = construirObjetoEquipo(m.player1_id, m.player1.nombre || m.player1.name, m.player1.seed);
+                    if (eq1) participantsById.set(String(m.player1_id), eq1);
+                }
+                if (m.player2_id && m.player2 && (m.player2.nombre || m.player2.name) && !participantsById.has(String(m.player2_id))) {
+                    const eq2 = construirObjetoEquipo(m.player2_id, m.player2.nombre || m.player2.name, m.player2.seed);
+                    if (eq2) participantsById.set(String(m.player2_id), eq2);
+                }
+            });
+
+            allMatchesMap.clear();
+            matches.forEach(m => {
+                allMatchesMap.set(String(m.id), m);
+            });
+
+            const wbRounds = [...new Set(matches.filter(m => m.round > 0).map(m => m.round))].sort((a, b) => a - b);
+            const foundWb8 = wbRounds.find(r => matches.filter(m => m.round === r).length === 8);
+            wbStartRound = foundWb8 !== undefined ? foundWb8 : 3;
+
+            const maxPosRound = Math.max(...wbRounds);
+            grandFinalRound = maxPosRound;
+
+            wbRoundsList = wbRounds.filter(r => r >= wbStartRound && r < grandFinalRound);
+
+            const lbRounds = [...new Set(matches.filter(m => m.round < 0).map(m => m.round))].sort((a, b) => b - a);
+            const foundLb8 = lbRounds.find(r => Math.abs(r) >= 3 && matches.filter(m => m.round === r).length === 8);
+            lbStartRound = foundLb8 !== undefined ? foundLb8 : -3;
+            lbRoundsList = lbRounds.filter(r => r <= lbStartRound);
+
+            const gfCandidates = matches.filter(m => m.round === grandFinalRound);
+            grandFinalMatch = gfCandidates.find(m => !m.optional) || gfCandidates[0] || null;
+
+            pickemMatchIds.clear();
+            matches.forEach(m => {
+                if (wbRoundsList.includes(m.round) || lbRoundsList.includes(m.round)) {
+                    pickemMatchIds.add(String(m.id));
+                }
+            });
+            if (grandFinalMatch) {
+                pickemMatchIds.add(String(grandFinalMatch.id));
+            }
+
+            // Construir el ordenamiento de árbol exacto de Challonge para WB y LB
+            construirOrdenArbolRondas(matches);
+
+            renderizarTodoPickem();
+        }
+
+        function obtenerPartidasDeRondaOrdenadas(round) {
+            if (orderedMatchesByRound.has(round)) {
+                return orderedMatchesByRound.get(round);
+            }
+            const list = [];
+            allMatchesMap.forEach(m => {
+                if (m.round === round && !m.optional) {
+                    list.push(m);
+                }
+            });
+            return list.sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id));
+        }
+
+        // =========================================================================
+        // 6. SIMULADOR EN CASCADA (PROPAGACIÓN WB -> LB -> GRAN FINAL)
+        // =========================================================================
+        function simularCascadaBracket(picksSource) {
+            const activePicks = picksSource || {};
+            const resolvedSlots = new Map();
+
+            const resolverPartida = (m) => {
+                if (!m) return;
+                const mId = String(m.id);
+
+                const obtenerEquipoSlot = (slotNum) => {
+                    const prereqId = slotNum === 1 ? m.player1_prereq_match_id : m.player2_prereq_match_id;
+                    const isLoser = slotNum === 1 ? m.player1_is_prereq_match_loser : m.player2_is_prereq_match_loser;
+                    const officialPlayerId = slotNum === 1 ? m.player1_id : m.player2_id;
+
+                    // Si el prerrequisito pertenece al Pick'em interactivo:
+                    if (prereqId && pickemMatchIds.has(String(prereqId))) {
+                        const parentSim = resolvedSlots.get(String(prereqId));
+                        if (parentSim) {
+                            const propagated = isLoser ? parentSim.loserTeam : parentSim.winnerTeam;
+                            if (propagated) return propagated;
+                        }
+                        if (officialPlayerId && participantsById.has(String(officialPlayerId))) {
+                            return participantsById.get(String(officialPlayerId));
+                        }
+                        return null;
+                    }
+
+                    // Si viene de una ronda previa ya jugada o es ronda inicial del Pick'em (8vos WB / LB R3):
+                    if (officialPlayerId && participantsById.has(String(officialPlayerId))) {
+                        return participantsById.get(String(officialPlayerId));
+                    }
+                    return null;
+                };
+
+                const team1 = obtenerEquipoSlot(1);
+                const team2 = obtenerEquipoSlot(2);
+
+                let winnerTeam = null;
+                let loserTeam = null;
+
+                const userPick = activePicks[mId];
+                const pickedWinnerId = userPick?.winnerId ? String(userPick.winnerId) : null;
+
+                if (pickedWinnerId) {
+                    if (team1 && String(team1.id) === pickedWinnerId) {
+                        winnerTeam = team1;
+                        loserTeam = team2 || null;
+                    } else if (team2 && String(team2.id) === pickedWinnerId) {
+                        winnerTeam = team2;
+                        loserTeam = team1 || null;
+                    }
+                } else if (m.state === 'completed' && m.winner_id && !inspectedUser) {
+                    const offWinId = String(m.winner_id);
+                    if (team1 && String(team1.id) === offWinId) {
+                        winnerTeam = team1;
+                        loserTeam = team2 || null;
+                    } else if (team2 && String(team2.id) === offWinId) {
+                        winnerTeam = team2;
+                        loserTeam = team1 || null;
+                    }
+                }
+
+                resolvedSlots.set(mId, {
+                    team1,
+                    team2,
+                    winnerTeam,
+                    loserTeam
+                });
+            };
+
+            wbRoundsList.forEach(r => {
+                obtenerPartidasDeRondaOrdenadas(r).forEach(resolverPartida);
+            });
+
+            lbRoundsList.forEach(r => {
+                obtenerPartidasDeRondaOrdenadas(r).forEach(resolverPartida);
+            });
+
+            if (grandFinalMatch) {
+                resolverPartida(grandFinalMatch);
+            }
+
+            return resolvedSlots;
+        }
+
+        // =========================================================================
+        // 7. MOTOR COMPARADOR DE PUNTOS (SOLO GANADORES)
+        // =========================================================================
+        function evaluarPuntuacionPicks(picksMap) {
+            let totalPoints = 0;
+            let totalHits = 0;
+            const matchEvaluations = new Map();
+
+            if (!picksMap) {
+                return { totalPoints: 0, totalHits: 0, matchEvaluations };
+            }
+
+            pickemMatchIds.forEach(mId => {
+                const m = allMatchesMap.get(String(mId));
+                const pick = picksMap[String(mId)];
+                if (!m || !pick || !pick.winnerId) {
+                    matchEvaluations.set(String(mId), { status: 'pending', pointsEarned: 0 });
+                    return;
+                }
+
+                if (m.state !== 'completed' || !m.winner_id) {
+                    matchEvaluations.set(String(mId), { status: 'pending', pointsEarned: 0 });
+                    return;
+                }
+
+                const officialWinnerId = String(m.winner_id);
+                const pickedWinnerId = String(pick.winnerId);
+                const reglas = obtenerReglaPuntos(m);
+
+                if (officialWinnerId === pickedWinnerId) {
+                    totalPoints += reglas.base;
+                    totalHits += 1;
+                    matchEvaluations.set(String(mId), {
+                        status: 'hit-winner',
+                        pointsEarned: reglas.base
+                    });
+                } else {
+                    matchEvaluations.set(String(mId), {
+                        status: 'miss',
+                        pointsEarned: 0
+                    });
+                }
+            });
+
+            return { totalPoints, totalHits, matchEvaluations };
+        }
+
+        // =========================================================================
+        // 8. INTERACCIÓN DEL USUARIO: ELEGIR GANADOR Y CLEAR
+        // =========================================================================
+        function estaPartidaBloqueada(match) {
+            if (inspectedUser) return true;
+            const user = obtenerUsuarioActual();
+            const isAdmin = user?.rol === 'ADMIN';
+
+            if (pickemConfig.globalLocked && !isAdmin) return true;
+            if ((match.state === 'completed' || match.state === 'live') && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                return true;
+            }
+            return false;
+        }
+
+        window.seleccionarGanadorPickem = (matchId, teamId) => {
+            if (inspectedUser) {
+                mostrarToastAuth("Estás viendo el bracket de otro jugador. Vuelve a tu bracket para editar.", "warning");
+                return;
+            }
+
+            const m = allMatchesMap.get(String(matchId));
+            if (!m) return;
+
+            if (estaPartidaBloqueada(m)) {
+                mostrarToastAuth("Esta partida ya se encuentra bloqueada porque está en curso o finalizada.", "warning");
+                return;
+            }
+
+            myPicks[String(matchId)] = {
+                winnerId: String(teamId)
+            };
+
+            limpiarSeleccionesHuerfanasEnCascada();
+
+            hasUnsavedChanges = true;
+            guardarBorradorLocal();
+            renderizarTodoPickem();
+        };
+
+        function limpiarSeleccionesHuerfanasEnCascada() {
+            for (let pass = 0; pass < 4; pass++) {
+                const sim = simularCascadaBracket(myPicks);
+                pickemMatchIds.forEach(mId => {
+                    const pick = myPicks[mId];
+                    if (!pick || !pick.winnerId) return;
+                    const slotData = sim.get(mId);
+                    if (!slotData) return;
+                    const t1Id = slotData.team1 ? String(slotData.team1.id) : null;
+                    const t2Id = slotData.team2 ? String(slotData.team2.id) : null;
+                    if (String(pick.winnerId) !== t1Id && String(pick.winnerId) !== t2Id) {
+                        delete myPicks[mId];
+                    }
+                });
+            }
+        }
+
+        window.reiniciarMisPicks = () => {
+            if (inspectedUser) return;
+            Object.keys(myPicks).forEach(mId => {
+                const m = allMatchesMap.get(String(mId));
+                if (!m || !estaPartidaBloqueada(m)) {
+                    delete myPicks[mId];
+                }
+            });
+            hasUnsavedChanges = true;
+            guardarBorradorLocal();
+            renderizarTodoPickem();
+            mostrarToastAuth("Predicciones limpiadas. Puedes rehacer tu bracket.", "info");
+        };
+
+        function guardarBorradorLocal() {
+            try {
+                const u = obtenerUsuarioActual();
+                const key = u?.uid ? `lbl_pickem_draft_${u.uid}` : 'lbl_pickem_draft_guest';
+                localStorage.setItem(key, JSON.stringify(myPicks));
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // 9. RENDERIZADO GEOMÉTRICO DEL BRACKET SIMÉTRICO + SEEDS + INDICADORES
+        // =========================================================================
+        function calcularYSimetrico(colIndex, matchIndex, countInCol, prevColYs) {
+            if (colIndex === 0 || !prevColYs || prevColYs.length === 0) {
+                return TOP_OFFSET + matchIndex * (CARD_H + ROW_GAP_BASE);
+            }
+            if (countInCol === prevColYs.length) {
+                return prevColYs[matchIndex] ?? (TOP_OFFSET + matchIndex * (CARD_H + ROW_GAP_BASE));
+            }
+            if (countInCol * 2 === prevColYs.length) {
+                const yA = prevColYs[matchIndex * 2];
+                const yB = prevColYs[matchIndex * 2 + 1];
+                if (yA !== undefined && yB !== undefined) {
+                    return Math.round((yA + yB) / 2);
+                }
+            }
+            return TOP_OFFSET + matchIndex * (CARD_H + ROW_GAP_BASE);
+        }
+
+        function renderizarTodoPickem() {
+            const activePicks = inspectedUser ? (inspectedUser.picks || {}) : myPicks;
+            const simMap = simularCascadaBracket(activePicks);
+            const evalResult = evaluarPuntuacionPicks(activePicks);
+
+            const totalPickable = pickemMatchIds.size;
+            const completedPicksCount = Array.from(pickemMatchIds).filter(id => {
+                const p = activePicks[id];
+                if (p && p.winnerId) return true;
+                const m = allMatchesMap.get(id);
+                return m && m.state === 'completed' && m.winner_id;
+            }).length;
+
+            const ptsEl = document.getElementById('stat-user-points');
+            const hitsEl = document.getElementById('stat-user-hits');
+            const progEl = document.getElementById('stat-user-progress');
+            const badgeEl = document.getElementById('stat-save-badge');
+
+            if (ptsEl) ptsEl.textContent = evalResult.totalPoints;
+            if (hitsEl) hitsEl.textContent = evalResult.totalHits;
+            if (progEl) progEl.textContent = `${completedPicksCount}/${totalPickable}`;
+            if (badgeEl) {
+                if (inspectedUser) {
+                    badgeEl.textContent = 'Modo Vista';
+                    badgeEl.className = 'text-[9px] font-bold text-amber-400 block';
+                } else if (hasUnsavedChanges) {
+                    badgeEl.textContent = 'Sin guardar';
+                    badgeEl.className = 'text-[9px] font-bold text-amber-400 block animate-pulse';
+                } else {
+                    badgeEl.textContent = 'Sincronizado';
+                    badgeEl.className = 'text-[9px] font-bold text-emerald-400 block';
+                }
+            }
+
+            if (currentViewMode === 'leaderboard') {
+                renderizarLeaderboardDOM();
+                return;
+            }
+
+            renderizarLienzoBracket(simMap, evalResult, activePicks);
+        }
+
+        function renderizarLienzoBracket(simMap, evalResult, activePicks) {
+            const canvas = document.getElementById('pickem-canvas');
+            if (!canvas) return;
+
+            const showWB = currentViewMode === 'completa' || currentViewMode === 'wb';
+            const showLB = currentViewMode === 'completa' || currentViewMode === 'lb';
+
+            const cardPositions = new Map();
+            let htmlCards = '';
+            let maxX = 0;
+            let maxY = 0;
+
+            // --- BLOQUE 1: WINNER BRACKET + GRAN FINAL ---
+            let wbBottomY = 0;
+            if (showWB) {
+                let prevYs = [];
+                wbRoundsList.forEach((roundNum, colIdx) => {
+                    const matchesInCol = obtenerPartidasDeRondaOrdenadas(roundNum);
+                    const colX = LEFT_OFFSET + colIdx * (CARD_W + COL_GAP);
+                    const currentYs = [];
+
+                    const headerMeta = obtenerNombreRondaColumna(roundNum, false);
+                    htmlCards += `
+                        <div class="pickem-round-header" style="left:${colX}px; top:16px;">
+                            <span class="text-[11px] font-black uppercase tracking-wider text-cyan-300 leading-none">${headerMeta.title}</span>
+                            <span class="text-[9px] font-bold text-gray-400 mt-1 leading-none">${headerMeta.sub}</span>
+                        </div>
+                    `;
+
+                    matchesInCol.forEach((m, mIdx) => {
+                        const y = calcularYSimetrico(colIdx, mIdx, matchesInCol.length, prevYs);
+                        currentYs.push(y);
+                        cardPositions.set(String(m.id), { x: colX, y, w: CARD_W, h: CARD_H });
+                        htmlCards += construirHTMLTarjetaPartida(m, colX, y, simMap, evalResult, activePicks, false);
+                        maxX = Math.max(maxX, colX + CARD_W);
+                        maxY = Math.max(maxY, y + CARD_H);
+                        wbBottomY = Math.max(wbBottomY, y + CARD_H);
+                    });
+
+                    prevYs = currentYs;
+                });
+
+                // Gran Final y Pedestal del Campeón
+                if (grandFinalMatch) {
+                    const gfColIdx = wbRoundsList.length;
+                    const gfX = LEFT_OFFSET + gfColIdx * (CARD_W + COL_GAP);
+                    const gfY = prevYs.length > 0 ? prevYs[0] : (TOP_OFFSET + 300);
+
+                    const headerMeta = obtenerNombreRondaColumna(grandFinalRound, true);
+                    htmlCards += `
+                        <div class="pickem-round-header final-header" style="left:${gfX}px; top:16px;">
+                            <span class="text-[11px] font-black uppercase tracking-wider text-yellow-300 leading-none"><i class="fas fa-crown mr-1"></i>${headerMeta.title}</span>
+                            <span class="text-[9px] font-bold text-yellow-200/80 mt-1 leading-none">${headerMeta.sub}</span>
+                        </div>
+                    `;
+
+                    cardPositions.set(String(grandFinalMatch.id), { x: gfX, y: gfY, w: CARD_W, h: CARD_H });
+                    htmlCards += construirHTMLTarjetaPartida(grandFinalMatch, gfX, gfY, simMap, evalResult, activePicks, true);
+
+                    const champX = gfX + CARD_W + COL_GAP;
+                    const gfSim = simMap.get(String(grandFinalMatch.id));
+                    const champTeam = gfSim?.winnerTeam || null;
+
+                    htmlCards += construirHTMLPedestalCampeon(champX, gfY - 18, champTeam);
+                    maxX = Math.max(maxX, champX + 240);
+                    maxY = Math.max(maxY, gfY + CARD_H + 40);
+                }
+            }
+
+            // --- BLOQUE 2: LOSER BRACKET (ORDENAMIENTO EXACTO CHALLONGE) ---
+            if (showLB) {
+                const lbTopOffset = showWB ? (wbBottomY + 110) : TOP_OFFSET;
+                const lbHeaderY = lbTopOffset - 64;
+
+                if (showWB) {
+                    htmlCards += `
+                        <div style="position:absolute; left:${LEFT_OFFSET}px; top:${lbHeaderY - 34}px;" class="flex items-center gap-2.5">
+                            <span class="px-3 py-1 rounded-full bg-orange-500/15 border border-orange-500/40 text-orange-300 text-[10px] font-black uppercase tracking-widest">
+                                <i class="fas fa-fire-alt mr-1"></i> LOSER BRACKET (DESDE RONDA 3)
+                            </span>
+                        </div>
+                    `;
+                }
+
+                let prevLbYs = [];
+                lbRoundsList.forEach((roundNum, colIdx) => {
+                    const matchesInCol = obtenerPartidasDeRondaOrdenadas(roundNum);
+                    const colX = LEFT_OFFSET + colIdx * (CARD_W + COL_GAP);
+                    const currentYs = [];
+
+                    const headerMeta = obtenerNombreRondaColumna(roundNum, false);
+                    htmlCards += `
+                        <div class="pickem-round-header loser-header" style="left:${colX}px; top:${lbHeaderY}px;">
+                            <span class="text-[11px] font-black uppercase tracking-wider text-orange-300 leading-none">${headerMeta.title}</span>
+                            <span class="text-[9px] font-bold text-gray-400 mt-1 leading-none">${headerMeta.sub}</span>
+                        </div>
+                    `;
+
+                    matchesInCol.forEach((m, mIdx) => {
+                        let y;
+                        if (colIdx === 0 || prevLbYs.length === 0) {
+                            y = lbTopOffset + mIdx * (CARD_H + ROW_GAP_BASE);
+                        } else if (matchesInCol.length === prevLbYs.length) {
+                            y = prevLbYs[mIdx];
+                        } else if (matchesInCol.length * 2 === prevLbYs.length) {
+                            y = Math.round((prevLbYs[mIdx * 2] + prevLbYs[mIdx * 2 + 1]) / 2);
+                        } else {
+                            y = lbTopOffset + mIdx * (CARD_H + ROW_GAP_BASE);
+                        }
+
+                        currentYs.push(y);
+                        cardPositions.set(String(m.id), { x: colX, y, w: CARD_W, h: CARD_H });
+                        htmlCards += construirHTMLTarjetaPartida(m, colX, y, simMap, evalResult, activePicks, false);
+                        maxX = Math.max(maxX, colX + CARD_W);
+                        maxY = Math.max(maxY, y + CARD_H);
+                    });
+
+                    prevLbYs = currentYs;
+                });
+            }
+
+            const svgPaths = construirConectoresSVG(cardPositions, simMap, evalResult, activePicks);
+
+            const totalCanvasW = maxX + 80;
+            const totalCanvasH = maxY + 80;
+
+            canvas.style.width = `${totalCanvasW}px`;
+            canvas.style.height = `${totalCanvasH}px`;
+            canvas.style.transform = `scale(${currentZoom})`;
+
+            canvas.innerHTML = `
+                <svg class="pickem-svg-layer" width="${totalCanvasW}" height="${totalCanvasH}" viewBox="0 0 ${totalCanvasW} ${totalCanvasH}">
+                    ${svgPaths}
+                </svg>
+                ${htmlCards}
+            `;
+        }
+
+        function construirHTMLTarjetaPartida(match, x, y, simMap, evalResult, activePicks, isGrandFinal) {
+            const mId = String(match.id);
+            const sim = simMap.get(mId) || { team1: null, team2: null, winnerTeam: null };
+            const evalInfo = evalResult.matchEvaluations.get(mId) || { status: 'pending', pointsEarned: 0 };
+            const pick = activePicks[mId] || null;
+            const locked = estaPartidaBloqueada(match);
+            const bo = obtenerFormatoSerie(match);
+            const reglas = obtenerReglaPuntos(match);
+
+            const pickedWinnerId = pick?.winnerId ? String(pick.winnerId) : (match.state === 'completed' && match.winner_id ? String(match.winner_id) : null);
+
+            let cardExtraClass = '';
+            if (isGrandFinal) cardExtraClass += ' card-grand-final';
+            if (evalInfo.status === 'hit-winner') cardExtraClass += ' card-hit-winner';
+            else if (evalInfo.status === 'miss') cardExtraClass += ' card-miss';
+            else if (pick?.winnerId) cardExtraClass += ' card-has-pick';
+
+            let statusBadge = `<span class="text-gray-400">${bo} • +${reglas.base}P</span>`;
+            if (evalInfo.status === 'hit-winner') {
+                statusBadge = `<span class="text-emerald-400 font-black"><i class="fas fa-check mr-1"></i>+${evalInfo.pointsEarned} PTS</span>`;
+            } else if (evalInfo.status === 'miss') {
+                statusBadge = `<span class="text-rose-400 font-black"><i class="fas fa-times mr-1"></i>0 PTS</span>`;
+            } else if (locked) {
+                statusBadge = `<span class="text-amber-400/90"><i class="fas fa-lock mr-1"></i>${bo}</span>`;
+            }
+
+            const renderSlot = (team, slotIdx) => {
+                const prereqId = slotIdx === 1 ? match.player1_prereq_match_id : match.player2_prereq_match_id;
+                const isLoser = slotIdx === 1 ? match.player1_is_prereq_match_loser : match.player2_is_prereq_match_loser;
+                const prereqMatch = prereqId ? allMatchesMap.get(String(prereqId)) : null;
+                const prereqNum = prereqMatch ? (prereqMatch.suggested_play_order || prereqMatch.identifier || '') : '';
+                const isFromWbDrop = Boolean(isLoser && match.round < 0);
+
+                if (!team) {
+                    let placeholderLabel = 'Por Definir (TBD)';
+                    if (isFromWbDrop && prereqNum) {
+                        placeholderLabel = `⬇ Perdedor de #${prereqNum}`;
+                    } else if (isFromWbDrop) {
+                        placeholderLabel = '⬇ Cae de Winner Bracket';
+                    } else if (prereqNum) {
+                        placeholderLabel = `Ganador de #${prereqNum}`;
+                    }
+                    return `
+                        <div class="pickem-team-slot slot-disabled opacity-60">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="seed-badge">-</span>
+                                <span class="text-[10px] font-bold ${isFromWbDrop ? 'text-orange-300/90' : 'text-gray-500'} truncate">
+                                    ${placeholderLabel}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const isSelected = pickedWinnerId && String(team.id) === String(pickedWinnerId);
+                const isOtherSelected = pickedWinnerId && String(team.id) !== String(pickedWinnerId);
+
+                let slotClass = 'pickem-team-slot';
+                if (isSelected) slotClass += isGrandFinal ? ' slot-selected-gold' : ' slot-selected';
+                else if (isOtherSelected) slotClass += ' slot-eliminated';
+                if (locked) slotClass += ' slot-disabled';
+
+                const seedText = (team.seed !== null && team.seed !== undefined) ? team.seed : '-';
+
+                let rightIndicator = '';
+                if (isSelected) {
+                    rightIndicator = `<i class="fas fa-check-circle text-xs ${isGrandFinal ? 'text-yellow-400' : 'text-cyan-400'} shrink-0"></i>`;
+                } else if (isFromWbDrop && prereqNum) {
+                    rightIndicator = `<span class="text-[8px] font-black text-orange-400/90 uppercase px-1 py-0.5 rounded bg-orange-500/15 shrink-0" title="Perdedor de la partida #${prereqNum} de Winner Bracket">⬇#${prereqNum}</span>`;
+                }
+
+                return `
+                    <div class="${slotClass}" onclick="window.seleccionarGanadorPickem('${mId}', '${team.id}')" title="[Seed #${seedText}] ${team.nombre} (${team.tag})">
+                        <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                            <span class="seed-badge" title="Seed #${seedText}">${seedText}</span>
+                            <img src="${team.logo}" alt="${team.tag}" loading="lazy" onerror="this.src='/assets/logo.webp'" class="w-5 h-5 rounded object-contain bg-black/40 p-0.5 border border-white/10 shrink-0">
+                            <span class="text-[11px] font-black uppercase tracking-tight ${isSelected ? 'text-white' : 'text-cyan-300'} shrink-0">${team.tag}</span>
+                            <span class="text-[10px] font-semibold text-gray-300 truncate">${team.nombre}</span>
+                        </div>
+                        ${rightIndicator}
+                    </div>
+                `;
+            };
+
+            const matchOrderLabel = match.suggested_play_order ? `PARTIDA #${match.suggested_play_order}` : `ID ${match.identifier || ''}`;
+
+            return `
+                <div class="pickem-match-card ${cardExtraClass}" style="left:${x}px; top:${y}px;">
+                    <div class="pickem-card-topbar">
+                        <span class="text-cyan-400/90 font-black">${matchOrderLabel}</span>
+                        ${statusBadge}
+                    </div>
+                    ${renderSlot(sim.team1, 1)}
+                    ${renderSlot(sim.team2, 2)}
+                </div>
+            `;
+        }
+
+        function construirHTMLPedestalCampeon(x, y, champTeam) {
+            if (!champTeam) {
+                return `
+                    <div style="position:absolute; left:${x}px; top:${y}px; width:220px; height:128px;" class="rounded-2xl bg-[#070d19] border border-dashed border-yellow-500/35 flex flex-col items-center justify-center p-4 text-center shadow-2xl">
+                        <div class="w-11 h-11 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-2">
+                            <i class="fas fa-trophy text-lg"></i>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-yellow-400">CAMPEÓN COPA LEGION</span>
+                        <span class="text-xs font-bold text-gray-500 mt-0.5">Elige en la Gran Final</span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div style="position:absolute; left:${x}px; top:${y}px; width:220px; height:128px;" class="rounded-2xl bg-gradient-to-br from-yellow-950/70 via-[#090d16] to-amber-950/50 border-2 border-yellow-400 shadow-[0_0_35px_rgba(234,179,8,0.3)] flex flex-col items-center justify-center p-3 text-center">
+                    <span class="px-2.5 py-0.5 rounded-full bg-yellow-400 text-slate-950 text-[9px] font-black uppercase tracking-widest mb-1.5 shadow">
+                        <i class="fas fa-crown mr-1"></i> CAMPEÓN ELEGIDO
+                    </span>
+                    <div class="flex items-center gap-2.5 my-1">
+                        <img src="${champTeam.logo}" alt="${champTeam.tag}" onerror="this.src='/assets/logo.webp'" class="w-11 h-11 rounded-xl object-contain bg-black/50 p-1 border border-yellow-400/50">
+                        <div class="text-left min-w-0">
+                            <span class="text-base font-black text-yellow-300 uppercase tracking-tight block leading-none">${champTeam.tag}</span>
+                            <span class="text-[11px] font-bold text-white truncate block max-w-[120px] mt-0.5">${champTeam.nombre}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function construirConectoresSVG(cardPositions, simMap, evalResult, activePicks) {
+            let paths = '';
+
+            cardPositions.forEach((targetPos, targetId) => {
+                const m = allMatchesMap.get(String(targetId));
+                if (!m) return;
+
+                const drawLink = (prereqId, isLoser, slotIndex) => {
+                    if (!prereqId || !cardPositions.has(String(prereqId))) return;
+                    if (isLoser) return;
+
+                    const prereqMatch = allMatchesMap.get(String(prereqId));
+                    // Omitir la línea conectora entre el ganador de Loser Bracket y la Gran Final
+                    if (prereqMatch && ((prereqMatch.round < 0 && m.round > 0) || (prereqMatch.round > 0 && m.round < 0))) {
+                        return;
+                    }
+
+                    const srcPos = cardPositions.get(String(prereqId));
+                    const x1 = srcPos.x + srcPos.w;
+                    const y1 = srcPos.y + Math.round(srcPos.h / 2);
+
+                    const x2 = targetPos.x;
+                    const y2 = targetPos.y + (slotIndex === 1 ? 39 : 74);
+                    const midX = Math.round((x1 + x2) / 2);
+
+                    const srcEval = evalResult.matchEvaluations.get(String(prereqId));
+                    const srcPick = activePicks[String(prereqId)];
+
+                    let pathClass = 'connector-path';
+                    if (srcEval?.status === 'hit-winner') {
+                        pathClass += ' path-correct';
+                    } else if (srcEval?.status === 'miss') {
+                        pathClass += ' path-wrong';
+                    } else if (srcPick?.winnerId) {
+                        pathClass += ' path-picked';
+                    }
+
+                    paths += `<path d="M ${x1} ${y1} H ${midX} V ${y2} H ${x2}" class="${pathClass}" />`;
+                };
+
+                drawLink(m.player1_prereq_match_id, m.player1_is_prereq_match_loser, 1);
+                drawLink(m.player2_prereq_match_id, m.player2_is_prereq_match_loser, 2);
+            });
+
+            return paths;
+        }
+
+        // =========================================================================
+        // 10. GUARDADO Y SINCRONIZACIÓN DE PREDICCIONES
+        // =========================================================================
+        window.guardarPrediccionesPickem = async () => {
+            const user = obtenerUsuarioActual();
+            if (!user || !user.uid) {
+                mostrarToastAuth("Inicia sesión para guardar tu Pick'em.", "info");
+                abrirModalLoginFlotante({
+                    onSuccess: () => {
+                        window.guardarPrediccionesPickem();
+                    }
+                });
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-pickem');
+            const btnText = document.getElementById('btn-save-pickem-text');
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.textContent = 'Guardando...';
+
+            const sim = simularCascadaBracket(myPicks);
+            const evalRes = evaluarPuntuacionPicks(myPicks);
+            const gfSim = grandFinalMatch ? sim.get(String(grandFinalMatch.id)) : null;
+            const champTeam = gfSim?.winnerTeam || null;
+
+            const nombreRanking = obtenerIdRegistradoUsuario(user);
+
+            const payload = {
+                uid: user.uid,
+                riotId: nombreRanking,
+                gameName: user.gameName || nombreRanking.split('#')[0],
+                tagLine: user.tagLine || (nombreRanking.includes('#') ? nombreRanking.split('#')[1] : 'LBL'),
+                displayName: user.displayName || '',
+                photoURL: user.photoURL || '',
+                rol: user.rol || 'USER',
+                picks: myPicks,
+                totalPoints: evalRes.totalPoints,
+                totalHits: evalRes.totalHits,
+                picksCount: Object.keys(myPicks).length,
+                championPick: champTeam ? {
+                    id: champTeam.id,
+                    nombre: champTeam.nombre,
+                    tag: champTeam.tag,
+                    logo: champTeam.logo
+                } : null
+            };
+
+            guardarBorradorLocal();
+            try {
+                const localList = JSON.parse(localStorage.getItem('lbl_pickems_scouting3_local_list') || '[]');
+                const idx = localList.findIndex(x => x.uid === user.uid);
+                if (idx >= 0) localList[idx] = payload;
+                else localList.push(payload);
+                localStorage.setItem('lbl_pickems_scouting3_local_list', JSON.stringify(localList));
+
+                const memIdx = leaderboardEntries.findIndex(x => x.uid === user.uid);
+                if (memIdx >= 0) leaderboardEntries[memIdx] = payload;
+                else leaderboardEntries.push(payload);
+                const countBadge = document.getElementById('leaderboard-count-badge');
+                if (countBadge) countBadge.textContent = leaderboardEntries.length;
+            } catch (e) {}
+
+            try {
+                await setDoc(doc(db, "pickems_scouting3", user.uid), {
+                    ...payload,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+            } catch (error) {}
+
+            hasUnsavedChanges = false;
+            if (btn) btn.disabled = false;
+            if (btnText) btnText.textContent = 'Guardar Predicciones';
+            renderizarTodoPickem();
+            mostrarToastAuth(`¡Predicciones guardadas para ${nombreRanking}!`, "success");
+        };
+
+        // =========================================================================
+        // 11. LEADERBOARD EN TIEMPO REAL Y MODO INSPECCIÓN
+        // =========================================================================
+        function iniciarSuscripcionLeaderboard() {
+            try {
+                const localList = JSON.parse(localStorage.getItem('lbl_pickems_scouting3_local_list') || '[]');
+                if (Array.isArray(localList) && localList.length > 0) {
+                    leaderboardEntries = localList;
+                    const countBadge = document.getElementById('leaderboard-count-badge');
+                    if (countBadge) countBadge.textContent = leaderboardEntries.length;
+                }
+            } catch (e) {}
+
+            try {
+                onSnapshot(collection(db, "pickems_scouting3"), (snap) => {
+                    const mapByUid = new Map();
+                    try {
+                        const localList = JSON.parse(localStorage.getItem('lbl_pickems_scouting3_local_list') || '[]');
+                        localList.forEach(item => { if (item?.uid) mapByUid.set(item.uid, item); });
+                    } catch (e) {}
+
+                    snap.forEach(docSnap => {
+                        const data = docSnap.data();
+                        if (data && data.uid) {
+                            mapByUid.set(data.uid, data);
+                        }
+                    });
+                    leaderboardEntries = Array.from(mapByUid.values());
+                    const countBadge = document.getElementById('leaderboard-count-badge');
+                    if (countBadge) countBadge.textContent = leaderboardEntries.length;
+
+                    const current = obtenerUsuarioActual();
+                    if (current?.uid && Object.keys(myPicks).length === 0 && !hasUnsavedChanges) {
+                        const myCloudDoc = leaderboardEntries.find(x => x.uid === current.uid);
+                        if (myCloudDoc && myCloudDoc.picks) {
+                            myPicks = { ...myCloudDoc.picks };
+                            renderizarTodoPickem();
+                        }
+                    }
+
+                    if (currentViewMode === 'leaderboard') {
+                        renderizarLeaderboardDOM();
+                    }
+                });
+            } catch (e) {}
+        }
+
+        function renderizarLeaderboardDOM() {
+            const podiumGrid = document.getElementById('leaderboard-podium-grid');
+            const tbody = document.getElementById('leaderboard-table-body');
+            const searchVal = (document.getElementById('input-search-leaderboard')?.value || '').toLowerCase().trim();
+
+            if (!tbody || !podiumGrid) return;
+
+            const enriched = leaderboardEntries.map(entry => {
+                const liveEval = evaluarPuntuacionPicks(entry.picks || {});
+                return {
+                    ...entry,
+                    livePoints: liveEval.totalPoints,
+                    liveHits: liveEval.totalHits
+                };
+            }).sort((a, b) => {
+                if (b.livePoints !== a.livePoints) return b.livePoints - a.livePoints;
+                return b.liveHits - a.liveHits;
+            });
+
+            const top3 = enriched.slice(0, 3);
+            const medallas = [
+                { label: 'TOP 1 • ORO', border: 'border-yellow-400/60', bg: 'from-yellow-500/20 to-[#060b14]', text: 'text-yellow-300', icon: 'fa-crown text-yellow-400' },
+                { label: 'TOP 2 • PLATA', border: 'border-slate-300/50', bg: 'from-slate-400/15 to-[#060b14]', text: 'text-slate-200', icon: 'fa-medal text-slate-300' },
+                { label: 'TOP 3 • BRONCE', border: 'border-amber-600/50', bg: 'from-amber-700/15 to-[#060b14]', text: 'text-amber-400', icon: 'fa-award text-amber-500' }
+            ];
+
+            if (top3.length === 0) {
+                podiumGrid.innerHTML = '';
+            } else {
+                podiumGrid.innerHTML = top3.map((u, idx) => {
+                    const m = medallas[idx];
+                    const idShown = u.riotId || u.displayName || 'Jugador';
+                    const champ = u.championPick;
+                    return `
+                        <div class="rounded-3xl bg-gradient-to-b ${m.bg} border ${m.border} p-5 flex items-center justify-between gap-4 shadow-xl">
+                            <div class="flex items-center gap-3.5 min-w-0">
+                                <div class="relative shrink-0">
+                                    <img src="${u.photoURL || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" referrerpolicy="no-referrer" class="w-14 h-14 rounded-2xl object-cover border border-white/20">
+                                    <span class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-[#030712] border border-white/20 flex items-center justify-center text-xs">
+                                        <i class="fas ${m.icon}"></i>
+                                    </span>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[10px] font-black uppercase tracking-widest ${m.text} block">${m.label}</span>
+                                    <p class="text-base font-black text-white truncate">${idShown}</p>
+                                    <span class="text-[11px] font-bold text-gray-400 block">${u.liveHits} aciertos</span>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-2xl font-black ${m.text} block leading-none">${u.livePoints}</span>
+                                <span class="text-[9px] font-black uppercase text-gray-400">PUNTOS</span>
+                                ${champ ? `
+                                    <div class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/50 border border-white/10">
+                                        <img src="${champ.logo}" onerror="this.src='/assets/logo.webp'" class="w-3.5 h-3.5 object-contain">
+                                        <span class="text-[9px] font-black text-yellow-300">${champ.tag}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const filtered = searchVal
+                ? enriched.filter(u => (u.riotId || u.displayName || '').toLowerCase().includes(searchVal))
+                : enriched;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-12 text-center text-gray-500 font-bold">
+                            Aún no hay predicciones registradas. ¡Guarda tu Pick'em para inaugurar la tabla!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const currentUid = obtenerUsuarioActual()?.uid;
+
+            tbody.innerHTML = filtered.map((u) => {
+                const rank = enriched.indexOf(u) + 1;
+                const isMe = currentUid && u.uid === currentUid;
+                const idShown = u.riotId || u.displayName || 'Jugador';
+                const champ = u.championPick;
+
+                const rolePill = u.rol === 'ADMIN'
+                    ? `<span class="px-1.5 py-0.5 rounded bg-red-500/20 border border-red-500/40 text-red-300 text-[8px] font-black uppercase ml-1.5">ADMIN</span>`
+                    : `<span class="px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 text-[8px] font-black uppercase ml-1.5">USER</span>`;
+
+                return `
+                    <tr class="hover:bg-white/[0.04] transition-colors ${isMe ? 'bg-cyan-500/10' : ''}">
+                        <td class="py-3.5 px-4 text-center font-black text-sm ${rank <= 3 ? 'text-yellow-400' : 'text-gray-400'}">
+                            #${rank}
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${u.photoURL || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" referrerpolicy="no-referrer" class="w-8 h-8 rounded-xl object-cover border border-white/15 shrink-0">
+                                <div class="flex items-center">
+                                    <span class="font-black text-white">${idShown}</span>
+                                    ${rolePill}
+                                    ${isMe ? `<span class="ml-1.5 text-[9px] font-black text-emerald-400 uppercase">(Tú)</span>` : ''}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            ${champ ? `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 font-black text-[11px]">
+                                    <img src="${champ.logo}" onerror="this.src='/assets/logo.webp'" class="w-4 h-4 object-contain">
+                                    ${champ.tag}
+                                </span>
+                            ` : `<span class="text-gray-500">Sin elegir</span>`}
+                        </td>
+                        <td class="py-3.5 px-4 text-center font-black text-emerald-400">${u.liveHits}</td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="px-3 py-1 rounded-xl bg-yellow-500/15 border border-yellow-500/40 text-yellow-300 font-black text-sm">
+                                ${u.livePoints} PTS
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <button onclick="window.inspeccionarBracketUsuario('${u.uid}')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/40 text-gray-200 hover:text-cyan-300 font-black text-[10px] uppercase tracking-wider transition-all cursor-pointer">
+                                <i class="fas fa-eye mr-1"></i> Ver Bracket
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.filtrarLeaderboard = () => {
+            renderizarLeaderboardDOM();
+        };
+
+        window.inspeccionarBracketUsuario = (uid) => {
+            const target = leaderboardEntries.find(x => x.uid === uid);
+            if (!target) return;
+            const liveEval = evaluarPuntuacionPicks(target.picks || {});
+            inspectedUser = {
+                uid: target.uid,
+                riotId: target.riotId || target.displayName || 'Jugador',
+                picks: target.picks || {},
+                totalPoints: liveEval.totalPoints
+            };
+
+            const banner = document.getElementById('inspector-mode-banner');
+            const nameEl = document.getElementById('inspector-target-name');
+            const ptsEl = document.getElementById('inspector-target-pts');
+            if (banner) banner.classList.remove('hidden');
+            if (nameEl) nameEl.textContent = inspectedUser.riotId;
+            if (ptsEl) ptsEl.textContent = `${inspectedUser.totalPoints} PTS`;
+
+            window.cambiarVistaPickem('completa');
+        };
+
+        window.salirModoInspeccion = () => {
+            inspectedUser = null;
+            const banner = document.getElementById('inspector-mode-banner');
+            if (banner) banner.classList.add('hidden');
+            renderizarTodoPickem();
+        };
+
+        // =========================================================================
+        // 12. CONTROLES DE NAVEGACIÓN, PAN & ZOOM Y PANEL ADMIN
+        // =========================================================================
+        window.cambiarVistaPickem = (vista) => {
+            currentViewMode = vista;
+            const tabs = ['completa', 'wb', 'lb', 'leaderboard'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-pickem-${t}`);
+                if (!btn) return;
+                if (t === vista) {
+                    btn.className = 'px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.25)] whitespace-nowrap';
+                } else {
+                    btn.className = 'px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5 border border-transparent whitespace-nowrap';
+                }
+            });
+
+            const secBracket = document.getElementById('section-bracket-view');
+            const secLeader = document.getElementById('section-leaderboard-view');
+            const zoomWrap = document.getElementById('zoom-controls-wrap');
+
+            if (vista === 'leaderboard') {
+                secBracket?.classList.add('hidden');
+                secLeader?.classList.remove('hidden');
+                zoomWrap?.classList.add('hidden');
+            } else {
+                secBracket?.classList.remove('hidden');
+                secLeader?.classList.add('hidden');
+                zoomWrap?.classList.remove('hidden');
+            }
+
+            renderizarTodoPickem();
+        };
+
+        window.ajustarZoomBracket = (delta) => {
+            currentZoom = Math.min(1.3, Math.max(0.55, Math.round((currentZoom + delta) * 100) / 100));
+            const lbl = document.getElementById('zoom-level-label');
+            if (lbl) lbl.textContent = `${Math.round(currentZoom * 100)}%`;
+            const canvas = document.getElementById('pickem-canvas');
+            if (canvas) canvas.style.transform = `scale(${currentZoom})`;
+        };
+
+        window.resetearZoomBracket = () => {
+            currentZoom = 1;
+            const lbl = document.getElementById('zoom-level-label');
+            if (lbl) lbl.textContent = '100%';
+            const canvas = document.getElementById('pickem-canvas');
+            if (canvas) canvas.style.transform = 'scale(1)';
+            const vp = document.getElementById('pickem-viewport');
+            if (vp) {
+                vp.scrollLeft = 0;
+                vp.scrollTop = 0;
+            }
+        };
+
+        window.toggleModalReglasPickem = () => {
+            const modal = document.getElementById('modal-reglas-pickem');
+            if (!modal) return;
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        function inicializarDragScrollViewport() {
+            const vp = document.getElementById('pickem-viewport');
+            if (!vp) return;
+            let isDown = false;
+            let startX = 0;
+            let startY = 0;
+            let scrollLeft = 0;
+            let scrollTop = 0;
+
+            vp.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.pickem-team-slot')) return;
+                isDown = true;
+                startX = e.pageX - vp.offsetLeft;
+                startY = e.pageY - vp.offsetTop;
+                scrollLeft = vp.scrollLeft;
+                scrollTop = vp.scrollTop;
+            });
+            vp.addEventListener('mouseleave', () => { isDown = false; });
+            vp.addEventListener('mouseup', () => { isDown = false; });
+            vp.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - vp.offsetLeft;
+                const y = e.pageY - vp.offsetTop;
+                vp.scrollLeft = scrollLeft - (x - startX);
+                vp.scrollTop = scrollTop - (y - startY);
+            });
+        }
+
+        window.toggleModoPruebasAdmin = () => {
+            pickemConfig.allowEditPlayedAdmin = !pickemConfig.allowEditPlayedAdmin;
+            const lbl = document.getElementById('label-admin-unlock-played');
+            if (lbl) {
+                lbl.textContent = `Permitir Editar Partidas Jugadas: ${pickemConfig.allowEditPlayedAdmin ? 'ON' : 'OFF'}`;
+            }
+            renderizarTodoPickem();
+            mostrarToastAuth(
+                pickemConfig.allowEditPlayedAdmin
+                    ? "Modo Pruebas Admin activado: puedes elegir ganadores incluso en partidas ya jugadas."
+                    : "Modo Pruebas Admin desactivado.",
+                "info"
+            );
+        };
+
+        window.toggleBloqueoGlobalPickem = async () => {
+            const u = obtenerUsuarioActual();
+            if (u?.rol !== 'ADMIN') return;
+            const nuevoEstado = !pickemConfig.globalLocked;
+            try {
+                await setDoc(doc(db, "pickem_config", "scouting3"), {
+                    globalLocked: nuevoEstado,
+                    updatedBy: u.email,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                mostrarToastAuth(nuevoEstado ? "Pick'em bloqueado globalmente." : "Pick'em reabierto.", "success");
+            } catch (e) {}
+        };
+
+        window.sincronizarChallongeYRecalcularAdmin = async () => {
+            const u = obtenerUsuarioActual();
+            if (u?.rol !== 'ADMIN') return;
+            const btn = document.getElementById('btn-admin-sync-challonge');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>Sincronizando Challonge...</span>`;
+            }
+            try {
+                const fresh = await procesarTorneoChallonge('18498275');
+                if (fresh && Array.isArray(fresh.matches)) {
+                    await setDoc(doc(db, "torneos_registrados", "scouting3"), {
+                        id: 'scouting3',
+                        nombre: 'COPA LEGION X TORNEO SCOUTING 3',
+                        slug: 'TS3LBL',
+                        challongeId: '18498275',
+                        categoria: 'clasificacion_lbl',
+                        division: 'Scouting 3',
+                        formatoLabel: 'Doble Eliminación',
+                        estado: fresh.estado === 'complete' ? 'finalizado' : 'vivo',
+                        actualizadoEn: new Date().toISOString(),
+                        datosChallonge: fresh,
+                        matches: fresh.matches,
+                        participantes: fresh.participantes
+                    }, { merge: true });
+
+                    procesarEstructuraBracket(fresh);
+                    mostrarToastAuth("¡Challonge sincronizado y puntajes recalculados!", "success");
+                }
+            } catch (err) {
+                mostrarToastAuth("Error sincronizando con Challonge.", "error");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-sync-alt"></i> <span>Sync Challonge & Recalcular Puntos</span>`;
+                }
+            }
+        };
+
+        function iniciarListenersConfigYAuth() {
+            try {
+                onSnapshot(doc(db, "pickem_config", "scouting3"), (snap) => {
+                    if (snap.exists()) {
+                        const d = snap.data();
+                        pickemConfig.globalLocked = Boolean(d.globalLocked);
+                        const statusTxt = document.getElementById('admin-lock-status-text');
+                        const btnLock = document.getElementById('btn-admin-global-lock');
+                        if (statusTxt) {
+                            statusTxt.innerHTML = pickemConfig.globalLocked
+                                ? `Estado: <strong class="text-rose-400">🔒 Bloqueado Globalmente</strong>`
+                                : `Estado: <strong class="text-emerald-400">🔓 Abierto para Predicciones</strong>`;
+                        }
+                        if (btnLock) {
+                            btnLock.innerHTML = pickemConfig.globalLocked
+                                ? `<i class="fas fa-unlock"></i> <span>Reabrir Pick'em Global</span>`
+                                : `<i class="fas fa-lock"></i> <span>Bloquear Pick'em Global</span>`;
+                        }
+                        renderizarTodoPickem();
+                    }
+                });
+            } catch (e) {}
+
+            window.addEventListener('lbl-auth-changed', async (e) => {
+                const profile = e.detail;
+                const adminBar = document.getElementById('admin-pickem-control-bar');
+                if (adminBar) {
+                    if (profile?.rol === 'ADMIN') {
+                        adminBar.classList.remove('hidden');
+                    } else {
+                        adminBar.classList.add('hidden');
+                    }
+                }
+
+                if (profile?.uid) {
+                    try {
+                        const snap = await getDoc(doc(db, "pickems_scouting3", profile.uid));
+                        if (snap.exists() && snap.data().picks) {
+                            myPicks = { ...snap.data().picks };
+                            hasUnsavedChanges = false;
+                        } else {
+                            const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
+                            if (draft) {
+                                myPicks = JSON.parse(draft);
+                            }
+                        }
+                    } catch (err) {
+                        const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
+                        if (draft) {
+                            try { myPicks = JSON.parse(draft); } catch (e2) {}
+                        }
+                    }
+                }
+                renderizarTodoPickem();
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            inicializarDragScrollViewport();
+            iniciarListenersConfigYAuth();
+            iniciarSuscripcionLeaderboard();
+
+            const cachedUser = obtenerUsuarioActual();
+            if (cachedUser?.rol === 'ADMIN') {
+                document.getElementById('admin-pickem-control-bar')?.classList.remove('hidden');
+            }
+            if (cachedUser?.uid) {
+                const draft = localStorage.getItem(`lbl_pickem_draft_${cachedUser.uid}`);
+                if (draft) {
+                    try { myPicks = JSON.parse(draft); } catch (e) {}
+                }
+            }
+
+            await cargarDatosTorneoScouting3();
+        });
+    </script>
+</body>
+</html>

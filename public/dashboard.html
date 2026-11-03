@@ -302,7 +302,16 @@
                     <input type="password" id="login-pass" class="input-login" placeholder="••••••••" required>
                 </div>
                 <p id="login-error" class="text-red-500 text-xs font-bold text-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i> Credenciales incorrectas.</p>
-                <button type="submit" id="btn-login" class="w-full bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-red-500/20 active:scale-95">INICIAR SESIÓN</button>
+                <button type="submit" id="btn-login" class="w-full bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-red-500/20 active:scale-95 cursor-pointer">INICIAR SESIÓN</button>
+                <div class="relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-gray-800"></div>
+                    <span class="flex-shrink mx-3 text-[10px] font-black uppercase tracking-widest text-gray-500">O acceso rápido Staff</span>
+                    <div class="flex-grow border-t border-gray-800"></div>
+                </div>
+                <button type="button" onclick="loginStaffConGoogle()" class="w-full bg-[#0b111e] hover:bg-[#111a2e] text-white border border-gray-700 hover:border-cyan-500/50 font-black py-3.5 rounded-xl transition-all flex items-center justify-center gap-2.5 text-xs uppercase tracking-wider cursor-pointer active:scale-95">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-4 h-4">
+                    <span>Continuar con Google (Staff)</span>
+                </button>
             </form>
             <div class="mt-6 text-center">
                 <a href="/" class="text-gray-600 hover:text-white text-xs transition-colors"><i class="fas fa-arrow-left mr-1"></i> Volver a la página pública</a>
@@ -339,6 +348,9 @@
                 <button onclick="abrirModalGestorTorneos()" class="px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-xl bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-500/40 text-cyan-300 font-black text-[10px] sm:text-sm uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap" title="Abrir Gestor Multitorneo LBL">
                     <i class="fas fa-trophy text-cyan-400"></i> <span class="hidden xs:inline">Torneos</span>
                 </button>
+                <a href="/pickem" class="px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/40 text-yellow-300 font-black text-[10px] sm:text-sm uppercase tracking-wider flex items-center gap-1.5 transition-all whitespace-nowrap" title="Control Pick'em Scouting 3">
+                    <i class="fas fa-bullseye text-yellow-400"></i> <span class="hidden sm:inline">Pick'em</span>
+                </a>
                 <a href="/" class="text-gray-500 hover:text-white text-sm font-bold px-3 py-2 transition-colors hidden sm:block"><i class="fas fa-home mr-1"></i> Inicio</a>
                 <button onclick="cerrarSesion()" class="border border-red-900/50 text-red-400 hover:bg-red-600 hover:text-white text-[10px] sm:text-sm font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all shadow-lg shadow-red-900/20 whitespace-nowrap"><i class="fas fa-sign-out-alt mr-1"></i> <span class="hidden xs:inline">Salir</span></button>
             </div>
@@ -989,11 +1001,11 @@
     <script type="module">
         import { db, auth } from "/firebase-config.js"; 
         import { collection, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
-        import { getStaffNick, formatStaffAuthor } from "/staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=235";
-        import "/app-version.js?v=235";
+        import { STAFF_DIRECTORY, getStaffNick, formatStaffAuthor } from "/staff-config.js";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=248";
+        import "/app-version.js?v=248";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1128,6 +1140,17 @@
                 formatoLabel: 'Doble Eliminación',
                 estado: 'finalizado',
                 creadoEn: '2025-11-01T00:00:00.000Z'
+            },
+            {
+                id: 'scouting3',
+                nombre: 'COPA LEGION X TORNEO SCOUTING 3',
+                slug: 'TS3LBL',
+                challongeId: '18498275',
+                categoria: 'clasificacion_lbl',
+                division: 'Scouting 3',
+                formatoLabel: 'Doble Eliminación',
+                estado: 'vivo',
+                creadoEn: '2026-10-18T00:00:00.000Z'
             },
             {
                 id: 'winter_cup',
@@ -1843,8 +1866,36 @@
             }
         };
 
+        window.loginStaffConGoogle = async () => {
+            errorMsg.classList.add('hidden');
+            try {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const res = await signInWithPopup(auth, provider);
+                if (res && res.user) {
+                    const email = (res.user.email || '').toLowerCase().trim();
+                    if (!STAFF_DIRECTORY[email]) {
+                        errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> La cuenta ${email} tiene rol USER, no pertenece al Staff (ADMIN).`;
+                        errorMsg.classList.remove('hidden');
+                        loginScreen.classList.remove('hidden');
+                        dashboardContent.classList.add('hidden');
+                    }
+                }
+            } catch (err) {
+                console.warn("Google Staff Login aviso:", err);
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> No se pudo iniciar sesión con Google.`;
+                    errorMsg.classList.remove('hidden');
+                }
+            }
+        };
+
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            const emailLower = (user?.email || '').toLowerCase().trim();
+            // Permitir acceso al Dashboard si el correo está en STAFF_DIRECTORY o si inició con correo/contraseña de Staff
+            const isAuthorizedStaff = Boolean(user && (STAFF_DIRECTORY[emailLower] || user.providerData?.some(p => p.providerId === 'password')));
+
+            if (user && isAuthorizedStaff) {
                 // Si venía redirigido desde Scouting T3 u otra sección protegida, enviarlo allí directamente
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirectTo = urlParams.get('redirect');

@@ -256,6 +256,132 @@ const server = http.createServer((req, res) => {
         }
     }
 
+    // 0.1 PROXY PARA RIOT GAMES API (Account-V1 + Summoner-V4 + League-V4)
+    if (pathname === '/api/riot-account') {
+        const gameName = (urlObj.searchParams.get('gameName') || '').trim();
+        const tagLine = (urlObj.searchParams.get('tagLine') || '').trim().replace(/^#+/, '');
+        const region = (urlObj.searchParams.get('region') || 'la2').toLowerCase();
+        const apiKey = (urlObj.searchParams.get('apiKey') || process.env.RIOT_API_KEY || 'RGAPI-7d514ad3-3115-4677-848d-0282d0d80c7a').trim();
+
+        if (!gameName || !tagLine) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+            return res.end(JSON.stringify({ error: 'Se requiere gameName y tagLine' }));
+        }
+
+        const fetchJson = (url, headers = {}) => new Promise((resolve, reject) => {
+            https.get(url, { headers, timeout: 8000 }, (r) => {
+                let raw = '';
+                r.on('data', chunk => { raw += chunk; });
+                r.on('end', () => {
+                    try {
+                        resolve({ status: r.statusCode, data: raw ? JSON.parse(raw) : null });
+                    } catch (err) {
+                        resolve({ status: r.statusCode, data: null });
+                    }
+                });
+            }).on('error', reject);
+        });
+
+        (async () => {
+            try {
+                if (!apiKey) {
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                    return res.end(JSON.stringify({
+                        verifiedViaApi: false,
+                        gameName,
+                        tagLine: tagLine.toUpperCase(),
+                        region: region.toUpperCase(),
+                        profileIconId: 29,
+                        profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png',
+                        summonerLevel: null,
+                        soloq: null,
+                        notice: 'Sin RIOT_API_KEY activa; vinculado en modo básico.'
+                    }));
+                }
+
+                const riotHeaders = { 'X-Riot-Token': apiKey, 'User-Agent': 'LBLEsports/1.0' };
+                const accUrl = `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
+                const accResp = await fetchJson(accUrl, riotHeaders);
+
+                if (accResp.status !== 200 || !accResp.data?.puuid) {
+                    res.writeHead(accResp.status || 404, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                    return res.end(JSON.stringify({
+                        error: accResp.status === 404
+                            ? `No se encontró la cuenta ${gameName}#${tagLine} en Riot Games.`
+                            : `Error de Riot API (HTTP ${accResp.status}). Verifica tu RIOT_API_KEY.`
+                    }));
+                }
+
+                const puuid = accResp.data.puuid;
+                const platformHost = ['la1', 'la2', 'br1', 'na1', 'euw1'].includes(region) ? region : 'la2';
+                const sumUrl = `https://${platformHost}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${encodeURIComponent(puuid)}`;
+                const sumResp = await fetchJson(sumUrl, riotHeaders);
+
+                let profileIconId = 29;
+                let summonerLevel = null;
+                let soloq = null;
+
+                if (sumResp.status === 200 && sumResp.data) {
+                    profileIconId = sumResp.data.profileIconId || 29;
+                    summonerLevel = sumResp.data.summonerLevel || null;
+
+                    if (sumResp.data.id) {
+                        const leagueUrl = `https://${platformHost}.api.riotgames.com/lol/league/v4/entries/by-summoner/${encodeURIComponent(sumResp.data.id)}`;
+                        const leagueResp = await fetchJson(leagueUrl, riotHeaders);
+                        if (leagueResp.status === 200 && Array.isArray(leagueResp.data)) {
+                            const rankedSolo = leagueResp.data.find(q => q.queueType === 'RANKED_SOLO_5x5') || leagueResp.data[0];
+                            if (rankedSolo) {
+                                soloq = {
+                                    queueType: rankedSolo.queueType,
+                                    tier: rankedSolo.tier,
+                                    rank: rankedSolo.rank,
+                                    leaguePoints: rankedSolo.leaguePoints,
+                                    wins: rankedSolo.wins,
+                                    losses: rankedSolo.losses
+                                };
+                            }
+                        }
+                    }
+
+                    if (!soloq) {
+                        const puuidLeagueUrl = `https://${platformHost}.api.riotgames.com/lol/league/v4/entries/by-puuid/${encodeURIComponent(puuid)}`;
+                        const puuidLeagueResp = await fetchJson(puuidLeagueUrl, riotHeaders);
+                        if (puuidLeagueResp.status === 200 && Array.isArray(puuidLeagueResp.data)) {
+                            const rankedSolo = puuidLeagueResp.data.find(q => q.queueType === 'RANKED_SOLO_5x5') || puuidLeagueResp.data[0];
+                            if (rankedSolo) {
+                                soloq = {
+                                    queueType: rankedSolo.queueType,
+                                    tier: rankedSolo.tier,
+                                    rank: rankedSolo.rank,
+                                    leaguePoints: rankedSolo.leaguePoints,
+                                    wins: rankedSolo.wins,
+                                    losses: rankedSolo.losses
+                                };
+                            }
+                        }
+                    }
+                }
+
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                return res.end(JSON.stringify({
+                    verifiedViaApi: true,
+                    puuid,
+                    gameName: accResp.data.gameName || gameName,
+                    tagLine: (accResp.data.tagLine || tagLine).toUpperCase(),
+                    region: platformHost.toUpperCase(),
+                    profileIconId,
+                    profileIconUrl: `https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/${profileIconId}.png`,
+                    summonerLevel,
+                    soloq
+                }));
+            } catch (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                return res.end(JSON.stringify({ error: 'Error consultando Riot API: ' + err.message }));
+            }
+        })();
+        return;
+    }
+
     // 1. REWRITE: /torneos/* -> torneos.html (igual que Firebase)
     if (pathname.startsWith('/torneos/') || pathname === '/torneos') {
         const torneosFile = path.join(PUBLIC_DIR, 'torneos.html');
