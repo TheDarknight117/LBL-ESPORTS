@@ -66,9 +66,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/dist/output.css?v=248">
-    <script type="module" src="/app-version.js?v=248"></script>
-    <script type="module" src="/auth-core.js?v=248"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=267">
+    <script type="module" src="/app-version.js?v=267"></script>
+    <script type="module" src="/auth-core.js?v=267"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @font-face {
@@ -499,17 +499,8 @@
          AFICHE 1: HERO / CARTELERA PRINCIPAL DE TEMPORADA
          ==================================================================== -->
     <main id="hero" class="section-afiche w-full text-center px-4 relative z-10 overflow-hidden">
-        <!-- CAPA DE VIDEO CINEMATOGRÁFICO DE FONDO -->
-        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
-            <video 
-                autoplay 
-                muted 
-                loop 
-                playsinline 
-                preload="metadata"
-                class="w-full h-full object-cover bg-black">
-                <source src="assets/v4Hero.mp4" type="video/mp4">
-            </video>
+        <!-- CAPA DE FONDO CINEMATOGRÁFICO (Modo ahorro ancho de banda: video pausado temporalmente) -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10 bg-gradient-to-b from-[#02050d] via-black to-[#030712]">
         </div>
 
         <!-- Luz focal ambiental azul centrado -->
@@ -617,6 +608,12 @@
             <div class="relative w-full overflow-hidden mask-gradient py-1 sm:py-2">
                 <div id="marquee-track" class="flex flex-row gap-4 sm:gap-6 w-full select-none cursor-grab active:cursor-grabbing overflow-x-auto no-scrollbar pb-3 sm:pb-4 pt-1 sm:pt-2 touch-pan-y overscroll-x-contain">
                     <!-- Set 1 -->
+                    <a href="scouting?torneo=scouting3" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-emerald-400/60 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+                        <span class="absolute top-2 right-2.5 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] uppercase tracking-wider flex items-center gap-1 shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
+                        </span>
+                        <img src="assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Copa Legion X Scouting 3" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(16,185,129,0.25)]" draggable="false">
+                    </a>
                     <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
@@ -628,6 +625,12 @@
                     </a>
                     
                     <!-- Set 2 -->
+                    <a href="scouting?torneo=scouting3" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-emerald-400/60 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+                        <span class="absolute top-2 right-2.5 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] uppercase tracking-wider flex items-center gap-1 shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
+                        </span>
+                        <img src="assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Copa Legion X Scouting 3" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(16,185,129,0.25)]" draggable="false">
+                    </a>
                     <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
@@ -639,6 +642,12 @@
                     </a>
 
                     <!-- Set 3 (Amplitud para monitores Ultra-Wide) -->
+                    <a href="scouting?torneo=scouting3" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-emerald-400/60 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+                        <span class="absolute top-2 right-2.5 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] uppercase tracking-wider flex items-center gap-1 shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
+                        </span>
+                        <img src="assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Copa Legion X Scouting 3" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(16,185,129,0.25)]" draggable="false">
+                    </a>
                     <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
@@ -650,6 +659,12 @@
                     </a>
 
                     <!-- Set 4 -->
+                    <a href="scouting?torneo=scouting3" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-emerald-400/60 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+                        <span class="absolute top-2 right-2.5 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] uppercase tracking-wider flex items-center gap-1 shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
+                        </span>
+                        <img src="assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Copa Legion X Scouting 3" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(16,185,129,0.25)]" draggable="false">
+                    </a>
                     <a href="scouting?torneo=scouting1" class="shrink-0 group relative flex items-center justify-center p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#060a14]/90 backdrop-blur-md hover:bg-[#081020] hover:border-yellow-500/40 transition-all duration-300 w-[76vw] max-w-[280px] xs:max-w-[300px] sm:w-64 md:w-[340px] aspect-[1.9/1] sm:aspect-[2.2/1] shadow-xl hover:shadow-[0_0_25px_rgba(234,179,8,0.22)]">
                         <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="h-12 xs:h-14 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]" draggable="false">
                     </a>
@@ -680,17 +695,8 @@
          AFICHE 3: CIRCUITO COMPETITIVO (TIER 1 VS TIER 2)
          ==================================================================== -->
     <section id="circuito" class="section-afiche w-full px-4 md:px-6 relative z-10 text-center overflow-hidden">
-        <!-- CAPA DE VIDEO DE FONDO: CIRCUITO COMPETITIVO (SIN FILTROS NI VIÑETA) -->
-        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10">
-            <video 
-                id="circuito-video"
-                muted 
-                loop 
-                playsinline 
-                preload="metadata"
-                class="w-full h-full object-cover">
-                <source src="assets/overlaylol.mp4" type="video/mp4">
-            </video>
+        <!-- CAPA DE FONDO: CIRCUITO COMPETITIVO (Modo ahorro ancho de banda: video pausado temporalmente) -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden -z-10 bg-gradient-to-b from-black via-[#040814] to-black">
         </div>
 
         <!-- Luz focal dual ambiental: Oro a la izquierda y Azul a la derecha -->
@@ -991,15 +997,10 @@
             </div>
 
 
-            <!-- Fila Inferior: Copyright, Créditos y Acceso Staff -->
+            <!-- Fila Inferior: Copyright y Créditos -->
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
                 <div class="flex items-center gap-2">
                     <span>© 2026 LBL Esports. Todos los derechos reservados.</span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <a href="dashboard" class="inline-flex items-center gap-2 text-slate-500 hover:text-red-400 text-[11px] font-black tracking-widest uppercase transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 border border-transparent hover:border-red-500/20">
-                        <i class="fas fa-shield-alt text-[10px]"></i> Portal Staff
-                    </a>
                 </div>
             </div>
         </div>

@@ -256,16 +256,17 @@ const server = http.createServer((req, res) => {
         }
     }
 
-    // 0.1 PROXY PARA RIOT GAMES API (Account-V1 + Summoner-V4 + League-V4)
+    // 0.1 PROXY PARA RIOT GAMES API (Account-V1 por Riot ID o por PUUID + Summoner-V4 + League-V4)
     if (pathname === '/api/riot-account') {
         const gameName = (urlObj.searchParams.get('gameName') || '').trim();
         const tagLine = (urlObj.searchParams.get('tagLine') || '').trim().replace(/^#+/, '');
+        const queryPuuid = (urlObj.searchParams.get('puuid') || '').trim();
         const region = (urlObj.searchParams.get('region') || 'la2').toLowerCase();
-        const apiKey = (urlObj.searchParams.get('apiKey') || process.env.RIOT_API_KEY || 'RGAPI-7d514ad3-3115-4677-848d-0282d0d80c7a').trim();
+        const apiKey = (urlObj.searchParams.get('apiKey') || process.env.RIOT_API_KEY || 'RGAPI-7d514ad3-3115-4677-948d-0282d0d60c7a').trim();
 
-        if (!gameName || !tagLine) {
+        if (!queryPuuid && (!gameName || !tagLine)) {
             res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
-            return res.end(JSON.stringify({ error: 'Se requiere gameName y tagLine' }));
+            return res.end(JSON.stringify({ error: 'Se requiere gameName y tagLine (o puuid)' }));
         }
 
         const fetchJson = (url, headers = {}) => new Promise((resolve, reject) => {
@@ -284,23 +285,10 @@ const server = http.createServer((req, res) => {
 
         (async () => {
             try {
-                if (!apiKey) {
-                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
-                    return res.end(JSON.stringify({
-                        verifiedViaApi: false,
-                        gameName,
-                        tagLine: tagLine.toUpperCase(),
-                        region: region.toUpperCase(),
-                        profileIconId: 29,
-                        profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png',
-                        summonerLevel: null,
-                        soloq: null,
-                        notice: 'Sin RIOT_API_KEY activa; vinculado en modo básico.'
-                    }));
-                }
-
                 const riotHeaders = { 'X-Riot-Token': apiKey, 'User-Agent': 'LBLEsports/1.0' };
-                const accUrl = `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
+                const accUrl = queryPuuid
+                    ? `https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/${encodeURIComponent(queryPuuid)}`
+                    : `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
                 const accResp = await fetchJson(accUrl, riotHeaders);
 
                 if (accResp.status !== 200 || !accResp.data?.puuid) {
@@ -308,7 +296,7 @@ const server = http.createServer((req, res) => {
                     return res.end(JSON.stringify({
                         error: accResp.status === 404
                             ? `No se encontró la cuenta ${gameName}#${tagLine} en Riot Games.`
-                            : `Error de Riot API (HTTP ${accResp.status}). Verifica tu RIOT_API_KEY.`
+                            : `Error de Riot API (HTTP ${accResp.status}). Verifica que el Riot ID sea correcto.`
                     }));
                 }
 
@@ -367,10 +355,10 @@ const server = http.createServer((req, res) => {
                     verifiedViaApi: true,
                     puuid,
                     gameName: accResp.data.gameName || gameName,
-                    tagLine: (accResp.data.tagLine || tagLine).toUpperCase(),
+                    tagLine: accResp.data.tagLine || tagLine,
                     region: platformHost.toUpperCase(),
                     profileIconId,
-                    profileIconUrl: `https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/${profileIconId}.png`,
+                    profileIconUrl: `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${profileIconId}.jpg`,
                     summonerLevel,
                     soloq
                 }));

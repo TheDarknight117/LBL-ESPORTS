@@ -1,85 +1,31 @@
-const CACHE_NAME = 'lbl-cache-v247';
-const ASSETS = [
+const CACHE_CODE_NAME = 'lbl-code-v260';
+const CACHE_ASSETS_NAME = 'lbl-static-assets-v1';
+const CACHE_LOGOS_NAME = 'lbl-team-logos-cache';
+
+// Pre-cache mínimo esencial (evita descargas masivas en segundo plano al primer ingreso)
+const SHELL_ASSETS = [
   '/',
-  '/torneos',
-  '/registro',
-  '/dashboard',
-  '/staff-scouting',
-  '/editar',
-  '/equipos',
-  '/scouting',
-  '/assets/scouting1.json',
-  '/assets/scouting2.json',
-  '/assets/qualifier.json',
-  '/auditoria-core.js',
-  '/staff-config.js',
-  '/sc3-logos.js',
-  '/challonge-core.js',
-  '/image-optimizer.js',
-  '/app-version.js',
-  '/pwa-manager.js',
-  '/assets/fonts/Square-One-Bold.ttf',
-  '/assets/pwa-icon-192.png',
-  '/assets/pwa-icon-512.png',
   '/dist/output.css',
   '/assets/logo.webp',
-  '/assets/logo2.webp',
-  '/assets/BARON.webp',
-  '/assets/pentakill.webp',
-  '/assets/logo copa Legion.png',
-  '/assets/legion_store.webp',
-  '/assets/ICONIC.webp',
-  '/assets/ICONIC3.webp',
-  '/assets/AQM.webp',
-  '/assets/AQM.png',
-  '/assets/teams/kaox_pink.webp',
-  '/assets/teams/marines_del_altiplano.webp',
-  '/assets/teams/uka_kitties.webp',
-  '/assets/teams/kaox_red.webp',
-  '/assets/teams/mapaches_apaches.webp',
-  '/assets/teams/kaox_yellow.webp',
-  '/assets/teams/strugglers_esports.webp',
-  '/assets/teams/team_first_kill.webp',
-  '/assets/teams/aether_core_academy.webp',
-  '/assets/teams/kaox_green.webp',
-  '/assets/teams/quinteto_de_nos.webp',
-  '/assets/teams/t1nacotas.webp',
-  '/assets/teams/crimson_weasels.webp',
-  '/assets/teams/grieta_cumbiera.webp',
-  '/assets/teams/team_dark.webp',
-  '/assets/teams/snake_dynasty.webp',
-  '/assets/teams/rise_of_kings_order.webp',
-  '/assets/teams/aether_core.webp',
-  '/assets/teams/condor_nexus.webp',
-  '/assets/teams/riot_pls_game.webp',
-  '/assets/teams/anti_kaox.webp',
-  '/assets/teams/kaox_esports.webp',
-  '/assets/teams/katz_esports.webp',
-  '/assets/teams/ruined_king.webp',
-  '/assets/teams/ruined_kings.webp',
-  '/assets/teams/kaox_blue.webp',
-  '/assets/teams/kaox_purple.webp',
-  '/assets/teams/viktus.webp',
-  '/assets/teams/solo_kill_pro.webp',
-  '/assets/teams/nox_reign.webp'
+  '/assets/fonts/Square-One-Bold.ttf'
 ];
 
-// Install Event - pre-cache critical assets
+// Install Event - pre-cache únicamente el shell esencial
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('SW: Pre-caching assets:', CACHE_NAME);
-      return cache.addAll(ASSETS);
+    caches.open(CACHE_CODE_NAME).then((cache) => {
+      return cache.addAll(SHELL_ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activate Event - purge old caches immediately and claim clients
+// Activate Event - purgar cachés de código antiguas conservando las cachés de imágenes/logos
 self.addEventListener('activate', (e) => {
+  const allowedCaches = new Set([CACHE_CODE_NAME, CACHE_ASSETS_NAME, CACHE_LOGOS_NAME]);
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => !allowedCaches.has(key)).map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
@@ -92,12 +38,18 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Fetch Event - Network-First for JS/HTML code, Cache-First for static images
+// Fetch Event - Network-First para código, Cache-First estricto (0 bytes repetidos) para imágenes y fuentes
 self.addEventListener('fetch', (e) => {
-  // Ignore non-GET requests
   if (e.request.method !== 'GET') return;
 
-  // External images (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.)
+  const url = new URL(e.request.url);
+
+  // Excluir archivos multimedia pesados (.mp4, .webm, .ogg, .mp3) para que el navegador use HTTP Range/Cache nativo
+  if (url.pathname.match(/\.(mp4|webm|ogg|mp3)(\?.*)?$/i) || e.request.destination === 'video' || e.request.destination === 'audio') {
+    return;
+  }
+
+  // Imágenes externas (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.) -> Cache-First Puro
   if (!e.request.url.startsWith(self.location.origin)) {
     const isImage = e.request.destination === 'image' || 
                     e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
@@ -112,12 +64,9 @@ self.addEventListener('fetch', (e) => {
 
     if (isImage) {
       e.respondWith(
-        caches.open('lbl-team-logos-cache').then((cache) => {
+        caches.open(CACHE_LOGOS_NAME).then((cache) => {
           return cache.match(e.request).then((cachedResponse) => {
             if (cachedResponse) {
-              fetch(e.request).then((netRes) => {
-                if (netRes && netRes.ok) cache.put(e.request, netRes);
-              }).catch(() => {});
               return cachedResponse;
             }
             return fetch(e.request).then((netRes) => {
@@ -131,7 +80,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Ignore Firebase SDK & API endpoints
+  // Ignorar endpoints de Firebase SDK y APIs dinámicas
   if (
     e.request.url.includes('/api/') ||
     e.request.url.includes('firestore.googleapis.com') || 
@@ -143,9 +92,8 @@ self.addEventListener('fetch', (e) => {
   }
 
   let matchKey = e.request;
-  const url = new URL(e.request.url);
   
-  // Normalize SPA /torneos/* navigation requests to clean /torneos
+  // Normalizar navegación SPA /torneos/* a /torneos
   if (url.pathname.startsWith('/torneos') && !url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|json|webp)$/i)) {
     matchKey = '/torneos';
   } else if (url.pathname.endsWith('.html')) {
@@ -162,16 +110,15 @@ self.addEventListener('fetch', (e) => {
                            url.pathname === '/';
 
   if (isCodeOrDocument) {
-    // Network-First strategy: Siempre busca el código fresco primero
+    // Network-First para código/HTML (aprovecha HTTP 304 Not Modified y caché por ?v=XXX)
     e.respondWith(
       fetch(e.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, responseToCache));
+          caches.open(CACHE_CODE_NAME).then((cache) => cache.put(matchKey, responseToCache));
         }
         return networkResponse;
       }).catch(() => {
-        // Si no hay red, usar el cache de respaldo
         return caches.match(matchKey).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
           if (e.request.mode === 'navigate') return caches.match('/');
@@ -179,24 +126,19 @@ self.addEventListener('fetch', (e) => {
       })
     );
   } else {
-    // Stale-While-Revalidate for local images & assets
+    // Cache-First estricto para imágenes estáticas locales, logos de equipos y fuentes (0 re-descargas en segundo plano)
     e.respondWith(
-      caches.match(matchKey).then((cachedResponse) => {
-        if (cachedResponse) {
-          fetch(e.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, networkResponse));
-            }
-          }).catch(() => {});
-          return cachedResponse;
-        }
-
-        return fetch(e.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(matchKey, responseToCache));
+      caches.open(CACHE_ASSETS_NAME).then((cache) => {
+        return cache.match(matchKey).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
           }
-          return networkResponse;
+          return fetch(e.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(matchKey, networkResponse.clone());
+            }
+            return networkResponse;
+          });
         });
       })
     );

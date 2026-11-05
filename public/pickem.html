@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Squada+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/dist/output.css?v=251">
+    <link rel="stylesheet" href="/dist/output.css?v=267">
     <script src="/sc3-logos.js?v=251"></script>
 
     <style>
@@ -277,7 +277,7 @@
                     <span class="text-base sm:text-lg md:text-xl font-black tracking-wider uppercase italic leading-none text-white">
                         LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-cyan-400">PICK'EM</span>
                     </span>
-                    <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase hidden sm:block">
+                    <span class="text-[9px] font-black tracking-widest text-red-500 uppercase hidden sm:block">
                         Copa Legion
                     </span>
                 </div>
@@ -329,11 +329,16 @@
 
         <!-- HERO DE ESTADO Y RESUMEN DE PUNTOS (INDICADOR EN BOX) -->
         <section class="max-w-[1640px] mx-auto glass-panel rounded-3xl p-4 sm:p-6 border-t-4 border-cyan-500 shadow-2xl relative overflow-hidden">
+            <!-- Portada difuminada en la parte derecha en baja opacidad (Copa Legion x SC3) -->
+            <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-full sm:w-3/5 md:w-1/2 lg:w-5/12 overflow-hidden flex items-center justify-end z-0 select-none">
+                <img src="/assets/LEGION_X_SC3.png" alt="Legion X SC3" class="h-[130%] max-h-[220px] w-auto object-contain object-right opacity-30 drop-shadow-[0_0_25px_rgba(239,68,68,0.3)]" style="mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,1) 85%); -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,1) 85%);">
+            </div>
+
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-                <!-- Título y Descripción (Sin las etiquetas superiores, con título PICK'EM COPA LEGION) -->
+                <!-- Título y Descripción: PICK'EM COPA LEGION (Letras Rojas) -->
                 <div class="space-y-1.5 max-w-2xl">
                     <h1 class="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-white leading-none">
-                        PICK'EM <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-yellow-400">COPA LEGION</span>
+                        PICK'EM <span class="text-red-500 font-black drop-shadow-[0_0_18px_rgba(239,68,68,0.55)]">COPA LEGION</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
                         Haz clic en los equipos para elegir al ganador de cada llave y simular el avance en cascada por Winner y Loser Bracket hasta coronar a tu Campeón.
@@ -361,12 +366,12 @@
                     </div>
 
                     <!-- Botones de Acción: GUARDAR PREDICCIONES + CLEAR -->
-                    <div class="w-full sm:w-auto flex items-center gap-2.5">
+                    <div id="pickem-action-buttons-wrap" class="w-full sm:w-auto flex items-center gap-2.5">
                         <button id="btn-save-pickem" onclick="window.guardarPrediccionesPickem()" class="flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-400 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
                             <i class="fas fa-cloud-upload-alt text-sm"></i>
                             <span id="btn-save-pickem-text">Guardar Predicciones</span>
                         </button>
-                        <button onclick="window.reiniciarMisPicks()" title="Limpiar y rehacer predicciones" style="background-color: #160b11; border: 1px solid rgba(244,63,94,0.4);" class="px-4 py-3.5 rounded-2xl hover:bg-rose-950 text-rose-300 hover:text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap">
+                        <button id="btn-clear-pickem" onclick="window.reiniciarMisPicks()" title="Limpiar y rehacer predicciones" style="background-color: #160b11; border: 1px solid rgba(244,63,94,0.4);" class="px-4 py-3.5 rounded-2xl hover:bg-rose-950 text-rose-300 hover:text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap">
                             <i class="fas fa-trash-restore-alt text-xs"></i>
                             <span>Clear</span>
                         </button>
@@ -443,8 +448,9 @@
             <!-- Lienzo Libre Fuera de Caja -->
             <div id="pickem-viewport" class="pickem-viewport">
                 <div id="pickem-canvas" class="pickem-canvas mx-auto">
-                    <div class="flex flex-col items-center justify-center h-[600px] text-center p-8">
-                        <i class="fas fa-circle-notch fa-spin text-4xl text-cyan-400 mb-3"></i>
+                    <div class="flex flex-col items-center justify-center h-[600px] text-center p-8 relative overflow-hidden">
+                        <img src="/assets/logo_copa_legion.png" alt="Copa Legion" class="w-48 sm:w-64 object-contain opacity-15 mb-3 select-none pointer-events-none filter drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+                        <i class="fas fa-circle-notch fa-spin text-3xl text-cyan-400 mb-3"></i>
                         <p class="text-sm font-black uppercase tracking-widest text-white">Cargando Llaves Oficiales de Copa Legion...</p>
                         <p class="text-xs text-gray-500 mt-1">Sincronizando Octavos de Winner Bracket y Ronda 3 de Loser Bracket</p>
                     </div>
@@ -560,14 +566,14 @@
             onSnapshot,
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge } from "/challonge-core.js?v=251";
+        import { procesarTorneoChallonge } from "/challonge-core.js?v=259";
         import {
             obtenerUsuarioActual,
             obtenerIdRegistradoUsuario,
             abrirModalLoginFlotante,
             mostrarToastAuth
-        } from "/auth-core.js?v=251";
-        import "/app-version.js?v=251";
+        } from "/auth-core.js?v=267";
+        import "/app-version.js?v=267";
 
         // =========================================================================
         // 1. CONSTANTES DE GEOMETRÍA Y TAGS
@@ -795,30 +801,93 @@
         // =========================================================================
         // 5. CARGA DEL TORNEO Y ORDENAMIENTO EXACTO DEL ÁRBOL CHALLONGE
         // =========================================================================
-        async function cargarDatosTorneoScouting3() {
-            let tDoc = null;
+        let unsubscribeTorneoScouting3 = null;
 
+        async function iniciarSincronizacionTorneoScouting3() {
+            let matchesCargados = false;
+
+            // 1. Carga instantánea desde caché local si existe
             try {
-                const snap = await getDoc(doc(db, "torneos_registrados", "scouting3"));
-                if (snap.exists()) {
-                    tDoc = snap.data();
+                const cachedTorneo = localStorage.getItem('lbl_scouting3_bracket_cache_v2');
+                if (cachedTorneo) {
+                    const parsed = JSON.parse(cachedTorneo);
+                    const m = parsed?.datosChallonge?.matches || parsed?.matches || [];
+                    if (m.length > 0) {
+                        procesarEstructuraBracket(parsed);
+                        matchesCargados = true;
+                    }
+                }
+            } catch (e) {}
+
+            // 2. Intentar leer desde Firestore (scouting3 o ts3lbl)
+            let tDoc = null;
+            try {
+                const snap1 = await getDoc(doc(db, "torneos_registrados", "scouting3"));
+                if (snap1.exists()) {
+                    tDoc = snap1.data();
+                } else {
+                    const snap2 = await getDoc(doc(db, "torneos_registrados", "ts3lbl"));
+                    if (snap2.exists()) tDoc = snap2.data();
                 }
             } catch (e) {}
 
             const matchesExistentes = tDoc?.datosChallonge?.matches || tDoc?.matches || [];
-            if (!matchesExistentes || matchesExistentes.length === 0) {
+            if (matchesExistentes && matchesExistentes.length > 0) {
+                try {
+                    localStorage.setItem('lbl_scouting3_bracket_cache_v2', JSON.stringify(tDoc));
+                } catch (e2) {}
+                procesarEstructuraBracket(tDoc);
+                matchesCargados = true;
+            }
+
+            // 3. Fallback seguro: Si no había en Firestore ni en caché local, consultar Challonge 18498275
+            if (!matchesCargados) {
                 try {
                     const fresh = await procesarTorneoChallonge('18498275');
                     if (fresh && Array.isArray(fresh.matches) && fresh.matches.length > 0) {
-                        tDoc = fresh;
+                        try {
+                            localStorage.setItem('lbl_scouting3_bracket_cache_v2', JSON.stringify(fresh));
+                            await setDoc(doc(db, "torneos_registrados", "scouting3"), {
+                                id: 'scouting3',
+                                nombre: 'COPA LEGION X TORNEO SCOUTING 3',
+                                slug: 'TS3LBL',
+                                challongeId: '18498275',
+                                categoria: 'clasificacion_lbl',
+                                division: 'Scouting 3',
+                                formatoLabel: 'Doble Eliminación',
+                                estado: fresh.estado === 'complete' ? 'finalizado' : 'vivo',
+                                actualizadoEn: new Date().toISOString(),
+                                datosChallonge: fresh,
+                                matches: fresh.matches,
+                                participantes: fresh.participantes
+                            }, { merge: true });
+                        } catch (e3) {}
+                        procesarEstructuraBracket(fresh);
+                        matchesCargados = true;
                     }
                 } catch (err) {
-                    console.error("[Pick'em] Error consultando Challonge 18498275:", err);
+                    console.error("[Pick'em] Error cargando torneo oficial:", err);
                 }
             }
 
-            if (!tDoc) return;
-            procesarEstructuraBracket(tDoc);
+            // 4. Escucha en tiempo real de Firestore para recibir syncs del Staff desde /dashboard
+            try {
+                if (unsubscribeTorneoScouting3) unsubscribeTorneoScouting3();
+                unsubscribeTorneoScouting3 = onSnapshot(doc(db, "torneos_registrados", "scouting3"), (snap) => {
+                    if (snap.exists()) {
+                        const pushDoc = snap.data();
+                        const pMatches = pushDoc?.datosChallonge?.matches || pushDoc?.matches || [];
+                        if (pMatches.length > 0) {
+                            try {
+                                localStorage.setItem('lbl_scouting3_bracket_cache_v2', JSON.stringify(pushDoc));
+                            } catch (e4) {}
+                            procesarEstructuraBracket(pushDoc);
+                        }
+                    }
+                }, (err) => {
+                    console.warn("[Pick'em] Lectura de torneo desde Firestore:", err?.message);
+                });
+            } catch (err) {}
         }
 
         /**
@@ -1127,15 +1196,35 @@
         }
 
         // =========================================================================
-        // 8. INTERACCIÓN DEL USUARIO: ELEGIR GANADOR Y CLEAR
+        // 8. INTERACCIÓN DEL USUARIO: ELEGIR GANADOR, BLOQUEO ESTÁTICO Y CLEAR
         // =========================================================================
+        function usuarioTienePicksConfirmados() {
+            const u = obtenerUsuarioActual();
+            if (!u || !u.uid) return false;
+            const isAdmin = u.rol === 'ADMIN';
+            if (isAdmin && pickemConfig.allowEditPlayedAdmin) return false; // Staff en modo pruebas
+            if (localStorage.getItem(`lbl_pickem_confirmed_${u.uid}`) === 'true') return true;
+            const entry = leaderboardEntries.find(x => x.uid === u.uid);
+            if (entry && entry.picks && Object.keys(entry.picks).length > 0) return true;
+            return false;
+        }
+
         function estaPartidaBloqueada(match) {
             if (inspectedUser) return true;
             const user = obtenerUsuarioActual();
             const isAdmin = user?.rol === 'ADMIN';
 
-            if (pickemConfig.globalLocked && !isAdmin) return true;
-            if ((match.state === 'completed' || match.state === 'live') && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+            // Staff en modo pruebas tiene permiso especial si está habilitado
+            if (isAdmin && pickemConfig.allowEditPlayedAdmin) return false;
+
+            // 1. Si el Staff cerró el Pick'em globalmente, todo queda 100% estático
+            if (pickemConfig.globalLocked) return true;
+
+            // 2. Si el usuario ya confirmó y guardó su Pick'em de forma única e individual
+            if (usuarioTienePicksConfirmados()) return true;
+
+            // 3. Si la partida está en curso o finalizada
+            if (match && (match.state === 'completed' || match.state === 'live')) {
                 return true;
             }
             return false;
@@ -1143,7 +1232,20 @@
 
         window.seleccionarGanadorPickem = (matchId, teamId) => {
             if (inspectedUser) {
-                mostrarToastAuth("Estás viendo el bracket de otro jugador. Vuelve a tu bracket para editar.", "warning");
+                mostrarToastAuth("Estás en modo vista. Vuelve a tu bracket para ver tus predicciones.", "warning");
+                return;
+            }
+
+            const user = obtenerUsuarioActual();
+            const isAdmin = user?.rol === 'ADMIN';
+
+            if (pickemConfig.globalLocked && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Las predicciones oficiales están cerradas por el Staff. Tu bracket está en modo estático.", "warning");
+                return;
+            }
+
+            if (usuarioTienePicksConfirmados() && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Tus predicciones ya fueron confirmadas y guardadas. Tu bracket está en modo estático oficial.", "info");
                 return;
             }
 
@@ -1185,6 +1287,22 @@
 
         window.reiniciarMisPicks = () => {
             if (inspectedUser) return;
+            const user = obtenerUsuarioActual();
+            const isAdmin = user?.rol === 'ADMIN';
+
+            if (pickemConfig.globalLocked && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Las predicciones oficiales están cerradas. No se pueden reiniciar.", "warning");
+                return;
+            }
+
+            if (usuarioTienePicksConfirmados() && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Tus predicciones ya han sido confirmadas y no pueden ser reiniciadas.", "warning");
+                return;
+            }
+
+            const confirmClear = confirm("¿Estás seguro de que deseas limpiar tus selecciones no confirmadas?");
+            if (!confirmClear) return;
+
             Object.keys(myPicks).forEach(mId => {
                 const m = allMatchesMap.get(String(mId));
                 if (!m || !estaPartidaBloqueada(m)) {
@@ -1194,7 +1312,7 @@
             hasUnsavedChanges = true;
             guardarBorradorLocal();
             renderizarTodoPickem();
-            mostrarToastAuth("Predicciones limpiadas. Puedes rehacer tu bracket.", "info");
+            mostrarToastAuth("Predicciones limpiadas.", "info");
         };
 
         function guardarBorradorLocal() {
@@ -1246,16 +1364,58 @@
             if (ptsEl) ptsEl.textContent = evalResult.totalPoints;
             if (hitsEl) hitsEl.textContent = evalResult.totalHits;
             if (progEl) progEl.textContent = `${completedPicksCount}/${totalPickable}`;
+            const isConfirmed = usuarioTienePicksConfirmados();
+            const isGlobalLocked = Boolean(pickemConfig.globalLocked);
+            const btnSave = document.getElementById('btn-save-pickem');
+            const btnClear = document.getElementById('btn-clear-pickem');
+
             if (badgeEl) {
                 if (inspectedUser) {
                     badgeEl.textContent = 'Modo Vista';
                     badgeEl.className = 'text-[9px] font-bold text-amber-400 block';
+                } else if (isGlobalLocked) {
+                    badgeEl.textContent = 'Cerrado';
+                    badgeEl.className = 'text-[9px] font-bold text-rose-400 block';
+                } else if (isConfirmed) {
+                    badgeEl.textContent = 'Confirmado';
+                    badgeEl.className = 'text-[9px] font-bold text-emerald-400 block';
                 } else if (hasUnsavedChanges) {
                     badgeEl.textContent = 'Sin guardar';
                     badgeEl.className = 'text-[9px] font-bold text-amber-400 block animate-pulse';
                 } else {
-                    badgeEl.textContent = 'Sincronizado';
-                    badgeEl.className = 'text-[9px] font-bold text-emerald-400 block';
+                    badgeEl.textContent = 'Borrador';
+                    badgeEl.className = 'text-[9px] font-bold text-gray-400 block';
+                }
+            }
+
+            // Refinamiento: Una vez confirmadas las predicciones o cerrado el Pick'em, ocultar Clear completamente
+            if (btnClear) {
+                if (isConfirmed || isGlobalLocked || inspectedUser) {
+                    btnClear.classList.add('hidden');
+                } else {
+                    btnClear.classList.remove('hidden');
+                }
+            }
+
+            // Refinamiento: Una vez confirmado, mostrar badge de confirmación y deshabilitar re-guardado
+            if (btnSave) {
+                if (inspectedUser) {
+                    btnSave.classList.add('hidden');
+                } else if (isGlobalLocked) {
+                    btnSave.classList.remove('hidden');
+                    btnSave.disabled = true;
+                    btnSave.className = "flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/40 text-rose-300 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 whitespace-nowrap cursor-default shadow-md";
+                    btnSave.innerHTML = `<i class="fas fa-lock text-rose-400"></i> <span>Predicciones Cerradas</span>`;
+                } else if (isConfirmed) {
+                    btnSave.classList.remove('hidden');
+                    btnSave.disabled = true;
+                    btnSave.className = "flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 whitespace-nowrap cursor-default shadow-[0_0_20px_rgba(16,185,129,0.25)]";
+                    btnSave.innerHTML = `<i class="fas fa-check-circle text-emerald-400"></i> <span>Predicciones Confirmadas</span>`;
+                } else {
+                    btnSave.classList.remove('hidden');
+                    btnSave.disabled = false;
+                    btnSave.className = "flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-400 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap";
+                    btnSave.innerHTML = `<i class="fas fa-cloud-upload-alt text-sm"></i> <span id="btn-save-pickem-text">Guardar Predicciones</span>`;
                 }
             }
 
@@ -1397,7 +1557,35 @@
             canvas.style.height = `${totalCanvasH}px`;
             canvas.style.transform = `scale(${currentZoom})`;
 
+            // Marca de agua oficial de Copa Legion en el fondo de las llaves (Visible y en baja opacidad por colaboración)
+            let watermarkHtml = '';
+            const midX = Math.round(maxX / 2);
+            if (showWB && showLB) {
+                const wbMidY = Math.round(wbBottomY / 2);
+                const lbMidY = Math.round(((wbBottomY + 110) + maxY) / 2);
+                watermarkHtml = `
+                    <div class="pickem-watermark-layer" style="position:absolute; left:0; top:0; width:${totalCanvasW}px; height:${totalCanvasH}px; pointer-events:none; z-index:0; overflow:hidden;">
+                        <div style="position:absolute; left:${midX}px; top:${wbMidY}px; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; opacity:0.16;">
+                            <img src="/assets/logo_copa_legion.png" alt="Copa Legion" style="width:520px; max-width:85vw; object-fit:contain; filter:drop-shadow(0 0 50px rgba(239,68,68,0.45)); user-select:none; pointer-events:none;">
+                        </div>
+                        <div style="position:absolute; left:${midX}px; top:${lbMidY}px; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; opacity:0.16;">
+                            <img src="/assets/logo_copa_legion.png" alt="Copa Legion" style="width:520px; max-width:85vw; object-fit:contain; filter:drop-shadow(0 0 50px rgba(239,68,68,0.45)); user-select:none; pointer-events:none;">
+                        </div>
+                    </div>
+                `;
+            } else {
+                const midY = Math.round(maxY / 2);
+                watermarkHtml = `
+                    <div class="pickem-watermark-layer" style="position:absolute; left:0; top:0; width:${totalCanvasW}px; height:${totalCanvasH}px; pointer-events:none; z-index:0; overflow:hidden;">
+                        <div style="position:absolute; left:${midX}px; top:${midY}px; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; opacity:0.16;">
+                            <img src="/assets/logo_copa_legion.png" alt="Copa Legion" style="width:560px; max-width:85vw; object-fit:contain; filter:drop-shadow(0 0 50px rgba(239,68,68,0.45)); user-select:none; pointer-events:none;">
+                        </div>
+                    </div>
+                `;
+            }
+
             canvas.innerHTML = `
+                ${watermarkHtml}
                 <svg class="pickem-svg-layer" width="${totalCanvasW}" height="${totalCanvasH}" viewBox="0 0 ${totalCanvasW} ${totalCanvasH}">
                     ${svgPaths}
                 </svg>
@@ -1580,7 +1768,7 @@
         }
 
         // =========================================================================
-        // 10. GUARDADO Y SINCRONIZACIÓN DE PREDICCIONES
+        // 10. GUARDADO Y SINCRONIZACIÓN DE PREDICCIONES (CONFIRMACIÓN ÚNICA)
         // =========================================================================
         window.guardarPrediccionesPickem = async () => {
             const user = obtenerUsuarioActual();
@@ -1594,10 +1782,34 @@
                 return;
             }
 
+            const isAdmin = user.rol === 'ADMIN';
+            if (pickemConfig.globalLocked && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Las predicciones oficiales están cerradas por el Staff.", "warning");
+                return;
+            }
+
+            if (usuarioTienePicksConfirmados() && !(isAdmin && pickemConfig.allowEditPlayedAdmin)) {
+                mostrarToastAuth("Tus predicciones ya fueron confirmadas y guardadas de forma única e individual.", "info");
+                return;
+            }
+
+            const totalPickable = pickemMatchIds.size;
+            const currentPicksCount = Object.keys(myPicks).length;
+            if (currentPicksCount === 0) {
+                mostrarToastAuth("Debes seleccionar al menos un ganador antes de confirmar.", "warning");
+                return;
+            }
+
+            const confirmMsg = currentPicksCount < totalPickable
+                ? `⚠️ Has completado ${currentPicksCount} de ${totalPickable} partidas.\n\n¿Deseas confirmar tus predicciones ahora?\nUna vez confirmadas, tu selección quedará registrada de forma única e individual y no podrá ser reiniciada con 'Clear'.`
+                : `⚠️ ¿Confirmar tus predicciones de la Copa Legion?\n\nUna vez confirmadas, tu selección quedará registrada de forma definitiva y única en el ranking oficial.`;
+
+            if (!confirm(confirmMsg)) return;
+
             const btn = document.getElementById('btn-save-pickem');
             const btnText = document.getElementById('btn-save-pickem-text');
             if (btn) btn.disabled = true;
-            if (btnText) btnText.textContent = 'Guardando...';
+            if (btnText) btnText.textContent = 'Confirmando...';
 
             const sim = simularCascadaBracket(myPicks);
             const evalRes = evaluarPuntuacionPicks(myPicks);
@@ -1618,6 +1830,7 @@
                 totalPoints: evalRes.totalPoints,
                 totalHits: evalRes.totalHits,
                 picksCount: Object.keys(myPicks).length,
+                confirmed: true,
                 championPick: champTeam ? {
                     id: champTeam.id,
                     nombre: champTeam.nombre,
@@ -1627,6 +1840,8 @@
             };
 
             guardarBorradorLocal();
+            localStorage.setItem(`lbl_pickem_confirmed_${user.uid}`, 'true');
+
             try {
                 const localList = JSON.parse(localStorage.getItem('lbl_pickems_scouting3_local_list') || '[]');
                 const idx = localList.findIndex(x => x.uid === user.uid);
@@ -1644,19 +1859,18 @@
             try {
                 await setDoc(doc(db, "pickems_scouting3", user.uid), {
                     ...payload,
+                    confirmedAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 }, { merge: true });
             } catch (error) {}
 
             hasUnsavedChanges = false;
-            if (btn) btn.disabled = false;
-            if (btnText) btnText.textContent = 'Guardar Predicciones';
             renderizarTodoPickem();
-            mostrarToastAuth(`¡Predicciones guardadas para ${nombreRanking}!`, "success");
+            mostrarToastAuth(`¡Predicciones confirmadas con éxito para ${nombreRanking}!`, "success");
         };
 
         // =========================================================================
-        // 11. LEADERBOARD EN TIEMPO REAL Y MODO INSPECCIÓN
+        // 11. LEADERBOARD EN TIEMPO REAL & RANKING GLOBAL OFICIAL
         // =========================================================================
         function iniciarSuscripcionLeaderboard() {
             try {
@@ -1671,11 +1885,6 @@
             try {
                 onSnapshot(collection(db, "pickems_scouting3"), (snap) => {
                     const mapByUid = new Map();
-                    try {
-                        const localList = JSON.parse(localStorage.getItem('lbl_pickems_scouting3_local_list') || '[]');
-                        localList.forEach(item => { if (item?.uid) mapByUid.set(item.uid, item); });
-                    } catch (e) {}
-
                     snap.forEach(docSnap => {
                         const data = docSnap.data();
                         if (data && data.uid) {
@@ -1683,24 +1892,37 @@
                         }
                     });
                     leaderboardEntries = Array.from(mapByUid.values());
+                    try {
+                        localStorage.setItem('lbl_pickems_scouting3_local_list', JSON.stringify(leaderboardEntries));
+                    } catch (e) {}
+
                     const countBadge = document.getElementById('leaderboard-count-badge');
                     if (countBadge) countBadge.textContent = leaderboardEntries.length;
 
                     const current = obtenerUsuarioActual();
-                    if (current?.uid && Object.keys(myPicks).length === 0 && !hasUnsavedChanges) {
+                    if (current?.uid) {
                         const myCloudDoc = leaderboardEntries.find(x => x.uid === current.uid);
-                        if (myCloudDoc && myCloudDoc.picks) {
-                            myPicks = { ...myCloudDoc.picks };
-                            renderizarTodoPickem();
+                        if (myCloudDoc && myCloudDoc.picks && Object.keys(myCloudDoc.picks).length > 0) {
+                            localStorage.setItem(`lbl_pickem_confirmed_${current.uid}`, 'true');
+                            if (Object.keys(myPicks).length === 0 || !hasUnsavedChanges) {
+                                myPicks = { ...myCloudDoc.picks };
+                            }
                         }
                     }
 
-                    if (currentViewMode === 'leaderboard') {
-                        renderizarLeaderboardDOM();
-                    }
+                    renderizarTodoPickem();
+                }, (err) => {
+                    console.warn("[Pick'em] Error suscripción leaderboard:", err?.message);
                 });
-            } catch (e) {}
+            } catch (err) {
+                console.warn("[Pick'em] Error al iniciar suscripción leaderboard:", err);
+            }
         }
+
+        window.cargarLeaderboardBajoDemanda = async () => {
+            renderizarLeaderboardDOM();
+            return leaderboardEntries;
+        };
 
         function renderizarLeaderboardDOM() {
             const podiumGrid = document.getElementById('leaderboard-podium-grid');
@@ -1728,18 +1950,43 @@
                 { label: 'TOP 3 • BRONCE', border: 'border-amber-600/50', bg: 'from-amber-700/15 to-[#060b14]', text: 'text-amber-400', icon: 'fa-award text-amber-500' }
             ];
 
+            const currentProfile = obtenerUsuarioActual();
+            const currentUid = currentProfile?.uid;
+
+            const formatearIdRanking = (u) => {
+                if (currentUid && u.uid === currentUid) {
+                    return obtenerIdRegistradoUsuario(currentProfile) || u.riotId || u.displayName || 'Jugador';
+                }
+                const raw = (u.riotId || u.gameName || u.displayName || 'Jugador').toString().trim();
+                if (u.rol !== 'ADMIN' && raw.includes('#')) {
+                    return raw.split('#')[0].trim();
+                }
+                return raw;
+            };
+
+            const formatearFotoRanking = (u) => {
+                const rawUrl = (currentUid && u.uid === currentUid && currentProfile?.photoURL)
+                    ? currentProfile.photoURL
+                    : (u.photoURL || '');
+                if (!rawUrl || rawUrl === '/assets/logo.webp' || rawUrl === '/assets/logo.png') {
+                    return '/assets/default-user.svg';
+                }
+                return rawUrl;
+            };
+
             if (top3.length === 0) {
                 podiumGrid.innerHTML = '';
             } else {
                 podiumGrid.innerHTML = top3.map((u, idx) => {
                     const m = medallas[idx];
-                    const idShown = u.riotId || u.displayName || 'Jugador';
+                    const idShown = formatearIdRanking(u);
+                    const avatarShown = formatearFotoRanking(u);
                     const champ = u.championPick;
                     return `
                         <div class="rounded-3xl bg-gradient-to-b ${m.bg} border ${m.border} p-5 flex items-center justify-between gap-4 shadow-xl">
                             <div class="flex items-center gap-3.5 min-w-0">
                                 <div class="relative shrink-0">
-                                    <img src="${u.photoURL || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" referrerpolicy="no-referrer" class="w-14 h-14 rounded-2xl object-cover border border-white/20">
+                                    <img src="${avatarShown}" onerror="this.src='/assets/default-user.svg'" referrerpolicy="no-referrer" class="w-14 h-14 rounded-2xl object-cover border border-white/20">
                                     <span class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-[#030712] border border-white/20 flex items-center justify-center text-xs">
                                         <i class="fas ${m.icon}"></i>
                                     </span>
@@ -1766,7 +2013,7 @@
             }
 
             const filtered = searchVal
-                ? enriched.filter(u => (u.riotId || u.displayName || '').toLowerCase().includes(searchVal))
+                ? enriched.filter(u => formatearIdRanking(u).toLowerCase().includes(searchVal))
                 : enriched;
 
             if (filtered.length === 0) {
@@ -1780,12 +2027,11 @@
                 return;
             }
 
-            const currentUid = obtenerUsuarioActual()?.uid;
-
             tbody.innerHTML = filtered.map((u) => {
                 const rank = enriched.indexOf(u) + 1;
                 const isMe = currentUid && u.uid === currentUid;
-                const idShown = u.riotId || u.displayName || 'Jugador';
+                const idShown = formatearIdRanking(u);
+                const avatarShown = formatearFotoRanking(u);
                 const champ = u.championPick;
 
                 const rolePill = u.rol === 'ADMIN'
@@ -1799,7 +2045,7 @@
                         </td>
                         <td class="py-3.5 px-4">
                             <div class="flex items-center gap-3">
-                                <img src="${u.photoURL || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" referrerpolicy="no-referrer" class="w-8 h-8 rounded-xl object-cover border border-white/15 shrink-0">
+                                <img src="${avatarShown}" onerror="this.src='/assets/default-user.svg'" referrerpolicy="no-referrer" class="w-8 h-8 rounded-xl object-cover border border-white/15 shrink-0">
                                 <div class="flex items-center">
                                     <span class="font-black text-white">${idShown}</span>
                                     ${rolePill}
@@ -1887,6 +2133,7 @@
                 secBracket?.classList.add('hidden');
                 secLeader?.classList.remove('hidden');
                 zoomWrap?.classList.add('hidden');
+                window.cargarLeaderboardBajoDemanda(false);
             } else {
                 secBracket?.classList.remove('hidden');
                 secLeader?.classList.add('hidden');
@@ -2063,19 +2310,26 @@
                 if (profile?.uid) {
                     try {
                         const snap = await getDoc(doc(db, "pickems_scouting3", profile.uid));
-                        if (snap.exists() && snap.data().picks) {
+                        if (snap.exists() && snap.data().picks && Object.keys(snap.data().picks).length > 0) {
                             myPicks = { ...snap.data().picks };
                             hasUnsavedChanges = false;
+                            localStorage.setItem(`lbl_pickem_confirmed_${profile.uid}`, 'true');
                         } else {
-                            const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
-                            if (draft) {
-                                myPicks = JSON.parse(draft);
+                            const isConf = localStorage.getItem(`lbl_pickem_confirmed_${profile.uid}`) === 'true';
+                            if (!isConf) {
+                                const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
+                                if (draft) {
+                                    myPicks = JSON.parse(draft);
+                                }
                             }
                         }
                     } catch (err) {
-                        const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
-                        if (draft) {
-                            try { myPicks = JSON.parse(draft); } catch (e2) {}
+                        const isConf = localStorage.getItem(`lbl_pickem_confirmed_${profile.uid}`) === 'true';
+                        if (!isConf) {
+                            const draft = localStorage.getItem(`lbl_pickem_draft_${profile.uid}`) || localStorage.getItem('lbl_pickem_draft_guest');
+                            if (draft) {
+                                try { myPicks = JSON.parse(draft); } catch (e2) {}
+                            }
                         }
                     }
                 }
@@ -2093,13 +2347,16 @@
                 document.getElementById('admin-pickem-control-bar')?.classList.remove('hidden');
             }
             if (cachedUser?.uid) {
-                const draft = localStorage.getItem(`lbl_pickem_draft_${cachedUser.uid}`);
-                if (draft) {
-                    try { myPicks = JSON.parse(draft); } catch (e) {}
+                const isConf = localStorage.getItem(`lbl_pickem_confirmed_${cachedUser.uid}`) === 'true';
+                if (!isConf) {
+                    const draft = localStorage.getItem(`lbl_pickem_draft_${cachedUser.uid}`);
+                    if (draft) {
+                        try { myPicks = JSON.parse(draft); } catch (e) {}
+                    }
                 }
             }
 
-            await cargarDatosTorneoScouting3();
+            await iniciarSincronizacionTorneoScouting3();
         });
     </script>
 </body>

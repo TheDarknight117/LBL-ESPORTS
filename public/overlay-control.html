@@ -342,9 +342,9 @@
 
                         <!-- Mini Vista Previa Multimedia -->
                         <div class="p-2.5 rounded-xl bg-black/60 border border-zinc-800 flex flex-col items-center justify-center">
-                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa Multimedia en Vivo</span>
+                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa Multimedia en Vivo (Clic para reproducir)</span>
                             <div class="w-full h-32 bg-black rounded-lg overflow-hidden flex items-center justify-center relative border border-zinc-800/80">
-                                <video id="ctrl-preview-video" src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" autoplay loop muted playsinline class="w-full h-full object-contain"></video>
+                                <video id="ctrl-preview-video" src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" preload="none" controls loop muted playsinline class="w-full h-full object-contain"></video>
                                 <img id="ctrl-preview-image" src="" alt="Preview" class="w-full h-full object-contain hidden">
                                 <div id="ctrl-preview-fallback" class="text-xs text-zinc-500 flex items-center gap-2 hidden">
                                     <i class="fa-solid fa-images"></i> Galería de Sponsors por Código activa
@@ -1967,11 +1967,9 @@
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (vidEl) {
                     vidEl.classList.remove('hidden');
-                    if (vidEl.src !== mediaUrl) {
-                        vidEl.src = mediaUrl;
-                        vidEl.load();
+                    if (vidEl.getAttribute('src') !== mediaUrl) {
+                        vidEl.setAttribute('src', mediaUrl);
                     }
-                    vidEl.play().catch(() => {});
                 }
             } else {
                 if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }

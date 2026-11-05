@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Squada+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/dist/output.css?v=251">
+    <link rel="stylesheet" href="/dist/output.css?v=262">
 
     <style>
         body {
@@ -120,7 +120,7 @@
 
                     <div class="flex items-center gap-4">
                         <div class="relative group cursor-pointer" onclick="window.abrirModalSelectorIconos()" title="Haz clic para elegir tu Icono de Perfil">
-                            <img id="page-account-avatar" src="/assets/logo.webp" alt="Avatar" referrerpolicy="no-referrer" onerror="this.src='/assets/logo.webp'" class="w-16 h-16 rounded-2xl object-cover border-2 border-cyan-500/40 shrink-0 transition-all group-hover:border-cyan-300 group-hover:scale-105 shadow-lg">
+                            <img id="page-account-avatar" src="/assets/default-user.svg" alt="Avatar" referrerpolicy="no-referrer" onerror="this.src='/assets/default-user.svg'" class="w-16 h-16 rounded-2xl object-cover border-2 border-cyan-500/40 shrink-0 transition-all group-hover:border-cyan-300 group-hover:scale-105 shadow-lg">
                             <div class="absolute inset-0 bg-black/65 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-[10px] font-black uppercase tracking-wider">
                                 <i class="fas fa-camera text-sm mb-0.5 text-cyan-400"></i>
                                 <span>Cambiar</span>
@@ -138,22 +138,68 @@
                         </div>
                     </div>
 
-                    <!-- Edición rápida de Alias / Nick -->
-                    <form id="form-page-alias" class="pt-2 border-t border-gray-800/80 space-y-3">
-                        <div>
-                            <label class="block text-[10px] font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                <i class="fas fa-user-edit mr-1 text-cyan-400"></i> Alias / Nick de Perfil
+                    <!-- SECCIÓN EXCLUSIVA STAFF (ADMIN): Personalización de ID y Credencial de Acceso -->
+                    <div id="staff-only-profile-section" class="hidden pt-3 border-t border-red-500/25 space-y-3.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-400 flex items-center gap-1.5">
+                                <i class="fas fa-user-shield"></i> Opciones Exclusivas Staff
+                            </span>
+                            <span class="px-2 py-0.5 rounded bg-red-500/15 border border-red-500/35 text-red-300 text-[8px] font-black uppercase">Solo Staff</span>
+                        </div>
+
+                        <form id="form-page-alias" class="space-y-2">
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-gray-300">
+                                <i class="fas fa-user-edit mr-1 text-cyan-400"></i> Personalizar ID / Alias de Staff
                             </label>
                             <div class="flex gap-2">
-                                <input type="text" id="page-input-customnick" maxlength="20" placeholder="Tu Nick visible"
+                                <input type="text" id="page-input-customnick" maxlength="20" placeholder="Ej: LBL Darkcito"
                                     style="background-color: #03060c; border: 1px solid #1f2937;"
                                     class="flex-1 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl focus:border-cyan-400 focus:outline-none">
                                 <button type="submit" id="btn-save-alias" class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider cursor-pointer transition-all shrink-0">
                                     Guardar
                                 </button>
                             </div>
+                        </form>
+
+                        <!-- Tarjeta Informativa de Credenciales Asignadas de Staff -->
+                        <div class="p-3.5 rounded-2xl bg-[#03060c] border border-red-500/30 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-black uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                                    <i class="fas fa-key text-red-400"></i> Credenciales de Staff
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                                    <i class="fas fa-check-circle mr-1"></i> Asignadas
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl bg-black/50 border border-gray-800">
+                                    <span class="text-[9px] font-bold text-gray-500 block uppercase">Usuario Asignado</span>
+                                    <span id="staff-cred-nick" class="font-black text-white text-xs truncate block">elDarkcito</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-black/50 border border-gray-800">
+                                    <span class="text-[9px] font-bold text-gray-500 block uppercase">Correo Oficial</span>
+                                    <span id="staff-cred-mail" class="font-black text-white text-xs truncate block">staff@lbl.com</span>
+                                </div>
+                            </div>
+                            <div class="pt-1 flex items-center justify-between">
+                                <span class="text-[10px] text-gray-400">Acceso activo por Usuario / Contraseña</span>
+                                <button type="button" onclick="window.toggleFormCambiarPassStaff()" class="text-[10px] font-black text-cyan-400 hover:text-cyan-300 uppercase cursor-pointer">
+                                    <i class="fas fa-edit mr-1"></i> Cambiar Contraseña
+                                </button>
+                            </div>
+                            <!-- Formulario para cambiar contraseña de Staff si se requiere -->
+                            <form id="form-staff-password" class="hidden pt-2 border-t border-gray-800/80 space-y-2">
+                                <div class="flex gap-2">
+                                    <input type="password" id="page-input-staff-pass" minlength="6" placeholder="Nueva contraseña de Staff..."
+                                        style="background-color: #03060c; border: 1px solid #1f2937;"
+                                        class="flex-1 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl focus:border-red-400 focus:outline-none">
+                                    <button type="submit" id="btn-save-staff-pass" class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all shrink-0">
+                                        Guardar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
 
                     <!-- Estado y Vinculación de Cuenta de Google -->
                     <div class="p-3.5 rounded-2xl bg-[#040811] border border-gray-800/90 space-y-2.5">
@@ -189,7 +235,7 @@
             <!-- Columna Derecha: CONEXIONES DE CUENTAS (RIOT GAMES + TWITCH) -->
             <div class="lg:col-span-7 space-y-6">
 
-                <!-- 1. CONEXIÓN RIOT GAMES (Account-V1 + Summoner-V4 + League-V4 + DataDragon) -->
+                <!-- 1. CONEXIÓN RIOT GAMES (1-Click Login Modal / RSO + Auto-Sync por PUUID) -->
                 <div class="glass-panel rounded-3xl p-6 space-y-5">
                     <div class="flex items-start justify-between gap-3 border-b border-gray-800 pb-4">
                         <div class="flex items-center gap-3">
@@ -197,79 +243,62 @@
                                 <i class="fas fa-fist-raised text-lg"></i>
                             </div>
                             <div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
                                     <h3 class="text-base font-black uppercase italic text-white">Riot Games (League of Legends)</h3>
                                     <span id="riot-conn-badge" class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[9px] font-black uppercase">Sin Vincular</span>
                                 </div>
                                 <p class="text-xs text-gray-400 mt-0.5">
-                                    Sincroniza tu Riot ID (<code class="text-cyan-300">Nick#TAG</code>), Icono de Invocador, Nivel y Rango SoloQ.
+                                    Conecta tu cuenta oficial de Riot Games. Si cambias tu Riot ID en el juego, se actualizará automáticamente.
                                 </p>
                             </div>
                         </div>
-                        <button type="button" id="btn-unlink-riot-card" onclick="window.desvincularRiotEnCuenta()" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer">
-                            <i class="fas fa-unlink mr-1"></i> Desvincular
-                        </button>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" id="btn-sync-riot-card" onclick="window.forzarSincronizacionRiotEnCuenta()" title="Actualizar Riot ID desde Riot Games" class="hidden px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-[10px] font-black uppercase cursor-pointer transition-all">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button type="button" id="btn-unlink-riot-card" onclick="window.desvincularRiotEnCuenta()" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer">
+                                <i class="fas fa-unlink mr-1"></i> Desvincular
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Tarjeta Visual cuando Riot Games está Conectado -->
-                    <div id="riot-connected-info-card" class="hidden p-4 rounded-2xl bg-[#040811] border border-red-500/30 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="relative">
-                                <img id="riot-card-icon" src="https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png" alt="Summoner Icon" class="w-14 h-14 rounded-2xl object-cover border-2 border-red-500/50">
-                                <span id="riot-card-level" class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-slate-950 border border-red-500/50 text-[9px] font-black text-white">NV. -</span>
+                    <div id="riot-connected-info-card" class="hidden p-3.5 rounded-2xl bg-[#040811] border border-red-500/35 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="relative shrink-0">
+                                <img id="riot-card-icon" src="https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png" alt="Summoner Icon" class="w-10 h-10 rounded-xl object-cover border border-red-500/50">
+                                <span id="riot-card-level" class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-slate-950 border border-red-500/50 text-[8px] font-black text-white whitespace-nowrap">NV. -</span>
                             </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span id="riot-card-riotid" class="text-base font-black text-white">Faker#LAS</span>
-                                    <span id="riot-card-region" class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 text-[9px] font-black uppercase">LA2</span>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span id="riot-card-riotid" class="text-sm font-black text-white truncate">Faker#LAS</span>
+                                    <span id="riot-card-region" class="px-1.5 py-0.5 rounded bg-red-500/20 border border-red-500/40 text-red-300 text-[9px] font-black uppercase">LA2</span>
+                                    <span id="riot-card-rank" class="px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[9px] font-black uppercase">UNRANKED</span>
                                 </div>
-                                <p id="riot-card-rank" class="text-xs font-bold text-cyan-300 mt-0.5">Sin Rango Registrado</p>
-                                <p id="riot-card-verified-mode" class="text-[10px] text-gray-500 mt-0.5">Conectado a tu perfil LBL</p>
+                                <p id="riot-card-verified-mode" class="text-[10px] text-gray-500 mt-0.5">Sincronización automática de Riot ID activa</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Formulario para Vincular / Actualizar Riot ID -->
-                    <form id="form-connect-riot" class="space-y-3.5">
-                        <div class="grid grid-cols-12 gap-2.5">
-                            <div class="col-span-12 sm:col-span-5">
-                                <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">Nombre de Invocador</label>
-                                <input type="text" id="page-input-gamename" maxlength="16" required placeholder="Ej: elDarkcito"
-                                    style="background-color: #03060c; border: 1px solid #1f2937;"
-                                    class="w-full text-white font-bold text-xs px-3.5 py-2.5 rounded-xl focus:border-red-400 focus:outline-none">
-                            </div>
-                            <div class="col-span-6 sm:col-span-3">
-                                <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">Tag (#)</label>
-                                <div class="relative flex items-center">
-                                    <span class="absolute left-3 text-red-400 font-black text-xs select-none">#</span>
-                                    <input type="text" id="page-input-tagline" maxlength="5" required placeholder="LAS"
-                                        style="background-color: #03060c; border: 1px solid #1f2937;"
-                                        class="w-full text-red-300 font-black uppercase text-xs pl-7 pr-2.5 py-2.5 rounded-xl focus:border-red-400 focus:outline-none">
-                                </div>
-                            </div>
-                            <div class="col-span-6 sm:col-span-4">
-                                <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">Servidor</label>
-                                <select id="page-input-riot-region" style="background-color: #03060c; border: 1px solid #1f2937;" class="w-full text-white font-bold text-xs px-3 py-2.5 rounded-xl focus:border-red-400 focus:outline-none">
-                                    <option value="la2">LAS (LA2)</option>
-                                    <option value="la1">LAN (LA1)</option>
-                                    <option value="br1">Brasil (BR1)</option>
-                                    <option value="na1">Norteamérica (NA1)</option>
-                                </select>
-                            </div>
+                    <!-- Controles de Conexión Riot Games (1-Click Botón igual que Twitch; se oculta al estar conectado) -->
+                    <div id="riot-connect-controls-wrap" class="p-4 rounded-2xl bg-red-950/20 border border-red-500/30 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase tracking-wider text-red-300">Conectar con Riot Games</span>
+                            <span class="text-[10px] font-bold text-amber-300">
+                                <i class="fas fa-clock mr-1"></i> Permanencia: 90 días
+                            </span>
                         </div>
-
-                        <p id="riot-connect-error" class="hidden text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-500/40 rounded-xl p-2.5 text-center"></p>
-
-                        <div class="flex justify-end">
-                            <button type="submit" id="btn-connect-riot" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 text-white font-black text-xs uppercase tracking-wider shadow-lg cursor-pointer transition-all active:scale-95 flex items-center gap-2">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Vincular y Sincronizar Riot ID</span>
-                            </button>
-                        </div>
-                    </form>
+                        <p class="text-xs text-gray-300">
+                            Inicia sesión con tu cuenta de Riot Games para sincronizar automáticamente tu Riot ID, icono de invocador, nivel y rango SoloQ (solo se permite una cuenta por perfil):
+                        </p>
+                        <button type="button" onclick="window.iniciarLoginRiotGames()" class="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-[#D13639] to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all shadow-[0_0_20px_rgba(209,54,57,0.35)] flex items-center justify-center gap-2.5 active:scale-95">
+                            <i class="fas fa-fist-raised text-sm"></i>
+                            <span>Iniciar Sesión con Riot Games</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- 2. CONEXIÓN TWITCH (OAuth 2.0 Implicit Grant + Twitch Helix API) -->
+                <!-- 2. CONEXIÓN TWITCH (OAuth 2.0 Oficial - 1 Cuenta por Perfil) -->
                 <div class="glass-panel rounded-3xl p-6 space-y-5">
                     <div class="flex items-start justify-between gap-3 border-b border-gray-800 pb-4">
                         <div class="flex items-center gap-3">
@@ -277,67 +306,51 @@
                                 <i class="fab fa-twitch text-lg"></i>
                             </div>
                             <div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
                                     <h3 class="text-base font-black uppercase italic text-white">Twitch</h3>
                                     <span id="twitch-conn-badge" class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[9px] font-black uppercase">Sin Vincular</span>
                                 </div>
                                 <p class="text-xs text-gray-400 mt-0.5">
-                                    Conecta tu cuenta de Twitch mediante OAuth 2.0 (Helix API) o vincula tu canal para mostrar tu stream.
+                                    Conecta tu cuenta oficial de Twitch para sincronizar tu usuario, icono y condición de streamer.
                                 </p>
                             </div>
                         </div>
-                        <button type="button" id="btn-unlink-twitch-card" onclick="window.desvincularTwitchEnCuenta()" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer">
+                        <button type="button" id="btn-unlink-twitch-card" onclick="window.desvincularTwitchEnCuenta()" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer shrink-0">
                             <i class="fas fa-unlink mr-1"></i> Desvincular
                         </button>
                     </div>
 
-                    <!-- Tarjeta Visual cuando Twitch está Conectado -->
-                    <div id="twitch-connected-info-card" class="hidden p-4 rounded-2xl bg-[#040811] border border-purple-500/35 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <img id="twitch-card-avatar" src="/assets/logo.webp" alt="Twitch Avatar" class="w-13 h-13 rounded-2xl object-cover border-2 border-purple-500/50">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span id="twitch-card-displayname" class="text-base font-black text-white">CanalTwitch</span>
-                                    <span id="twitch-card-type" class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[9px] font-black uppercase">STREAMER</span>
+                    <!-- Tarjeta Visual cuando Twitch está Conectado (Logo pequeño + User al lado + Etiqueta STREAMER solo si es Afiliado/Partner) -->
+                    <div id="twitch-connected-info-card" class="hidden p-3.5 rounded-2xl bg-[#040811] border border-purple-500/35 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img id="twitch-card-avatar" src="/assets/logo.webp" alt="Twitch Avatar" class="w-10 h-10 rounded-xl object-cover border border-purple-500/50 shrink-0">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <a id="twitch-card-link" href="https://twitch.tv" target="_blank" class="text-sm font-black text-white hover:text-purple-300 transition-colors truncate">
+                                        <span id="twitch-card-displayname">CanalTwitch</span>
+                                    </a>
+                                    <span id="twitch-card-type" class="hidden px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[9px] font-black uppercase tracking-wider">STREAMER</span>
                                 </div>
-                                <a id="twitch-card-link" href="https://twitch.tv" target="_blank" class="text-xs font-bold text-purple-400 hover:underline block mt-0.5">
-                                    twitch.tv/canal
-                                </a>
+                                <p id="twitch-card-lock-note" class="text-[10px] text-gray-500 mt-0.5">Cuenta oficial vinculada</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Controles de Conexión Twitch (OAuth 2.0 Oficial 1-Click + Vinculación Directa) -->
-                    <div class="space-y-4">
-                        <!-- Botón Principal 1-Click con conexión oficial -->
-                        <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
-                            <span class="text-xs font-black uppercase tracking-wider text-purple-300 block">Conectar con Twitch</span>
-                            <p class="text-xs text-gray-300">
-                                Haz clic para autorizar y sincronizar automáticamente tu avatar, nombre y estado de streamer en vivo:
-                            </p>
-                            <button type="button" onclick="window.iniciarOAuthTwitch()" class="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-purple-600 to-[#9146FF] hover:from-purple-500 hover:to-[#7c2ff2] text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all shadow-[0_0_20px_rgba(145,70,255,0.35)] flex items-center justify-center gap-2.5 active:scale-95">
-                                <i class="fab fa-twitch text-sm"></i>
-                                <span>Conectar con Twitch</span>
-                            </button>
+                    <!-- Controles de Conexión Twitch (Se ocultan automáticamente cuando ya hay una cuenta vinculada) -->
+                    <div id="twitch-connect-controls-wrap" class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase tracking-wider text-purple-300">Conectar con Twitch</span>
+                            <span class="text-[10px] font-bold text-amber-300">
+                                <i class="fas fa-clock mr-1"></i> Permanencia: 90 días
+                            </span>
                         </div>
-
-                        <!-- Opción secundaria: Vincular por nombre de canal -->
-                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-1">
-                            <div class="sm:col-span-8">
-                                <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">O vincular canal manualmente</label>
-                                <div class="relative flex items-center">
-                                    <span class="absolute left-3.5 text-purple-400 font-bold text-xs select-none">twitch.tv/</span>
-                                    <input type="text" id="page-input-twitch-login" placeholder="tu_canal"
-                                        style="background-color: #03060c; border: 1px solid #1f2937;"
-                                        class="w-full text-white font-bold text-xs pl-20 pr-3.5 py-2.5 rounded-xl focus:border-purple-400 focus:outline-none">
-                                </div>
-                            </div>
-                            <div class="sm:col-span-4 flex items-end">
-                                <button type="button" onclick="window.vincularTwitchDirecto()" class="w-full py-2.5 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all">
-                                    <i class="fas fa-link mr-1"></i> Vincular
-                                </button>
-                            </div>
-                        </div>
+                        <p class="text-xs text-gray-300">
+                            Inicia sesión con tu cuenta de Twitch para sincronizar tu avatar y usuario (solo se permite una cuenta vinculada por perfil):
+                        </p>
+                        <button type="button" onclick="window.iniciarOAuthTwitch()" class="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-purple-600 to-[#9146FF] hover:from-purple-500 hover:to-[#7c2ff2] text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all shadow-[0_0_20px_rgba(145,70,255,0.35)] flex items-center justify-center gap-2.5 active:scale-95">
+                            <i class="fab fa-twitch text-sm"></i>
+                            <span>Conectar con Twitch</span>
+                        </button>
                     </div>
                 </div>
 
@@ -347,9 +360,75 @@
 
     </main>
 
-    <!-- MODAL SELECTOR DE ICONOS DE PERFIL -->
+    <!-- MODAL VENTANA DE INICIO DE SESIÓN / AUTENTICACIÓN RIOT GAMES -->
+    <div id="modal-login-riot-games" onclick="if(event.target === this) window.cerrarModalLoginRiotGames()" class="fixed inset-0 z-[10000] hidden items-center justify-center p-4" style="background-color: rgba(2, 5, 12, 0.9);">
+        <div class="w-full max-w-md rounded-3xl overflow-hidden relative shadow-2xl" style="background-color: #0b0e14; border: 1px solid rgba(209, 54, 57, 0.45); box-shadow: 0 28px 70px rgba(0,0,0,0.96);">
+            <div class="h-1.5 w-full bg-gradient-to-r from-[#D13639] via-rose-500 to-amber-500"></div>
+
+            <div class="p-6 sm:p-7 space-y-5">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-[#D13639]/20 border border-[#D13639]/50 flex items-center justify-center text-[#D13639] shrink-0">
+                            <i class="fas fa-fist-raised text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-400 block">Riot Sign-On / API Oficial</span>
+                            <h3 class="text-xl font-black uppercase italic tracking-tight text-white leading-none mt-0.5">
+                                CUENTA <span class="text-[#D13639]">RIOT GAMES</span>
+                            </h3>
+                        </div>
+                    </div>
+                    <button type="button" onclick="window.cerrarModalLoginRiotGames()" class="w-8 h-8 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-400 hover:text-white flex items-center justify-center cursor-pointer">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+
+                <form id="form-connect-riot" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
+                            <i class="fas fa-user mr-1 text-red-400"></i> Riot ID (Usuario#TAG)
+                        </label>
+                        <div class="grid grid-cols-12 gap-2">
+                            <div class="col-span-8">
+                                <input type="text" id="page-input-gamename" maxlength="16" required placeholder="Tu Riot ID"
+                                    style="background-color: #05070c; border: 1px solid #1f2937;"
+                                    class="w-full text-white font-bold text-sm px-3.5 py-2.5 rounded-xl focus:border-red-500 focus:outline-none">
+                            </div>
+                            <div class="col-span-4 relative flex items-center">
+                                <span class="absolute left-3 text-red-400 font-black text-xs select-none">#</span>
+                                <input type="text" id="page-input-tagline" maxlength="5" required placeholder="TAG"
+                                    style="background-color: #05070c; border: 1px solid #1f2937;"
+                                    class="w-full text-red-300 font-black text-sm pl-7 pr-2.5 py-2.5 rounded-xl focus:border-red-500 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
+                            <i class="fas fa-globe-americas mr-1 text-red-400"></i> Región de League of Legends
+                        </label>
+                        <select id="page-input-riot-region" style="background-color: #05070c; border: 1px solid #1f2937;" class="w-full text-white font-bold text-xs px-3.5 py-2.5 rounded-xl focus:border-red-500 focus:outline-none">
+                            <option value="la2">Latinoamérica Sur — LAS (LA2)</option>
+                            <option value="la1">Latinoamérica Norte — LAN (LA1)</option>
+                            <option value="br1">Brasil (BR1)</option>
+                            <option value="na1">Norteamérica (NA1)</option>
+                        </select>
+                    </div>
+
+                    <p id="riot-connect-error" class="hidden text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-500/40 rounded-xl p-2.5 text-center"></p>
+
+                    <button type="submit" id="btn-connect-riot" class="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-[#D13639] to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(209,54,57,0.4)] cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Autorizar y Conectar Riot Games</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SELECTOR DE ICONOS DE PERFIL (SOLO ICONOS MIGRADOS DE RIOT Y TWITCH) -->
     <div id="modal-selector-iconos" onclick="if(event.target === this) window.cerrarModalSelectorIconos()" class="fixed inset-0 z-[10000] hidden items-center justify-center p-4" style="background-color: rgba(2, 5, 12, 0.88);">
-        <div class="w-full max-w-2xl rounded-3xl overflow-hidden relative shadow-2xl flex flex-col max-h-[90vh]" style="background-color: #070c16; border: 1px solid #1e293b; box-shadow: 0 28px 70px rgba(0,0,0,0.96);">
+        <div class="w-full max-w-lg rounded-3xl overflow-hidden relative shadow-2xl flex flex-col max-h-[90vh]" style="background-color: #070c16; border: 1px solid #1e293b; box-shadow: 0 28px 70px rgba(0,0,0,0.96);">
             <!-- Barra superior -->
             <div class="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"></div>
 
@@ -357,10 +436,10 @@
             <div class="p-5 sm:p-6 border-b border-gray-800 flex items-center justify-between bg-[#040810]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
-                        <i class="fas fa-palette text-lg"></i>
+                        <i class="fas fa-user-circle text-lg"></i>
                     </div>
                     <div>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 block">Personalización LBL</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 block">Iconos de Cuentas Conectadas</span>
                         <h3 class="text-lg font-black uppercase italic text-white leading-none mt-0.5">
                             Elegir Icono de Perfil
                         </h3>
@@ -371,55 +450,29 @@
                 </button>
             </div>
 
-            <!-- Contenido con scroll -->
-            <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+            <!-- Contenido -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1 text-xs">
                 <!-- Previsualización Actual -->
                 <div class="p-4 rounded-2xl bg-[#040810] border border-gray-800 flex items-center gap-4">
-                    <img id="preview-selected-icon-img" src="/assets/logo.webp" alt="Selected" class="w-16 h-16 rounded-2xl object-cover border-2 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                    <img id="preview-selected-icon-img" src="/assets/default-user.svg" alt="Selected" class="w-14 h-14 rounded-2xl object-cover border-2 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] shrink-0">
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">Icono Seleccionado</span>
-                        <p id="preview-selected-icon-name" class="text-sm font-black text-white mt-0.5">Logo Oficial LBL</p>
-                        <p class="text-[11px] text-gray-500">Se mostrará en el navbar, en tu perfil y en la tabla de clasificaciones.</p>
+                        <p id="preview-selected-icon-name" class="text-sm font-black text-white mt-0.5">Icono Actual</p>
+                        <p class="text-[11px] text-gray-500">Se mostrará en el navbar, en tu perfil y en la tabla del Pick'em.</p>
                     </div>
                 </div>
 
-                <!-- 1. Iconos de Cuentas Vinculadas -->
-                <div id="section-icons-connected" class="space-y-2.5">
+                <!-- Iconos Migrados de Riot Games (LoL) y Twitch -->
+                <div id="section-icons-connected" class="space-y-3">
                     <span class="text-[11px] font-black uppercase tracking-wider text-cyan-400 block">
-                        <i class="fas fa-link mr-1"></i> De tus Cuentas Conectadas
+                        <i class="fas fa-link mr-1"></i> Iconos Migrados (Riot Games & Twitch)
                     </span>
-                    <div id="grid-icons-connected" class="grid grid-cols-4 sm:grid-cols-6 gap-3"></div>
+                    <div id="grid-icons-connected" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
                 </div>
 
-                <!-- 2. Iconos Temáticos League of Legends & LBL -->
-                <div class="space-y-2.5">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-amber-400 block">
-                        <i class="fas fa-fire mr-1"></i> League of Legends & LBL Esports
-                    </span>
-                    <div id="grid-icons-lol" class="grid grid-cols-4 sm:grid-cols-6 gap-3"></div>
-                </div>
-
-                <!-- 3. Iconos Staff LBL -->
-                <div id="section-icons-staff" class="space-y-2.5">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-purple-400 block">
-                        <i class="fas fa-shield-alt mr-1"></i> Iconos de Staff LBL
-                    </span>
-                    <div id="grid-icons-staff" class="grid grid-cols-4 sm:grid-cols-6 gap-3"></div>
-                </div>
-
-                <!-- 4. URL Personalizada -->
-                <div class="p-3.5 rounded-2xl bg-[#040810] border border-gray-800 space-y-2">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 block">
-                        <i class="fas fa-globe mr-1 text-cyan-400"></i> O ingresa una URL de imagen directa
-                    </span>
-                    <div class="flex gap-2">
-                        <input type="url" id="input-custom-avatar-url" placeholder="https://ejemplo.com/mi-avatar.png"
-                            style="background-color: #020409; border: 1px solid #1f2937;"
-                            class="flex-1 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl focus:border-cyan-400 focus:outline-none">
-                        <button type="button" onclick="window.previsualizarIconoCustomUrl()" class="px-3.5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-black text-xs uppercase cursor-pointer">
-                            Probar
-                        </button>
-                    </div>
+                <div class="p-3.5 rounded-2xl bg-[#040810] border border-gray-800/80 text-[11px] text-gray-400 flex items-center gap-2.5">
+                    <i class="fas fa-info-circle text-cyan-400 shrink-0"></i>
+                    <span>En el futuro añadiremos más iconos de personalización. Actualmente puedes elegir entre el icono migrado de tu cuenta de League of Legends y el de tu cuenta de Twitch.</span>
                 </div>
             </div>
 
@@ -448,10 +501,16 @@
             obtenerIdRegistradoUsuario,
             guardarDatosMiCuenta,
             vincularCuentaGoogleActual,
+            guardarPasswordAccesoUsuario,
             actualizarFotoPerfilUsuario,
+            normalizarFotoPerfil,
+            DEFAULT_USER_AVATAR,
+            consultarRiotApiOficial,
+            sincronizarRiotIdAutomaticoJugador,
+            obtenerEstadoBloqueo90Dias,
             mostrarToastAuth
-        } from "/auth-core.js?v=252";
-        import "/app-version.js?v=252";
+        } from "/auth-core.js?v=262";
+        import "/app-version.js?v=262";
 
         const loggedOutView = document.getElementById('account-logged-out-view');
         const loggedInView = document.getElementById('account-logged-in-view');
@@ -460,41 +519,8 @@
         const gameNameInp = document.getElementById('page-input-gamename');
         const tagLineInp = document.getElementById('page-input-tagline');
         const regionInp = document.getElementById('page-input-riot-region');
-        const twitchLoginInp = document.getElementById('page-input-twitch-login');
 
         const TWITCH_DEFAULT_CLIENT_ID = '2rk1hvxy3lg9id3e4g3e94j06bl603';
-
-        // Catálogo de Iconos para el Selector de Perfil
-        const ICONOS_LOL_LBL = [
-            { name: 'Barón Nashor', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png' },
-            { name: 'Poro Clásico', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/501.png' },
-            { name: 'Poro Caballero', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/502.png' },
-            { name: 'Minion Mago', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/503.png' },
-            { name: 'Espadas Cruzadas', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/0.png' },
-            { name: 'Rosa Invernal', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/504.png' },
-            { name: 'Escudo Invocador', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/1.png' },
-            { name: 'Garra de Fuego', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/2.png' },
-            { name: 'Casco de Asedio', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/3.png' },
-            { name: 'Golem Ancestro', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/4.png' },
-            { name: 'Dragón Arcano', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/5.png' },
-            { name: 'Pergamino de Runas', url: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/6.png' },
-            { name: 'Barón LBL', url: '/assets/BARON.webp' },
-            { name: 'Heraldo LBL', url: '/assets/heraldo.webp' },
-            { name: 'Pentakill LBL', url: '/assets/pentakill.webp' },
-            { name: 'Vacuos LBL', url: '/assets/vacuos.webp' },
-            { name: 'LBL Circular', url: '/assets/LBL Circular.webp' },
-            { name: 'Logo LBL', url: '/assets/logo.webp' }
-        ];
-
-        const ICONOS_STAFF = [
-            { name: 'Staff Darkcito', url: '/assets/icons staff/darkcito.webp' },
-            { name: 'Staff Ketwi', url: '/assets/icons staff/ketwi.webp' },
-            { name: 'Staff Ketwi 2', url: '/assets/icons staff/ketwi2.webp' },
-            { name: 'Staff Luico', url: '/assets/icons staff/luico.webp' },
-            { name: 'Staff Pol', url: '/assets/icons staff/Pol.webp' },
-            { name: 'Staff Ren Noroi', url: '/assets/icons staff/ren noroi.webp' },
-            { name: 'Staff El Alex', url: '/assets/icons staff/aliaselalex.webp' }
-        ];
 
         let selectedAvatarUrlTemp = '';
 
@@ -513,13 +539,15 @@
             const emailEl = document.getElementById('page-account-email');
             const roleBadgeEl = document.getElementById('page-account-role-badge');
             const activeIdEl = document.getElementById('page-account-active-id');
+            const staffSection = document.getElementById('staff-only-profile-section');
+            const staffPassBadge = document.getElementById('staff-pass-status-badge');
 
             const idReg = obtenerIdRegistradoUsuario(user);
             const riotConn = user.connections?.riot || null;
             const twitchConn = user.connections?.twitch || null;
 
             if (avatarEl) {
-                avatarEl.src = user.photoURL || riotConn?.profileIconUrl || twitchConn?.profileImageUrl || '/assets/logo.webp';
+                avatarEl.src = normalizarFotoPerfil(user.photoURL, riotConn?.profileIconUrl, twitchConn?.profileImageUrl);
             }
             if (displayIdEl) displayIdEl.textContent = idReg;
             if (emailEl) emailEl.textContent = user.email || '';
@@ -529,19 +557,26 @@
                 if (user.rol === 'ADMIN') {
                     roleBadgeEl.textContent = 'ADMIN';
                     roleBadgeEl.className = 'px-2 py-0.5 rounded bg-red-500/20 border border-red-500/50 text-red-300 text-[9px] font-black uppercase';
+                    staffSection?.classList.remove('hidden');
+
+                    const credNickEl = document.getElementById('staff-cred-nick');
+                    const credMailEl = document.getElementById('staff-cred-mail');
+                    if (credNickEl) credNickEl.textContent = user.staffNick || user.customNick || 'Staff LBL';
+                    if (credMailEl) credMailEl.textContent = user.email || '';
                 } else {
                     roleBadgeEl.textContent = 'USER';
                     roleBadgeEl.className = 'px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[9px] font-black uppercase';
+                    staffSection?.classList.add('hidden');
                 }
             }
 
-            // Estado de cuenta de Google
+            // Estado de cuenta de Google (verificar proveedor google.com real para permitir vincular Google desde cuentas Staff)
             const googleBadge = document.getElementById('google-status-badge');
             const googleInfo = document.getElementById('google-linked-info');
             const googleEmailEl = document.getElementById('google-linked-email');
             const googleBtn = document.getElementById('btn-link-google');
 
-            const isGoogle = Boolean(user.isGoogleLinked || user.googleEmail || (user.email && user.email.endsWith('@gmail.com')));
+            const isGoogle = Boolean(user.isGoogleLinked);
 
             if (isGoogle) {
                 if (googleBadge) {
@@ -565,18 +600,35 @@
             if (tagLineInp) tagLineInp.value = user.tagLine || riotConn?.tagLine || '';
             if (regionInp && riotConn?.region) regionInp.value = riotConn.region.toLowerCase();
 
-            // Renderizar tarjeta de Riot Games (sin indicadores de API)
+            // 1. Renderizar tarjeta de Riot Games (Ocultar botón Conectar si ya está vinculado; 1 cuenta por perfil)
             const riotCard = document.getElementById('riot-connected-info-card');
+            const riotControlsWrap = document.getElementById('riot-connect-controls-wrap');
             const riotBadge = document.getElementById('riot-conn-badge');
             const riotUnlinkBtn = document.getElementById('btn-unlink-riot-card');
+            const riotSyncBtn = document.getElementById('btn-sync-riot-card');
 
             if (user.riotId || riotConn) {
                 riotCard?.classList.remove('hidden');
+                riotControlsWrap?.classList.add('hidden');
                 riotUnlinkBtn?.classList.remove('hidden');
+                riotSyncBtn?.classList.remove('hidden');
+
                 if (riotBadge) {
                     riotBadge.textContent = 'Conectado';
                     riotBadge.className = 'px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] font-black uppercase';
                 }
+
+                const riotLock = obtenerEstadoBloqueo90Dias(riotConn?.linkedAt);
+                if (riotUnlinkBtn) {
+                    if (riotLock.bloqueado) {
+                        riotUnlinkBtn.innerHTML = `<i class="fas fa-lock mr-1"></i> Cambio en ${riotLock.diasRestantes}d`;
+                        riotUnlinkBtn.className = 'px-2.5 py-1.5 rounded-xl bg-gray-800/90 border border-gray-700 text-gray-400 text-[10px] font-black uppercase cursor-not-allowed';
+                    } else {
+                        riotUnlinkBtn.innerHTML = `<i class="fas fa-unlink mr-1"></i> Cambiar / Desvincular`;
+                        riotUnlinkBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer';
+                    }
+                }
+
                 const iconEl = document.getElementById('riot-card-icon');
                 const lvlEl = document.getElementById('riot-card-level');
                 const idEl = document.getElementById('riot-card-riotid');
@@ -591,50 +643,87 @@
                 if (rankEl) {
                     if (riotConn?.soloq) {
                         const s = riotConn.soloq;
-                        rankEl.textContent = `SoloQ: ${s.tier} ${s.rank} (${s.leaguePoints} LP • ${s.wins}W / ${s.losses}L)`;
+                        rankEl.textContent = `${s.tier} ${s.rank} (${s.leaguePoints} LP)`;
+                        rankEl.classList.remove('hidden');
                     } else {
-                        rankEl.textContent = 'Riot ID activo para Ranking Pick\'em';
+                        rankEl.classList.add('hidden');
                     }
                 }
                 if (modeEl) {
-                    modeEl.textContent = 'Vinculado a tu cuenta LBL';
+                    modeEl.textContent = riotLock.bloqueado
+                        ? `Riot ID auto-sincronizable • Cambio disponible en ${riotLock.diasRestantes} días`
+                        : 'Riot ID auto-sincronizable • Cuenta vinculada';
                 }
             } else {
                 riotCard?.classList.add('hidden');
+                riotControlsWrap?.classList.remove('hidden');
                 riotUnlinkBtn?.classList.add('hidden');
+                riotSyncBtn?.classList.add('hidden');
                 if (riotBadge) {
                     riotBadge.textContent = 'Sin Vincular';
                     riotBadge.className = 'px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[9px] font-black uppercase';
                 }
             }
 
-            // Renderizar tarjeta de Twitch (sin indicadores técnicos)
+            // 2. Renderizar tarjeta de Twitch (Ocultar botón Conectar si ya está vinculado; etiqueta STREAMER solo si es Afiliado/Partner)
             const twitchCard = document.getElementById('twitch-connected-info-card');
+            const twitchControlsWrap = document.getElementById('twitch-connect-controls-wrap');
             const twitchBadge = document.getElementById('twitch-conn-badge');
             const twitchUnlinkBtn = document.getElementById('btn-unlink-twitch-card');
 
             if (twitchConn && twitchConn.login) {
                 twitchCard?.classList.remove('hidden');
+                twitchControlsWrap?.classList.add('hidden');
                 twitchUnlinkBtn?.classList.remove('hidden');
-                if (twitchLoginInp) twitchLoginInp.value = twitchConn.login;
+
                 if (twitchBadge) {
                     twitchBadge.textContent = 'Conectado';
                     twitchBadge.className = 'px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[9px] font-black uppercase';
                 }
+
+                const twitchLock = obtenerEstadoBloqueo90Dias(twitchConn?.linkedAt);
+                if (twitchUnlinkBtn) {
+                    if (twitchLock.bloqueado) {
+                        twitchUnlinkBtn.innerHTML = `<i class="fas fa-lock mr-1"></i> Cambio en ${twitchLock.diasRestantes}d`;
+                        twitchUnlinkBtn.className = 'px-2.5 py-1.5 rounded-xl bg-gray-800/90 border border-gray-700 text-gray-400 text-[10px] font-black uppercase cursor-not-allowed shrink-0';
+                    } else {
+                        twitchUnlinkBtn.innerHTML = `<i class="fas fa-unlink mr-1"></i> Cambiar / Desvincular`;
+                        twitchUnlinkBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-[10px] font-black uppercase cursor-pointer shrink-0';
+                    }
+                }
+
                 const twAvatar = document.getElementById('twitch-card-avatar');
                 const twName = document.getElementById('twitch-card-displayname');
                 const twType = document.getElementById('twitch-card-type');
                 const twLink = document.getElementById('twitch-card-link');
+                const twLockNote = document.getElementById('twitch-card-lock-note');
 
                 if (twAvatar) twAvatar.src = twitchConn.profileImageUrl || '/assets/logo.webp';
                 if (twName) twName.textContent = twitchConn.displayName || twitchConn.login;
-                if (twType) twType.textContent = (twitchConn.broadcasterType || 'STREAMER').toUpperCase();
+
+                // Mostrar etiqueta STREAMER únicamente si tiene Afiliado o Partner en Twitch
+                const bType = (twitchConn.broadcasterType || '').toString().toLowerCase().trim();
+                const esAfiliadoOPartner = bType === 'affiliate' || bType === 'partner';
+                if (twType) {
+                    if (esAfiliadoOPartner) {
+                        twType.textContent = 'STREAMER';
+                        twType.classList.remove('hidden');
+                    } else {
+                        twType.classList.add('hidden');
+                    }
+                }
+
                 if (twLink) {
                     twLink.href = `https://twitch.tv/${twitchConn.login}`;
-                    twLink.textContent = `twitch.tv/${twitchConn.login}`;
+                }
+                if (twLockNote) {
+                    twLockNote.textContent = twitchLock.bloqueado
+                        ? `twitch.tv/${twitchConn.login} • Cambio disponible en ${twitchLock.diasRestantes} días`
+                        : `twitch.tv/${twitchConn.login}`;
                 }
             } else {
                 twitchCard?.classList.add('hidden');
+                twitchControlsWrap?.classList.remove('hidden');
                 twitchUnlinkBtn?.classList.add('hidden');
                 if (twitchBadge) {
                     twitchBadge.textContent = 'Sin Vincular';
@@ -651,24 +740,78 @@
             }
         };
 
-        // Guardar Alias de Perfil
+        // Guardar Alias de Perfil (Exclusivo Staff)
         document.getElementById('form-page-alias')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const u = obtenerUsuarioActual();
-            if (!u) return;
+            if (!u || u.rol !== 'ADMIN') return;
             const cNick = (nickInp?.value || '').trim();
             await guardarDatosMiCuenta(cNick, u.gameName || '', u.tagLine || '');
             renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
         });
 
-        // Conectar y sincronizar Riot Games
+        // Desplegar / ocultar cambio de contraseña de Staff
+        window.toggleFormCambiarPassStaff = () => {
+            const f = document.getElementById('form-staff-password');
+            if (f) {
+                f.classList.toggle('hidden');
+                if (!f.classList.contains('hidden')) {
+                    document.getElementById('page-input-staff-pass')?.focus();
+                }
+            }
+        };
+
+        // Cambiar Contraseña de Acceso Staff
+        document.getElementById('form-staff-password')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const u = obtenerUsuarioActual();
+            if (!u || u.rol !== 'ADMIN') return;
+            const passInput = document.getElementById('page-input-staff-pass');
+            const passBtn = document.getElementById('btn-save-staff-pass');
+            const newPass = passInput?.value || '';
+            if (passBtn) {
+                passBtn.disabled = true;
+                passBtn.textContent = '...';
+            }
+            const ok = await guardarPasswordAccesoUsuario(newPass);
+            if (ok && passInput) {
+                passInput.value = '';
+                document.getElementById('form-staff-password')?.classList.add('hidden');
+            }
+            if (passBtn) {
+                passBtn.disabled = false;
+                passBtn.textContent = 'Guardar';
+            }
+            renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
+        });
+
+        window.iniciarLoginRiotGames = () => {
+            const modal = document.getElementById('modal-login-riot-games');
+            const errEl = document.getElementById('riot-connect-error');
+            if (errEl) errEl.classList.add('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => document.getElementById('page-input-gamename')?.focus(), 80);
+            }
+        };
+
+        window.cerrarModalLoginRiotGames = () => {
+            const modal = document.getElementById('modal-login-riot-games');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        // Conectar y verificar Riot Games (Exige validación real contra Riot API)
         document.getElementById('form-connect-riot')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const u = obtenerUsuarioActual();
             if (!u) return;
 
             const gName = (gameNameInp?.value || '').trim();
-            const tLine = (tagLineInp?.value || '').trim().replace(/^#+/, '').toUpperCase();
+            const tLine = (tagLineInp?.value || '').trim().replace(/^#+/, '');
             const region = (regionInp?.value || 'la2').toLowerCase();
             const errEl = document.getElementById('riot-connect-error');
             const btn = document.getElementById('btn-connect-riot');
@@ -677,32 +820,17 @@
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>Sincronizando con Riot Games...</span>`;
+                btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>Autenticando con Riot Games...</span>`;
             }
 
             try {
-                const params = new URLSearchParams({ gameName: gName, tagLine: tLine, region });
-                let data = null;
-                try {
-                    const resp = await fetch(`/api/riot-account?${params.toString()}`);
-                    if (resp.ok) {
-                        data = await resp.json();
-                    }
-                } catch (e) {}
+                const data = await consultarRiotApiOficial({
+                    gameName: gName,
+                    tagLine: tLine,
+                    region
+                });
 
-                // Fallback para producción estática si no está corriendo dev-server.js
-                if (!data || data.error) {
-                    data = {
-                        verifiedViaApi: false,
-                        gameName: gName,
-                        tagLine: tLine,
-                        region: region.toUpperCase(),
-                        profileIconId: 29,
-                        profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/29.png',
-                        summonerLevel: null,
-                        soloq: null
-                    };
-                }
+                data.linkedAt = new Date().toISOString();
 
                 await guardarDatosMiCuenta(
                     (nickInp?.value || u.customNick || u.displayName || '').trim(),
@@ -710,46 +838,44 @@
                     data.tagLine || tLine,
                     { riot: data }
                 );
+                window.cerrarModalLoginRiotGames();
                 renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
             } catch (err) {
                 if (errEl) {
-                    errEl.textContent = err.message || 'Error al vincular Riot ID.';
+                    errEl.textContent = err.message || 'No se pudo verificar la cuenta en Riot Games.';
                     errEl.classList.remove('hidden');
                 }
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fas fa-sync-alt"></i> <span>Vincular y Sincronizar Riot ID</span>`;
+                    btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span>Autorizar y Conectar Riot Games</span>`;
                 }
             }
         });
 
+        // Forzar sincronización manual/automática del Riot ID por PUUID
+        window.forzarSincronizacionRiotEnCuenta = async () => {
+            const u = obtenerUsuarioActual();
+            if (!u) return;
+            mostrarToastAuth("Verificando cambios de Riot ID en Riot Games...", "info");
+            const actualizado = await sincronizarRiotIdAutomaticoJugador(u);
+            if (actualizado) {
+                renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
+                mostrarToastAuth(`Datos de Riot sincronizados: ${actualizado.gameName}#${actualizado.tagLine}`, "success");
+            } else {
+                mostrarToastAuth("Tu Riot ID ya está actualizado.", "info");
+            }
+        };
+
         window.desvincularRiotEnCuenta = async () => {
             const u = obtenerUsuarioActual();
             if (!u) return;
-            await guardarDatosMiCuenta(u.customNick || u.displayName || '', '', '', { riot: null });
-            renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
-        };
-
-        // Vincular canal de Twitch directamente o iniciar OAuth 2.0
-        window.vincularTwitchDirecto = async () => {
-            const u = obtenerUsuarioActual();
-            if (!u) return;
-            const rawLogin = (twitchLoginInp?.value || '').trim().replace(/^https?:\/\/(www\.)?twitch\.tv\//i, '').replace(/^@/, '').split('/')[0];
-            if (!rawLogin) {
-                mostrarToastAuth("Ingresa tu nombre de canal de Twitch.", "warning");
+            const lock = obtenerEstadoBloqueo90Dias(u.connections?.riot?.linkedAt);
+            if (lock.bloqueado) {
+                mostrarToastAuth(`Para cambiar la cuenta vinculada de Riot Games deben pasar 90 días (faltan ${lock.diasRestantes} días).`, "warning");
                 return;
             }
-            const twitchData = {
-                login: rawLogin.toLowerCase(),
-                displayName: rawLogin,
-                profileImageUrl: `https://unavatar.io/twitch/${encodeURIComponent(rawLogin)}`,
-                broadcasterType: 'Streamer',
-                verifiedOAuth: false
-            };
-            await guardarDatosMiCuenta(u.customNick || u.displayName || '', u.gameName || '', u.tagLine || '', {
-                twitch: twitchData
-            });
+            await guardarDatosMiCuenta(u.customNick || u.displayName || '', '', '', { riot: null });
             renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
         };
 
@@ -762,7 +888,11 @@
         window.desvincularTwitchEnCuenta = async () => {
             const u = obtenerUsuarioActual();
             if (!u) return;
-            if (twitchLoginInp) twitchLoginInp.value = '';
+            const lock = obtenerEstadoBloqueo90Dias(u.connections?.twitch?.linkedAt);
+            if (lock.bloqueado) {
+                mostrarToastAuth(`Para cambiar la cuenta vinculada de Twitch deben pasar 90 días (faltan ${lock.diasRestantes} días).`, "warning");
+                return;
+            }
             await guardarDatosMiCuenta(u.customNick || u.displayName || '', u.gameName || '', u.tagLine || '', {
                 twitch: null
             });
@@ -796,8 +926,9 @@
                                 login: twUser.login,
                                 displayName: twUser.display_name,
                                 profileImageUrl: twUser.profile_image_url,
-                                broadcasterType: twUser.broadcaster_type || 'afiliado',
-                                verifiedOAuth: true
+                                broadcasterType: (twUser.broadcaster_type || '').toLowerCase(),
+                                verifiedOAuth: true,
+                                linkedAt: new Date().toISOString()
                             }
                         });
                         renderizarEstadoPaginaCuenta(obtenerUsuarioActual());
@@ -809,63 +940,55 @@
         }
 
         // =========================================================================
-        // LÓGICA DEL SELECTOR DE ICONOS DE PERFIL
+        // LÓGICA DEL SELECTOR DE ICONOS DE PERFIL (SOLO MIGRADOS DE RIOT Y TWITCH)
         // =========================================================================
         window.abrirModalSelectorIconos = () => {
             const modal = document.getElementById('modal-selector-iconos');
             const u = obtenerUsuarioActual();
             if (!modal || !u) return;
 
-            selectedAvatarUrlTemp = u.photoURL || '/assets/logo.webp';
+            selectedAvatarUrlTemp = normalizarFotoPerfil(
+                u.photoURL,
+                u.connections?.riot?.profileIconUrl,
+                u.connections?.twitch?.profileImageUrl
+            );
             window.actualizarPrevisualizacionModal(selectedAvatarUrlTemp, 'Icono Actual');
 
-            // 1. Iconos de cuentas conectadas
             const gridConnected = document.getElementById('grid-icons-connected');
             if (gridConnected) {
-                const connList = [
-                    { name: 'Logo LBL Oficial', url: '/assets/logo.webp', tag: 'LBL' }
-                ];
-                if (u.googlePhoto) {
-                    connList.push({ name: 'Foto de Google', url: u.googlePhoto, tag: 'GOOGLE' });
-                }
+                const connList = [];
                 if (u.connections?.riot?.profileIconUrl) {
-                    connList.push({ name: 'Invocador LoL', url: u.connections.riot.profileIconUrl, tag: 'RIOT' });
+                    connList.push({
+                        name: `League of Legends (${u.riotId || 'Riot'})`,
+                        url: u.connections.riot.profileIconUrl,
+                        tag: 'RIOT GAMES (LOL)'
+                    });
                 }
                 if (u.connections?.twitch?.profileImageUrl) {
-                    connList.push({ name: 'Avatar Twitch', url: u.connections.twitch.profileImageUrl, tag: 'TWITCH' });
+                    connList.push({
+                        name: `Twitch (${u.connections.twitch.displayName || u.connections.twitch.login})`,
+                        url: u.connections.twitch.profileImageUrl,
+                        tag: 'TWITCH'
+                    });
                 }
 
-                gridConnected.innerHTML = connList.map(item => `
-                    <button type="button" onclick="window.seleccionarIconoModal('${item.url}', '${item.name}')"
-                        class="icon-picker-btn relative rounded-2xl overflow-hidden border-2 transition-all p-1 flex flex-col items-center gap-1.5 cursor-pointer hover:border-cyan-400 ${selectedAvatarUrlTemp === item.url ? 'border-cyan-400 bg-cyan-500/15 ring-2 ring-cyan-400' : 'border-gray-800 bg-[#03060c]'}">
-                        <img src="${item.url}" alt="${item.name}" onerror="this.src='/assets/logo.webp'" class="w-12 h-12 rounded-xl object-cover">
-                        <span class="text-[9px] font-black uppercase text-gray-300 truncate w-full text-center">${item.tag}</span>
-                    </button>
-                `).join('');
-            }
-
-            // 2. Iconos LoL & LBL
-            const gridLol = document.getElementById('grid-icons-lol');
-            if (gridLol) {
-                gridLol.innerHTML = ICONOS_LOL_LBL.map(item => `
-                    <button type="button" onclick="window.seleccionarIconoModal('${item.url}', '${item.name}')"
-                        class="icon-picker-btn relative rounded-2xl overflow-hidden border-2 transition-all p-1 flex flex-col items-center gap-1.5 cursor-pointer hover:border-amber-400 ${selectedAvatarUrlTemp === item.url ? 'border-amber-400 bg-amber-500/15 ring-2 ring-amber-400' : 'border-gray-800 bg-[#03060c]'}">
-                        <img src="${item.url}" alt="${item.name}" onerror="this.src='/assets/logo.webp'" class="w-12 h-12 rounded-xl object-cover">
-                        <span class="text-[9px] font-bold text-gray-400 truncate w-full text-center">${item.name}</span>
-                    </button>
-                `).join('');
-            }
-
-            // 3. Iconos Staff LBL
-            const gridStaff = document.getElementById('grid-icons-staff');
-            if (gridStaff) {
-                gridStaff.innerHTML = ICONOS_STAFF.map(item => `
-                    <button type="button" onclick="window.seleccionarIconoModal('${item.url}', '${item.name}')"
-                        class="icon-picker-btn relative rounded-2xl overflow-hidden border-2 transition-all p-1 flex flex-col items-center gap-1.5 cursor-pointer hover:border-purple-400 ${selectedAvatarUrlTemp === item.url ? 'border-purple-400 bg-purple-500/15 ring-2 ring-purple-400' : 'border-gray-800 bg-[#03060c]'}">
-                        <img src="${item.url}" alt="${item.name}" onerror="this.src='/assets/logo.webp'" class="w-12 h-12 rounded-xl object-cover">
-                        <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center">${item.name.replace('Staff ', '')}</span>
-                    </button>
-                `).join('');
+                if (connList.length === 0) {
+                    gridConnected.innerHTML = `
+                        <div class="col-span-full p-5 rounded-2xl bg-[#03060c] border border-gray-800 text-center space-y-1.5">
+                            <i class="fas fa-unlink text-gray-500 text-lg"></i>
+                            <p class="text-xs font-bold text-gray-300">Aún no has vinculado Riot Games ni Twitch</p>
+                            <p class="text-[11px] text-gray-500">Conecta tu cuenta de League of Legends o de Twitch para migrar y elegir tu icono de perfil.</p>
+                        </div>
+                    `;
+                } else {
+                    gridConnected.innerHTML = connList.map(item => `
+                        <button type="button" onclick="window.seleccionarIconoModal('${item.url}', '${item.name}')"
+                            class="icon-picker-btn relative rounded-2xl overflow-hidden border-2 transition-all p-3 flex flex-col items-center gap-2 cursor-pointer hover:border-cyan-400 ${selectedAvatarUrlTemp === item.url ? 'border-cyan-400 bg-cyan-500/15 ring-2 ring-cyan-400' : 'border-gray-800 bg-[#03060c]'}">
+                            <img src="${item.url}" alt="${item.name}" onerror="this.src='/assets/logo.webp'" class="w-16 h-16 rounded-2xl object-cover">
+                            <span class="text-[10px] font-black uppercase text-gray-200 truncate w-full text-center">${item.tag}</span>
+                        </button>
+                    `).join('');
+                }
             }
 
             modal.classList.remove('hidden');
@@ -883,7 +1006,7 @@
         window.actualizarPrevisualizacionModal = (url, name) => {
             const img = document.getElementById('preview-selected-icon-img');
             const lbl = document.getElementById('preview-selected-icon-name');
-            if (img) img.src = url || '/assets/logo.webp';
+            if (img) img.src = url || DEFAULT_USER_AVATAR;
             if (lbl) lbl.textContent = name || 'Icono Seleccionado';
         };
 
@@ -891,27 +1014,16 @@
             selectedAvatarUrlTemp = url;
             window.actualizarPrevisualizacionModal(url, name);
 
-            // Actualizar estilo visual activo de botones
             document.querySelectorAll('.icon-picker-btn').forEach(btn => {
                 const img = btn.querySelector('img');
                 if (img && img.getAttribute('src') === url) {
                     btn.classList.add('border-cyan-400', 'bg-cyan-500/15', 'ring-2', 'ring-cyan-400');
                     btn.classList.remove('border-gray-800', 'bg-[#03060c]');
                 } else {
-                    btn.classList.remove('border-cyan-400', 'bg-cyan-500/15', 'ring-2', 'ring-cyan-400', 'border-amber-400', 'bg-amber-500/15', 'ring-amber-400', 'border-purple-400', 'bg-purple-500/15', 'ring-purple-400');
+                    btn.classList.remove('border-cyan-400', 'bg-cyan-500/15', 'ring-2', 'ring-cyan-400');
                     btn.classList.add('border-gray-800', 'bg-[#03060c]');
                 }
             });
-        };
-
-        window.previsualizarIconoCustomUrl = () => {
-            const inp = document.getElementById('input-custom-avatar-url');
-            const url = (inp?.value || '').trim();
-            if (!url) {
-                mostrarToastAuth("Ingresa un enlace de imagen válido.", "warning");
-                return;
-            }
-            window.seleccionarIconoModal(url, 'Imagen Personalizada');
         };
 
         window.guardarIconoPerfilSeleccionado = async () => {

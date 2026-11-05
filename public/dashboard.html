@@ -294,8 +294,8 @@
             </div>
             <form id="form-login" class="space-y-5">
                 <div>
-                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Correo Electrónico</label>
-                    <input type="email" id="login-email" class="input-login" placeholder="staff@lbl.com" required>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Usuario o Correo Staff</label>
+                    <input type="text" id="login-email" class="input-login" placeholder="Tu Nick o correo@gmail.com" required>
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Contraseña</label>
@@ -1001,15 +1001,35 @@
     <script type="module">
         import { db, auth } from "/firebase-config.js"; 
         import { collection, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { STAFF_DIRECTORY, getStaffNick, formatStaffAuthor } from "/staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=248";
-        import "/app-version.js?v=248";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=260";
+        import {
+            obtenerUsuarioActual,
+            obtenerIdRegistradoUsuario,
+            loginStaffConCredenciales,
+            loginStaffConGoogle,
+            cerrarSesionGlobal,
+            esCorreoStaff
+        } from "/auth-core.js?v=262";
+        import "/app-version.js?v=262";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
         const errorMsg = document.getElementById('login-error');
+
+        // Verificación instantánea sin parpadeo de sesión Staff activa
+        const initialProfile = obtenerUsuarioActual();
+        const isInitialStaff = Boolean(initialProfile && (initialProfile.rol === 'ADMIN' || esCorreoStaff(initialProfile.email)));
+        if (isInitialStaff) {
+            loginScreen.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+            dashboardContent.classList.add('flex');
+            const nickInit = obtenerIdRegistradoUsuario(initialProfile) || getStaffNick(initialProfile.email) || 'Staff LBL';
+            const userDispInit = document.getElementById('user-display');
+            if (userDispInit) userDispInit.innerText = `Sesión: ${nickInit}`;
+        }
 
         const getFallbackImage = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name.trim())}&background=0D0D0D&color=fff&size=128&font-size=0.33`;
 
@@ -1869,31 +1889,36 @@
         window.loginStaffConGoogle = async () => {
             errorMsg.classList.add('hidden');
             try {
-                const provider = new GoogleAuthProvider();
-                provider.setCustomParameters({ prompt: 'select_account' });
-                const res = await signInWithPopup(auth, provider);
-                if (res && res.user) {
-                    const email = (res.user.email || '').toLowerCase().trim();
-                    if (!STAFF_DIRECTORY[email]) {
-                        errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> La cuenta ${email} tiene rol USER, no pertenece al Staff (ADMIN).`;
-                        errorMsg.classList.remove('hidden');
-                        loginScreen.classList.remove('hidden');
-                        dashboardContent.classList.add('hidden');
-                    }
-                }
+                await loginStaffConGoogle();
             } catch (err) {
-                console.warn("Google Staff Login aviso:", err);
+                console.warn("Google Staff Login error:", err);
                 if (err.code !== 'auth/popup-closed-by-user') {
-                    errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> No se pudo iniciar sesión con Google.`;
+                    errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> ${err.message || 'No se pudo iniciar sesión con Google.'}`;
                     errorMsg.classList.remove('hidden');
                 }
             }
         };
 
+        const actualizarDisplayStaff = (user) => {
+            const curProfile = obtenerUsuarioActual();
+            const nick = curProfile ? obtenerIdRegistradoUsuario(curProfile) : (getStaffNick(user?.email) || 'Staff LBL');
+            const userDisp = document.getElementById('user-display');
+            if (userDisp) {
+                userDisp.innerText = `Sesión: ${nick}`;
+                userDisp.title = `Conectado como: ${user?.email || ''} (${nick})`;
+            }
+        };
+
+        window.addEventListener('lbl-auth-changed', () => {
+            if (auth.currentUser) {
+                actualizarDisplayStaff(auth.currentUser);
+            }
+        });
+
         onAuthStateChanged(auth, (user) => {
             const emailLower = (user?.email || '').toLowerCase().trim();
             // Permitir acceso al Dashboard si el correo está en STAFF_DIRECTORY o si inició con correo/contraseña de Staff
-            const isAuthorizedStaff = Boolean(user && (STAFF_DIRECTORY[emailLower] || user.providerData?.some(p => p.providerId === 'password')));
+            const isAuthorizedStaff = Boolean(user && (esCorreoStaff(emailLower) || user.providerData?.some(p => p.providerId === 'password')));
 
             if (user && isAuthorizedStaff) {
                 // Si venía redirigido desde Scouting T3 u otra sección protegida, enviarlo allí directamente
@@ -1907,13 +1932,8 @@
                 loginScreen.classList.add('hidden');
                 dashboardContent.classList.remove('hidden');
                 dashboardContent.classList.add('flex');
-                const nick = getStaffNick(user.email);
-                const userDisp = document.getElementById('user-display');
-                if (userDisp) {
-                    userDisp.innerText = `Sesión: ${nick}`;
-                    userDisp.title = `Conectado como: ${user.email} (${nick})`;
-                }
                 localStorage.setItem('lbl_staff_logged_in', 'true');
+                actualizarDisplayStaff(user);
                 
                 if (typeof cargarEstadoNotificacionesCloud === 'function') {
                     cargarEstadoNotificacionesCloud(user.uid);
@@ -1961,16 +1981,20 @@
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-login');
-            const mail = document.getElementById('login-email').value.trim();
+            const rawInput = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> VERIFICANDO...';
             errorMsg.classList.add('hidden');
+
             try {
-                await signInWithEmailAndPassword(auth, mail, pass);
+                const perfil = await loginStaffConCredenciales(rawInput, pass);
                 btn.innerHTML = 'INICIAR SESIÓN';
+                if (perfil) {
+                    actualizarDisplayStaff(auth.currentUser);
+                }
             } catch (error) {
                 console.error("Firebase Auth Error:", error);
-                let mensaje = 'Correo o contraseña incorrectos.';
+                let mensaje = error.message || 'Correo o contraseña incorrectos.';
                 if (error.code === 'auth/unauthorized-domain') {
                     mensaje = 'Dominio no autorizado en Firebase Auth Console.';
                 } else if (error.code === 'auth/network-request-failed') {
@@ -1979,6 +2003,8 @@
                     mensaje = 'Demasiados intentos fallidos. Por seguridad, espera unos minutos.';
                 } else if (error.code === 'auth/user-disabled') {
                     mensaje = 'Esta cuenta de Staff ha sido deshabilitada.';
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    mensaje = 'Usuario o contraseña de Staff incorrectos.';
                 }
                 errorMsg.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> ${mensaje}`;
                 errorMsg.classList.remove('hidden');
@@ -1986,9 +2012,13 @@
             }
         });
 
-        window.cerrarSesion = () => {
+        window.cerrarSesion = async () => {
             localStorage.removeItem('lbl_staff_logged_in');
-            signOut(auth);
+            await cerrarSesionGlobal();
+            loginScreen.classList.remove('hidden');
+            dashboardContent.classList.add('hidden');
+            dashboardContent.classList.remove('flex');
+            window.location.replace('/');
         };
 
         window.switchTab = (tabName) => {

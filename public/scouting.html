@@ -43,8 +43,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=243">
-    <script type="module" src="/app-version.js?v=243"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=268">
+    <script type="module" src="/app-version.js?v=268"></script>
     <script src="/sc3-logos.js?v=243"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -64,7 +64,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none !important; }
         .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
 
-        .search-box { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px 20px; border-radius: 12px; outline: none; transition: 0.3s; width: 100%; font-weight: bold; }
+        .search-box { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px 20px 12px 48px; border-radius: 12px; outline: none; transition: 0.3s; width: 100%; font-weight: bold; }
         .search-box:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
         
         .rank-badge { background: #141414; border: 1px solid rgba(234, 179, 8, 0.5) !important; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #eab308; }
@@ -465,11 +465,11 @@
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-3 sm:px-4 pt-6 sm:pt-8 md:pt-10 pb-16 sm:pb-20">
         
-        <div class="text-center mb-6 sm:mb-8">
-            <div class="inline-block px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-3 sm:mb-4">
+        <div class="flex flex-col items-center text-center mb-6 sm:mb-8">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-widest uppercase mb-3">
                 <i class="fas fa-search-location mr-1"></i> Base de Datos Oficial
             </div>
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-2 sm:mb-3">NUESTROS TORNEOS...</h1>
+            <h1 class="block w-full text-2xl sm:text-3xl md:text-4xl font-black italic tracking-tighter text-gradient-cyan uppercase mb-2 sm:mb-3">NUESTROS TORNEOS...</h1>
             <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-5 sm:mb-6 px-2">
                 ¿Quieres buscar equipo o algún jugador?<br class="hidden sm:inline">
                 Accede a la información de nuestros torneos oficiales y scouting en tiempo real
@@ -477,15 +477,11 @@
             
             <!-- Selector de Torneo (Botones con Logos Normalizados) -->
             <div id="tournament-selector" class="flex flex-row overflow-x-auto md:overflow-x-visible justify-start md:justify-center items-center gap-2.5 sm:gap-3 md:gap-4 max-w-4xl mx-auto mb-6 sm:mb-8 no-scrollbar pt-3 pb-2 px-3 sm:px-4 w-full snap-x snap-mandatory">
-                <button id="btn-scouting3" onclick="cambiarTorneo(4)" class="group relative flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer snap-start">
+                <button id="btn-scouting3" onclick="cambiarTorneo(4)" class="group relative flex items-center justify-center rounded-xl border border-emerald-500 bg-[#070707]/90 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02] sm:scale-[1.03] transition-all duration-300 w-36 sm:w-44 md:w-52 h-12 md:h-16 shrink-0 px-3 cursor-pointer snap-start">
                     <span class="absolute -top-2.5 right-1 sm:-right-2 px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black text-[8px] sm:text-[9px] uppercase tracking-wider sm:tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.8)] flex items-center gap-1 z-10">
                         <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> EN CURSO
                     </span>
-                    <img src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Copa Legion" class="h-7 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
-                    <div class="text-left leading-tight">
-                        <span class="block text-[9px] md:text-[10px] font-black text-emerald-400 uppercase tracking-wider">Copa Legion</span>
-                        <span class="block text-xs md:text-sm font-black italic text-white uppercase tracking-tight">Scouting 3</span>
-                    </div>
+                    <img src="/assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Copa Legion X Scouting 3" class="max-h-8 md:max-h-11 max-w-[90%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </button>
                 <button id="btn-scouting1" onclick="cambiarTorneo(1)" class="group relative flex items-center justify-center rounded-xl border border-white/5 bg-black/40 hover:bg-[#070707]/60 hover:border-cyan-500/30 transition-all duration-300 w-28 sm:w-36 md:w-44 h-12 md:h-16 shadow-md shrink-0 px-2 cursor-pointer snap-start">
                     <img src="assets/scouting1.webp" loading="lazy" decoding="async" onerror="this.src='assets/scouting1.png'" alt="Scouting Tournament 1" class="max-h-7 md:max-h-9 max-w-[85%] w-auto object-contain transition-transform duration-300 group-hover:scale-105">
@@ -502,7 +498,7 @@
         <!-- Sección de Descripción del Torneo Activo (Con Marco de Logo Normalizado e Indexador de Equipos) -->
         <div id="tournament-description-box" class="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto mb-6 sm:mb-8 glass-panel p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-white/5 shadow-lg w-full">
             <div id="td-logo-container" class="flex items-center justify-center shrink-0 w-full md:w-72 lg:w-80 h-16 sm:h-20 md:h-24">
-                <img id="td-logo" src="/assets/logo%20copa%20Legion.png" loading="lazy" decoding="async" alt="Torneo Logo" class="max-h-14 sm:max-h-16 md:max-h-20 max-w-[240px] sm:max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
+                <img id="td-logo" src="/assets/LEGION_X_SC3.png" loading="lazy" decoding="async" alt="Torneo Logo" class="max-h-14 sm:max-h-16 md:max-h-20 max-w-[240px] sm:max-w-[270px] md:max-w-[290px] w-auto h-auto object-contain drop-shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300">
             </div>
             <div class="text-left w-full space-y-2">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between md:justify-start gap-2 sm:gap-3">
@@ -528,10 +524,10 @@
             </div>
         </div>
 
-        <!-- Buscador con icono centrado -->
+        <!-- Buscador con icono centrado y espaciado protegido -->
         <div id="search-bar-container" class="max-w-2xl mx-auto mb-3 sm:mb-4 relative">
-            <i class="fas fa-search absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
-            <input type="text" id="searchInput" class="search-box pl-10 sm:pl-12 text-sm sm:text-base py-2.5 sm:py-3" placeholder="Buscar por equipo, TAG, nick o rango...">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none z-10"></i>
+            <input type="text" id="searchInput" class="search-box !pl-12 text-sm sm:text-base py-2.5 sm:py-3" placeholder="Buscar por equipo, TAG, nick o rango...">
         </div>
 
         <!-- Indicadores Esenciales: High Elo, Notas/Observaciones y Jugadores Baneados -->
@@ -601,7 +597,7 @@
         <!-- Placeholder para Open Qualifier -->
         <div id="qualifier-placeholder" class="text-center py-16 px-4 hidden max-w-xl mx-auto glass-panel rounded-3xl border-rose-500/20 shadow-lg shadow-rose-950/10 fade-in mb-10">
             <div class="inline-flex items-center justify-center p-6 bg-rose-500/10 rounded-full border border-rose-500/20 mb-6 animate-pulse">
-                <img src="assets/open_qualifier.png" alt="Open Qualifier Logo" class="h-16 w-auto object-contain">
+                <img src="assets/open_qualifier.webp" loading="lazy" decoding="async" alt="Open Qualifier Logo" class="h-16 w-auto object-contain">
             </div>
             <h3 class="text-2xl font-black uppercase italic tracking-tighter text-white mb-3">OPEN QUALIFIER</h3>
             <p class="text-gray-400 text-sm md:text-base leading-relaxed mb-6">
@@ -1337,7 +1333,7 @@
 
             const descripciones = {
                 4: {
-                    logo: "/assets/logo%20copa%20Legion.png",
+                    logo: "/assets/LEGION_X_SC3.png",
                     imgClass: "max-h-14 sm:max-h-16 md:max-h-20 max-w-[220px] sm:max-w-[250px] md:max-w-[270px] w-auto h-auto object-contain",
                     shadow: "drop-shadow-[0_0_18px_rgba(16,185,129,0.35)]",
                     text: "Base de datos pública oficial en tiempo real de la Copa Legion x Torneo Scouting 3. Consulta los logos oficiales, nicks de cuenta LAS y cuenta MAIN (OP.GG), junto al contacto directo del representante de cada equipo. Si detectas alguna irregularidad en un OP.GG o cambio de nick, puedes enviar una nota directa al Staff desde la ficha del equipo."
