@@ -462,9 +462,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=235";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=269";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=262";
+        import "/app-version.js?v=269";
         import "/auth-core.js?v=262";
 
         // ══════════════════════════════════════════════════════════════════
@@ -1445,52 +1445,12 @@
             }, 1000);
         }
 
-        // --- PRECARGA INTELIGENTE EN SEGUNDO PLANO (ZERO-LATENCY SPA CACHING) ---
+        // --- PRECARGA INTELIGENTE EN SEGUNDO PLANO (PROTEGIDA PARA PRESERVAR POOL CHALLONGE) ---
         let _prefetchEnProgreso = false;
         async function precargarTorneosEnSegundoPlano() {
-            if (_prefetchEnProgreso) return;
-            _prefetchEnProgreso = true;
-
-            // Esperar 1.5s para no competir con el primer renderizado crítico
-            await new Promise(r => setTimeout(r, 1500));
-
-            for (const t of listaTorneosRegistrados) {
-                const hasMatches = Array.isArray(t.matches) && t.matches.length > 0;
-                const hasChallongeMatches = t.datosChallonge && Array.isArray(t.datosChallonge.matches) && t.datosChallonge.matches.length > 0;
-                const est = (t.estado || t.datosChallonge?.estado || '').toLowerCase();
-                const isPending = est === 'proximamente' || est === 'pending';
-
-                if (!hasMatches && !hasChallongeMatches && !isPending && !t._cargandoChallonge && !t._sinPartidasVerificado) {
-                    try {
-                        const slugOrId = t.challongeId || t.slug || t.id;
-                        const res = await procesarTorneoChallonge(slugOrId, null, listaEquiposAceptadosCache, t.division || 'Tier 1');
-                        if (res && res.matches && res.matches.length > 0) {
-                            t.datosChallonge = res;
-                            t.matches = res.matches;
-                            t.participantes = res.participantes;
-                            t.challongeStandings = res.challongeStandings;
-                            t.podio = res.podio;
-                            t.grupos = res.grupos;
-                            t.tipoFormat = res.tipoFormat;
-                            if (res.estado) t.estado = res.estado;
-
-                            const idx = listaTorneosRegistrados.findIndex(x => x.id === t.id);
-                            if (idx !== -1) {
-                                listaTorneosRegistrados[idx] = { ...t };
-                            }
-                            localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                        } else {
-                            t._sinPartidasVerificado = true;
-                        }
-                    } catch (e) {
-                        t._sinPartidasVerificado = true;
-                        console.warn("[Prefetch] Torneo " + t.id + ":", e.message);
-                    }
-                    // Breve pausa para no saturar conexiones
-                    await new Promise(r => setTimeout(r, 600));
-                }
-            }
-            _prefetchEnProgreso = false;
+            // Los torneos y brackets se sincronizan en tiempo real desde Firestore.
+            // Se previene la ejecución de peticiones directas de visitantes a Challonge para cuidar el Pool.
+            return;
         }
 
         function renderizarVista(animate = false) {
@@ -2547,67 +2507,13 @@
             const esPorIniciar = chStateActual === 'pending' || chStateActual === 'proximamente';
 
             if (!tienePartidasCargadas) {
-                if (countText) countText.innerText = esPorIniciar ? 'Torneo por iniciar' : 'Sincronizando...';
+                if (countText) countText.innerText = esPorIniciar ? 'Torneo por iniciar' : 'Partidas pendientes';
                 if (feedSection) feedSection.style.display = 'none';
 
-                // Si el torneo está marcado como "Por Iniciar" o ya fue verificado en esta sesión sin partidas,
-                // mostrar de inmediato la Sala de Espera Oficial sin bloquear la interfaz con un spinner infinito.
-                if (mainContainer && (esPorIniciar || docTorneo._sinPartidasVerificado)) {
+                // Mostrar de inmediato la Sala de Espera Oficial sin quemar llamadas a Challonge para visitantes.
+                // Los datos se actualizan en vivo cuando el Staff sincroniza desde /dashboard.
+                if (mainContainer) {
                     mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
-                } else if (mainContainer && !docTorneo._cargandoChallonge) {
-                    mainContainer.innerHTML = `
-                        <div class="p-12 text-center glass-panel rounded-3xl border border-gray-800 text-gray-400 text-xs font-bold uppercase space-y-4">
-                            <div class="inline-block w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                            <p class="text-white text-sm font-black">Sincronizando datos del torneo...</p>
-                            <span class="text-[11px] text-gray-500 block">Conectando con el servidor oficial de competencias LBL</span>
-                        </div>`;
-                }
-
-                if (!docTorneo._cargandoChallonge && !docTorneo._sinPartidasVerificado) {
-                    docTorneo._cargandoChallonge = true;
-                    const slugOrId = docTorneo.challongeId || docTorneo.slug || docTorneo.id;
-                    
-                    procesarTorneoChallonge(slugOrId, null, listaEquiposAceptadosCache, docTorneo.division || 'Tier 1')
-                        .then(res => {
-                            if (res && Array.isArray(res.participantes) && res.participantes.length > 0) {
-                                docTorneo.participantes = res.participantes;
-                                docTorneo.datosChallonge = { ...(docTorneo.datosChallonge || {}), ...res };
-                            }
-                            if (res && res.matches && res.matches.length > 0) {
-                                docTorneo.datosChallonge = res;
-                                docTorneo.matches = res.matches;
-                                docTorneo.participantes = res.participantes;
-                                docTorneo.challongeStandings = res.challongeStandings;
-                                docTorneo.podio = res.podio;
-                                docTorneo.grupos = res.grupos;
-                                docTorneo.tipoFormat = res.tipoFormat;
-                                if (res.estado) docTorneo.estado = res.estado;
-                                docTorneo._sinPartidasVerificado = false;
-
-                                const idx = listaTorneosRegistrados.findIndex(t => t.id === docTorneo.id);
-                                if (idx !== -1) {
-                                    listaTorneosRegistrados[idx] = { ...docTorneo };
-                                }
-                                localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
-                                renderizarTorneoDetalle(false);
-                                regularAlturaTorneo(false);
-                            } else {
-                                docTorneo._sinPartidasVerificado = true;
-                                if (mainContainer && torneoSeleccionadoId === docTorneo.id) {
-                                    mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            console.warn("Torneo en espera de inicio / sincronización:", err.message);
-                            docTorneo._sinPartidasVerificado = true;
-                            if (mainContainer && torneoSeleccionadoId === docTorneo.id) {
-                                mainContainer.innerHTML = renderizarPantallaEsperaTorneo(docTorneo, torneo, etapaActiva);
-                            }
-                        })
-                        .finally(() => {
-                            docTorneo._cargandoChallonge = false;
-                        });
                 }
                 return;
             }

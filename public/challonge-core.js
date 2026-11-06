@@ -11,14 +11,21 @@
  * 5. Mapear equipos con Firestore (Logos HD, Rosters, TAGs, Podios y Standings).
  */
 
-// POOL MULTI-KEY OFICIAL LBL (1,500 requests/mes combinados con failover automático)
+// POOL MULTI-KEY OFICIAL LBL (2,000 requests/mes combinados con failover automático)
 export const CHALLONGE_API_KEYS = [
-    '9addea784754ed234a45d394f064050c7c2309c2d183731b', // Llave 1: Luico / LBL Activa (200 OK, cuota disponible)
-    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 2: LBL Principal (Se reactiva al reiniciar ciclo mensual)
-    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 3: LBL Backup (Se reactiva al reiniciar ciclo mensual)
+    '5aaec867d47e0257722c97d8088f6a5f0074af05edc49946', // Llave 1: LBL Activa Primaria (200 OK, cuota disponible)
+    '9addea784754ed234a45d394f064050c7c2309c2d183731b', // Llave 2: Luico / Backup (Se reactiva al reiniciar ciclo mensual)
+    '62dfc5ae3c0cd785b41ff82a0b4dc5465146abdf701892c8', // Llave 3: LBL Principal (Se reactiva al reiniciar ciclo mensual)
+    '76b119b0d4615733e9e72e3b628f515551ba710deeb64f5b'  // Llave 4: LBL Backup (Se reactiva al reiniciar ciclo mensual)
 ];
 
 export const DEFAULT_CHALLONGE_API_KEY = CHALLONGE_API_KEYS[0];
+
+// Credenciales OAuth v2 (para integraciones avanzadas y extensiones futuras)
+export const CHALLONGE_OAUTH_CREDENTIALS = {
+    clientId: 'fcef3e4430407ffa637a49e73a0974bae962514d4ed114a931c2b1ec2ebb9118',
+    clientSecret: '452b707603df73fdd695413385850b2bf467a99bf147358429b5a09711875b80'
+};
 
 // Directorio oficial de respaldo para Logos HD de Equipos LBL
 export const OFFICIAL_LBL_TEAM_LOGOS = {
@@ -689,9 +696,14 @@ async function apiCall(endpointPath, preferredApiKey = null) {
         window.location.hostname.endsWith('.local')
     );
 
+    let quotaExceededKeysCount = 0;
+    let totalKeysTried = 0;
+
     for (const key of keysToTry) {
         const cleanKey = (key || '').trim();
         if (!cleanKey) continue;
+        totalKeysTried++;
+        let keyRateLimited = false;
 
         const separator = endpointPath.includes('?') ? '&' : '?';
         const targetUrl = `https://api.challonge.com/v1/${endpointPath}${separator}api_key=${encodeURIComponent(cleanKey)}`;
@@ -706,14 +718,24 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                     if (res.status === 404 || res.status === 422) {
                         return null; // El recurso no existe en Challonge (no ciclar llaves ni proxies)
                     }
-                    if (res.ok) {
+                    if (res.status === 429) {
+                        keyRateLimited = true;
+                    } else if (res.ok) {
                         const parsed = await res.json();
-                        if (parsed && (parsed.tournament || Array.isArray(parsed))) {
+                        if (parsed && parsed.errors) {
+                            const errStr = JSON.stringify(parsed.errors).toLowerCase();
+                            if (errStr.includes('limit')) keyRateLimited = true;
+                        } else if (parsed && (parsed.tournament || Array.isArray(parsed))) {
                             return { data: parsed, keyUsed: cleanKey };
                         }
                     }
                 }
             } catch (e) {}
+
+            if (keyRateLimited) {
+                quotaExceededKeysCount++;
+                continue;
+            }
         }
 
         // 2. PROXY PRIMARIO DE PRODUCCIÓN: Cloudflare Worker Dedicado de LBL (100% CORS, ~1.5s, 0 Rate Limits)
@@ -737,7 +759,11 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                 if (res.status === 404 || res.status === 422) {
                     return null; // Recurso no existe en Challonge: cortar inmediato sin quemar proxies ni llaves
                 }
-                if (res.status === 429 || res.status === 401) {
+                if (res.status === 429) {
+                    keyRateLimited = true;
+                    break;
+                }
+                if (res.status === 401) {
                     break;
                 }
                 if (!res.ok) {
@@ -751,11 +777,15 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                     if (wrapper && wrapper.status && (wrapper.status.http_code === 404 || wrapper.status.http_code === 422)) {
                         return null;
                     }
-                    if (wrapper && wrapper.status && (wrapper.status.http_code === 429 || wrapper.status.http_code === 401)) {
+                    if (wrapper && wrapper.status && wrapper.status.http_code === 429) {
+                        keyRateLimited = true;
+                        break;
+                    }
+                    if (wrapper && wrapper.status && wrapper.status.http_code === 401) {
                         break;
                     }
                     if (wrapper && wrapper.contents) {
-                        parsed = JSON.parse(wrapper.contents);
+                        try { parsed = JSON.parse(wrapper.contents); } catch (e) {}
                     }
                 } else {
                     parsed = await res.json();
@@ -763,7 +793,11 @@ async function apiCall(endpointPath, preferredApiKey = null) {
 
                 if (parsed && parsed.errors) {
                     const errStr = JSON.stringify(parsed.errors).toLowerCase();
-                    if (errStr.includes('limit') || errStr.includes('unauthorized') || errStr.includes('invalid api key')) {
+                    if (errStr.includes('limit')) {
+                        keyRateLimited = true;
+                        break;
+                    }
+                    if (errStr.includes('unauthorized') || errStr.includes('invalid api key')) {
                         break;
                     }
                     return null;
@@ -778,6 +812,14 @@ async function apiCall(endpointPath, preferredApiKey = null) {
                 continue;
             }
         }
+
+        if (keyRateLimited) {
+            quotaExceededKeysCount++;
+        }
+    }
+
+    if (quotaExceededKeysCount > 0 && quotaExceededKeysCount === totalKeysTried) {
+        return { error: 'RATE_LIMIT_EXCEEDED', keysCount: totalKeysTried };
     }
 
     return null;
@@ -877,6 +919,11 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
     if (directRes && directRes.data && directRes.data.tournament) {
         payload = directRes.data;
         keyUsada = directRes.keyUsed;
+    } else if (directRes && directRes.error === 'RATE_LIMIT_EXCEEDED') {
+        throw new Error(
+            `Límite de cuota mensual de Challonge agotado (HTTP 429: 500 req/mes consumidos en las ${directRes.keysCount} cuentas del Pool).\n` +
+            `Por favor registra una nueva API Key en challonge-core.js o espera la renovación de ciclo mensual.`
+        );
     }
 
     // 2. FALLBACK DE RESOLUCIÓN SOLO SI EL SLUG NO ES NUMÉRICO Y EL INTENTO DIRECTO FALLÓ (ej. Slugs con mayúsculas en Challonge API v1)
@@ -888,6 +935,11 @@ export async function procesarTorneoChallonge(tournamentSlugOrId, apiKey = null,
             if (res2 && res2.data && res2.data.tournament) {
                 payload = res2.data;
                 keyUsada = res2.keyUsed;
+            } else if (res2 && res2.error === 'RATE_LIMIT_EXCEEDED') {
+                throw new Error(
+                    `Límite de cuota mensual de Challonge agotado (HTTP 429: 500 req/mes consumidos en las cuentas del Pool).\n` +
+                    `Por favor registra una nueva API Key en challonge-core.js o espera la renovación de ciclo mensual.`
+                );
             }
         }
     }
