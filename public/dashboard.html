@@ -1004,7 +1004,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { procesarAuditoriaEquipo } from "/auditoria-core.js";
         import { STAFF_DIRECTORY, getStaffNick, formatStaffAuthor } from "/staff-config.js";
-        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=269";
+        import { procesarTorneoChallonge, extraerChallongeSlug, obtenerListaTorneosChallonge, DEFAULT_CHALLONGE_API_KEY, CHALLONGE_API_KEYS, mapearLogoAWebp } from "/challonge-core.js?v=270";
         import {
             obtenerUsuarioActual,
             obtenerIdRegistradoUsuario,
@@ -1013,7 +1013,7 @@
             cerrarSesionGlobal,
             esCorreoStaff
         } from "/auth-core.js?v=262";
-        import "/app-version.js?v=269";
+        import "/app-version.js?v=270";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -1855,6 +1855,12 @@
                 // Guardar en Firestore torneos_registrados
                 try {
                     await setDoc(doc(db, 'torneos_registrados', id), updatedDoc, { merge: true });
+                    // Si es Scouting 3, mantener sincronizado el alias ts3lbl en Firestore
+                    if (id === 'scouting3') {
+                        try { await setDoc(doc(db, 'torneos_registrados', 'ts3lbl'), { ...updatedDoc, id: 'ts3lbl' }, { merge: true }); } catch (e) {}
+                    } else if (id === 'ts3lbl') {
+                        try { await setDoc(doc(db, 'torneos_registrados', 'scouting3'), { ...updatedDoc, id: 'scouting3' }, { merge: true }); } catch (e) {}
+                    }
                 } catch (fsErr) {
                     console.warn("No se pudo guardar en Firestore:", fsErr);
                 }

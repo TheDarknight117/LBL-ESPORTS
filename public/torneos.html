@@ -41,7 +41,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=243">
+    <link rel="stylesheet" href="/dist/output.css?v=270">
+    <script src="/sc3-logos.js?v=270"></script>
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
@@ -462,9 +463,9 @@
     <script type="module">
         import { db } from "/firebase-config.js";
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=269";
+        import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=270";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=269";
+        import "/app-version.js?v=270";
         import "/auth-core.js?v=262";
 
         // ══════════════════════════════════════════════════════════════════
@@ -863,20 +864,41 @@
             if (!t) return false;
             if (t.categoria === 'liga_lbl' || t.datosChallonge?.categoria === 'liga_lbl') return true;
             if (t.id === 'tier1' || t.id === 'tier2' || t.id === 't1clbl2026' || t.id === 't2clbl2026') return true;
+            if (esTorneoScouting3(t)) return true;
             return false;
         }
 
         function obtenerLogoEquipo(equipoObj, nombreStr, docTorneoOpt = null) {
-            // Regla estricta: Los logos de equipos SOLO se cargan en torneos oficiales de LIGA
-            if (!esTorneoLigaActivo(docTorneoOpt)) {
-                return '';
-            }
+            const t = docTorneoOpt || (typeof torneoSeleccionadoId !== 'undefined' && torneoSeleccionadoId && Array.isArray(listaTorneosRegistrados) ? listaTorneosRegistrados.find(x => x.id === torneoSeleccionadoId) : null);
 
             const rawLogo = (equipoObj?.logo || equipoObj?.lblInfo?.logo || '').trim();
             const nameToSearch = (nombreStr || equipoObj?.nombre || equipoObj?.name || '').trim();
             const tagToSearch = (equipoObj?.tag || equipoObj?.lblInfo?.tag || '').trim();
 
             if (!nameToSearch || nameToSearch.toLowerCase() === 'tbd') return '';
+
+            // 1. PRIORIDAD ABSOLUTA EN SCOUTING 3 / COPA LEGION: Catálogo oficial unificado PNG (sc3-logos.js)
+            if (esTorneoScouting3(t)) {
+                if (typeof window !== 'undefined' && typeof window.findLocalSc3Logo === 'function') {
+                    const sc3Logo = window.findLocalSc3Logo(nameToSearch, tagToSearch);
+                    if (sc3Logo) return sc3Logo;
+                }
+                if (typeof window !== 'undefined' && window.LOCAL_SC3_LOGOS) {
+                    const clean = nameToSearch.toLowerCase().trim();
+                    const cleanTag = tagToSearch.toLowerCase().trim();
+                    if (window.LOCAL_SC3_LOGOS[clean]) return window.LOCAL_SC3_LOGOS[clean];
+                    if (window.LOCAL_SC3_LOGOS[cleanTag]) return window.LOCAL_SC3_LOGOS[cleanTag];
+                }
+                if (Array.isArray(scouting3EquiposCache) && scouting3EquiposCache.length > 0) {
+                    const eqS3 = buscarEquipoScouting3(nameToSearch, equipoObj);
+                    if (eqS3 && eqS3.logo && !eqS3.logo.includes('placeholder')) return eqS3.logo;
+                }
+            }
+
+            // Regla estricta: Los logos de equipos SOLO se cargan en torneos oficiales de LIGA o Scouting 3
+            if (!esTorneoLigaActivo(t)) {
+                return '';
+            }
 
             // 1. PRIORIDAD MÁXIMA: Buscar en Firestore (datos editados en Dashboard / registro)
             const cleanSearch = nameToSearch.toLowerCase().replace(/\s*\(.*?\)\s*/g, '').trim();
@@ -1067,43 +1089,50 @@
             const eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
             const mapa = new Map();
 
+            const getTimestamp = (doc) => {
+                if (!doc) return 0;
+                return doc.ultimaSincronizacionTimestamp || (doc.actualizadoEn ? new Date(doc.actualizadoEn).getTime() : 0);
+            };
+
             // 1. Torneos entrantes (de Firestore o del caché local)
             (listaEntrante || []).forEach(t => {
                 if (!t || eliminados.includes(t.id) || t.id === 'winter_cup') return;
                 const slugKey = (t.slug || t.id).toString().trim().toLowerCase();
                 const idKey = (t.id || '').toString().trim().toLowerCase();
-                mapa.set(slugKey, t);
-                if (idKey) mapa.set(idKey, t);
-            });
+                const chIdKey = (t.challongeId || '').toString().trim().toLowerCase();
 
-            // 2. Preservar datos de Challonge que ya tengamos en memoria (matches, standings, podio)
-            (listaTorneosRegistrados || []).forEach(t => {
-                if (!t || eliminados.includes(t.id) || t.id === 'winter_cup') return;
-                const slugKey = (t.slug || t.id).toString().trim().toLowerCase();
-                const idKey = (t.id || '').toString().trim().toLowerCase();
-                const existing = mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null);
+                const existing = mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
                 if (existing) {
-                    if ((!existing.matches || existing.matches.length === 0) && (t.matches && t.matches.length > 0)) {
-                        existing.matches = t.matches;
-                    }
-                    if ((!existing.datosChallonge || !existing.datosChallonge.matches) && (t.datosChallonge && t.datosChallonge.matches)) {
-                        existing.datosChallonge = t.datosChallonge;
-                    }
-                    if (!existing.challongeStandings && t.challongeStandings) {
-                        existing.challongeStandings = t.challongeStandings;
-                    }
-                    if (!existing.podio && t.podio) {
-                        existing.podio = t.podio;
-                    }
-                    if (!existing.grupos && t.grupos) {
-                        existing.grupos = t.grupos;
-                    }
-                    if (!existing.participantes && t.participantes) {
-                        existing.participantes = t.participantes;
+                    if (getTimestamp(t) >= getTimestamp(existing)) {
+                        mapa.set(slugKey, t);
+                        if (idKey) mapa.set(idKey, t);
+                        if (chIdKey) mapa.set(chIdKey, t);
                     }
                 } else {
                     mapa.set(slugKey, t);
                     if (idKey) mapa.set(idKey, t);
+                    if (chIdKey) mapa.set(chIdKey, t);
+                }
+            });
+
+            // 2. Preservar datos de Challonge que ya tengamos en memoria solo si son más recientes
+            (listaTorneosRegistrados || []).forEach(t => {
+                if (!t || eliminados.includes(t.id) || t.id === 'winter_cup') return;
+                const slugKey = (t.slug || t.id).toString().trim().toLowerCase();
+                const idKey = (t.id || '').toString().trim().toLowerCase();
+                const chIdKey = (t.challongeId || '').toString().trim().toLowerCase();
+
+                const existing = mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
+                if (existing) {
+                    if (getTimestamp(t) > getTimestamp(existing)) {
+                        mapa.set(slugKey, t);
+                        if (idKey) mapa.set(idKey, t);
+                        if (chIdKey) mapa.set(chIdKey, t);
+                    }
+                } else {
+                    mapa.set(slugKey, t);
+                    if (idKey) mapa.set(idKey, t);
+                    if (chIdKey) mapa.set(chIdKey, t);
                 }
             });
 
@@ -2670,7 +2699,7 @@
 
             const participantes = Array.from(participantesMap.values());
 
-            const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
+            const esLigaLBL = esTorneoLigaActivo(docTorneo || torneo);
             let equiposGridHTML = '';
             if (participantes.length > 0) {
                 equiposGridHTML = `<div class="flex flex-col gap-3 pt-2">`;
@@ -3098,7 +3127,7 @@
         function renderizarCronogramaPartidos(docTorneo, animateCards = false) {
             const torneo = docTorneo.datosChallonge || docTorneo;
             const rawMatches = Array.isArray(torneo.matches) ? [...torneo.matches] : [];
-            const esLigaLBL = (docTorneo?.categoria === 'liga_lbl') || (torneo?.categoria === 'liga_lbl');
+            const esLigaLBL = esTorneoLigaActivo(docTorneo || torneo);
 
             // Filtrar partidas opcionales no activadas y cruces automáticos contra equipos fantasmas (BYEs)
             const matches = rawMatches.filter(m => {
@@ -3528,7 +3557,7 @@
             if (!feedContainer) return;
 
             const torneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
-            const esLigaLBL = (torneoActual.categoria === 'liga_lbl') || (torneoActual.datosChallonge?.categoria === 'liga_lbl');
+            const esLigaLBL = esTorneoLigaActivo(torneoActual);
 
             if (!matches || matches.length === 0) {
                 feedContainer.innerHTML = `
@@ -3683,7 +3712,7 @@
                 const tagDisplay = resolverTag(eq) || (eq.nombre || '').substring(0, 3).toUpperCase();
                 const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
                 const docTorneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
-                const esLigaLBL = (docTorneoActual.categoria === 'liga_lbl') || (docTorneoActual.datosChallonge?.categoria === 'liga_lbl');
+                const esLigaLBL = esTorneoLigaActivo(docTorneoActual);
                 const logo = esLigaLBL ? obtenerLogoEquipo(eq, eq.nombre, docTorneoActual) : '';
 
                 let avatarHTML = '';
@@ -4587,7 +4616,7 @@
 
                 const tagDisplay = resolverTag(eq) || eqNombre.substring(0, 3).toUpperCase();
                 const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
-                const esLigaLBL = (torneo.categoria === 'liga_lbl') || (torneo.datosChallonge?.categoria === 'liga_lbl');
+                const esLigaLBL = esTorneoLigaActivo(torneo);
                 const logo = esLigaLBL ? obtenerLogoEquipo(eq, eqNombre, torneo) : '';
 
                 let avatarHTML = '';
@@ -4872,7 +4901,7 @@
 
             if (esValido) {
                 const tag = (resolverTag(pObj, tournament) || pObj.tag || rawName.substring(0, 3)).toUpperCase();
-                const esLigaLBL = (tournament?.categoria === 'liga_lbl') || (tournament?.datosChallonge?.categoria === 'liga_lbl');
+                const esLigaLBL = esTorneoLigaActivo(tournament);
                 let logo = '';
                 if (esLigaLBL) {
                     logo = obtenerLogoEquipo(pObj, rawName, tournament);
@@ -4981,7 +5010,7 @@
             }
 
             // Logos / Avatares (Dimensiones fijas bloqueadas a 22x22px)
-            const esLigaLBL = (tournament?.categoria === 'liga_lbl') || (tournament?.datosChallonge?.categoria === 'liga_lbl');
+            const esLigaLBL = esTorneoLigaActivo(tournament);
             const p1Avatar = (p1.isDefined && p1.logo)
                 ? `<img src="${p1.logo}" onerror="this.onerror=null; this.src='${getFallbackImage(p1.name)}';" style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px; object-fit: contain;" class="w-[22px] h-[22px] rounded object-contain bg-black/60 shrink-0 p-0.5 border border-cyan-500/30">`
                 : (p1.isDefined
