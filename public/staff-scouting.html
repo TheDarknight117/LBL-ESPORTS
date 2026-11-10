@@ -1757,7 +1757,7 @@
     </div>
 
     <!-- ============================================================== -->
-    <!-- MODAL DE GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)     -->
+    <!-- MODAL DE GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AMQ Y SMOK)     -->
     <!-- ============================================================== -->
     <div id="modal-credenciales-lan" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalCredencialesLAN()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-6 hidden">
         <div class="bg-[#07090e] border border-purple-500/40 rounded-2xl sm:rounded-3xl w-full max-w-3xl max-h-[94dvh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
@@ -1785,8 +1785,8 @@
             <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#0a0f19] flex flex-wrap items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2 text-xs">
                     <span class="text-[10px] uppercase font-black text-gray-400">Ingreso directo Staff:</span>
-                    <a href="/aqm" target="_blank" class="px-3 py-1.5 rounded-xl bg-red-600/25 hover:bg-red-600/40 text-red-300 border border-red-500/40 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
-                        <i class="fas fa-gamepad text-red-400"></i> Terminal AQM (La Paz)
+                    <a href="/amq" target="_blank" class="px-3 py-1.5 rounded-xl bg-red-600/25 hover:bg-red-600/40 text-red-300 border border-red-500/40 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-gamepad text-red-400"></i> Terminal AMQ (La Paz)
                     </a>
                     <a href="/smok" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
                         <i class="fas fa-circle-play text-emerald-400"></i> Terminal SMOK (Cocha)
@@ -1809,11 +1809,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Usuario (Login):</label>
-                                <input type="text" id="lan-input-usuario" required placeholder="ej: cajero_aqm_tarde" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                                <input type="text" id="lan-input-usuario" required placeholder="ej: cajero_amq_tarde" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Contraseña:</label>
-                                <input type="text" id="lan-input-password" required placeholder="ej: aqm2026" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                                <input type="text" id="lan-input-password" required placeholder="ej: amq2026" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Nombre / Responsable:</label>
@@ -1822,7 +1822,7 @@
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Sede Permitida:</label>
                                 <select id="lan-input-sede" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                                    <option value="AQM">AQM (La Paz)</option>
+                                    <option value="AMQ">AMQ (La Paz)</option>
                                     <option value="SMOK">SMOK (Cochabamba)</option>
                                     <option value="TODAS">Ambas Sedes (Admin)</option>
                                 </select>
@@ -5386,7 +5386,7 @@
                 // C.I. / DNI obligatorio
                 const ciDetectado = extraerCi(t.nombreCi || t.ci || '');
                 if (!ciDetectado || ciDetectado.length < 5) {
-                    inconsistencias.push(`[${pos}] ${t.nombreCi || t.riotIdLas || 'Jugador'}: ⚠️ Falta Cédula de Identidad (C.I. / DNI). Requerido para verificación y convenio LAN (AQM / SMOK).`);
+                    inconsistencias.push(`[${pos}] ${t.nombreCi || t.riotIdLas || 'Jugador'}: ⚠️ Falta Cédula de Identidad (C.I. / DNI). Requerido para verificación y convenio LAN (AMQ / SMOK).`);
                 }
 
                 // Residencia y Departamento
@@ -6611,7 +6611,7 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
         };
 
         // ==============================================================
-        // GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AQM Y SMOK)
+        // GESTIÓN DE ACCESOS Y CREDENCIALES LAN (AMQ Y SMOK)
         // ==============================================================
         const DOC_LAN_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
         const STORAGE_KEY_LAN_CUENTAS = 'lbl_lan_cuentas_cache_v2';
@@ -6639,7 +6639,7 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
                     usuario: cFields.usuario?.stringValue || k,
                     nombre: cFields.nombre?.stringValue || '--',
                     password: cFields.password?.stringValue || '',
-                    sede: cFields.sede?.stringValue || 'AQM',
+                    sede: cFields.sede?.stringValue || 'AMQ',
                     activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
                     modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
                     updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
@@ -6727,18 +6727,18 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
                     },
                     "aquimequedo": {
                         usuario: "aquimequedo",
-                        password: "aqm2026",
-                        nombre: "Encargado AQM",
-                        sede: "AQM",
+                        password: "amq2026",
+                        nombre: "Encargado AMQ",
+                        sede: "AMQ",
                         activo: true,
                         modificadoPor: staffNickActual || 'Staff LBL',
                         updatedAt: new Date().toISOString()
                     },
-                    "cajero_aqm": {
-                        usuario: "cajero_aqm",
-                        password: "aqm2026",
-                        nombre: "Cajero Principal AQM",
-                        sede: "AQM",
+                    "cajero_amq": {
+                        usuario: "cajero_amq",
+                        password: "amq2026",
+                        nombre: "Cajero Principal AMQ",
+                        sede: "AMQ",
                         activo: true,
                         creadoPor: staffNickActual || 'Staff LBL',
                         creadoEn: new Date().toISOString()
@@ -6794,10 +6794,10 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
 
             keys.forEach(k => {
                 const c = cuentasLANActuales[k];
-                const esAqm = (c.sede || '').toUpperCase() === 'AQM';
+                const esAmq = (c.sede || '').toUpperCase() === 'AMQ' || (c.sede || '').toUpperCase() === 'AQM';
                 const esSmok = (c.sede || '').toUpperCase() === 'SMOK';
-                const badgeColor = esAqm ? 'bg-red-950 text-red-300 border-red-500/40' : (esSmok ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-purple-950 text-purple-300 border-purple-500/40');
-                const badgeTexto = esAqm ? 'AQM (La Paz)' : (esSmok ? 'SMOK (Cocha)' : 'Ambas Sedes');
+                const badgeColor = esAmq ? 'bg-red-950 text-red-300 border-red-500/40' : (esSmok ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-purple-950 text-purple-300 border-purple-500/40');
+                const badgeTexto = esAmq ? 'AMQ (La Paz)' : (esSmok ? 'SMOK (Cocha)' : 'Ambas Sedes');
                 const passVisible = !!passwordsVisiblesLAN[k];
                 const safeKey = escapeHTML(k);
                 const safeNombre = escapeHTML(c.nombre || '--');
@@ -6906,7 +6906,7 @@ El jugador *${jugNom}* (Riot ID: *${riotLas}*) ya se encuentra formalmente regis
             document.getElementById('lan-input-usuario').value = c.usuario || k;
             document.getElementById('lan-input-password').value = c.password || '';
             document.getElementById('lan-input-nombre').value = c.nombre || '';
-            document.getElementById('lan-input-sede').value = c.sede || 'AQM';
+            document.getElementById('lan-input-sede').value = c.sede || 'AMQ';
             document.getElementById('lan-input-usuario').focus();
         };
 

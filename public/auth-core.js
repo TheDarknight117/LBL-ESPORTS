@@ -47,7 +47,7 @@ const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 const USER_CACHE_KEY = 'lbl_user_profile_cache_v1';
-const RIOT_PROD_API_KEY = 'RGAPI-7d514ad3-3115-4677-948d-0282d0d60c7a';
+const RIOT_PROD_API_KEY = ''; // Clave de Riot Games delegada al proxy seguro del backend (/api/riot-account)
 export const DIAS_BLOQUEO_CONEXION = 90;
 export const DEFAULT_USER_AVATAR = '/assets/default-user.svg';
 

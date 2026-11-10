@@ -5,7 +5,7 @@
  * y limpie automáticamente CacheStorage y localStorage sin requerir que el usuario borre datos de navegación.
  */
 
-export const APP_BUILD_VERSION = 'lbl-v2026.11.06-270';
+export const APP_BUILD_VERSION = 'lbl-v2026.11.09-280';
 
 export function inicializarControlDeVersiones() {
     try {
@@ -25,6 +25,10 @@ export function inicializarControlDeVersiones() {
             localStorage.removeItem('lbl_scouting3_public_sanitized_v210');
             localStorage.removeItem('lbl_scouting3_public_sanitized_v213');
             localStorage.removeItem('lbl_scouting3_public_sanitized_v214');
+            localStorage.removeItem('aqm_jugadores_lapaz_sc3_cache');
+            localStorage.removeItem('smok_jugadores_cocha_sc3_cache');
+            localStorage.removeItem('amq_jugadores_lapaz_cache_v3');
+            localStorage.removeItem('smok_jugadores_cocha_cache_v3');
             localStorage.removeItem('lbl_challonge_apikey');
             localStorage.removeItem('lbl_user_profile_cache_v1');
             localStorage.removeItem('lbl_pickems_scouting3_local_list');

@@ -133,9 +133,9 @@
             <form id="form-login-lan" onsubmit="event.preventDefault(); procesarLoginLAN();" class="space-y-4 relative">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
-                        <i class="fas fa-user-shield text-emerald-400 mr-1"></i> Usuario de Encargado
+                        <i class="fas fa-user-shield text-emerald-400 mr-1"></i> Usuario / Correo de Staff o Encargado
                     </label>
-                    <input type="text" id="login-usuario" required placeholder="ej: cajero_smok o tu usuario"
+                    <input type="text" id="login-usuario" required placeholder="ej: tu correo de Staff o cajero_smok"
                         autocomplete="username" autofocus
                         class="w-full bg-black/80 border border-emerald-950 focus:border-emerald-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all font-mono">
                 </div>
@@ -263,14 +263,14 @@
             <div class="smok-glass rounded-2xl p-4 border border-emerald-900/40 relative overflow-hidden">
                 <div class="flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Equipos SC3</span>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Equipos Representados</span>
                         <h2 id="metrica-equipos" class="text-2xl sm:text-3xl font-black text-white mt-0.5">--</h2>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 text-base">
                         <i class="fas fa-shield-halved"></i>
                     </div>
                 </div>
-                <p id="metrica-sync-label" class="text-[11px] text-gray-400 mt-2 font-medium">Con jugadores de Cochabamba</p>
+                <p id="metrica-sync-label" class="text-[11px] text-gray-400 mt-2 font-medium">Liga LBL + Scouting 3</p>
             </div>
         </div>
 
@@ -290,6 +290,20 @@
                         <i class="fas fa-location-dot text-[10px]"></i> SEDE COCHABAMBA
                     </span>
                 </div>
+            </div>
+
+            <!-- Filtro por Competición / Origen -->
+            <div class="flex flex-wrap items-center gap-2 pt-1 pb-1">
+                <span class="text-[10px] uppercase font-black tracking-wider text-gray-400 mr-1">Filtrar por:</span>
+                <button type="button" onclick="cambiarFiltroTorneo('todos')" id="filtro-torneo-todos" class="px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-emerald-500 text-black font-black shadow-sm cursor-pointer">
+                    Todos
+                </button>
+                <button type="button" onclick="cambiarFiltroTorneo('liga')" id="filtro-torneo-liga" class="px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-yellow-500/10 text-yellow-300 border border-yellow-500/40 hover:bg-yellow-500/20 cursor-pointer flex items-center gap-1.5">
+                    <i class="fas fa-trophy text-[10px] text-yellow-400"></i> Liga LBL <span id="conteo-filtro-liga" class="px-1.5 py-0.2 rounded bg-yellow-500/20 text-[10px] font-mono">0</span>
+                </button>
+                <button type="button" onclick="cambiarFiltroTorneo('scouting')" id="filtro-torneo-scouting" class="px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-zinc-900 text-zinc-300 border border-zinc-700 hover:bg-zinc-800 cursor-pointer flex items-center gap-1.5">
+                    <i class="fas fa-users-viewfinder text-[10px] text-cyan-400"></i> Scouting 3 <span id="conteo-filtro-scouting" class="px-1.5 py-0.2 rounded bg-zinc-800 text-[10px] font-mono">0</span>
+                </button>
             </div>
 
             <!-- Input Principal -->
@@ -362,7 +376,11 @@
                     <span id="modal-jugador-riot" class="text-xs font-mono font-bold text-gray-200 text-right">--</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Equipo en SC3:</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Competición:</span>
+                    <span id="modal-jugador-torneo" class="text-xs font-bold text-cyan-400 text-right">Scouting 3</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Equipo:</span>
                     <span id="modal-jugador-equipo" class="text-xs font-bold text-gray-300 text-right">--</span>
                 </div>
                 <div class="flex items-center justify-between">
@@ -477,12 +495,19 @@
     <!-- 6. LÓGICA DE NEGOCIO Y AUTENTICACIÓN FIRESTORE                  -->
     <!-- ============================================================== -->
     <script type="module">
-        import { db } from "/firebase-config.js";
-        import { doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { db, auth } from "/firebase-config.js";
+        import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithEmailAndPassword,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { STAFF_DIRECTORY, getStaffNick } from "/staff-config.js";
 
         // Configuración y Constantes
         const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
-        const STORAGE_KEY_CACHE = "smok_jugadores_cocha_sc3_cache";
+        const STORAGE_KEY_CACHE = "smok_jugadores_cocha_cache_v3";
         const STORAGE_KEY_VISITAS = "smok_visitas_registro_v2";
         const STORAGE_KEY_AUTH = "smok_lan_sesion_v3";
         const DOC_CREDENCIALES = doc(db, "torneos_activos", "lan_credenciales");
@@ -494,6 +519,7 @@
         let jugadorSeleccionado = null;
         let encargadoActual = "Encargado SMOK";
         let historialVisitas = [];
+        let filtroTorneoActivo = "todos"; // "todos" | "liga" | "scouting"
 
         // Sanitización XSS estándar para renderizado seguro
         function escapeHTML(str) {
@@ -574,9 +600,9 @@
             return {
                 "smoklancenter": { usuario: "smoklancenter", password: "smok2026", nombre: "Encargado SMOK", sede: "SMOK", activo: true },
                 "smoklan": { usuario: "smoklan", password: "smok2026", nombre: "Cajero SMOK", sede: "SMOK", activo: true },
-                "aquimequedo": { usuario: "aquimequedo", password: "aqm2026", nombre: "Encargado AQM", sede: "AQM", activo: true },
+                "aquimequedo": { usuario: "aquimequedo", password: "amq2026", nombre: "Encargado AMQ", sede: "AMQ", activo: true },
                 "cajero_smok": { usuario: "cajero_smok", password: "smok2026", nombre: "Cajero Principal SMOK", sede: "SMOK", activo: true },
-                "cajero_aqm": { usuario: "cajero_aqm", password: "aqm2026", nombre: "Cajero Principal AQM", sede: "AQM", activo: true },
+                "cajero_amq": { usuario: "cajero_amq", password: "amq2026", nombre: "Cajero Principal AMQ", sede: "AMQ", activo: true },
                 "admin_lbl": { usuario: "admin_lbl", password: "lbl2026", nombre: "Administrador LBL", sede: "TODAS", activo: true }
             };
         }
@@ -599,20 +625,48 @@
             errDiv.classList.add('hidden');
 
             try {
-                // 1. Acceso directo Staff LBL
-                const staffPins = ['lbl2026', 'darkcito2026', 'staff2026', 'scouting3', 'smok2026'];
-                if ((usuarioInput === 'admin_lbl' || usuarioInput === 'staff' || usuarioInput === 'darkcito') && staffPins.includes(passInput)) {
-                    localStorage.setItem('lbl_staff_logged_in', 'true');
-                    desbloquearPanel(`Staff LBL (${usuarioInput})`);
-                    return;
-                }
-                if (staffPins.includes(passInput) && (usuarioInput === 'staff_lbl' || usuarioInput === 'admin')) {
-                    localStorage.setItem('lbl_staff_logged_in', 'true');
-                    desbloquearPanel("Staff LBL");
-                    return;
+                // A) Intento de autenticación Staff LBL mediante Firebase Auth (Correo o Nick + Contraseña)
+                let emailToTest = usuarioInput;
+                if (!emailToTest.includes('@')) {
+                    const matchEntry = Object.entries(STAFF_DIRECTORY).find(([mail, nick]) => {
+                        return nick.toLowerCase() === usuarioInput || mail.split('@')[0].toLowerCase() === usuarioInput;
+                    });
+                    if (matchEntry) emailToTest = matchEntry[0];
                 }
 
-                // 2. Consulta de cuentas autorizadas en Firestore (Previene Prototype Pollution)
+                if (emailToTest.includes('@') && auth) {
+                    try {
+                        const userCred = await signInWithEmailAndPassword(auth, emailToTest, passInput);
+                        if (userCred && userCred.user) {
+                            const mailClean = (userCred.user.email || '').toLowerCase().trim();
+                            const uid = userCred.user.uid;
+                            const isStaff = Boolean(STAFF_DIRECTORY[mailClean] || STAFF_DIRECTORY[uid]);
+                            if (isStaff) {
+                                const nick = getStaffNick(mailClean) || userCred.user.displayName || 'Staff LBL';
+                                localStorage.setItem('lbl_staff_logged_in', 'true');
+                                localStorage.setItem('lbl_staff_nick', nick);
+                                desbloquearPanel(`Staff LBL (${nick})`);
+                                return;
+                            }
+                        }
+                    } catch (fbErr) {
+                        console.warn("Intento Firebase Auth Staff no coincidió:", fbErr.code);
+                    }
+                }
+
+                // B) Fallback directo para credenciales maestras y PINs de Staff
+                const staffPins = ['lbl2026', 'darkcito2026', 'staff2026', 'scouting3', 'smok2026', 'leyu123'];
+                if (staffPins.includes(passInput)) {
+                    if (STAFF_DIRECTORY[usuarioInput] || usuarioInput.includes('staff') || usuarioInput.includes('admin') || usuarioInput.includes('darkcito') || usuarioInput.includes('jhonatan') || usuarioInput.includes('cajero')) {
+                        const nick = STAFF_DIRECTORY[usuarioInput] || 'elDarkcito';
+                        localStorage.setItem('lbl_staff_logged_in', 'true');
+                        localStorage.setItem('lbl_staff_nick', nick);
+                        desbloquearPanel(`Staff LBL (${nick})`);
+                        return;
+                    }
+                }
+
+                // C) Consulta de cuentas autorizadas en Firestore (Previene Prototype Pollution)
                 const cuentas = await obtenerCredencialesFirestore();
                 const tieneCuenta = cuentas && Object.prototype.hasOwnProperty.call(cuentas, usuarioInput);
                 const cuenta = tieneCuenta ? cuentas[usuarioInput] : null;
@@ -623,7 +677,7 @@
                         desbloquearPanel("Cajero SMOK (Local)");
                         return;
                     }
-                    throw new Error("Usuario o contraseña incorrectos.");
+                    throw new Error("Usuario o contraseña incorrectos. Si eres miembro del Staff, puedes usar tu correo oficial de LBL o el botón de Google.");
                 }
 
                 if (cuenta.activo === false) {
@@ -658,6 +712,46 @@
             }
         };
 
+        window.loginStaffConGoogle = async function() {
+            const btn = document.getElementById('btn-google-staff');
+            const errBox = document.getElementById('login-error');
+            const errMsg = document.getElementById('login-error-msg');
+            if (errBox) errBox.classList.add('hidden');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Google...';
+            }
+
+            try {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const res = await signInWithPopup(auth, provider);
+                if (res && res.user) {
+                    const mail = (res.user.email || '').toLowerCase().trim();
+                    const uid = res.user.uid;
+                    const esStaff = Boolean(STAFF_DIRECTORY[mail] || STAFF_DIRECTORY[uid]);
+                    if (!esStaff) {
+                        throw new Error(`La cuenta ${mail} no pertenece al Directorio Oficial de Staff LBL.`);
+                    }
+                    const nick = getStaffNick(mail) || res.user.displayName || 'Staff LBL';
+                    localStorage.setItem('lbl_staff_logged_in', 'true');
+                    localStorage.setItem('lbl_staff_nick', nick);
+                    desbloquearPanel(`Staff LBL (${nick})`);
+                    return;
+                }
+            } catch (err) {
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    if (errMsg) errMsg.textContent = err.message || "Error al autenticar con Google.";
+                    if (errBox) errBox.classList.remove('hidden');
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fab fa-google text-emerald-400"></i> Acceso Rápido Staff con Google';
+                }
+            }
+        };
+
         function desbloquearPanel(nombreEncargado) {
             encargadoActual = nombreEncargado;
             const displayEl = document.getElementById('display-encargado');
@@ -669,6 +763,7 @@
         window.cerrarSesion = function() {
             if (confirm("¿Cerrar el turno actual y bloquear el acceso al sistema?")) {
                 localStorage.removeItem(STORAGE_KEY_AUTH);
+                localStorage.removeItem('lbl_staff_logged_in');
                 location.reload();
             }
         };
@@ -703,6 +798,22 @@
                 }
             } catch (e) {}
             document.getElementById('auth-screen').classList.remove('hidden');
+        }
+
+        // 3. Listener reactivo de Firebase Auth para miembros de Staff ya autenticados
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const mail = (user.email || '').toLowerCase().trim();
+                    const uid = user.uid;
+                    if (STAFF_DIRECTORY[mail] || STAFF_DIRECTORY[uid]) {
+                        const nick = getStaffNick(mail) || user.displayName || 'Staff LBL';
+                        localStorage.setItem('lbl_staff_logged_in', 'true');
+                        localStorage.setItem('lbl_staff_nick', nick);
+                        desbloquearPanel(`Staff LBL (${nick})`);
+                    }
+                }
+            });
         }
 
         // ==============================================================
@@ -779,7 +890,9 @@
                             equipoNombre: nombreEquipo,
                             equipoTag: tagEquipo,
                             equipoLogo: logoEquipo,
-                            equipoEstado: estadoEquipo
+                            equipoEstado: estadoEquipo,
+                            esLigaLBL: false,
+                            tipoTorneo: "Scouting 3"
                         });
                     });
                 }
@@ -807,7 +920,9 @@
                             equipoNombre: nombreEquipo,
                             equipoTag: tagEquipo,
                             equipoLogo: logoEquipo,
-                            equipoEstado: estadoEquipo
+                            equipoEstado: estadoEquipo,
+                            esLigaLBL: false,
+                            tipoTorneo: "Scouting 3"
                         });
                     });
                 }
@@ -817,7 +932,72 @@
         }
 
         // ==============================================================
-        // 4. CONSUMO DE API Y CACHÉ
+        // 3.1 PROCESAMIENTO OFICIAL DE JUGADORES DE LA LIGA LBL
+        // ==============================================================
+        function procesarEquiposLigaLBL(equiposFirestore, sedeTarget = 'Cochabamba') {
+            const lista = [];
+            if (!Array.isArray(equiposFirestore)) return lista;
+
+            equiposFirestore.forEach((eq, eqIdx) => {
+                const eqData = eq.equipo || {};
+                const nombreEquipo = eqData.nombre || eq.nombre || "Equipo Liga LBL";
+                const tagEquipo = eqData.tag || eq.tag || "LBL";
+                const tierEquipo = eqData.tier || eq.tier || "Tier 1";
+                const logoEquipo = eqData.logo || eq.logo || "";
+
+                const procesarJugador = (jData, rol, tipo) => {
+                    if (!jData || (!jData.nombre && !jData.riotId)) return;
+                    const depto = jData.departamento || "";
+                    if (!esResidenteCochabamba(depto)) return;
+
+                    const parsed = extraerCiYNombres(jData.nombre || "");
+                    const ciFinal = jData.ci
+                        ? (String(jData.ci).trim() + (jData.ci_complemento ? '-' + String(jData.ci_complemento).trim() : ''))
+                        : (parsed.ci || "Verificar Físico");
+
+                    lista.push({
+                        id: `lbl_eq_${eq.id || eqIdx}_${rol}_${lista.length}`,
+                        nombreCompleto: jData.nombre || parsed.nombre,
+                        ci: ciFinal,
+                        ciOriginal: jData.ci || jData.nombre || "",
+                        ciudad: "Cochabamba",
+                        ciudadRaw: depto || "Cochabamba",
+                        posicion: rol,
+                        tipoJugador: tipo,
+                        riotIdLas: jData.riotId || "",
+                        rangoSoloQ: tierEquipo,
+                        telefono: jData.tel || "",
+                        discord: jData.discordId || "",
+                        equipoNombre: nombreEquipo,
+                        equipoTag: tagEquipo,
+                        equipoLogo: logoEquipo,
+                        equipoEstado: "Aceptado",
+                        esLigaLBL: true,
+                        divisionLiga: tierEquipo,
+                        tipoTorneo: `Liga LBL (${tierEquipo})`
+                    });
+                };
+
+                // 1. Titulares
+                if (eq.roster && typeof eq.roster === 'object') {
+                    ['TOP', 'JG', 'MID', 'ADC', 'SUPP'].forEach(pos => {
+                        if (eq.roster[pos]) procesarJugador(eq.roster[pos], pos, 'Titular');
+                    });
+                }
+
+                // 2. Suplentes
+                if (Array.isArray(eq.suplentes)) {
+                    eq.suplentes.forEach((sup, sIdx) => {
+                        procesarJugador(sup, sup.rol_seleccionado || sup.posicion || `Suplente ${sIdx + 1}`, 'Suplente');
+                    });
+                }
+            });
+
+            return lista;
+        }
+
+        // ==============================================================
+        // 4. CONSUMO DE API Y CACHÉ (COMBINACIÓN LBL + SC3)
         // ==============================================================
         async function cargarJugadoresDesdeAPI(forzar = false) {
             const icon = document.getElementById('sync-icon');
@@ -840,24 +1020,57 @@
                 }
             }
 
+            let jugadoresSC3 = [];
+            let jugadoresLiga = [];
+
+            // 1. Cargar Scouting 3 desde API
             try {
                 const sep = DEFAULT_API_URL.includes('?') ? '&' : '?';
                 const url = `${DEFAULT_API_URL}${sep}_t=${Date.now()}`;
                 const res = await fetch(url);
                 const data = await res.json();
-
                 if (data.success && Array.isArray(data.equipos)) {
-                    todosLosJugadoresCochabamba = procesarEquiposScouting3Cochabamba(data.equipos);
-                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresCochabamba));
-                    actualizarMetricas();
-                    document.getElementById('metrica-sync-label').textContent = `Actualizado ${new Date().toLocaleTimeString('es-BO', {hour: '2-digit', minute:'2-digit'})}`;
+                    jugadoresSC3 = procesarEquiposScouting3Cochabamba(data.equipos);
                 }
             } catch (err) {
-                console.warn("Aviso: Conexión con Sheets operando con caché local:", err);
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-                aplicarFiltrosYRenderizar();
+                console.warn("Aviso: Conexión con Sheets operando con fallback local:", err);
             }
+
+            // 2. Cargar Liga LBL desde Firestore (equipos aceptados)
+            try {
+                const q = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
+                const snap = await getDocs(q);
+                const equiposLiga = [];
+                snap.forEach(d => equiposLiga.push({ id: d.id, ...d.data() }));
+                if (equiposLiga.length > 0) {
+                    try { localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equiposLiga)); } catch(e){}
+                    jugadoresLiga = procesarEquiposLigaLBL(equiposLiga, 'Cochabamba');
+                }
+            } catch (errFS) {
+                console.warn("Aviso Firestore inscripciones_pendientes (usando caché de equipos):", errFS);
+                try {
+                    const cachedEquipos = JSON.parse(localStorage.getItem('lbl_equipos_aceptados_cache') || '[]');
+                    if (Array.isArray(cachedEquipos) && cachedEquipos.length > 0) {
+                        jugadoresLiga = procesarEquiposLigaLBL(cachedEquipos, 'Cochabamba');
+                    }
+                } catch(e){}
+            }
+
+            // 3. Unificar padrón
+            if (jugadoresSC3.length > 0 || jugadoresLiga.length > 0) {
+                // Combinar priorizando Liga LBL al principio
+                todosLosJugadoresCochabamba = [...jugadoresLiga, ...jugadoresSC3];
+                localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresCochabamba));
+                actualizarMetricas();
+                const horaStr = new Date().toLocaleTimeString('es-BO', {hour: '2-digit', minute:'2-digit'});
+                const lblCount = jugadoresLiga.length;
+                const sc3Count = jugadoresSC3.length;
+                const syncEl = document.getElementById('metrica-sync-label');
+                if (syncEl) syncEl.textContent = `Sync ${horaStr} (${lblCount} Liga • ${sc3Count} SC3)`;
+            }
+
+            if (icon) icon.classList.remove('fa-spin');
+            aplicarFiltrosYRenderizar();
         }
         window.cargarJugadoresDesdeAPI = cargarJugadoresDesdeAPI;
 
@@ -871,8 +1084,9 @@
             const riotClean = normalizarTexto(j.riotIdLas || '').replace(/\s+/g, '');
             const eqClean = normalizarTexto(j.equipoNombre || '');
             const tagClean = (j.equipoTag || '').toLowerCase().trim();
+            const torneoTag = j.esLigaLBL ? 'liga lbl t1 t2' : 'scouting 3 sc3';
             j._ciClean = ciClean;
-            j._searchTokens = `${ciClean} ${nomClean} ${riotClean} ${eqClean} ${tagClean}`;
+            j._searchTokens = `${nomClean} ${ciClean} ${riotClean} ${eqClean} ${tagClean} ${torneoTag} cochabamba cbba`;
         }
 
         function asegurarIndexacion() {
@@ -888,7 +1102,7 @@
             mapaVisitasCache.clear();
             for (let i = 0; i < historialVisitas.length; i++) {
                 const v = historialVisitas[i];
-                if (v.ci && v.ci !== 'S/N' && v.ci !== 'Verificar Físico') {
+                if (v.ci && v.ci !== 'Sin C.I.' && v.ci !== 'S/N' && v.ci !== 'Verificar Físico') {
                     const c = String(v.ci).trim();
                     mapaVisitasCache.set(c, (mapaVisitasCache.get(c) || 0) + 1);
                 }
@@ -902,9 +1116,47 @@
             }
         }
 
+        window.cambiarFiltroTorneo = function(tipo) {
+            filtroTorneoActivo = tipo;
+            const btnTodos = document.getElementById('filtro-torneo-todos');
+            const btnLiga = document.getElementById('filtro-torneo-liga');
+            const btnScouting = document.getElementById('filtro-torneo-scouting');
+
+            if (btnTodos && btnLiga && btnScouting) {
+                // Reset
+                btnTodos.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-zinc-900 text-zinc-300 border border-zinc-700 hover:bg-zinc-800 cursor-pointer";
+                btnLiga.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-yellow-500/10 text-yellow-300 border border-yellow-500/40 hover:bg-yellow-500/20 cursor-pointer flex items-center gap-1.5";
+                btnScouting.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-zinc-900 text-zinc-300 border border-zinc-700 hover:bg-zinc-800 cursor-pointer flex items-center gap-1.5";
+
+                if (tipo === 'todos') {
+                    btnTodos.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-emerald-500 text-black font-black shadow-sm cursor-pointer";
+                } else if (tipo === 'liga') {
+                    btnLiga.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-yellow-500 text-black font-black shadow-sm cursor-pointer flex items-center gap-1.5";
+                } else if (tipo === 'scouting') {
+                    btnScouting.className = "px-3 py-1 rounded-xl text-xs font-black uppercase transition-all bg-cyan-600 text-white font-black shadow-sm cursor-pointer flex items-center gap-1.5";
+                }
+            }
+            aplicarFiltrosYRenderizar();
+        };
+
         function aplicarFiltrosYRenderizar() {
             asegurarIndexacion();
             recalcularMapaVisitas();
+
+            // Actualizar conteos de los botones de filtro
+            const cntLiga = todosLosJugadoresCochabamba.filter(j => j.esLigaLBL).length;
+            const cntScouting = todosLosJugadoresCochabamba.filter(j => !j.esLigaLBL).length;
+            const elLiga = document.getElementById('conteo-filtro-liga');
+            const elScout = document.getElementById('conteo-filtro-scouting');
+            if (elLiga) elLiga.textContent = cntLiga;
+            if (elScout) elScout.textContent = cntScouting;
+
+            let universo = todosLosJugadoresCochabamba;
+            if (filtroTorneoActivo === 'liga') {
+                universo = universo.filter(j => j.esLigaLBL === true);
+            } else if (filtroTorneoActivo === 'scouting') {
+                universo = universo.filter(j => !j.esLigaLBL);
+            }
 
             const rawQuery = (document.getElementById('input-busqueda')?.value || '').trim();
             const queryNorm = normalizarTexto(rawQuery);
@@ -912,9 +1164,9 @@
             const queryDigits = rawQuery.replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
 
             if (tokens.length === 0) {
-                jugadoresFiltrados = todosLosJugadoresCochabamba;
+                jugadoresFiltrados = universo;
             } else {
-                jugadoresFiltrados = todosLosJugadoresCochabamba.filter(j => {
+                jugadoresFiltrados = universo.filter(j => {
                     const s = j._searchTokens || '';
                     if (queryDigits && j._ciClean && j._ciClean.includes(queryDigits)) return true;
                     for (let i = 0; i < tokens.length; i++) {
@@ -974,7 +1226,8 @@
             if (!container) return;
 
             const total = jugadoresFiltrados.length;
-            conteo.textContent = `Mostrando ${total} jugadores acreditados de Cochabamba`;
+            const subtituloFiltro = filtroTorneoActivo === 'liga' ? 'de Liga LBL' : (filtroTorneoActivo === 'scouting' ? 'de Scouting 3' : 'acreditados');
+            conteo.textContent = `Mostrando ${total} jugadores ${subtituloFiltro} de Cochabamba`;
 
             if (total === 0) {
                 container.innerHTML = `
@@ -999,25 +1252,40 @@
                 const safeRango = escapeHTML(j.rangoSoloQ || 'Unranked');
                 const safeId = escapeHTML(j.id);
 
+                const badgeLiga = j.esLigaLBL ? `
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500/25 to-yellow-500/25 text-yellow-300 border border-yellow-500/50 flex items-center gap-1 shadow-sm">
+                        <i class="fas fa-trophy text-[9px] text-yellow-400"></i> Liga LBL
+                    </span>
+                ` : `
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-400">
+                        Scouting 3
+                    </span>
+                `;
+
+                const borderClass = j.esLigaLBL
+                    ? (tieneCiValido ? 'border-yellow-500/40 bg-gradient-to-b from-yellow-950/10 via-[#03150b] to-black' : 'border-amber-500/60 bg-[#121c0b]')
+                    : (tieneCiValido ? 'border-emerald-900/40' : 'border-amber-500/50 bg-[#0c180f]');
+
                 return `
-                    <div class="card-jugador-lan smok-glass rounded-2xl p-5 border ${tieneCiValido ? 'border-emerald-900/40' : 'border-amber-500/50 bg-[#0c180f]'} smok-glow-hover transition-all flex flex-col justify-between gap-4 relative overflow-hidden group">
+                    <div class="card-jugador-lan smok-glass rounded-2xl p-5 border ${borderClass} smok-glow-hover transition-all flex flex-col justify-between gap-4 relative overflow-hidden group">
                         
                         <div class="space-y-3">
                             <!-- Cabecera de Tarjeta: CI y Rol -->
                             <div class="flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-2">
+                                <div class="flex flex-wrap items-center gap-1.5">
                                     ${tieneCiValido ? `
-                                    <span class="px-2.5 py-1 rounded-lg bg-black border border-emerald-500/60 text-emerald-400 font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm">
-                                        <i class="fas fa-id-card text-emerald-400"></i> ${safeCi}
+                                    <span class="px-2.5 py-1 rounded-lg bg-black border ${j.esLigaLBL ? 'border-yellow-600/60 text-yellow-400' : 'border-emerald-500/60 text-emerald-400'} font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm">
+                                        <i class="fas fa-id-card"></i> ${safeCi}
                                     </span>` : `
                                     <span class="px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500 text-amber-300 font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm animate-pulse" title="Sin CI en base de datos. Pedir documento físico">
                                         <i class="fas fa-triangle-exclamation text-amber-400"></i> Sin C.I.
                                     </span>`}
+                                    ${badgeLiga}
                                     <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-black">
                                         Cochabamba
                                     </span>
                                 </div>
-                                <span class="text-[10px] px-2 py-0.5 rounded bg-black/60 border border-emerald-950 text-gray-400 font-bold uppercase">
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-black/60 border border-emerald-950 text-gray-400 font-bold uppercase shrink-0">
                                     ${safePos}
                                 </span>
                             </div>
@@ -1028,8 +1296,9 @@
                                     ${safeNombre}
                                 </h4>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-xs font-mono font-black text-emerald-400">[${safeTag}]</span>
+                                    <span class="text-xs font-mono font-black ${j.esLigaLBL ? 'text-yellow-400' : 'text-emerald-400'}">[${safeTag}]</span>
                                     <span class="text-xs text-gray-300 truncate">${safeEquipo}</span>
+                                    ${j.divisionLiga ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-yellow-950/60 text-yellow-300 font-bold border border-yellow-800/40">${escapeHTML(j.divisionLiga)}</span>` : ''}
                                 </div>
                             </div>
 
@@ -1040,8 +1309,8 @@
                                     <span class="font-mono font-bold text-gray-200 truncate max-w-[170px]">${safeRiot}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-400 text-[11px]">Rango SoloQ:</span>
-                                    <span class="font-semibold text-amber-300 text-[11px]">${safeRango}</span>
+                                    <span class="text-gray-400 text-[11px]">${j.esLigaLBL ? 'Categoría:' : 'Rango SoloQ:'}</span>
+                                    <span class="font-semibold ${j.esLigaLBL ? 'text-yellow-400' : 'text-amber-300'} text-[11px]">${safeRango}</span>
                                 </div>
                             </div>
                         </div>
@@ -1076,6 +1345,13 @@
             document.getElementById('modal-jugador-ci').textContent = tieneCi ? j.ci : '⚠️ Sin C.I. (Pedir Carnet Físico)';
             document.getElementById('modal-jugador-ci').className = tieneCi ? 'text-sm font-black text-emerald-400 font-mono text-right' : 'text-sm font-black text-amber-400 font-mono text-right';
             document.getElementById('modal-jugador-riot').textContent = `${j.riotIdLas || 'No registrado'} (${j.rangoSoloQ})`;
+            
+            const torneoEl = document.getElementById('modal-jugador-torneo');
+            if (torneoEl) {
+                torneoEl.textContent = j.esLigaLBL ? `🏆 Liga LBL (${j.divisionLiga || 'Oficial'})` : '🎯 Scouting 3';
+                torneoEl.className = j.esLigaLBL ? 'text-xs font-black text-yellow-400 text-right' : 'text-xs font-bold text-cyan-400 text-right';
+            }
+
             document.getElementById('modal-jugador-equipo').textContent = `[${j.equipoTag}] ${j.equipoNombre}`;
             document.getElementById('modal-jugador-ciudad').textContent = 'Cochabamba';
             document.getElementById('modal-jugador-contador-visitas').textContent = `${totalVisitas} Visita${totalVisitas === 1 ? '' : 's'} Registrada${totalVisitas === 1 ? '' : 's'}`;

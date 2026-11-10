@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Informe Técnico de Ingeniería de Software - LBL eSports</title>
-    <!-- Inclusión de Mermaid.js para renderizado nativo de diagramas UML y C4 -->
+    <!-- Renderizado nativo vectorial SVG de diagramas UML y C4 con Mermaid.js -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script>
         mermaid.initialize({ 
@@ -18,20 +18,23 @@
             },
             sequence: {
                 useMaxWidth: true,
-                actorFontSize: 13,
-                messageFontSize: 12,
-                noteFontSize: 11
+                actorFontSize: 9.5,
+                messageFontSize: 8.8,
+                noteFontSize: 8.2,
+                messageMargin: 18,
+                boxMargin: 4,
+                mirrorActors: false
             }
         });
     </script>
     <style>
         @page {
-            size: A4;
-            margin: 18mm 16mm 20mm 16mm;
+            size: A4 portrait;
+            margin: 11mm 13mm 13mm 13mm;
             @bottom-right {
-                content: counter(page);
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-size: 9pt;
+                content: "Página " counter(page);
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 8pt;
                 color: #64748b;
             }
         }
@@ -44,80 +47,142 @@
 
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.55;
+            font-size: 8.6pt;
+            line-height: 1.42;
             color: #1e293b;
             background-color: #ffffff;
             margin: 0;
             padding: 0;
         }
 
-        .cover-page {
-            height: 100vh;
+        /* Estructura estricta de páginas A4 sin textos cortados */
+        .page-section {
+            page-break-after: always;
+            break-after: page;
+            clear: both;
+        }
+
+        .page-section:last-child {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        /* CARÁTULA UNIVERSITARIA FORMAL */
+        .university-cover {
+            height: 96vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            page-break-after: always;
-            padding: 30px 20px 20px 20px;
-            border-bottom: 3px solid #0284c7;
+            align-items: center;
+            text-align: center;
+            padding: 22px 25px;
+            border: 2px solid #0f172a;
+            outline: 1px solid #0284c7;
+            outline-offset: -6px;
+            background: #ffffff;
         }
 
-        .cover-header {
-            border-left: 6px solid #0284c7;
-            padding-left: 20px;
+        .univ-header {
+            margin-top: 10px;
         }
 
-        .cover-badge {
+        .univ-name {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .univ-faculty {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0369a1;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 4px 0 0 0;
+        }
+
+        .univ-career {
+            font-size: 9.8pt;
+            font-weight: 600;
+            color: #475569;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin: 3px 0 0 0;
+        }
+
+        .univ-divider {
+            width: 140px;
+            height: 3px;
+            background: linear-gradient(90deg, #0284c7, #0f172a);
+            margin: 18px auto;
+        }
+
+        .doc-type-badge {
             display: inline-block;
             background-color: #0f172a;
             color: #38bdf8;
             font-size: 8.5pt;
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            padding: 6px 14px;
+            padding: 5px 16px;
             border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .project-title {
+            font-size: 22pt;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.15;
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+        }
+
+        .project-subtitle {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: #334155;
+            max-width: 620px;
+            margin: 0 auto 8px auto;
+            line-height: 1.35;
+        }
+
+        .project-tagline {
+            font-size: 9pt;
+            font-style: italic;
+            color: #64748b;
             margin-bottom: 20px;
         }
 
-        .cover-title {
-            font-size: 26pt;
-            font-weight: 800;
-            color: #0f172a;
-            line-height: 1.15;
-            margin: 0 0 10px 0;
-        }
-
-        .cover-subtitle {
-            font-size: 13pt;
-            font-weight: 500;
-            color: #475569;
-            margin: 0 0 25px 0;
-        }
-
-        .cover-meta-grid {
+        .univ-meta-grid {
+            width: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px;
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 40px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 14px 18px;
+            text-align: left;
+            margin: 0 auto;
         }
 
         .meta-item {
-            font-size: 9.5pt;
+            font-size: 8.8pt;
         }
 
         .meta-label {
             font-weight: 700;
             color: #64748b;
             text-transform: uppercase;
-            font-size: 8pt;
+            font-size: 7.2pt;
             letter-spacing: 0.5px;
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .meta-value {
@@ -125,71 +190,98 @@
             color: #0f172a;
         }
 
-        .cover-footer {
-            margin-top: auto;
+        .univ-footer {
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 10px;
             font-size: 8.5pt;
-            color: #64748b;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 15px;
+            font-weight: 700;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
+        /* Tipografía y Secciones */
         h1, h2, h3, h4 {
             color: #0f172a;
             font-weight: 700;
             page-break-after: avoid;
+            break-after: avoid;
+            margin-top: 0;
         }
 
         h1 {
-            font-size: 16pt;
+            font-size: 12.5pt;
             border-bottom: 2px solid #0284c7;
-            padding-bottom: 6px;
-            margin-top: 30px;
-            margin-bottom: 14px;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
         }
 
         h2 {
-            font-size: 12.5pt;
-            border-left: 4px solid #0284c7;
-            padding-left: 10px;
-            margin-top: 22px;
-            margin-bottom: 10px;
+            font-size: 10pt;
+            border-left: 3.5px solid #0284c7;
+            padding-left: 7px;
+            margin-top: 10px;
+            margin-bottom: 5px;
             color: #0369a1;
         }
 
         h3 {
-            font-size: 11pt;
-            margin-top: 16px;
-            margin-bottom: 8px;
+            font-size: 8.8pt;
+            margin-top: 7px;
+            margin-bottom: 3px;
         }
 
         p {
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             text-align: justify;
         }
 
         ul, ol {
-            margin: 0 0 12px 0;
-            padding-left: 22px;
+            margin: 0 0 7px 0;
+            padding-left: 17px;
         }
 
         li {
-            margin-bottom: 5px;
+            margin-bottom: 2.5px;
         }
 
+        p, li {
+            orphans: 3;
+            widows: 3;
+        }
+
+        /* Tablas */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 14px 0;
-            font-size: 8.5pt;
+            margin: 5px 0;
+            font-size: 7.4pt;
+        }
+
+        tr {
             page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .rf-table th, .rf-table td {
+            padding: 2.2px 5px !important;
+            font-size: 6.9pt !important;
+            line-height: 1.18 !important;
+        }
+
+        .standards-table th, .standards-table td {
+            padding: 2.8px 5.5px !important;
+            font-size: 7.1pt !important;
+            line-height: 1.20 !important;
         }
 
         th, td {
             border: 1px solid #cbd5e1;
-            padding: 8px 10px;
+            padding: 4px 6px;
             text-align: left;
             vertical-align: top;
         }
@@ -198,22 +290,21 @@
             background-color: #0f172a;
             color: #f8fafc;
             font-weight: 600;
-            letter-spacing: 0.3px;
         }
 
         tr:nth-child(even) {
             background-color: #f8fafc;
         }
 
-        /* Contenedores modernos para diagramas Mermaid SVG */
+        /* Contenedores de Diagramas */
         .diagram-container {
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 16px 12px;
-            margin: 18px 0;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            border-radius: 5px;
+            padding: 4px 4px;
+            margin: 4px 0;
             page-break-inside: avoid;
+            break-inside: avoid;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -228,14 +319,15 @@
 
         .diagram-container svg {
             max-width: 100% !important;
+            max-height: 290px !important;
             height: auto !important;
         }
 
         .diagram-caption {
-            font-size: 8.5pt;
+            font-size: 7.2pt;
             font-weight: 700;
             color: #475569;
-            margin-top: 10px;
+            margin-top: 4px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -243,12 +335,13 @@
 
         .info-card {
             background-color: #f0f9ff;
-            border-left: 4px solid #0284c7;
-            padding: 12px 14px;
-            margin: 14px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 9pt;
+            border-left: 3.5px solid #0284c7;
+            padding: 6px 9px;
+            margin: 5px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 8pt;
             page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .info-card strong {
@@ -258,11 +351,12 @@
         .sponsor-card {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-left: 4px solid #0f172a;
-            padding: 10px 14px;
-            margin-bottom: 8px;
-            border-radius: 0 6px 6px 0;
+            border-left: 3.5px solid #0f172a;
+            padding: 6px 9px;
+            margin-bottom: 5px;
+            border-radius: 0 5px 5px 0;
             page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .sponsor-card.volt { border-left-color: #0284c7; }
@@ -273,409 +367,725 @@
         .sponsor-title {
             font-weight: 700;
             color: #0f172a;
-            font-size: 10pt;
-            margin-bottom: 2px;
+            font-size: 8.6pt;
+            margin-bottom: 1px;
         }
 
         .sponsor-desc {
-            font-size: 8.8pt;
+            font-size: 7.6pt;
             color: #475569;
             margin: 0;
         }
 
-        .page-break {
-            page-break-after: always;
+        .feature-block {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 3px solid #0284c7;
+            border-radius: 0 4px 4px 0;
+            padding: 6px 9px;
+            margin-bottom: 5px;
+            font-size: 7.9pt;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .feature-block-title {
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
-    <!-- PORTADA ACADÉMICA -->
-    <div class="cover-page">
-        <div>
-            <div class="cover-badge">INFORME TÉCNICO OFICIAL DE SISTEMA EN PRODUCCIÓN</div>
-            <div class="cover-header">
-                <h1 class="cover-title">LBL eSPORTS</h1>
-                <div class="cover-subtitle">Plataforma Integral y Ecosistema Digital de Gestión de Torneos para League of Legends en Bolivia</div>
+    <!-- ===================================================================
+         PÁGINA 1: CARÁTULA UNIVERSITARIA FORMAL
+         =================================================================== -->
+    <div class="page-section">
+        <div class="university-cover">
+            <div class="univ-header">
+                <div class="univ-name">UNIVERSIDAD MAYOR DE SAN SIMÓN</div>
+                <div class="univ-faculty">FACULTAD DE CIENCIAS Y TECNOLOGÍA</div>
+                <div class="univ-career">CARRERA DE INGENIERÍA INFORMÁTICA</div>
+                <div class="univ-divider"></div>
             </div>
 
-            <div class="cover-meta-grid">
+            <div>
+                <div class="doc-type-badge">INFORME TÉCNICO & AUDITORÍA DE SISTEMA EN PRODUCCIÓN</div>
+                <h1 class="project-title">LBL eSPORTS</h1>
+                <div class="project-subtitle">
+                    Plataforma Integral y Ecosistema Digital de Gestión de Torneos, Identidad Competitiva y Transmisión Broadcast
+                </div>
+                <div class="project-tagline">
+                    Liga Boliviana de League of Legends — Evaluación Forense de Ingeniería de Software
+                </div>
+            </div>
+
+            <div class="univ-meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Autor / Responsable</span>
+                    <span class="meta-value">JHOEL MILTON AGUILAR FLORES - CEO LBL</span>
+                </div>
                 <div class="meta-item">
                     <span class="meta-label">Asignatura</span>
                     <span class="meta-value">Ingeniería de Software</span>
                 </div>
                 <div class="meta-item">
-                    <span class="meta-label">Versión Desplegada</span>
-                    <span class="meta-value">lbl-v2026.10.28-234</span>
+                    <span class="meta-label">Docente / Tribunal</span>
+                    <span class="meta-value">Cátedra de Ingeniería de Software</span>
                 </div>
                 <div class="meta-item">
-                    <span class="meta-label">URL Activa en Producción</span>
+                    <span class="meta-label">Versión Activa en Producción</span>
+                    <span class="meta-value">lbl-v2026.11.06-270</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Rama Auditada</span>
+                    <span class="meta-value">main (origin/main)</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">URL Oficial Desplegada</span>
                     <span class="meta-value">https://lbl-esports.web.app</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Infraestructura Cloud</span>
-                    <span class="meta-value">Google Firebase & Cloudflare Edge</span>
+                    <span class="meta-value">Google Firebase & Cloudflare Workers Edge</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Estándar de Seguridad</span>
                     <span class="meta-value">OWASP ASVS v4.0.3 (Nivel 2)</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Fecha de Auditoría</span>
-                    <span class="meta-value">31 de Octubre de 2026</span>
+            </div>
+
+            <div class="univ-footer">
+                <span>Cochabamba — Bolivia</span>
+                <span>División de Ingeniería de Software LBL</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 2: RESUMEN EJECUTIVO Y REQUERIMIENTOS FUNCIONALES (INFINITIVOS)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>1. Resumen Ejecutivo y Alcance del Ecosistema</h1>
+        <p>
+            El presente informe técnico recoge la auditoría formal de arquitectura, software y seguridad de la plataforma <strong>LBL eSports</strong> (versión activa <code>lbl-v2026.11.06-270</code> en rama <code>main</code>). El software opera como un Tournament Management System (TMS) integral que unifica la identidad de jugadores con <strong>Riot Games API</strong>, pronósticos comunitarios <strong>Pick'em Copa Legion</strong>, verificación <strong>ID Check en LAN Centers aliados</strong> (La Paz y Cochabamba) y transmisión broadcast en tiempo real hacia <strong>OBS Studio</strong> a 1080p 60 FPS.
+        </p>
+
+        <h1>2. Catálogo Formal de Requerimientos de Software</h1>
+        
+        <h2>2.1. Requerimientos Funcionales (Acciones de Gestión en Verbos en Infinitivo)</h2>
+        <table class="rf-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Código</th>
+                    <th style="width: 32%;">Requerimiento (Acción en Infinitivo)</th>
+                    <th>Especificación y Alcance Técnico en Producción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>RF-01</strong></td>
+                    <td><strong>Autenticar usuarios de forma híbrida</strong></td>
+                    <td>Permitir el inicio de sesión y registro mediante credenciales clásicas (correo/contraseña) y federadas con Google OAuth 2.0.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-02</strong></td>
+                    <td><strong>Asignar roles y permisos de acceso (RBAC)</strong></td>
+                    <td>Asignar automáticamente el rol <code>ADMIN</code> a correos en <code>STAFF_DIRECTORY</code> y el rol <code>USER</code> a la comunidad competitiva.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-03</strong></td>
+                    <td><strong>Certificar cuentas con Riot Games API</strong></td>
+                    <td>Validar el Riot ID oficial (<code>Invocador#TAG</code>), extrayendo el <code>puuid</code>, nivel e icono oficial de invocador de League of Legends.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-04</strong></td>
+                    <td><strong>Bloquear transferencias de cuenta (Anti-Smurf)</strong></td>
+                    <td>Fijar un bloqueo estricto de 90 días (<code>conexionRiotBloqueadaHasta</code>) tras la vinculación de cuentas Riot o Twitch.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-05</strong></td>
+                    <td><strong>Vincular canales de streaming con Twitch Helix</strong></td>
+                    <td>Permitir la conexión con cuentas de Twitch mediante OAuth para extraer avatares y canales oficiales de streaming.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-06</strong></td>
+                    <td><strong>Pronosticar partidas en brackets (Pick'em)</strong></td>
+                    <td>Habilitar la selección interactiva de ganadores en bracket de doble eliminación desde Octavos de Final hasta la Gran Final.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-07</strong></td>
+                    <td><strong>Calcular puntajes y clasificar en Ranking Global</strong></td>
+                    <td>Computar automáticamente puntos ponderados contra resultados oficiales y generar la tabla clasificatoria en tiempo real.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-08</strong></td>
+                    <td><strong>Bloquear pronósticos por horario de partida</strong></td>
+                    <td>Inhabilitar la edición de pronósticos automáticamente al iniciarse las partidas oficiales del fixture de Copa Legion.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-09</strong></td>
+                    <td><strong>Inscribir equipos con nómina de 5 roles</strong></td>
+                    <td>Registrar 5 titulares (TOP, JG, MID, ADC, SUPP) y suplentes con Cédula de Identidad, Riot ID verificado y comprobante de pago.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-10</strong></td>
+                    <td><strong>Comprimir y optimizar escudos a WebP</strong></td>
+                    <td>Convertir imágenes en el cliente mediante Canvas HTML5 (256x256 px, calidad 0.88) antes de la transmisión a la nube.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-11</strong></td>
+                    <td><strong>Auto-gestionar nóminas con tokens efímeros</strong></td>
+                    <td>Permitir a capitanes corregir jugadores mediante URLs firmadas (<code>editToken</code>) con expiración temporal en milisegundos.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-12</strong></td>
+                    <td><strong>Auditar y sellar modificaciones de plantilla</strong></td>
+                    <td>Detectar y registrar en historial inmutable con fecha ISO renombres de invocador, altas, bajas a <code>ex_jugadores</code> y transferencias.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-13</strong></td>
+                    <td><strong>Fiscalizar escuadras desde el Staff Dashboard</strong></td>
+                    <td>Aprobar o rechazar solicitudes de equipos y buscar registros mediante motor difuso (<em>fuzzy search</em>) multi-criterio.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-14</strong></td>
+                    <td><strong>Verificar identidad presencial (ID Check)</strong></td>
+                    <td>Validar la pertenencia de jugadores a la liga mediante C.I. o Riot ID en terminales departamentales (La Paz y Cochabamba).</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-15</strong></td>
+                    <td><strong>Aplicar descuentos y registrar visitas en sala</strong></td>
+                    <td>Acreditar la presencia física en tiempo real y habilitar tarifas preferenciales acordadas con los LAN Centers sponsors.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-16</strong></td>
+                    <td><strong>Expirar turnos de caja en terminales presenciales</strong></td>
+                    <td>Invalidar automáticamente la sesión del cajero tras 14 horas continuas de actividad para forzar relevos de personal seguros.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-17</strong></td>
+                    <td><strong>Sincronizar torneos desde Challonge API v1</strong></td>
+                    <td>Mapear partidas y clasificaciones utilizando un pool multi-llave rotativo tolerante a cuotas agotadas (HTTP 429).</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-18</strong></td>
+                    <td><strong>Controlar marcadores en transmisiones broadcast</strong></td>
+                    <td>Actualizar en vivo puntos, partidas activas y pausas técnicas hacia OBS Studio en menos de 5 ms vía BroadcastChannel.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-19</strong></td>
+                    <td><strong>Rotar banners y spots publicitarios de sponsors</strong></td>
+                    <td>Proyectar marcas patrocinadoras en overlay 1080p cada 7 segundos con soporte para videos MP4 locales.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF-20</strong></td>
+                    <td><strong>Purgar automáticamente cachés por compilación</strong></td>
+                    <td>Comparar versión activa (<code>app-version.js</code>) y vaciar cachés obsoletas de <code>localStorage</code> y <code>CacheStorage</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 3: REQUERIMIENTOS NO FUNCIONALES Y MATRIZ DE TRAZABILIDAD
+         =================================================================== -->
+    <div class="page-section">
+        <h2>2.2. Requerimientos No Funcionales (RNF)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 12%;">Código</th>
+                    <th style="width: 28%;">Denominación</th>
+                    <th>Métrica de Rendimiento y Estándar de Cumplimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>RNF-01</strong></td>
+                    <td>Rendimiento Web y Carga Inmediata</td>
+                    <td>First Contentful Paint (FCP) &lt; 0.9s; 0 KB de sobrecoste de empaquetado sin Virtual DOM; Tailwind CSS JIT compilado a ~156 KB.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF-02</strong></td>
+                    <td>Alta Disponibilidad y Resiliencia</td>
+                    <td>Edge Proxy en Cloudflare Workers (cold start 0 ms), pool rotativo multi-llave para cuotas API y caché resiliente en <code>localStorage</code>.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF-03</strong></td>
+                    <td>Ciberseguridad OWASP ASVS v4.0.3</td>
+                    <td>Nivel 2: Sanitización universal contra Stored XSS con <code>escapeHTML()</code>, respuestas neutras anti-enumeración e inmunidad contra Prototype Pollution.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF-04</strong></td>
+                    <td>Consistencia Reactiva en Tiempo Real</td>
+                    <td>Latencia &lt; 200 ms en Cloud Firestore vía WebSockets/gRPC y &lt; 5 ms en comunicación local de streaming vía BroadcastChannel API.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF-05</strong></td>
+                    <td>Mitigación de Cuota NoSQL (1 MB)</td>
+                    <td>Ventana deslizante de 500 visitas en documentos LAN de Firestore, garantizando que jamás se alcance el límite estructural de 1 Megabyte.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF-06</strong></td>
+                    <td>Arquitectura PWA y Control de Versiones</td>
+                    <td>Cumplimiento W3C Web App Manifest v2; Service Worker con estrategia Cache First y módulo <code>app-version.js</code> de auto-purga.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h1>3. Matriz de Trazabilidad: Requerimientos vs. Módulos</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Módulo / Archivo Fuente</th>
+                    <th style="width: 35%;">Requerimientos Funcionales</th>
+                    <th>Requerimientos No Funcionales</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>`public/auth-core.js`</strong></td>
+                    <td>RF-01, RF-02, RF-03, RF-04, RF-05</td>
+                    <td>RNF-03 (Ciberseguridad OWASP), RNF-04 (Realtime)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/cuenta.html`</strong></td>
+                    <td>RF-01, RF-02, RF-03, RF-04, RF-05</td>
+                    <td>RNF-01 (Rendimiento Web y Carga Inmediata)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/pickem.html`</strong></td>
+                    <td>RF-06, RF-07, RF-08</td>
+                    <td>RNF-04 (Consistencia en Tiempo Real), RNF-01</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/index.html`</strong></td>
+                    <td>RF-19, RF-20</td>
+                    <td>RNF-01 (FCP &lt; 0.9s), RNF-06 (Arquitectura PWA)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/torneos.html`</strong></td>
+                    <td>RF-17</td>
+                    <td>RNF-02 (Alta Disponibilidad y Resiliencia)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/registro.html`</strong></td>
+                    <td>RF-09, RF-10</td>
+                    <td>RNF-01 (WebP), RNF-03 (Sanitización XSS)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/editar.html`</strong></td>
+                    <td>RF-11, RF-12</td>
+                    <td>RNF-03 (Control de Seguridad ABAC)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/equipos.html`</strong></td>
+                    <td>RF-09</td>
+                    <td>RNF-01 (Carga rápida Mobile-First)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/scouting.html`</strong></td>
+                    <td>RF-13</td>
+                    <td>RNF-02 (Backend Serverless API)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/aqm.html` / `smok.html`</strong></td>
+                    <td>RF-14, RF-15, RF-16</td>
+                    <td>RNF-03 (Sanitización), RNF-05 (Ventana 1 MB)</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/dashboard.html`</strong></td>
+                    <td>RF-11, RF-12, RF-13</td>
+                    <td>RNF-03 (Anti Shoulder Surfing), RNF-04</td>
+                </tr>
+                <tr>
+                    <td><strong>`public/staff-scouting.html`</strong></td>
+                    <td>RF-13</td>
+                    <td>RNF-02 (Google Apps Script API)</td>
+                </tr>
+                <tr>
+                    <td><strong>`overlay-schedule.html` / `control`</strong></td>
+                    <td>RF-18, RF-19</td>
+                    <td>RNF-04 (BroadcastChannel IPC &lt; 5 ms)</td>
+                </tr>
+                <tr>
+                    <td><strong>Motores Core (`challonge`, `audit`, etc.)</strong></td>
+                    <td>RF-10, RF-12, RF-17, RF-20</td>
+                    <td>RNF-01, RNF-02, RNF-06 (Control de Versiones)</td>
+                </tr>
+                <tr>
+                    <td><strong>`firestore.rules` & `worker-cors-proxy`</strong></td>
+                    <td>RF-11, RF-17</td>
+                    <td>RNF-02 (Edge Computing), RNF-03 (Reglas ABAC)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 4: CATÁLOGO DETALLADO DE FUNCIONALIDADES POR ÁREAS
+         =================================================================== -->
+    <div class="page-section">
+        <h1>4. Catálogo Detallado de Funcionalidades por Áreas del Ecosistema</h1>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 1: Identidad, Autenticación y Conexiones Oficiales</div>
+                    <p><strong>Iniciar y Cerrar Sesión:</strong> Modal universal con correo/contraseña o cuenta Google OAuth. <strong>Recuperar Contraseña:</strong> Envío automático de correo seguro vía Firebase Auth. <strong>Asignación Automática de Roles:</strong> Rol <code>ADMIN</code> al staff y <code>USER</code> a la comunidad. <strong>Certificación con Riot Games API:</strong> Extracción verificada del Riot ID (<code>Invocador#TAG</code>), PUUID e icono oficial. <strong>Bloqueo Anti-Smurf (90 Días):</strong> Sellado temporal en Firestore del Riot ID. <strong>Vinculación con Twitch:</strong> Flujo OAuth Helix para asociar canales y avatares de streaming.</p>
+                </div>
+
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 2: Gamificación y Pronósticos Pick'em (`pickem.html`)</div>
+                    <p><strong>Pronósticos de Bracket Completo:</strong> Selección táctil de ganadores en bracket de doble eliminación para la Copa Legion x SC3. <strong>Puntuación en Tiempo Real:</strong> Asignación ponderada de puntos por ronda evaluada contra resultados oficiales en <code>pickem_config/oficial</code>. <strong>Bloqueo Automático por Fixture:</strong> Congelamiento de llaves al iniciarse las partidas. <strong>Ranking Comunitario en Vivo:</strong> Tabla clasificatoria global con avatares sincronizados de Riot y Google.</p>
+                </div>
+
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 3: Inscripción, Gestión de Nóminas y Galería</div>
+                    <p><strong>Inscripción Reglamentaria:</strong> Captura estricta de C.I., Riot ID y comprobante para 5 titulares y suplentes. <strong>Conversión WebP en el Cliente:</strong> Canvas oculto que comprime escudos a 256x256 px a calidad 0.88. <strong>Edición con Llaves ABAC:</strong> Desbloqueo temporal con token firmado con caducidad en milisegundos. <strong>Auditoría Forense de Plantilla:</strong> Registro automático de renombres, altas, bajas y transferencias con fecha ISO. <strong>Galería Oficial:</strong> Exhibición pública en Tier 1, Tier 2 e Históricos.</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 4: Fiscalización y Staff Master Dashboard (`dashboard.html`)</div>
+                    <p><strong>Consola de Control Arbitral:</strong> Monitoreo continuo con <code>onSnapshot</code> de inscripciones pendientes, aprobadas y rechazadas. <strong>Búsqueda Difusa Multi-Criterio:</strong> Filtrado reactivo en tiempo real por número de carné, Riot ID, club o rol de juego. <strong>Gestión de Llaves de Edición:</strong> Generador de tokens efímeros con plazo configurable y copia automática de enlace. <strong>Centro de Notificaciones:</strong> Registro persistente por UID en Firestore de eventos leídos por directivo. <strong>Administración de Credenciales LAN:</strong> Creación de cuentas con contraseñas enmascaradas (<code>••••••••</code>). <strong>Evaluación de Scouting:</strong> Ficha técnica arbitral y notas privadas sincronizadas con Google Sheets.</p>
+                </div>
+
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 5: ID Check y Beneficios en LAN Centers Sponsors</div>
+                    <p><strong>Terminal Departamental Segura:</strong> Acceso para operadores en La Paz (<em>Aquí Me Quedo - AQM</em>) y Cochabamba (<em>SMOK Game Zone</em>). <strong>Caducidad de Turno (14h):</strong> Invalidación obligatoria tras 14 horas continuas para forzar el relevo de cajeros. <strong>ID Check de Jugadores LBL:</strong> Búsqueda instantánea por C.I. o Riot ID con ficha del equipo. <strong>Acreditación y Descuentos:</strong> Registro de visita en Firestore y aplicación de tarifas preferenciales en sala. <strong>Control de Cuota NoSQL:</strong> Ventana deslizante de 500 visitas que previene el límite de 1 Megabyte.</p>
+                </div>
+
+                <div class="feature-block">
+                    <div class="feature-block-title">Área 6: Torneos, Fixtures y Transmisión Broadcast</div>
+                    <p><strong>Consulta de Brackets y Fixtures:</strong> Sincronización en vivo con Challonge API y catálogo de logos locales SC3 en alta definición. <strong>Tolerancia a Cuotas API:</strong> Conmutación automática entre llaves autorizadas ante errores HTTP 429. <strong>Overlay OBS 1080p Nativo:</strong> Cabecera estilo Worlds, marcadores y cronograma para streaming oficial. <strong>Rotación Publicitaria Automatizada:</strong> Exposición de sponsors cada 7 segundos con banners HD y spots MP4. <strong>Consola Táctil de Transmisión:</strong> Control de marcadores y pausas técnicas en &lt;5 ms vía BroadcastChannel.</p>
                 </div>
             </div>
         </div>
-
-        <div class="cover-footer">
-            <span>Liga Boliviana de League of Legends — División de Ingeniería de Software</span>
-            <span>Documento Técnico Certificado</span>
-        </div>
     </div>
 
-    <!-- SECCIÓN 1: PLANTEAMIENTO GENERAL -->
-    <h1>1. Planteamiento General del Proyecto en Producción</h1>
+    <!-- ===================================================================
+         PÁGINA 5: ARQUITECTURA GLOBAL C4 EN PRODUCCIÓN
+         =================================================================== -->
+    <div class="page-section">
+        <h1>5. Arquitectura Global del Ecosistema en Producción</h1>
+        <p>
+            El sistema desacopla estrictamente la interfaz de usuario de los servicios de datos y cálculo, permitiendo que las consultas de alta concurrencia (como el streaming o la consulta de torneos) no degraden las transacciones de administración ni la verificación presencial en LAN Centers.
+        </p>
 
-    <h2>1.1. Contexto del Dominio y Problemática Resuelta</h2>
-    <p>
-        En la escena de los deportes electrónicos (<em>eSports</em>) en Bolivia, la gestión de ligas competitivas oficiales de <em>League of Legends</em> ha enfrentado tradicionalmente una grave desarticulación tecnológica. El proyecto <strong>LBL eSports</strong> fue concebido, desarrollado e implementado en producción para erradicar cuatro problemáticas operativas críticas:
-    </p>
-    <ul>
-        <li><strong>Vulnerabilidad e Inconsistencia en las Nóminas (Rosters):</strong> La gestión de inscripciones mediante canales informales propiciaba la suplantación de identidades (<em>smurfing</em>), transferencias clandestinas de jugadores durante fases de eliminación y la ausencia de trazabilidad fidedigna de sanciones.</li>
-        <li><strong>Latencia Operativa en Transmisiones en Vivo (Broadcast):</strong> La producción audiovisual en streaming (Twitch, YouTube, Kick) dependía de la edición manual de marcadores y banners publicitarios estáticos entre partidas, generando tiempos muertos de hasta 15 minutos e inconsistencias visuales en directo.</li>
-        <li><strong>Optimización Web para Dispositivos Móviles:</strong> Gran parte de la comunidad competitiva consume contenidos y gestiona sus equipos desde teléfonos inteligentes y portátiles escolares. El sistema requería una arquitectura web ultra-ligera, con compilación atómica de estilos y compresión adaptativa de imágenes para garantizar carga inmediata y 60 FPS estables.</li>
-        <li><strong>Articulación de Beneficios Departamentales con LAN Centers Sponsors:</strong> La liga cuenta con alianzas comerciales y patrocinio de los principales LAN Centers del país (La Paz con <em>Aquí Me Quedo - AQM</em> y Cochabamba con <em>SMOK Game Zone</em>). Existía la necesidad de vincular a los jugadores oficiales con estos centros aliados para que puedan acceder a <strong>descuentos y promociones exclusivas</strong> en horas de juego, consumo y hardware. Esto requería un módulo externo de verificación de identidad (<strong>ID Check</strong>) conectado a la base de datos central de la LBL.</li>
-    </ul>
-
-    <h2>1.2. Visión del Sistema y Alcance en Producción</h2>
-    <p>
-        <strong>LBL eSports</strong> es un ecosistema digital desacoplado de nivel empresarial (<em>Enterprise-grade</em>) desplegado globalmente sobre la red de distribución de contenidos (CDN) de Google Firebase Hosting (<code>https://lbl-esports.web.app</code>). El sistema en producción integra 5 componentes activos:
-    </p>
-    <div class="info-card">
-        <strong>Componentes Activos en Producción:</strong>
-        <ol style="margin-top:6px; margin-bottom:0;">
-            <li><strong>Portal Institucional de Alto Rendimiento:</strong> Landing page oficial con video nativo de fondo, vitrina de divisiones competitivas (Tier 1 / Tier 2) y módulo dinámico de patrocinadores.</li>
-            <li><strong>Tournament Management System (TMS):</strong> Panel de control administrativo para el cuerpo arbitral con auditoría reactiva de nóminas y control de estados.</li>
-            <li><strong>Motor de Sincronización de Brackets:</strong> Orquestador tolerante a cuotas de red que mapea llaves y resultados de Challonge API v1.</li>
-            <li><strong>Módulo Externo de ID Check y Beneficios en LAN Centers Aliados:</strong> Terminales departamentales seguras para validar a los jugadores oficiales de la liga en La Paz y Cochabamba y otorgarles promociones y descuentos en sala.</li>
-            <li><strong>Suite Broadcast de Overlays (1080p a 60 FPS):</strong> Gráficos dinámicos integrados en OBS Studio sincronizados por BroadcastChannel API y Firestore.</li>
-        </ol>
-    </div>
-
-    <!-- SECCIÓN 2: SPONSORS Y PARTNERS -->
-    <h1>2. Ecosistema de Sponsors, Marcas Aliadas y Activaciones Comerciales</h1>
-    <p>
-        Los patrocinadores oficiales constituyen un pilar fundamental en la sostenibilidad y crecimiento de la Liga Boliviana de League of Legends. En la plataforma en producción, las marcas cuentan con presencia transversal e interactiva tanto en la web pública como en las transmisiones oficiales de streaming y en los recintos físicos.
-    </p>
-
-    <h2>2.1. Catálogo de Patrocinadores Oficiales en Producción</h2>
-    <div class="sponsor-card volt">
-        <div class="sponsor-title">⚡ VOLT — Bebida Energética Oficial</div>
-        <p class="sponsor-desc">Patrocinador principal de energía de la LBL. Es el activador oficial del objetivo mayor de la Grieta del Invocador: <em>"El Barón Nashor es traído a ustedes gracias a VOLT — Destapa la energía que define campeones"</em>.</p>
-    </div>
-    <div class="sponsor-card legion">
-        <div class="sponsor-title">🎮 LEGION STORE — Hardware & Gaming Gear</div>
-        <p class="sponsor-desc">Patrocinador oficial de equipamiento informático, periféricos y hardware de alto rendimiento. Es el presentador de las jugadas maestras en las transmisiones: <em>"Pentakill con el poder de Legion Store"</em> y <em>"Exterminio total con el mejor equipamiento"</em>.</p>
-    </div>
-    <div class="sponsor-card iconic">
-        <div class="sponsor-title">👕 ICONIC — Moda Urbana & Streetwear</div>
-        <p class="sponsor-desc">Patrocinador oficial de indumentaria deportiva y moda urbana de la liga bajo el concepto: <em>"Para ser campeón tienes que ser ICONIC"</em>.</p>
-    </div>
-    <div class="sponsor-card lan">
-        <div class="sponsor-title">📍 AQUÍ ME QUEDO (AQM) — LAN Center Sponsor (La Paz)</div>
-        <p class="sponsor-desc">Patrocinador oficial territorial y sede presencial en La Paz. Punto de encuentro de la comunidad y centro de beneficios con descuentos en juego para jugadores oficiales de la LBL.</p>
-    </div>
-    <div class="sponsor-card lan">
-        <div class="sponsor-title">📍 SMOK GAME ZONE — LAN Center Sponsor (Cochabamba)</div>
-        <p class="sponsor-desc">Patrocinador oficial territorial y arena gamer en Cochabamba, integrado al ecosistema de promociones y descuentos en sala para la escena valluna.</p>
-    </div>
-
-    <h2>2.2. Módulo Interactivo de Sponsors en la Landing Page (<code>public/index.html</code>)</h2>
-    <p>
-        En la sección <code>NUESTROS SPONSORS / PARTNERS & ACTIVACIONES</code> de la página principal:
-    </p>
-    <ul>
-        <li><strong>Slideshow Automatizado con Barra de Progreso:</strong> Un carrusel dinámico rota automáticamente cada 6 segundos (<code>SPONSOR_DURATION = 6000</code>), mostrando el logotipo del sponsor, banner en alta definición, lema publicitario (<em>punchline</em>), descripción de la marca y botón directo a sus canales oficiales (Instagram, TikTok).</li>
-        <li><strong>Sistema Inteligente de Congelamiento por Hover (<code>pauseSponsor()</code> / <code>resumeSponsor()</code>):</strong> Cuando el usuario posa el cursor o el dedo sobre un sponsor para leer su contenido, el sistema calcula el tiempo exacto transcurrido (<code>slideRemainingTime</code>), congela la animación CSS de la barra de progreso en su porcentaje exacto y reanuda con naturalidad sin reiniciar la diapositiva.</li>
-        <li><strong>Degradados Temáticos Reactivos:</strong> Cada patrocinador posee su propia paleta de gradientes (azul/cian para Volt, rojo intenso para Legion Store, blanco monocromático para Iconic y rosa/rubí para Aquí Me Quedo).</li>
-    </ul>
-
-    <h2>2.3. Rotación de Sponsors en Transmisiones en Vivo (OBS Studio - 1080p)</h2>
-    <p>
-        En el overlay de transmisión (<code>overlay-schedule.html</code>), la columna derecha de la pantalla de transmisión está dedicada a la exposición comercial de las marcas:
-    </p>
-    <ul>
-        <li>Rotación periódica automatizada (cada 7 segundos) con logotipo en alta definición (<code>h-[160px] w-[340px]</code>), titular publicitario y mensaje promocional.</li>
-        <li>Soporte para reproducción de <strong>spots de video MP4</strong> y banners gráficos subidos por el operador desde la consola de control (<code>overlay-control.html</code>).</li>
-    </ul>
-
-    <!-- SECCIÓN 3: LAN CENTERS ID CHECK -->
-    <div class="page-break"></div>
-    <h1>3. Módulos LAN Centers: Sistema Externo de ID Check y Beneficios para Jugadores</h1>
-
-    <h2>3.1. Objetivo y Mecánica de Negocio</h2>
-    <p>
-        Los módulos <code>public/aqm.html</code> (La Paz) y <code>public/smok.html</code> (Cochabamba) son <strong>sistemas de verificación de identidad externa integrados a la base de datos de la LBL</strong> concebidos para materializar la alianza comercial con los LAN Centers sponsors.
-    </p>
-    <p>
-        Para premiar y fidelizar a los jugadores inscritos en la liga, la directiva de LBL acordó con los LAN Centers aliados tarifas preferenciales, descuentos en horas de máquina, promociones en consumo y acceso a bootcamps. Para que el LAN Center pueda otorgar estos beneficios de forma rigurosa y sin fraudes, la plataforma LBL les proporciona una terminal web conectada en tiempo real:
-    </p>
-    <div class="info-card">
-        <strong>Flujo de Verificación (ID Check):</strong>
-        <ol style="margin-top:6px; margin-bottom:0;">
-            <li>El jugador acude físicamente al LAN Center (<em>Aquí Me Quedo</em> en La Paz o <em>SMOK</em> en Cochabamba) y solicita su beneficio de jugador LBL.</li>
-            <li>El cajero solicita su Cédula de Identidad física y su Riot ID.</li>
-            <li>El cajero ingresa los datos en el buscador del módulo de su departamento (<code>/aqm</code> o <code>/smok</code>), el cual consulta el padrón oficial de jugadores de la LBL en Firestore.</li>
-            <li><strong>ID Check Instantáneo:</strong> La interfaz despliega la ficha oficial: Nombre completo, Cédula de Identidad, Riot ID verificado (<code>Invocador#TAG</code>), Rol competitivo y el Equipo de la LBL al que pertenece.</li>
-            <li><strong>Aplicación del Beneficio y Registro de Visita:</strong> Una vez confirmada la legitimidad del jugador, el cajero pulsa <em>"Acreditar Asistencia / Registrar Visita"</em>. El LAN Center aplica de inmediato el descuento o promoción en su sistema de caja local, mientras la plataforma LBL registra la visita en Firestore para auditoría comercial y métricas de afluencia.</li>
-        </ol>
-    </div>
-
-    <h2>3.2. Arquitectura Técnica y Hardening de los Módulos LAN</h2>
-    <ul>
-        <li><strong>Autenticación de Operadores de Caja:</strong> Acceso protegido por credenciales de cajero verificadas contra el documento administrativo en Firestore.</li>
-        <li><strong>Control de Caducidad de Turno (Shift Expiration - 14 Horas):</strong> Para evitar que terminales públicas queden con la sesión abierta al cambiar de personal, el token en <code>localStorage</code> caduca forzosamente tras 14 horas continuas (<code>MAX_SESSION_HOURS = 14</code>), obligando al nuevo cajero a autenticarse.</li>
-        <li><strong>Mitigación de Límite de Tamaño en Firestore (1 MB Limit):</strong> Para evitar que el acumular visitas colapse el límite de 1 Megabyte por documento de Firestore, el sistema utiliza una ventana deslizante que almacena en la nube únicamente las 500 visitas más recientes en un arreglo, mientras incrementa un contador entero atómico (<code>totalHistorico</code>).</li>
-        <li><strong>Protección contra Inyecciones (OWASP ASVS v4.0.3):</strong> Los campos de búsqueda y datos del jugador se sanitizan mediante <code>escapeHTML()</code>, y el acceso al diccionario de credenciales implementa <code>Object.prototype.hasOwnProperty.call()</code> para evitar ataques de <em>Prototype Pollution</em>.</li>
-    </ul>
-
-    <!-- SECCIÓN 4: ARQUITECTURA Y MÓDULOS CON MERMAID NATIVO -->
-    <div class="page-break"></div>
-    <h1>4. Inventario Exhaustivo y Funcionamiento de los Módulos Desplegados</h1>
-
-    <h2>4.1. Diagrama de Arquitectura Modular y Flujo de Datos (C4 Diagram)</h2>
-    <p>
-        El siguiente diagrama de arquitectura modela la interacción entre las aplicaciones cliente, los subsistemas externos en LAN Centers, los motores core y los servicios cloud:
-    </p>
-
-    <div class="diagram-container">
-        <div class="mermaid">
+        <div class="diagram-container">
+            <div class="mermaid">
 flowchart TD
-    subgraph Publicos["Módulos Públicos y de Usuario"]
-        M1["Landing Page Oficial<br/><b>index.html</b><br/>(Hero, Circuitos, Sponsors)"]
-        M2["Torneos y Brackets<br/><b>torneos.html</b><br/>(Fixtures, Standings)"]
-        M3["Inscripción de Equipos<br/><b>registro.html</b><br/>(Roster 5 Roles + Suplentes)"]
-        M4["Edición con Token ABAC<br/><b>editar.html</b><br/>(Gestión Capitán)"]
-        M5["Rosters Oficiales<br/><b>equipos.html</b><br/>(Equipos Tier 1 / Tier 2)"]
-        M6["Portal Scouting<br/><b>scouting.html</b><br/>(Bolsa Jugadores Libres)"]
-    end
-
-    subgraph SponsorsModule["Ecosistema de Sponsors & Partners"]
-        SP1["Carrusel Dinámico Web<br/>(Volt, Legion, Iconic, LANs)"]
-        SP2["Rotación Broadcast OBS<br/>(Banners 1080p cada 7s)"]
-    end
-
-    subgraph LanCenters["Sistema Externo LAN Centers Sponsors"]
-        M9["Terminal La Paz<br/><b>aqm.html</b> (Aquí Me Quedo)<br/>[ID Check + Descuentos LBL]"]
-        M10["Terminal Cochabamba<br/><b>smok.html</b> (SMOK Game Zone)<br/>[ID Check + Descuentos LBL]"]
-    end
-
-    subgraph Staff["Módulos Staff y Administración"]
-        M7["Staff Master Dashboard<br/><b>dashboard.html</b><br/>(Fiscalización, Tokens, Cuentas)"]
-        M8["Evaluación Scouting<br/><b>staff-scouting.html</b><br/>(Dictámenes Técnicos)"]
-    end
-
-    subgraph Broadcast["Suite Broadcast y Streaming (1080p)"]
-        M11["Consola Operador Stream<br/><b>overlay-control.html</b>"]
-        M12["Escena OBS Studio 1080p<br/><b>overlay-schedule.html</b>"]
+    subgraph Clientes["Capa de Clientes & Presentación"]
+        PWA["PWA Usuario / Jugador<br/><b>index.html / torneos.html</b>"]
+        PICKEM["Gamificación Pick'em<br/><b>pickem.html</b>"]
+        PERFIL["Perfil & Conexiones<br/><b>cuenta.html</b>"]
+        STAFF["Staff Master DB<br/><b>dashboard.html</b>"]
+        LAN["Terminales LAN Centers<br/><b>aqm.html / smok.html</b>"]
+        OBS["OBS Studio 1080p<br/><b>overlay-schedule.html</b>"]
     end
 
     subgraph Core["Motores Transversales (Core)"]
-        C1["Motor Challonge<br/><b>challonge-core.js</b>"]
-        C2["Auditoría Nóminas<br/><b>auditoria-core.js</b>"]
-        C3["Optimizador WebP<br/><b>image-optimizer.js</b>"]
-        C4["Purga Caché & Build<br/><b>app-version.js</b>"]
-        C5["Ciclo de Vida PWA<br/><b>pwa-manager.js + sw.js</b>"]
+        AUTH["Núcleo Auth & Conexiones<br/><b>auth-core.js</b>"]
+        CHALL["Motor Challonge & Multi-Key<br/><b>challonge-core.js</b>"]
+        AUDIT["Auditoría Nóminas<br/><b>auditoria-core.js</b>"]
+        WEBP["Optimizador WebP Canvas<br/><b>image-optimizer.js</b>"]
+        VERS["Purga Caché & Build<br/><b>app-version.js</b>"]
+        SC3L["Catálogo Logos SC3<br/><b>sc3-logos.js</b>"]
     end
 
-    subgraph Cloud["Infraestructura y Servicios en Producción"]
-        CFW["Cloudflare Worker<br/>(CORS Edge Proxy)"]
+    subgraph Cloud["Infraestructura Cloud & Edge"]
+        FHOST["Firebase Hosting CDN<br/>(HTTP/2, Clean URLs)"]
+        FAUTH["Firebase Authentication<br/>(JWT, RBAC Admin/User)"]
         FS[("Google Cloud Firestore<br/>NoSQL Database")]
-        FA["Firebase Auth<br/>(RBAC Staff JWT)"]
+        CFW["Cloudflare Worker<br/>(CORS Edge Proxy)"]
         GAS["Google Apps Script<br/>(Serverless API)"]
     end
 
-    %% Conexiones
-    M1 --> SP1
-    M1 --> C4
-    M1 --> C5
-    M2 --> C1
-    M3 --> C3
-    M3 --> FS
-    M4 --> C2
-    M4 --> FS
-    M5 --> FS
-    M6 --> GAS
+    subgraph APIs["APIs de Plataformas Externas"]
+        RIOT["Riot Games API<br/>(Riot ID & Icons)"]
+        TWITCH["Twitch Helix API<br/>(Avatars & Streams)"]
+        CHALLONGE["Challonge REST API v1<br/>(Brackets & Matches)"]
+        GSHEET[("Google Sheets / Drive<br/>Scouting DB")]
+    end
 
-    M7 --> FA
-    M7 --> FS
-    M7 --> C2
-    M8 --> GAS
+    PERFIL --> AUTH
+    PICKEM --> AUTH
+    PICKEM --> SC3L
+    PWA --> CHALL
+    PWA --> VERS
+    STAFF --> AUTH
+    STAFF --> AUDIT
+    LAN --> FS
 
-    M9 --> FS
-    M10 --> FS
-
-    M11 --> FS
-    M11 <-->|BroadcastChannel API| M12
-    M12 --> SP2
-    M12 --> FS
-
-    C1 <-->|Proxy Seguro| CFW
+    AUTH --> FAUTH
+    AUTH --> FS
+    AUTH --> RIOT
+    AUTH --> TWITCH
+    CHALL --> CFW
+    CFW --> CHALLONGE
+    STAFF --> FS
+    OBS --> FS
+    PICKEM --> FS
+    PWA --> GAS
+    GAS --> GSHEET
+            </div>
+            <div class="diagram-caption">Figura 1: Arquitectura Modular C4 y Flujo de Interacción en Producción</div>
         </div>
-        <div class="diagram-caption">Figura 1: Arquitectura Modular C4 y Flujo de Datos en Producción</div>
     </div>
 
-    <h2>4.2. Funcionamiento Detallado de los Módulos</h2>
+    <!-- ===================================================================
+         PÁGINA 6: DESGLOSE DE MÓDULOS (PARTE 1: IDENTIDAD Y GAMIFICACIÓN)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>6. Desglose Exhaustivo de Módulos (Parte 1: Identidad y Gamificación)</h1>
 
-    <h3>A. Módulos Públicos y de Comunidad</h3>
-    <ul>
-        <li><strong>Portal Institucional y Landing Principal (<code>public/index.html</code>):</strong> Puerta de enlace de la liga estructurada en secciones continuas: Hero con video nativo de fondo acelerado por hardware y accesos a torneos anteriores de scouting, Sección de Divisiones Competitivas (Tier 1 Primera División y Tier 2 Circuito Ascenso), Sección de Sponsors Oficiales con carrusel temporizado pausable y Acordeón del Staff Directivo.</li>
-        <li><strong>Portal de Torneos y Brackets (<code>public/torneos.html</code>):</strong> Sincroniza fases de grupos y cuadros de playoffs consumiendo <code>challonge-core.js</code>. Mapea en tiempo real el catálogo de escudos HD en formato WebP institucional y proporciona filtrado dinámico por categorías.</li>
-        <li><strong>Formulario Oficial de Inscripción (<code>public/registro.html</code>):</strong> Captura las postulaciones para los 5 roles reglamentarios (TOP, JG, MID, ADC, SUPP) y suplentes. Comprime el escudo a WebP mediante <code>image-optimizer.js</code> y envía el registro a Firestore con estado forzado <code>Pendiente</code>.</li>
-        <li><strong>Módulo de Auto-Gestión de Nóminas (<code>public/editar.html</code>):</strong> Permite al capitán actualizar su plantilla utilizando un enlace seguro firmado con token temporal (<code>editToken</code>). Valida la expiración contra Firestore y ejecuta <code>auditoria-core.js</code> para sellar las modificaciones en el historial del club.</li>
-        <li><strong>Galería Oficial de Rosters (<code>public/equipos.html</code>):</strong> Expone públicamente los equipos en estado <code>Aceptado</code>, organizados en pestañas por circuito competitivo (Tier 1, Tier 2 e Históricos) con fondo monocromático oficial de LBL.</li>
-        <li><strong>Portal Público de Scouting (<code>public/scouting.html</code>):</strong> Bolsa de talentos que consulta la API de Google Apps Script, permitiendo filtrar jugadores libres por carril de juego, elo en SoloQ, disponibilidad y ciudad.</li>
-    </ul>
+        <h2>6.1. Núcleo Transversal de Autenticación (`public/auth-core.js`)</h2>
+        <p>
+            Módulo maestro de identidad en producción. Provee un modal flotante no invasivo accesible desde el navbar de cualquier sección:
+        </p>
+        <ul>
+            <li><strong>Autenticación Híbrida:</strong> Permite inicio de sesión con correo y contraseña, registro clásico y federado con <strong>Google OAuth 2.0</strong> mediante <code>signInWithPopup</code> y <code>signInWithRedirect</code>.</li>
+            <li><strong>Asignación Automática de Roles:</strong> Cruza el email autenticado contra el diccionario inmutable <code>STAFF_DIRECTORY</code> (<code>staff-config.js</code>). Si existe coincidencia, asigna de inmediato el rol <span class="badge badge-admin">ADMIN</span>; en caso contrario, crea el perfil con rol <span class="badge badge-user">USER</span> en <code>usuarios_lbl/{userId}</code>.</li>
+            <li><strong>Integración con Riot Games API:</strong> El usuario puede certificar su Riot ID ingresando su <code>GameName#TagLine</code>. El script consulta la API de Riot Games con la clave de producción <code>RIOT_PROD_API_KEY</code>, extrayendo el <code>puuid</code> y la URL oficial del icono de invocador.</li>
+            <li><strong>Blindaje Anti-Smurf (Bloqueo de 90 Días):</strong> Al registrar o cambiar una cuenta de Riot Games o Twitch, se sella el timestamp <code>conexionRiotBloqueadaHasta</code> (90 días). Durante este periodo, la interfaz y las reglas bloquean cualquier cambio de cuenta para evitar suplantaciones entre torneos.</li>
+        </ul>
 
-    <h3>B. Módulos de Staff, Administración y Broadcast</h3>
-    <ul>
-        <li><strong>Staff Master Dashboard (<code>public/dashboard.html</code>):</strong> Consola de fiscalización protegida por Firebase Auth. Dispone de un motor de búsqueda difusa (<em>fuzzy search</em>), gestión de estados de inscripción, generador de tokens de edición con caducidad en milisegundos, campana de notificaciones en la nube por UID y administración de credenciales de operadores LAN con enmascaramiento de contraseñas.</li>
-        <li><strong>Panel de Evaluación de Scouting (<code>public/staff-scouting.html</code>):</strong> Interfaz técnica donde los visores arbitrales dictaminan el estado de los aspirantes y redactan notas privadas de rendimiento sincronizadas con Google Sheets.</li>
-        <li><strong>Consola de Control de Transmisión (<code>public/overlay-control.html</code>) y Escena OBS 1080p (<code>public/overlay-schedule.html</code>):</strong> Suite audiovisual de streaming. El operador ajusta marcadores, estados de partida, pausas técnicas y rotación publicitaria de sponsors desde la consola web, propagando los cambios en menos de 5 ms mediante <code>BroadcastChannel API</code> hacia OBS Studio en resolución nativa 1920x1080.</li>
-    </ul>
+        <h2>6.2. Gestión de Perfil y Conexiones Oficiales (`public/cuenta.html`)</h2>
+        <p>
+            Interfaz dedicada donde los miembros de la comunidad y jugadores oficiales administran su ficha competitiva:
+        </p>
+        <ul>
+            <li>Despliega el alias del jugador, rol asignado, foto de perfil normalizada y estado de vinculación con Riot Games y Twitch.</li>
+            <li>Permite actualizar la contraseña de acceso directamente contra el servicio de Firebase Auth con validaciones de longitud mínima.</li>
+            <li>Si el usuario posee rol <code>ADMIN</code>, despliega un acceso directo prioritario hacia el Staff Master Dashboard.</li>
+        </ul>
 
-    <!-- SECCIÓN 5: PILA TECNOLÓGICA E INTEGRACIONES -->
-    <div class="page-break"></div>
-    <h1>5. Pila Tecnológica Puntual e Integraciones en Producción</h1>
+        <h2>6.3. Plataforma de Gamificación Pick'em Copa Legion (`public/pickem.html`)</h2>
+        <p>
+            Sistema de predicciones de esports desplegado para la <strong>Copa Legion x Scouting Tournament 3</strong>:
+        </p>
+        <ul>
+            <li><strong>Retícula Interactiva de Doble Eliminación:</strong> Renderiza el bracket completo (Octavos, Cuartos, Semifinales, Final de Ganadores, Cuadro de Perdedores y Gran Final) con selección táctil de ganadores.</li>
+            <li><strong>Puntuación en Tiempo Real:</strong> Compara los pronósticos del usuario contra los resultados oficiales almacenados en <code>pickem_config/oficial</code>, sumando puntos ponderados según la dificultad de la ronda.</li>
+            <li><strong>Ranking Global Clasificatorio:</strong> Consulta en Firestore la colección <code>pickems_scouting3</code> y genera la tabla de líderes en tiempo real con avatares de Riot y Google.</li>
+            <li><strong>Control de Cierre Automático:</strong> Evalúa la fecha límite de cada llave; una vez iniciadas las partidas, las predicciones se bloquean en modo de solo lectura.</li>
+        </ul>
+    </div>
 
-    <h2>5.1. Matriz de Tecnologías Desplegadas</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Tecnología / Herramienta</th>
-                <th>Versión / Ámbito</th>
-                <th>Función en Producción</th>
-                <th>Justificación Técnica de Selección</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>JavaScript ES6+ Vanilla</strong></td>
-                <td>ECMAScript 2022</td>
-                <td>Lógica del cliente, reactividad DOM, diffing de nóminas.</td>
-                <td>Cero sobrecarga de empaquetado (<em>0 KB bundle overhead</em>), ejecución a 60 FPS garantizada sin Virtual DOM.</td>
-            </tr>
-            <tr>
-                <td><strong>HTML5 Semántico</strong></td>
-                <td>W3C Standard</td>
-                <td>Estructura de vistas, accesibilidad y renderizado multimedia.</td>
-                <td>Parsing ultrarrápido en navegadores móviles y cumplimiento nativo de accesibilidad.</td>
-            </tr>
-            <tr>
-                <td><strong>Tailwind CSS</strong></td>
-                <td>v3.4.1 (JIT)</td>
-                <td>Estilos atómicos, HUDs tácticos, glassmorphism y diseño responsivo.</td>
-                <td>Compilación minificada en un archivo único (<code>output.css</code> de ~156 KB) con purga total de clases no usadas.</td>
-            </tr>
-            <tr>
-                <td><strong>Google Cloud Firestore</strong></td>
-                <td>SDK v10.7.1</td>
-                <td>Base de datos NoSQL reactiva para inscripciones, padrón LAN y torneos.</td>
-                <td>Sincronización en tiempo real mediante <code>onSnapshot</code> (&lt;200 ms) y persistencia offline con IndexedDB.</td>
-            </tr>
-            <tr>
-                <td><strong>Firebase Authentication</strong></td>
-                <td>SDK v10.7.1</td>
-                <td>Autenticación y RBAC para directivos y árbitros oficiales.</td>
-                <td>Tokens JWT seguros integrados de forma nativa con las reglas formales de base de datos.</td>
-            </tr>
-            <tr>
-                <td><strong>Firebase Hosting</strong></td>
-                <td>Multi-Region CDN</td>
-                <td>Distribución perimetral de la PWA con HTTP/2 y SSL automático.</td>
-                <td>Entrega global de baja latencia con control estricto de cabeceras de caché (<code>firebase.json</code>).</td>
-            </tr>
-            <tr>
-                <td><strong>Cloudflare Workers</strong></td>
-                <td>V8 Isolate</td>
-                <td>Proxy CORS perimetral para consultas a Challonge API.</td>
-                <td>Arranque en frío (<em>cold start</em>) de 0 ms y cuota gratuita de 100.000 peticiones diarias.</td>
-            </tr>
-            <tr>
-                <td><strong>Google Apps Script</strong></td>
-                <td>V8 Runtime</td>
-                <td>Backend serverless REST para gestión de scouting en Google Sheets.</td>
-                <td>Permite usar hojas de cálculo institucionales como base de datos administrativa sin costo de infraestructura.</td>
-            </tr>
-            <tr>
-                <td><strong>Service Workers API</strong></td>
-                <td>W3C Spec</td>
-                <td>Intercepción de red y almacenamiento en caché offline (<code>lbl-cache-v220</code>).</td>
-                <td>Carga instantánea de la aplicación y disponibilidad offline de fuentes y assets institucionales.</td>
-            </tr>
-            <tr>
-                <td><strong>BroadcastChannel API</strong></td>
-                <td>W3C Spec</td>
-                <td>Comunicación IPC entre la consola web y el overlay de OBS.</td>
-                <td>Latencia de comunicación inferior a 5 ms sin consumo de ancho de banda de red.</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- ===================================================================
+         PÁGINA 7: DESGLOSE DE MÓDULOS (PARTE 2: COMPETICIÓN, STAFF Y LAN)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>6. Desglose Exhaustivo de Módulos (Parte 2: Competición, Staff y LAN)</h1>
 
-    <!-- SECCIÓN 6: DIAGRAMAS DE SECUENCIA UML -->
-    <div class="page-break"></div>
-    <h1>6. Diagramas de Secuencia del Sistema en Producción (UML 2.5)</h1>
+        <h2>6.4. Portal Institucional y Torneos (`index.html` y `torneos.html`)</h2>
+        <ul>
+            <li><strong>Landing Page Continua:</strong> Hero con video nativo de fondo en bucle decodificado por hardware (<code>hero-bg.mp4</code>), accesos a torneos pasados, tarjetas de circuito competitivo Tier 1 y Tier 2, acordeón de directiva y footer institucional.</li>
+            <li><strong>Portal de Torneos:</strong> Sincroniza en tiempo real los cuadros de partidas activas y pasadas consumiendo <code>challonge-core.js</code> y <code>sc3-logos.js</code>, con selector de jornadas y estados en vivo.</li>
+        </ul>
 
-    <h2>6.1. Secuencia 1: Postulación, Validación y Edición Segura con Token Criptográfico (ABAC)</h2>
-    <div class="diagram-container">
-        <div class="mermaid">
+        <h2>6.5. Inscripción, Auto-Gestión y Staff Dashboard (`registro`, `editar`, `dashboard`)</h2>
+        <ul>
+            <li><strong>Inscripción y Edición con Token:</strong> Formulario de 5 roles titulares con compresión WebP automática en Canvas y módulo de edición efímera para capitanes validada formalmente por <code>firestore.rules</code>.</li>
+            <li><strong>Staff Master Dashboard:</strong> Consola reactiva con <code>onSnapshot</code>, buscador difuso, generador de llaves de edición, notificaciones en la nube por UID y gestión de credenciales LAN.</li>
+        </ul>
+
+        <h2>6.6. Sistema Externo de ID Check en LAN Centers Sponsors (`aqm.html` y `smok.html`)</h2>
+        <p>
+            Módulos concebidos para canalizar la <strong>alianza comercial de patrocinio con los LAN Centers oficiales</strong> (La Paz: <em>Aquí Me Quedo - AQM</em> y Cochabamba: <em>SMOK Game Zone</em>):
+        </p>
+        <ul>
+            <li><strong>Finalidad Comercial:</strong> Permitir que los jugadores oficiales de la LBL accedan a <strong>descuentos y promociones exclusivas en horas de juego, consumo y bootcamps</strong> en las salas presenciales aliadas.</li>
+            <li><strong>Mecánica del ID Check:</strong> El cajero introduce la C.I. o Riot ID del jugador; la plataforma consulta Firestore y despliega su ficha completa, certificando su pertenencia a un equipo activo de la liga. Al pulsar <em>"Registrar Visita"</em>, el LAN Center aplica el descuento en su software de caja local.</li>
+            <li><strong>Hardening Operativo:</strong> Caducidad automática de sesión de turno a las 14 horas continuas (<code>MAX_SESSION_HOURS = 14</code>), sanitización con <code>escapeHTML()</code> y ventana deslizante de 500 visitas en Firestore para prevenir desbordes del límite de 1 MB.</li>
+        </ul>
+
+        <h2>6.7. Suite Broadcast OBS Studio y Motores Core</h2>
+        <ul>
+            <li><strong>Overlay Schedule (`overlay-schedule.html`):</strong> Lienzo 1080p nativo con cabecera estilo Worlds, rotación publicitaria automatizada cada 7 segundos y consola caster sincronizada en &lt;5 ms vía <code>BroadcastChannel API</code>.</li>
+            <li><strong>Motores Core:</strong> <code>challonge-core.js</code> (pool multi-key ante HTTP 429), <code>auditoria-core.js</code> (diffing de nóminas), <code>image-optimizer.js</code> (conversor WebP Canvas), <code>sc3-logos.js</code> (logos locales SC3) y <code>app-version.js</code> (auto-purga de caché por build).</li>
+        </ul>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 8: ECOSISTEMA DE SPONSORS Y ACTIVACIONES
+         =================================================================== -->
+    <div class="page-section">
+        <h1>7. Ecosistema de Sponsors, Marcas Aliadas y Activaciones Comerciales</h1>
+        <p>
+            Los patrocinadores oficiales forman parte activa del diseño de la plataforma en producción, contando con presencia transversal en la web pública, transmisiones en vivo y centros presenciales:
+        </p>
+
+        <div class="sponsor-card volt">
+            <div class="sponsor-title">⚡ VOLT — Bebida Energética Oficial</div>
+            <p class="sponsor-desc">Patrocinador principal de energía de la LBL. Es el activador oficial del objetivo mayor de la Grieta del Invocador: <em>"El Barón Nashor es traído a ustedes gracias a VOLT — Destapa la energía que define campeones"</em>.</p>
+        </div>
+
+        <div class="sponsor-card legion">
+            <div class="sponsor-title">🎮 LEGION STORE — Hardware & Gaming Gear</div>
+            <p class="sponsor-desc">Patrocinador oficial de equipamiento informático, periféricos y hardware de alto rendimiento. Presentador de las jugadas maestras: <em>"Pentakill con el poder de Legion Store"</em> y <em>"Exterminio total con el mejor equipamiento"</em>. Patrocinador titular de la <strong>Copa Legion</strong>.</p>
+        </div>
+
+        <div class="sponsor-card iconic">
+            <div class="sponsor-title">👕 ICONIC — Moda Urbana & Streetwear</div>
+            <p class="sponsor-desc">Patrocinador oficial de indumentaria deportiva y moda urbana de la liga bajo el concepto: <em>"Para ser campeón tienes que ser ICONIC"</em>.</p>
+        </div>
+
+        <div class="sponsor-card lan">
+            <div class="sponsor-title">📍 AQUÍ ME QUEDO (AQM) — LAN Center Sponsor (La Paz)</div>
+            <p class="sponsor-desc">Patrocinador territorial y sede presencial en La Paz. Punto de encuentro comunitario y centro de beneficios con descuentos en juego para jugadores de la LBL validados por ID Check.</p>
+        </div>
+
+        <div class="sponsor-card lan">
+            <div class="sponsor-title">📍 SMOK GAME ZONE — LAN Center Sponsor (Cochabamba)</div>
+            <p class="sponsor-desc">Patrocinador territorial y arena gamer en Cochabamba, integrado al ecosistema de promociones y descuentos en sala para la escena competitiva valluna.</p>
+        </div>
+
+        <h2>7.1. Módulo Interactivo de Sponsors en la Landing Page (`public/index.html`)</h2>
+        <ul>
+            <li><strong>Slideshow con Barra de Progreso:</strong> Rota automáticamente cada 6 segundos (<code>SPONSOR_DURATION = 6000</code>) con logotipo HD, lema publicitario, descripción de marca y botón directo a canales oficiales.</li>
+            <li><strong>Congelamiento por Hover (`pauseSponsor()` / `resumeSponsor()`):</strong> Al posar el cursor o dedo, calcula el tiempo exacto transcurrido (<code>slideRemainingTime</code>), congela la barra de progreso en su porcentaje exacto y reanuda con naturalidad sin saltos de diapositiva.</li>
+            <li><strong>Degradados Temáticos:</strong> Azul/cian para Volt, rojo intenso para Legion Store, blanco monocromático para Iconic y rosa/rubí para Aquí Me Quedo.</li>
+        </ul>
+
+        <h2>7.2. Rotación Publicitaria en Transmisiones en Vivo (OBS Studio - 1080p)</h2>
+        <ul>
+            <li>Columna comercial dedicada que rota sponsors automáticamente cada 7 segundos con banners en alta definición (<code>h-[160px] w-[340px]</code>).</li>
+            <li>Soporte para reproducción de <strong>spots de video comerciales MP4</strong> y banners locales controlados por el operador desde <code>overlay-control.html</code>.</li>
+        </ul>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 9: DIAGRAMAS DE SECUENCIA UML (FIGURAS 2 Y 3)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>8. Diagramas de Secuencia UML 2.5 en Producción (Parte 1)</h1>
+
+        <h2>8.1. Secuencia 1: Autenticación Federada, Asignación de Roles y Vinculación Riot ID</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as Usuario / Jugador
+    participant Modal as Modal Auth (auth-core.js)
+    participant FA as Firebase Auth
+    participant FS as Cloud Firestore (usuarios_lbl)
+    participant Riot as Riot Games API
+
+    User->>Modal: Clic en "Iniciar con Google"
+    Modal->>FA: signInWithPopup(GoogleAuthProvider)
+    FA-->>Modal: Retorna Credencial JWT (uid, email, photoURL)
+    
+    Modal->>Modal: Evalúa si email está en STAFF_DIRECTORY
+    alt Email en Directorio Staff
+        Modal->>Modal: Asigna Rol "ADMIN"
+    else Usuario General
+        Modal->>Modal: Asigna Rol "USER"
+    end
+
+    Modal->>FS: setDoc("usuarios_lbl", {rol, email, updatedAt})
+    Modal-->>User: Sesión Iniciada (Avatar y Alias en Navbar)
+
+    User->>Modal: Vincula Riot ID: "Faker#BOL"
+    Modal->>Riot: GET /riot/account/v1/accounts/by-riot-id/Faker/BOL
+    Riot-->>Modal: Retorna puuid, summonerLevel e iconId
+    Modal->>FS: updateDoc({riotId, puuid, conexionRiotBloqueadaHasta: +90d})
+    FS-->>User: Perfil Competitivo Certificado (Insignia Riot Verificada)
+            </div>
+            <div class="diagram-caption">Figura 2: Secuencia UML — Autenticación Federada, Roles y Vinculación Riot Games API</div>
+        </div>
+
+        <h2>8.2. Secuencia 2: Gamificación Pick'em Copa Legion y Bloqueo de Pronósticos</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Fan as Usuario Autenticado
+    participant Pickem as Web Pick'em (pickem.html)
+    participant Auth as auth-core.js
+    participant FS as Cloud Firestore (pickems_scouting3)
+    participant Config as Firestore (pickem_config/oficial)
+
+    Fan->>Pickem: Ingresa a pronosticar Llaves de Copa Legion
+    Pickem->>Auth: Verifica sesión activa (Riot ID vinculado)
+    Pickem->>Config: Consulta estado de llave y fecha límite
+    
+    alt Fecha Actual &lt; Fecha de Bloqueo
+        Pickem-->>Fan: Desbloquea Selector de Brackets
+        Fan->>Pickem: Selecciona ganadores: Octavos -&gt; Cuartos -&gt; Final
+        Pickem->>FS: setDoc("pickems_scouting3/{uid}", {predicciones, timestamp})
+        FS-->>Fan: Predicciones Selladas Exitosamente
+    else Fecha de Bloqueo Superada
+        Pickem-->>Fan: Vista de Solo Lectura (Predicciones Congeladas)
+    end
+
+    Note over Pickem, Config: Al concluir la partida oficial:
+    Config->>Pickem: Sincroniza resultado oficial
+    Pickem->>Pickem: Computa puntos ponderados por ronda
+    Pickem->>FS: Actualiza puntaje en Ranking Global
+            </div>
+            <div class="diagram-caption">Figura 3: Secuencia UML — Pronósticos Pick'em y Evaluación de Puntajes</div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         PÁGINA 10: DIAGRAMAS DE SECUENCIA UML (FIGURAS 4 Y 5)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>8. Diagramas de Secuencia UML 2.5 en Producción (Parte 2)</h1>
+
+        <h2>8.3. Secuencia 3: Postulación y Edición Segura con Token Criptográfico (ABAC)</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     autonumber
     actor Capitan as Capitán de Equipo
     participant WebReg as Web (/registro.html)
-    participant FS as Cloud Firestore
+    participant FS as Cloud Firestore (inscripciones)
     actor Staff as Árbitro Staff (/dashboard.html)
     participant WebEdit as Web (/editar.html)
 
-    Capitan->>WebReg: Completa Nómina (TOP..SUPP) + Cédulas + Escudo
+    Capitan->>WebReg: Envía Nómina (TOP..SUPP) + Cédulas + Escudo
     WebReg->>WebReg: Comprime Escudo a WebP (image-optimizer.js)
-    WebReg->>FS: addDoc("inscripciones_pendientes", {estado: "Pendiente"})
+    WebReg->>FS: addDoc({estado: "Pendiente"})
     FS-->>Staff: Disparo onSnapshot (Nuevo Equipo Detectado)
-    Staff->>Staff: Verifica no duplicidad de CIs y Riot IDs
     
     alt Aprobación Directa
         Staff->>FS: updateDoc({estado: "Aceptado"})
         FS-->>Capitan: Equipo Publicado en /equipos.html
-    else Requiere Corrección de Nómina
+    else Requiere Corrección de Roster
         Staff->>Staff: Genera Token Criptográfico y Expiración (+24h)
         Staff->>FS: updateDoc({editToken: "TK_89F", editTokenExp: 1730000000})
-        Staff-->>Capitan: Envía enlace: /editar.html?id=EQ1&token=TK_89F
+        Staff-->>Capitan: Envía enlace: /editar.html?id=EQ1&amp;token=TK_89F
         Capitan->>WebEdit: Abre URL con Token
         WebEdit->>FS: Consulta documento con Token
-        Note over FS: firestore.rules verifica: time &lt; editTokenExp
+        Note over FS: firestore.rules valida: time &lt; editTokenExp
         FS-->>WebEdit: Autoriza Lectura y Formulario de Edición
         Capitan->>WebEdit: Modifica Suplente y Guarda
         WebEdit->>WebEdit: Ejecuta auditoria-core.js (Detecta cambios)
         WebEdit->>FS: updateDoc(datos, token)
         FS-->>WebEdit: Edición Exitosa (Historial sellado con fecha ISO)
     end
+            </div>
+            <div class="diagram-caption">Figura 4: Secuencia UML — Postulación y Edición Segura con Token ABAC</div>
         </div>
-        <div class="diagram-caption">Figura 2: Diagrama de Secuencia UML — Postulación y Edición con Token ABAC</div>
-    </div>
 
-    <div class="page-break"></div>
-    <h2>6.2. Secuencia 2: ID Check en LAN Centers Sponsors para Descuentos y Promociones</h2>
-    <div class="diagram-container">
-        <div class="mermaid">
+        <h2>8.4. Secuencia 4: ID Check en LAN Centers y Aplicación de Descuentos en Sala</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     autonumber
     actor Jugador as Jugador LBL en Sala
-    actor Cajero as Cajero LAN (AQM / SMOK)
-    participant Terminal as Terminal LAN (/aqm.html o /smok.html)
-    participant FS as Cloud Firestore
+    actor Cajero as Cajero LAN (AQM/SMOK)
+    participant Terminal as Terminal LAN (aqm/smok.html)
+    participant FS as Cloud Firestore (inscripciones)
     participant CajaLAN as Software de Caja LAN Center
 
-    Jugador->>Cajero: Solicita descuento de jugador LBL y presenta CI
+    Jugador->>Cajero: Solicita descuento de jugador LBL y presenta C.I.
     Cajero->>Terminal: Ingresa Cédula de Identidad o Riot ID del jugador
     Terminal->>Terminal: escapeHTML() sanitiza parámetros de búsqueda
     Terminal->>FS: Consulta en padrón departamental de jugadores LBL
@@ -689,14 +1099,20 @@ sequenceDiagram
     
     Cajero->>CajaLAN: Aplica descuento promocional en horas/consumo LBL
     CajaLAN-->>Jugador: Recibe tarifa preferencial oficial de la liga
+            </div>
+            <div class="diagram-caption">Figura 5: Secuencia UML — ID Check y Aplicación de Descuentos en LAN Centers</div>
         </div>
-        <div class="diagram-caption">Figura 3: Diagrama de Secuencia UML — ID Check y Aplicación de Descuentos en LAN Centers</div>
     </div>
 
-    <div class="page-break"></div>
-    <h2>6.3. Secuencia 3: Sincronización de Brackets con Cloudflare Worker y Pool Multi-Key</h2>
-    <div class="diagram-container">
-        <div class="mermaid">
+    <!-- ===================================================================
+         PÁGINA 11: DIAGRAMAS DE SECUENCIA UML (FIGURAS 6 Y 7)
+         =================================================================== -->
+    <div class="page-section">
+        <h1>8. Diagramas de Secuencia UML 2.5 en Producción (Parte 3)</h1>
+
+        <h2>8.5. Secuencia 5: Sincronización Resiliente de Brackets con Pool Multi-Key</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     autonumber
     actor Fan as Espectador
@@ -704,10 +1120,10 @@ sequenceDiagram
     participant Core as challonge-core.js
     participant Worker as Cloudflare Worker (Proxy)
     participant Challonge as Challonge REST API v1
-    participant LocalCache as LocalStorage & Cache
+    participant LocalCache as LocalStorage &amp; Cache
 
-    Fan->>Torneos: Ingresa a ver Brackets de Playoffs
-    Torneos->>Core: obtenerTorneoDetalle("lbl_playoffs_2026")
+    Fan->>Torneos: Ingresa a ver Brackets de Torneo
+    Torneos->>Core: obtenerTorneoDetalle("ts3lbl")
     Core->>LocalCache: Verifica si hay caché válida reciente (&lt;10 min)
     
     alt Caché Válida en Memoria
@@ -730,18 +1146,17 @@ sequenceDiagram
             Worker-->>Core: Payload JSON de Torneo
         end
         
-        Core->>Core: Mapea escudos oficiales HD con OFFICIAL_LBL_TEAM_LOGOS
+        Core->>Core: Mapea escudos con sc3-logos.js y OFFICIAL_LBL_TEAM_LOGOS
         Core->>LocalCache: Almacena Fingerprint y Datos en Caché
         Core-->>Torneos: Renderiza Brackets Interactivos en Pantalla
     end
+            </div>
+            <div class="diagram-caption">Figura 6: Secuencia UML — Sincronización Resiliente de Brackets y Pool Multi-Key</div>
         </div>
-        <div class="diagram-caption">Figura 4: Diagrama de Secuencia UML — Sincronización Resiliente de Brackets</div>
-    </div>
 
-    <div class="page-break"></div>
-    <h2>6.4. Secuencia 4: Rotación de Sponsors y Marcadores en OBS Studio (Broadcast)</h2>
-    <div class="diagram-container">
-        <div class="mermaid">
+        <h2>8.6. Secuencia 6: Orquestación Gráfica Broadcast OBS Studio a 60 FPS</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     autonumber
     actor Caster as Operador / Caster
@@ -760,45 +1175,180 @@ sequenceDiagram
         FS-->>OBS: Snapshot Listener: Respaldo para casters a distancia
     end
 
-    Note over OBS: Rotación Automatizada de Sponsors (cada 7s):<br/>VOLT -> LEGION -> ICONIC -> LANs
+    Note over OBS: Rotación Automatizada de Sponsors (cada 7s):<br/>VOLT -&gt; LEGION -&gt; ICONIC -&gt; LANs
     OBS-->>OBS: Renderizado de Marcador y Banners a 60 FPS
+            </div>
+            <div class="diagram-caption">Figura 7: Secuencia UML — Orquestación Gráfica Broadcast OBS Studio en Tiempo Real</div>
         </div>
-        <div class="diagram-caption">Figura 5: Diagrama de Secuencia UML — Automatización Gráfica Broadcast OBS Studio</div>
     </div>
 
-    <!-- SECCIÓN 7: ESTÁNDARES INTERNACIONALES -->
-    <div class="page-break"></div>
-    <h1>7. Estándares Internacionales y Principios de Ingeniería de Software</h1>
+    <!-- ===================================================================
+         PÁGINA 12: MODELO DE DATOS EN FIRESTORE Y REGLAS
+         =================================================================== -->
+    <div class="page-section">
+        <h1>9. Modelo de Datos en Firestore y Reglas de Seguridad Formales</h1>
 
-    <h2>7.1. Cumplimiento de Estándares de Ciberseguridad: OWASP ASVS v4.0.3</h2>
-    <ul>
-        <li><strong>Mitigación de Stored & DOM XSS (V5.3.3):</strong> Política universal de neutralización mediante <code>escapeHTML(str)</code>. Cualquier valor dinámico procedente de entradas de usuario o de Firestore (<code>nombre</code>, <code>riotId</code>, <code>ci</code>, <code>nombreEquipo</code>) es sanitizado antes de insertarse en el DOM, transformando caracteres especiales (<code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>"</code>, <code>'</code>) en sus entidades HTML seguras.</li>
-        <li><strong>Defensa contra Enumeración de Usuarios (V2.1):</strong> Las terminales presenciales de LAN Centers (<code>aqm.html</code> y <code>smok.html</code>) unificaron sus mensajes ante fallos de autenticación bajo la respuesta neutral: <em>"Usuario o contraseña incorrectos"</em>, evitando que un atacante determine qué cuentas existen mediante ataques de fuerza bruta.</li>
-        <li><strong>Inmunidad contra Prototype Pollution (V5.2.1):</strong> La búsqueda en diccionarios de credenciales se realiza mediante <code>Object.prototype.hasOwnProperty.call(cuentas, usuarioInput)</code>, bloqueando inyecciones sobre propiedades nativas de la cadena de prototipos de JavaScript (<code>__proto__</code>, <code>constructor</code>).</li>
-        <li><strong>Protección contra Shoulder Surfing en Staff Dashboard:</strong> Las contraseñas de las cuentas de operadores LAN se visualizan enmascaradas con glifos <code>••••••••</code> por defecto en la tabla de credenciales, requiriendo una acción explícita para alternar su visibilidad.</li>
-        <li><strong>Neutralización de Entornos de Prueba (Dev Bypass Hardening):</strong> Las rutinas de desarrollo evalúan estrictamente que el hostname sea <code>localhost</code> o <code>127.0.0.1</code>. En cualquier dominio de producción, los controles de desarrollo son autodestruidos del DOM al iniciar la aplicación.</li>
-    </ul>
+        <h2>9.1. Esquema de Colecciones en Producción</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Colección</th>
+                    <th style="width: 38%;">Estructura del Documento</th>
+                    <th>Política de Seguridad (`firestore.rules`)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>usuarios_lbl</strong></td>
+                    <td><code>{ rol: 'ADMIN'|'USER', email, displayName, photoURL, riotId, puuid, twitchChannel, conexionRiotBloqueadaHasta }</code></td>
+                    <td>Lectura pública. Escritura restringida al propio usuario autenticado (<code>request.auth.uid == userId</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>pickems_scouting3</strong></td>
+                    <td><code>{ userId, pronosticos: { matchId: winnerId }, puntajeTotal, updatedAt }</code></td>
+                    <td>Lectura pública. Creación y actualización restringida a usuarios autenticados.</td>
+                </tr>
+                <tr>
+                    <td><strong>pickem_config</strong></td>
+                    <td><code>{ fechaBloqueo, resultadosOficiales: {}, estadoTorneo }</code></td>
+                    <td>Lectura pública. Escritura exclusiva para el Staff autenticado.</td>
+                </tr>
+                <tr>
+                    <td><strong>inscripciones_pendientes</strong></td>
+                    <td><code>{ nombreEquipo, tier, roster: {}, suplentes: [], estado, editToken, editTokenExp, historialAuditoria: [] }</code></td>
+                    <td>Lectura pública si es Aceptado o con token. Creación forzada en 'Pendiente'. Actualización ABAC temporal y borrado de Staff.</td>
+                </tr>
+                <tr>
+                    <td><strong>torneos_activos</strong></td>
+                    <td><code>{ challongeId, nombre, formato, standings: [], updatedAt }</code></td>
+                    <td>Lectura y escritura sincronizada de torneos oficiales.</td>
+                </tr>
+                <tr>
+                    <td><strong>staff_notificaciones</strong></td>
+                    <td><code>{ leidosIds: [ "evt_1", "evt_2" ], ultimaRevision }</code></td>
+                    <td>Lectura y escritura restringida exclusivamente al UID del miembro del staff autenticado.</td>
+                </tr>
+                <tr>
+                    <td><strong>broadcast_overlays</strong></td>
+                    <td><code>{ blueScore, redScore, blueTeam, redTeam, modo, flyerUrl }</code></td>
+                    <td>Lectura pública para OBS Studio y escritura autorizada de casters.</td>
+                </tr>
+                <tr>
+                    <td><strong>lan_visitas_aqm / smok</strong></td>
+                    <td><code>{ totalHistorico: int, visitas: [ { ci, riotId, fecha, cajero } ] }</code></td>
+                    <td>Transacciones atómicas en ventana deslizante (máximo 500 registros) para mitigar la cuota de 1 MB.</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <h2>7.2. Principios de Diseño de Software Aplicados</h2>
-    <ul>
-        <li><strong>Separación de Responsabilidades (Separation of Concerns - SoC):</strong> Estructuración por capas independientes: maquetación semántica (HTML5), estilos atómicos compilados (Tailwind CSS JIT), lógica de dominio pura (<code>auditoria-core.js</code>, <code>challonge-core.js</code>) e infraestructura en la nube (Firestore, Cloudflare).</li>
-        <li><strong>Principio de Responsabilidad Única (SRP - SOLID):</strong> Cada script posee un propósito unívoco: <code>image-optimizer.js</code> gestiona únicamente la compresión WebP; <code>app-version.js</code> controla la huella de compilación y purga de caché; <code>pwa-manager.js</code> supervisa los estados de la aplicación instalada.</li>
-        <li><strong>Principio de Inversión de Dependencias (DIP - SOLID):</strong> Las vistas de usuario no se acoplan rígidamente a servicios de red externos, sino que consumen capas intermedias que conmutan de forma transparente entre fuentes de datos en la nube y respaldos locales en memoria.</li>
-        <li><strong>DRY (Don't Repeat Yourself):</strong> Centralización de constantes, tags de equipos y directorios institucionales en diccionarios maestros compartidos (<code>OFFICIAL_LBL_TEAM_LOGOS</code>, <code>STAFF_DIRECTORY</code>).</li>
-        <li><strong>KISS (Keep It Simple, Stupid):</strong> Selección deliberada de JavaScript ES6 modular nativo en lugar de sobrecargar la aplicación con frameworks masivos, eliminando vulnerabilidades en la cadena de dependencias y asegurando tiempos de carga inmediatos.</li>
-        <li><strong>Programación Defensiva (Defensive Programming):</strong> Inclusión de bloques <code>try/catch</code> en todas las transacciones críticas, controladores de tiempo límite de red (<code>AbortController</code> de 4.5s) y asignación de fallbacks en imágenes y escudos de escuadras.</li>
-    </ul>
+        <h2>9.2. Auditoría del Código de Reglas Formales (`firestore.rules`)</h2>
+        <div class="info-card">
+            <strong>Protecciones Críticas Validadas en la Base de Datos:</strong>
+            <ul style="margin-top: 3px; margin-bottom: 0;">
+                <li><strong>Control ABAC de Nóminas:</strong> <code>request.time.toMillis() &lt; resource.data.editTokenExp</code> impide que un capitán altere datos una vez expirado el plazo concedido por el árbitro.</li>
+                <li><strong>Inmutabilidad del Estado:</strong> Las reglas bloquean que un usuario externo altere el atributo <code>estado</code> durante la edición; solo el Staff autenticado puede dictaminar Aceptado o Rechazado.</li>
+                <li><strong>Aislamiento de Perfiles:</strong> Los usuarios no pueden modificar datos ni roles de otras cuentas en <code>usuarios_lbl</code>.</li>
+            </ul>
+        </div>
+    </div>
 
-    <h2>7.3. Estándares Web, Accesibilidad y Rendimiento (W3C / WCAG)</h2>
-    <ul>
-        <li><strong>W3C Progressive Web App (PWA):</strong> Cumplimiento de especificación Web App Manifest v2 con iconos adaptativos (192px y 512px maskable), modo <code>standalone</code> y Service Worker con control de versiones.</li>
-        <li><strong>WCAG 2.1 Nivel AA (Accesibilidad Web):</strong> Relación de contraste cromático mínima de 4.5:1 en fondos oscuros, navegación asistida por teclado y áreas táctiles ergonómicas mínimas de 44x44 píxeles en dispositivos móviles.</li>
-        <li><strong>Compresión Adaptativa WebP:</strong> Conversión en el cliente antes de la subida, reduciendo el peso de transferencia en más del 82%.</li>
-    </ul>
+    <!-- ===================================================================
+         PÁGINA 13: ESTÁNDARES INTERNACIONALES Y PRINCIPIOS DE INGENIERÍA
+         =================================================================== -->
+    <div class="page-section">
+        <h1>10. Estándares Internacionales y Principios de Ingeniería de Software</h1>
 
-    <div style="margin-top: 35px; border-top: 2px solid #0284c7; padding-top: 15px; display: flex; justify-content: space-between; font-size: 8.5pt; color: #64748b;">
-        <span><strong>LBL eSports</strong> — Informe Técnico Certificado de Ingeniería de Software</span>
-        <span>Página de Cierre — Entorno de Producción Activo</span>
+        <div class="info-card" style="margin-bottom: 7px;">
+            <strong>Fundamentación Técnica Multidisciplinaria:</strong> La arquitectura del ecosistema <strong>LBL eSports</strong> (versión activa <code>lbl-v2026.11.06-270</code> en rama <code>main</code>) se encuentra formalmente alineada con especificaciones técnicas de organismos internacionales (ISO, IEC, IEEE, OMG, W3C, IETF, ITU-R y OWASP), abarcando modelado, calidad, rendimiento, accesibilidad, protocolos y ciberseguridad sin redundancias.
+        </div>
+
+        <h2>10.1. Matriz de Estándares Internacionales Identificados en la Arquitectura</h2>
+        <table class="standards-table">
+            <thead>
+                <tr>
+                    <th style="width: 19%;">Dominio</th>
+                    <th style="width: 25%;">Estándar Internacional</th>
+                    <th>Implementación Específica en LBL eSports</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Modelado Arquitectónico</strong></td>
+                    <td><strong>ISO/IEC/IEEE 42010:2011</strong> &amp;<br/><strong>C4 Model (Simon Brown)</strong></td>
+                    <td>Descripción formal de la arquitectura mediante vistas jerárquicas desacopladas (Nivel 1: Contexto de Sistema, Nivel 2: Contenedores en Cloud y Edge).</td>
+                </tr>
+                <tr>
+                    <td><strong>Modelado de Comportamiento</strong></td>
+                    <td><strong>OMG UML 2.5</strong><br/><em>(Unified Modeling Language)</em></td>
+                    <td>Diagramación formal de secuencias de interacción para flujos asíncronos: autenticación OAuth 2.0, ingesta de Riot/Twitch y transacciones LAN.</td>
+                </tr>
+                <tr>
+                    <td><strong>Calidad del Producto Software</strong></td>
+                    <td><strong>ISO/IEC 25010:2011</strong><br/><em>(SQuaRE Quality Model)</em></td>
+                    <td>Evaluación de adecuación funcional (RF-01 a RF-20), eficiencia de desempeño (FCP &lt; 0.9s, TTI &lt; 1.2s), tolerancia a fallos por fallback y modularidad.</td>
+                </tr>
+                <tr>
+                    <td><strong>Identidad y Autorización</strong></td>
+                    <td><strong>OAuth 2.0 (RFC 6749)</strong> &amp;<br/><strong>NIST SP 800-162 (ABAC/RBAC)</strong></td>
+                    <td>Federación de identidad con Google Identity Services (OpenID Connect) y control de acceso híbrido: roles (<code>ADMIN</code> / <code>USER</code>) y tokens de edición efímeros (<code>editTokenExp</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Caché y Protocolos Web</strong></td>
+                    <td><strong>IETF RFC 7234 &amp; RFC 5861</strong><br/><em>(HTTP Caching Extensions)</em></td>
+                    <td>Políticas deterministas en <code>firebase.json</code>: <code>stale-while-revalidate</code> en assets dinámicos, <code>immutable</code> en multimedia y <code>no-cache</code> forzado en <code>sw.js</code>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Aplicaciones Web Progresivas</strong></td>
+                    <td><strong>W3C PWA Standards</strong><br/><em>(Service Workers &amp; Manifest)</em></td>
+                    <td>Instalabilidad móvil con <code>manifest.json</code> v2, gestión de caché en segundo plano mediante Service Worker con invalidación basada en hash de versión.</td>
+                </tr>
+                <tr>
+                    <td><strong>Accesibilidad y Usabilidad</strong></td>
+                    <td><strong>W3C WAI WCAG 2.1</strong><br/><em>(Nivel AA)</em></td>
+                    <td>Ratios de contraste cromático superiores a 4.5:1 en paleta oscura/clara, navegación por teclado accesible y jerarquía semántica estructurada.</td>
+                </tr>
+                <tr>
+                    <td><strong>Intercambio de Datos y APIs</strong></td>
+                    <td><strong>IETF RFC 8259 (JSON)</strong> &amp;<br/><strong>REST Architectural Style</strong></td>
+                    <td>Serialización estructurada en Cloud Firestore y consumo sin estado (stateless) de APIs oficiales de Riot Games, Twitch Helix y Challonge REST API v1.</td>
+                </tr>
+                <tr>
+                    <td><strong>Transmisión Audiovisual</strong></td>
+                    <td><strong>ITU-R BT.709-6</strong> &amp;<br/><strong>W3C BroadcastChannel API</strong></td>
+                    <td>Estándar de video HDTV 1080p a 60 FPS (aspecto 16:9) en escena gráfica OBS Studio, sincronizada vía bus inter-contextos (IPC) con latencia &lt; 5 ms.</td>
+                </tr>
+                <tr>
+                    <td><strong>Ciberseguridad en Aplicaciones</strong></td>
+                    <td><strong>OWASP ASVS v4.0.3</strong><br/><em>(Nivel 2) &amp; Top 10:2021</em></td>
+                    <td>Sanitización universal de entradas con <code>escapeHTML()</code> contra XSS almacenado, mitigación de enumeración de usuarios y protección contra <em>Prototype Pollution</em>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>10.2. Principios y Patrones de Ingeniería de Software Aplicados</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 7px;">
+            <div class="feature-block">
+                <div class="feature-block-title">Principios SOLID (SRP &amp; DIP)</div>
+                Desacoplamiento modular: <code>auth-core.js</code> gestiona identidad y roles; <code>image-optimizer.js</code> optimiza assets a WebP; <code>sc3-logos.js</code> actúa como catálogo aislado. La persistencia opera desacoplada de la capa visual.
+            </div>
+            <div class="feature-block">
+                <div class="feature-block-title">Principios DRY &amp; KISS</div>
+                Centralización de constantes institucionales en diccionarios únicos compartidos (<code>STAFF_DIRECTORY</code>, <code>OFFICIAL_LBL_TEAM_LOGOS</code>). Uso deliberado de JavaScript ES6 nativo sin sobrecarga de librerías innecesarias.
+            </div>
+            <div class="feature-block">
+                <div class="feature-block-title">Arquitectura Resiliente y Degradación Elegante</div>
+                Mecanismo de fallback en 3 niveles para la visualización de torneos: Edge Worker Cloudflare &rarr; Respaldo en Cloud Firestore &rarr; Fixture local pre-renderizado.
+            </div>
+            <div class="feature-block">
+                <div class="feature-block-title">Optimización Core Web Vitals (CWV)</div>
+                Métricas auditadas de experiencia de usuario: Largest Contentful Paint (LCP &lt; 1.5s), Cumulative Layout Shift (CLS &lt; 0.05) e Interaction to Next Paint (INP &lt; 150ms).
+            </div>
+        </div>
+
+        <div style="margin-top: 14px; border-top: 2px solid #0284c7; padding-top: 8px; display: flex; justify-content: space-between; font-size: 7.8pt; color: #64748b;">
+            <span><strong>LBL eSports</strong> — Memoria Técnica de Ingeniería de Software</span>
+            <span>Cochabamba — Bolivia | Versión lbl-v2026.11.06-270</span>
+        </div>
     </div>
 
 </body>
