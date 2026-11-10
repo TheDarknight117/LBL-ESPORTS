@@ -5,7 +5,7 @@
  * y limpie automáticamente CacheStorage y localStorage sin requerir que el usuario borre datos de navegación.
  */
 
-export const APP_BUILD_VERSION = 'lbl-v2026.11.09-280';
+export const APP_BUILD_VERSION = 'lbl-v2026.11.10-281';
 
 export function inicializarControlDeVersiones() {
     try {

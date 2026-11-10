@@ -8,7 +8,8 @@ const firebaseConfig = {
   projectId: "lbl-esports",
   storageBucket: "lbl-esports.firebasestorage.app",
   messagingSenderId: "124596723477",
-  appId: "1:124596723477:web:d913f1060f303ef3a2531c"
+  appId: "1:124596723477:web:d913f1060f303ef3a2531c",
+  measurementId: "G-TERHMJ40W1"
 };
 
 const app = initializeApp(firebaseConfig);
