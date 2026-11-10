@@ -501,7 +501,8 @@
             GoogleAuthProvider,
             signInWithPopup,
             signInWithEmailAndPassword,
-            onAuthStateChanged
+            onAuthStateChanged,
+            signOut
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { STAFF_DIRECTORY, getStaffNick } from "/staff-config.js";
 
@@ -608,6 +609,7 @@
         }
 
         window.procesarLoginLAN = async function() {
+            sessionStorage.removeItem('lbl_lan_manual_signout');
             const usuarioInput = (document.getElementById('login-usuario').value || '').trim().toLowerCase();
             const passInput = (document.getElementById('login-password').value || '').trim();
             const btn = document.getElementById('btn-login');
@@ -760,10 +762,19 @@
             iniciarApp();
         }
 
-        window.cerrarSesion = function() {
+        window.cerrarSesion = async function() {
             if (confirm("¿Cerrar el turno actual y bloquear el acceso al sistema?")) {
+                sessionStorage.setItem('lbl_lan_manual_signout', 'true');
                 localStorage.removeItem(STORAGE_KEY_AUTH);
                 localStorage.removeItem('lbl_staff_logged_in');
+                localStorage.removeItem('lbl_staff_nick');
+                if (auth) {
+                    try {
+                        await signOut(auth);
+                    } catch (e) {
+                        console.warn("Aviso cerrando sesión en auth:", e);
+                    }
+                }
                 location.reload();
             }
         };
@@ -777,6 +788,11 @@
 
         function verificarSesionPrevia() {
             try {
+                // Si el usuario cerró sesión voluntariamente en este navegador, mostrar login
+                if (sessionStorage.getItem('lbl_lan_manual_signout') === 'true') {
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                    return;
+                }
                 // 1. Acceso Staff: si ya tiene sesión activa en este navegador
                 if (localStorage.getItem('lbl_staff_logged_in') === 'true') {
                     const nick = localStorage.getItem('lbl_staff_nick') || 'Staff LBL';
@@ -804,6 +820,9 @@
         if (auth) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
+                    if (sessionStorage.getItem('lbl_lan_manual_signout') === 'true') {
+                        return;
+                    }
                     const mail = (user.email || '').toLowerCase().trim();
                     const uid = user.uid;
                     if (STAFF_DIRECTORY[mail] || STAFF_DIRECTORY[uid]) {
