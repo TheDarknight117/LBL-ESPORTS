@@ -50,7 +50,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS (Compilado) & Favicon -->
-    <link rel="stylesheet" href="/dist/output.css?v=270">
+    <link rel="stylesheet" href="/dist/output.css?v=282">
     <script src="/sc3-logos.js?v=270"></script>
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
@@ -204,6 +204,187 @@
                 opacity: 1 !important;
                 transform: none !important;
             }
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           RETÍCULA GEOMÉTRICA SIMÉTRICA DE PLAYOFFS (ESTILO COPA LEGION / LBL)
+           ══════════════════════════════════════════════════════════════════ */
+        .lbl-bracket-viewport {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            background: radial-gradient(circle at 50% 25%, rgba(6, 182, 212, 0.045) 0%, rgba(2, 6, 15, 0.35) 70%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.25rem;
+            padding: 12px 10px 18px 10px;
+            user-select: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .lbl-bracket-viewport::-webkit-scrollbar {
+            height: 8px;
+        }
+        .lbl-bracket-viewport::-webkit-scrollbar-track {
+            background: #02050b;
+            border-radius: 9999px;
+        }
+        .lbl-bracket-viewport::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 2px solid #02050b;
+        }
+        .lbl-bracket-viewport::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+
+        .lbl-bracket-zoom-stage {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .lbl-bracket-canvas {
+            position: relative;
+            transform-origin: 0 0;
+            transition: transform 0.16s ease-out;
+        }
+
+        .lbl-round-header {
+            position: absolute;
+            width: 244px;
+            height: 46px;
+            border-radius: 0.875rem;
+            background: linear-gradient(180deg, #0c1526 0%, #060b14 100%);
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+        }
+        .lbl-round-header.loser-header {
+            border-color: rgba(244, 63, 94, 0.35);
+            background: linear-gradient(180deg, #1d0c13 0%, #0b0609 100%);
+        }
+        .lbl-round-header.final-header {
+            border-color: rgba(234, 179, 8, 0.55);
+            background: linear-gradient(180deg, #281e06 0%, #100c04 100%);
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.2);
+        }
+
+        .lbl-match-card {
+            position: absolute;
+            width: 244px;
+            height: 92px;
+            border-radius: 0.85rem;
+            background: #070d19;
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lbl-match-card:hover {
+            border-color: rgba(56, 189, 248, 0.55);
+            box-shadow: 0 10px 26px rgba(6, 182, 212, 0.18);
+        }
+        .lbl-match-card.card-grand-final {
+            border-color: rgba(234, 179, 8, 0.5);
+            box-shadow: 0 0 28px rgba(234, 179, 8, 0.16);
+        }
+        .lbl-match-card.card-grand-final:hover {
+            border-color: rgba(234, 179, 8, 0.85);
+        }
+        .lbl-match-card.card-live {
+            border-color: rgba(244, 63, 94, 0.7);
+            box-shadow: 0 0 22px rgba(244, 63, 94, 0.22);
+        }
+
+        .lbl-card-topbar {
+            height: 22px;
+            padding: 0 8px;
+            background: #03060d;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .lbl-team-slot {
+            height: 35px;
+            padding: 0 0 0 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            position: relative;
+            transition: background-color 0.15s ease;
+            flex-shrink: 0;
+        }
+        .lbl-team-slot:first-of-type {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .lbl-team-slot.slot-winner {
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.24) 0%, rgba(6, 182, 212, 0.05) 100%);
+        }
+        .lbl-team-slot.slot-winner::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #06b6d4;
+            box-shadow: 0 0 8px #06b6d4;
+        }
+        .lbl-team-slot.slot-winner-gold {
+            background: linear-gradient(90deg, rgba(234, 179, 8, 0.3) 0%, rgba(234, 179, 8, 0.06) 100%);
+        }
+        .lbl-team-slot.slot-winner-gold::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #eab308;
+            box-shadow: 0 0 10px #eab308;
+        }
+        .lbl-team-slot.slot-loser {
+            opacity: 0.48;
+        }
+
+        .lbl-seed-badge {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 3px;
+            border-radius: 4px;
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #9ca3af;
+            font-size: 9px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .slot-winner .lbl-seed-badge {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: rgba(6, 182, 212, 0.6);
+            color: #ffffff;
+        }
+        .slot-winner-gold .lbl-seed-badge {
+            background: rgba(234, 179, 8, 0.25);
+            border-color: rgba(234, 179, 8, 0.6);
+            color: #fef08a;
         }
     </style>
 </head>
@@ -443,6 +624,19 @@
                 </div>
             </div>
         </main>
+    <script>
+        (function() {
+            try {
+                var parts = decodeURIComponent(window.location.pathname || '').split('/').filter(Boolean);
+                if (parts.length >= 2 && parts[0].toLowerCase() === 'torneos') {
+                    var vc = document.getElementById('view-catalog');
+                    var vd = document.getElementById('view-detail');
+                    if (vc) vc.classList.add('hidden');
+                    if (vd) vd.classList.remove('hidden');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- DRAWER MÓVIL / OFF-CANVAS DE SELECCIÓN DE TORNEOS -->
     <div id="mobile-sidebar-backdrop" onclick="cerrarSidebarMobileDrawer()" class="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0"></div>
@@ -474,7 +668,7 @@
         import { collection, getDocs, doc, getDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { procesarTorneoChallonge, DEFAULT_CHALLONGE_API_KEY, extraerChallongeSlug, buscarEquipoLBL, OFFICIAL_LBL_TEAM_LOGOS, mapearLogoAWebp, verificarYAutoSincronizarTorneo, obtenerCooldownRecomendadoMs, calcularGruposTorneo, esEquipoFantasma } from "/challonge-core.js?v=270";
         import { obtenerLogoAdaptativoWebp } from "/image-optimizer.js";
-        import "/app-version.js?v=270";
+        import "/app-version.js?v=282";
         import "/auth-core.js?v=262";
 
         // ══════════════════════════════════════════════════════════════════
@@ -972,16 +1166,30 @@
         }
 
         // --- DEDUPLICADOR ROBUSTO DE TORNEOS ---
+        function obtenerClaveCanonicaTorneo(t) {
+            if (!t) return '';
+            const chId = (t.challongeId || '').toString().trim().toLowerCase();
+            const slug = (t.slug || '').toString().trim().toLowerCase();
+            const id = (t.id || '').toString().trim().toLowerCase();
+            if (chId === '18498275' || slug === 'ts3lbl' || id === 'scouting3' || id === 'ts3lbl') {
+                return 'scouting3';
+            }
+            return slug || id || chId;
+        }
+
         function deduplicarTorneos(lista) {
             if (!Array.isArray(lista)) return [];
             const vistos = new Set();
             const unicos = [];
             lista.forEach(t => {
+                if (!t) return;
+                const canonKey = obtenerClaveCanonicaTorneo(t);
                 const slugKey = (t.slug || t.id || '').toString().trim().toLowerCase();
                 const idKey = (t.id || '').toString().trim().toLowerCase();
-                if (!vistos.has(slugKey) && !vistos.has(idKey)) {
-                    vistos.add(slugKey);
-                    vistos.add(idKey);
+                if (!vistos.has(canonKey) && !vistos.has(slugKey) && !vistos.has(idKey)) {
+                    if (canonKey) vistos.add(canonKey);
+                    if (slugKey) vistos.add(slugKey);
+                    if (idKey) vistos.add(idKey);
                     unicos.push(t);
                 }
             });
@@ -1011,7 +1219,7 @@
                 categoria: 'liga_lbl',
                 division: 'Tier 1',
                 formatoLabel: 'Fase de Grupos',
-                estado: 'vivo',
+                estado: 'finalizado',
                 creadoEn: '2026-02-15T00:00:00.000Z'
             },
             {
@@ -1022,7 +1230,7 @@
                 categoria: 'liga_lbl',
                 division: 'Tier 2',
                 formatoLabel: 'Fase de Grupos',
-                estado: 'vivo',
+                estado: 'finalizado',
                 creadoEn: '2026-02-15T00:00:00.000Z'
             },
             {
@@ -1103,21 +1311,40 @@
                 return doc.ultimaSincronizacionTimestamp || (doc.actualizadoEn ? new Date(doc.actualizadoEn).getTime() : 0);
             };
 
+            const debeReemplazar = (nuevo, actual) => {
+                const tsNew = getTimestamp(nuevo);
+                const tsOld = getTimestamp(actual);
+                if (tsNew > tsOld) return true;
+                if (tsNew < tsOld) return false;
+                // En empate exacto de timestamp, priorizar el ID canónico 'scouting3' y documentos con partidas
+                const canon = obtenerClaveCanonicaTorneo(nuevo);
+                if (canon === 'scouting3') {
+                    if (actual.id === 'scouting3' && nuevo.id !== 'scouting3') return false;
+                    if (nuevo.id === 'scouting3' && actual.id !== 'scouting3') return true;
+                }
+                const newMatches = (nuevo.datosChallonge?.matches || nuevo.matches || []).length;
+                const oldMatches = (actual.datosChallonge?.matches || actual.matches || []).length;
+                return newMatches > oldMatches;
+            };
+
             // 1. Torneos entrantes (de Firestore o del caché local)
             (listaEntrante || []).forEach(t => {
                 if (!t || eliminados.includes(t.id) || t.id === 'winter_cup') return;
+                const canonKey = obtenerClaveCanonicaTorneo(t);
                 const slugKey = (t.slug || t.id).toString().trim().toLowerCase();
                 const idKey = (t.id || '').toString().trim().toLowerCase();
                 const chIdKey = (t.challongeId || '').toString().trim().toLowerCase();
 
-                const existing = mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
+                const existing = (canonKey ? mapa.get(canonKey) : null) || mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
                 if (existing) {
-                    if (getTimestamp(t) >= getTimestamp(existing)) {
+                    if (debeReemplazar(t, existing)) {
+                        if (canonKey) mapa.set(canonKey, t);
                         mapa.set(slugKey, t);
                         if (idKey) mapa.set(idKey, t);
                         if (chIdKey) mapa.set(chIdKey, t);
                     }
                 } else {
+                    if (canonKey) mapa.set(canonKey, t);
                     mapa.set(slugKey, t);
                     if (idKey) mapa.set(idKey, t);
                     if (chIdKey) mapa.set(chIdKey, t);
@@ -1127,18 +1354,21 @@
             // 2. Preservar datos de Challonge que ya tengamos en memoria solo si son más recientes
             (listaTorneosRegistrados || []).forEach(t => {
                 if (!t || eliminados.includes(t.id) || t.id === 'winter_cup') return;
+                const canonKey = obtenerClaveCanonicaTorneo(t);
                 const slugKey = (t.slug || t.id).toString().trim().toLowerCase();
                 const idKey = (t.id || '').toString().trim().toLowerCase();
                 const chIdKey = (t.challongeId || '').toString().trim().toLowerCase();
 
-                const existing = mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
+                const existing = (canonKey ? mapa.get(canonKey) : null) || mapa.get(slugKey) || (idKey ? mapa.get(idKey) : null) || (chIdKey ? mapa.get(chIdKey) : null);
                 if (existing) {
                     if (getTimestamp(t) > getTimestamp(existing)) {
+                        if (canonKey) mapa.set(canonKey, t);
                         mapa.set(slugKey, t);
                         if (idKey) mapa.set(idKey, t);
                         if (chIdKey) mapa.set(chIdKey, t);
                     }
                 } else {
+                    if (canonKey) mapa.set(canonKey, t);
                     mapa.set(slugKey, t);
                     if (idKey) mapa.set(idKey, t);
                     if (chIdKey) mapa.set(chIdKey, t);
@@ -1148,12 +1378,15 @@
             // 3. Garantizar siempre la existencia de los DEFAULT_TORNEOS_INICIALES
             DEFAULT_TORNEOS_INICIALES.forEach(def => {
                 if (eliminados.includes(def.id)) return;
+                const canonKey = obtenerClaveCanonicaTorneo(def);
                 const slugKey = (def.slug || def.id).toString().trim().toLowerCase();
                 const idKey = def.id.toString().trim().toLowerCase();
-                const existing = mapa.get(slugKey) || mapa.get(idKey);
+                const existing = (canonKey ? mapa.get(canonKey) : null) || mapa.get(slugKey) || mapa.get(idKey);
                 if (!existing) {
-                    mapa.set(slugKey, { ...def });
-                    mapa.set(idKey, { ...def });
+                    const copy = { ...def };
+                    if (canonKey) mapa.set(canonKey, copy);
+                    mapa.set(slugKey, copy);
+                    mapa.set(idKey, copy);
                 } else {
                     if (!existing.slug) existing.slug = def.slug;
                     if (!existing.challongeId) existing.challongeId = def.challongeId;
@@ -1167,6 +1400,7 @@
         }
 
         let listaTorneosRegistrados = [...DEFAULT_TORNEOS_INICIALES];
+        let _tieneCacheInicialTorneos = false;
         try {
             const cached = localStorage.getItem('lbl_torneos_registrados_cache');
             const eliminados = JSON.parse(localStorage.getItem('lbl_torneos_eliminados_ids') || '[]');
@@ -1176,9 +1410,34 @@
                     const validos = parsed.filter(t => !eliminados.includes(t.id) && t.id !== 'winter_cup');
                     listaTorneosRegistrados = combinarTorneosConDefaults(validos);
                     localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(listaTorneosRegistrados));
+                    _tieneCacheInicialTorneos = true;
                 }
             }
         } catch(e) {}
+
+        function buscarTorneoPorReferencia(refId) {
+            if (!Array.isArray(listaTorneosRegistrados) || listaTorneosRegistrados.length === 0 || !refId) return null;
+            const clean = String(refId).trim().toLowerCase();
+            let found = listaTorneosRegistrados.find(t => (t.id || '').toLowerCase() === clean);
+            if (found) return found;
+            found = listaTorneosRegistrados.find(t =>
+                (t.slug || '').toLowerCase() === clean ||
+                String(t.challongeId || '').toLowerCase() === clean ||
+                (t.url || '').toLowerCase() === clean
+            );
+            if (found) return found;
+            if (clean === 'scouting3' || clean === 'ts3lbl' || clean === 'sc3' || clean === 'ts3' || clean === '18498275') {
+                return listaTorneosRegistrados.find(t => esTorneoScouting3(t)) || null;
+            }
+            return null;
+        }
+
+        function obtenerTorneoActivoSeguro() {
+            const found = buscarTorneoPorReferencia(torneoSeleccionadoId);
+            if (found) return found;
+            if (!torneoSeleccionadoId) return null;
+            return listaTorneosRegistrados.find(t => (t.estado || '').toLowerCase() === 'vivo') || listaTorneosRegistrados[0] || null;
+        }
 
         let torneoSeleccionadoId = null; // null = vista catálogo; string = vista detalle
         let filtroEstadoCatalogo = 'vivo'; // 'vivo' | 'finalizado'
@@ -1317,20 +1576,22 @@
 
                 // 2. Fallback inteligente de resolución de URL
                 if (!found) {
-                    if (slugUrl.includes('t1clbl') || slugUrl === '18378786') {
-                        found = listaTorneosRegistrados.find(t => t.id === 't1clbl2026') || DEFAULT_TORNEOS_INICIALES[0];
+                    if (slugUrl.includes('scouting3') || slugUrl.includes('ts3lbl') || slugUrl === 'sc3' || slugUrl === 'ts3' || slugUrl === '18498275' || slugUrl.includes('legion')) {
+                        found = buscarTorneoPorReferencia('scouting3') || DEFAULT_TORNEOS_INICIALES[7];
+                    } else if (slugUrl.includes('t1clbl') || slugUrl === '18378786') {
+                        found = buscarTorneoPorReferencia('t1clbl2026') || DEFAULT_TORNEOS_INICIALES[0];
                     } else if (slugUrl.includes('t2clbl') || slugUrl === '18383807') {
-                        found = listaTorneosRegistrados.find(t => t.id === 't2clbl2026') || DEFAULT_TORNEOS_INICIALES[1];
+                        found = buscarTorneoPorReferencia('t2clbl2026') || DEFAULT_TORNEOS_INICIALES[1];
                     } else if (slugUrl.includes('t1albl') || slugUrl === '17573081') {
-                        found = listaTorneosRegistrados.find(t => t.id === 'tier1') || DEFAULT_TORNEOS_INICIALES[2];
+                        found = buscarTorneoPorReferencia('tier1') || DEFAULT_TORNEOS_INICIALES[2];
                     } else if (slugUrl.includes('t2albl') || slugUrl === '17573105') {
-                        found = listaTorneosRegistrados.find(t => t.id === 'tier2') || DEFAULT_TORNEOS_INICIALES[3];
+                        found = buscarTorneoPorReferencia('tier2') || DEFAULT_TORNEOS_INICIALES[3];
                     } else if (slugUrl.includes('qualifier') || slugUrl.includes('oq') || slugUrl === '17871688') {
-                        found = listaTorneosRegistrados.find(t => t.id === 'open_qualifier') || DEFAULT_TORNEOS_INICIALES[4];
+                        found = buscarTorneoPorReferencia('open_qualifier') || DEFAULT_TORNEOS_INICIALES[4];
                     } else if (slugUrl.includes('scouting2') || slugUrl.includes('lblsc2') || slugUrl === '17125906') {
-                        found = listaTorneosRegistrados.find(t => t.id === 'scouting2') || DEFAULT_TORNEOS_INICIALES[6];
+                        found = buscarTorneoPorReferencia('scouting2') || DEFAULT_TORNEOS_INICIALES[6];
                     } else if (slugUrl.includes('scouting1') || slugUrl.includes('lbl_scouting') || slugUrl === '16870497' || slugUrl === 'scouting') {
-                        found = listaTorneosRegistrados.find(t => t.id === 'scouting1') || DEFAULT_TORNEOS_INICIALES[5];
+                        found = buscarTorneoPorReferencia('scouting1') || DEFAULT_TORNEOS_INICIALES[5];
                     } else if (slugUrl.includes('winter') || slugUrl === '16167943') {
                         found = listaTorneosRegistrados.find(t => (t.slug || t.id || t.nombre || '').toLowerCase().includes('winter'));
                     }
@@ -1370,7 +1631,7 @@
             let docTitle = 'Torneos Oficiales | LBL Esports';
 
             if (torneoSeleccionadoId) {
-                const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+                const docTorneo = obtenerTorneoActivoSeguro();
                 if (docTorneo) {
                     const cleanSlug = (typeof extraerChallongeSlug === 'function')
                         ? extraerChallongeSlug(docTorneo.slug || docTorneo.url || docTorneo.id)
@@ -1421,9 +1682,27 @@
 
         // --- CARGA DE DATOS DESDE FIRESTORE / LOCALSTORAGE (PARALELIZADO Y OPTIMIZADO) ---
         async function cargarTorneosDesdeFirestore() {
-            // Renderizado ultra-rápido inicial desde caché (sin parpadeos de animación)
+            // Renderizado inicial: si hay caché local o ruta de torneo específico, pintar de inmediato.
+            // Si el catálogo abre en frío (sin caché local), mostrar estado de carga hasta recibir Firestore (o máx 1.5s) para evitar parpadeo de defaults.
             procesarRutaURL();
-            renderizarVista(false);
+            if (_tieneCacheInicialTorneos || torneoSeleccionadoId) {
+                renderizarVista(false);
+            } else {
+                aplicarEstadoSidebarLayout();
+                const catCont = document.getElementById('catalog-grid-container');
+                if (catCont) {
+                    catCont.innerHTML = `
+                        <div class="col-span-full p-12 text-center glass-panel rounded-3xl border border-gray-800/80 text-gray-400 text-xs font-bold uppercase space-y-3">
+                            <i class="fas fa-circle-notch fa-spin text-2xl text-cyan-400 block mb-2"></i>
+                            <p class="text-cyan-300 text-xs font-black tracking-widest">Cargando torneos oficiales...</p>
+                        </div>`;
+                }
+                setTimeout(() => {
+                    if (!window._firstFirestoreSnapshotLoaded && !torneoSeleccionadoId) {
+                        renderizarVista(false);
+                    }
+                }, 1500);
+            }
             actualizarURL(false);
 
             try {
@@ -1459,15 +1738,24 @@
                             const currentFp = calcularFingerprintTorneos(listaTorneosRegistrados);
                             const newFp = calcularFingerprintTorneos(nuevaDeduplicada);
                             
+                            const esPrimeraCargaFS = !window._firstFirestoreSnapshotLoaded;
                             // Sincronizar referencia en memoria y caché local
                             listaTorneosRegistrados = nuevaDeduplicada;
                             localStorage.setItem('lbl_torneos_registrados_cache', JSON.stringify(nuevaDeduplicada));
 
-                            // Solo re-renderizar la vista si los datos reales difieren de lo ya renderizado desde caché
-                            if (currentFp !== newFp) {
+                            if (torneoSeleccionadoId) {
+                                const realSelected = buscarTorneoPorReferencia(torneoSeleccionadoId);
+                                if (realSelected && realSelected.id) {
+                                    torneoSeleccionadoId = realSelected.id;
+                                }
+                            }
+
+                            window._firstFirestoreSnapshotLoaded = true;
+
+                            // Solo re-renderizar la vista si los datos reales difieren de lo ya renderizado o si esperaba la primera carga
+                            if (currentFp !== newFp || esPrimeraCargaFS) {
                                 renderizarVista(false);
                             }
-                            window._firstFirestoreSnapshotLoaded = true;
                         }
                     }, (err) => {
                         console.warn("Realtime onSnapshot torneos:", err.message);
@@ -2330,7 +2618,7 @@
         const escanearCicloDeVidaTorneo = window.escanearCicloDeVidaTorneo;
 
         function actualizarTabsUI(etapa) {
-            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            const docTorneo = obtenerTorneoActivoSeguro();
             const chState = (docTorneo?.datosChallonge?.estado || docTorneo?.estado || '').toLowerCase();
             const esFinalizado = chState === 'complete' || chState === 'finalizado' || chState === 'ended';
             const esEnVivo = !esFinalizado;
@@ -2378,7 +2666,7 @@
         }
 
         window.cambiarEtapa = (etapa) => {
-            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            const docTorneo = obtenerTorneoActivoSeguro();
             const ciclo = escanearCicloDeVidaTorneo(docTorneo);
 
             if (etapa === 'playoffs') {
@@ -2412,7 +2700,7 @@
         const getFallbackImage = window.getFallbackImage;
 
         function renderizarTorneoDetalle(animate = false) {
-            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            const docTorneo = obtenerTorneoActivoSeguro();
             if (!docTorneo) return;
 
             actualizarTabsUI(etapaActiva);
@@ -3565,7 +3853,7 @@
             const feedContainer = document.getElementById('matches-feed-container');
             if (!feedContainer) return;
 
-            const torneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
+            const torneoActual = obtenerTorneoActivoSeguro() || {};
             const esLigaLBL = esTorneoLigaActivo(torneoActual);
 
             if (!matches || matches.length === 0) {
@@ -3720,7 +4008,7 @@
 
                 const tagDisplay = resolverTag(eq) || (eq.nombre || '').substring(0, 3).toUpperCase();
                 const TAG_BADGE_CLASS = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
-                const docTorneoActual = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || {};
+                const docTorneoActual = obtenerTorneoActivoSeguro() || {};
                 const esLigaLBL = esTorneoLigaActivo(docTorneoActual);
                 const logo = esLigaLBL ? obtenerLogoEquipo(eq, eq.nombre, docTorneoActual) : '';
 
@@ -3852,19 +4140,377 @@
         }
 
         // ══════════════════════════════════════════════════════════════════
-        //  MOTOR DINÁMICO Y MODULAR DE BRACKETS (DATA-DRIVEN DESDE CHALLONGE)
+        //  MOTOR DINÁMICO Y GEOMÉTRICO DE BRACKETS (SIMETRÍA TIPO PICK'EM)
         // ══════════════════════════════════════════════════════════════════
         window.filtroFasePlayoffsMasivo = 'fase_final'; // 'fase_final' | 'rondas_previas' | 'completo'
+        window._playoffsZoom = window._playoffsZoom || 1;
+
+        window.aplicarZoomPlayoffsDOM = function(zoomVal) {
+            const z = Math.min(1.25, Math.max(0.5, Number(zoomVal) || 1));
+            window._playoffsZoom = z;
+            const canvas = document.getElementById('bracket-canvas');
+            const stage = document.getElementById('bracket-zoom-stage');
+            const label = document.getElementById('playoffs-zoom-label');
+            if (canvas) {
+                const baseW = parseFloat(canvas.dataset.baseW || canvas.style.width || '0');
+                const baseH = parseFloat(canvas.dataset.baseH || canvas.style.height || '0');
+                canvas.style.transform = `scale(${z})`;
+                if (stage && baseW > 0 && baseH > 0) {
+                    stage.style.width = `${Math.ceil(baseW * z)}px`;
+                    stage.style.height = `${Math.ceil(baseH * z)}px`;
+                }
+            }
+            if (label) {
+                label.textContent = `${Math.round(z * 100)}%`;
+            }
+        };
+
+        window.cambiarZoomPlayoffs = function(delta) {
+            const next = delta === 0 ? 1 : Math.round(((window._playoffsZoom || 1) + delta) * 100) / 100;
+            window.aplicarZoomPlayoffsDOM(next);
+        };
+
+        window.ajustarZoomPlayoffs = function() {
+            const viewport = document.getElementById('bracket-scroll-container');
+            const canvas = document.getElementById('bracket-canvas');
+            if (!viewport || !canvas) return;
+            const baseW = parseFloat(canvas.dataset.baseW || canvas.style.width || '0');
+            if (baseW <= 0) return;
+            const avail = Math.max(300, viewport.clientWidth - 24);
+            const fit = Math.min(1, Math.max(0.5, Math.floor((avail / baseW) * 100) / 100));
+            window.aplicarZoomPlayoffsDOM(fit);
+        };
+
         window.cambiarFaseBracketMasivo = function(fase) {
             window.filtroFasePlayoffsMasivo = fase;
             renderizarTorneoDetalle(false);
             setTimeout(() => {
-                const canvas = document.getElementById('bracket-canvas');
-                if (canvas && window._currentPlayoffMatches) {
-                    conectarBracketResponsivo(canvas, window._currentPlayoffMatches);
-                }
-            }, 60);
+                window.aplicarZoomPlayoffsDOM(window._playoffsZoom || 1);
+            }, 40);
         };
+
+        function ordenarRondasPorArbolPlayoffs(matchesList, roundsArr, isLower = false) {
+            const ordered = new Map();
+            if (!Array.isArray(roundsArr) || roundsArr.length === 0) return ordered;
+
+            const byId = new Map();
+            matchesList.forEach(m => byId.set(String(m.id), m));
+
+            const topRound = roundsArr[roundsArr.length - 1];
+            const topNonOpt = matchesList.filter(m => m.round === topRound && !m.optional);
+            const topRaw = topNonOpt.length > 0 ? topNonOpt : matchesList.filter(m => m.round === topRound);
+            ordered.set(topRound, [...topRaw].sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
+
+            for (let idx = roundsArr.length - 1; idx > 0; idx--) {
+                const rightRound = roundsArr[idx];
+                const leftRound = roundsArr[idx - 1];
+                const rightOrdered = ordered.get(rightRound) || [];
+                const leftOrdered = [];
+                const usedIds = new Set();
+
+                rightOrdered.forEach(parentMatch => {
+                    const p1Id = parentMatch.player1_prereq_match_id ? String(parentMatch.player1_prereq_match_id) : null;
+                    const p2Id = parentMatch.player2_prereq_match_id ? String(parentMatch.player2_prereq_match_id) : null;
+                    const m1 = p1Id ? byId.get(p1Id) : null;
+                    const m2 = p2Id ? byId.get(p2Id) : null;
+
+                    if (m1 && m1.round === leftRound && (!isLower || !parentMatch.player1_is_prereq_match_loser) && !usedIds.has(String(m1.id))) {
+                        leftOrdered.push(m1);
+                        usedIds.add(String(m1.id));
+                    }
+                    if (m2 && m2.round === leftRound && (!isLower || !parentMatch.player2_is_prereq_match_loser) && !usedIds.has(String(m2.id))) {
+                        leftOrdered.push(m2);
+                        usedIds.add(String(m2.id));
+                    }
+                });
+
+                matchesList
+                    .filter(m => m.round === leftRound && !m.optional && !usedIds.has(String(m.id)))
+                    .sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id))
+                    .forEach(m => leftOrdered.push(m));
+
+                ordered.set(leftRound, leftOrdered);
+            }
+            return ordered;
+        }
+
+        function inferirFormatoSeriePlayoff(m, isGrandFinal, isLowerFinal) {
+            if (m && m.best_of) return `BO${m.best_of}`;
+            if (m && m.scores_csv && typeof m.scores_csv === 'string' && m.scores_csv.split(',').length >= 2) {
+                return m.scores_csv.split(',').length >= 4 ? 'BO5' : 'BO3';
+            }
+            if (isGrandFinal || isLowerFinal) return 'BO5';
+            if (m && m.round > 0) return 'BO3';
+            if (m && m.round < 0) return Math.abs(m.round) >= 8 ? 'BO3' : 'BO1';
+            return 'BO3';
+        }
+
+        function renderPlayoffMatchCardAbs(m, x, y, allMatches, tournament, isLowerFinal = false) {
+            if (!m) return '';
+            const parsed = parseMatchScores(m);
+            const p1 = resolverParticipanteSlot(m, 1, allMatches, tournament);
+            const p2 = resolverParticipanteSlot(m, 2, allMatches, tournament);
+
+            const isLive = m.state === 'live';
+            const isCompleted = parsed.isCompleted;
+            const isOpen = m.state === 'open';
+            const isGrandFinal = !!m._isGrandFinal || m.identifier === 'BL' || m.identifier === 'BM';
+
+            const p1IsW = parsed.p1Winner;
+            const p2IsW = parsed.p2Winner;
+
+            let p1ScoreDisplay = '-';
+            let p2ScoreDisplay = '-';
+            if (isCompleted) {
+                if (parsed.isWalkover && p1IsW) { p1ScoreDisplay = 'W'; p2ScoreDisplay = '0'; }
+                else if (parsed.isWalkover && p2IsW) { p1ScoreDisplay = '0'; p2ScoreDisplay = 'W'; }
+                else {
+                    p1ScoreDisplay = parsed.p1Score ?? '0';
+                    p2ScoreDisplay = parsed.p2Score ?? '0';
+                }
+            }
+
+            const boLabel = inferirFormatoSeriePlayoff(m, isGrandFinal, isLowerFinal);
+            const matchIdent = m.identifier ? `MATCH #${m.identifier}` : (m.suggested_play_order ? `PARTIDA #${m.suggested_play_order}` : 'PARTIDA');
+
+            let statusRightHtml = `<span class="text-slate-500">${isOpen ? 'LISTO' : 'PENDIENTE'}</span>`;
+            if (isCompleted) {
+                statusRightHtml = `<span class="text-cyan-400 font-black flex items-center gap-1"><i class="fas fa-check text-[8px]"></i> FINAL</span>`;
+            } else if (isLive) {
+                statusRightHtml = `<span class="text-rose-400 font-black flex items-center gap-1 animate-pulse"><i class="fas fa-circle text-[6px]"></i> EN VIVO</span>`;
+            } else if (m.scheduled_time) {
+                try {
+                    const dt = formatearFechaHoraMatch(m.scheduled_time);
+                    if (dt && dt.horaTexto && dt.horaTexto !== 'Por Definir') {
+                        const shortDay = (dt.fechaTexto || '').split(' ').slice(0, 2).join(' ');
+                        statusRightHtml = `<span class="text-amber-300/90 font-bold"><i class="far fa-clock text-[8px] mr-0.5"></i>${shortDay ? shortDay + ' • ' : ''}${dt.horaTexto}</span>`;
+                    }
+                } catch (e) {}
+            }
+
+            const renderSlotAbs = (p, slotNum, isW, isL, scoreDisp) => {
+                const prereqId = slotNum === 1 ? m.player1_prereq_match_id : m.player2_prereq_match_id;
+                let isLoserDrop = slotNum === 1 ? !!m.player1_is_prereq_match_loser : !!m.player2_is_prereq_match_loser;
+                const prereqM = prereqId ? allMatches.find(mx => String(mx.id) === String(prereqId)) : null;
+                if (!isLoserDrop && m.round < 0 && prereqM && prereqM.round > 0) {
+                    isLoserDrop = true;
+                }
+                const isFromWbDrop = Boolean(isLoserDrop && m.round < 0);
+                const prereqIdent = prereqM ? (prereqM.identifier || prereqM.suggested_play_order || '?') : '';
+
+                let slotClasses = 'lbl-team-slot bracket-team-slot';
+                if (isW) slotClasses += isGrandFinal ? ' slot-winner-gold' : ' slot-winner';
+                else if (isL) slotClasses += ' slot-loser';
+
+                const scoreBoxBg = isW
+                    ? (isGrandFinal
+                        ? 'bg-gradient-to-br from-amber-300 to-yellow-400 text-slate-950 font-black'
+                        : 'bg-gradient-to-br from-cyan-400 to-cyan-300 text-slate-950 font-black')
+                    : `bg-[#03060d] ${isCompleted ? 'text-slate-500' : 'text-slate-600'} font-bold border-l border-white/[0.06]`;
+
+                const scoreBoxHtml = `<div class="w-8 self-stretch ${scoreBoxBg} text-xs sm:text-sm flex items-center justify-center shrink-0">${scoreDisp}</div>`;
+
+                if (!p.isDefined) {
+                    let placeholderText = 'Por Definir';
+                    let rightBadge = '';
+                    if (p.isBye) {
+                        placeholderText = 'PASE DIRECTO (BYE)';
+                    } else if (isFromWbDrop && prereqIdent) {
+                        placeholderText = `⬇ Perdedor Match #${prereqIdent}`;
+                        rightBadge = `<span class="text-[8px] font-black text-orange-300/90 uppercase px-1 py-0.5 rounded bg-orange-500/15 shrink-0 mr-1">⬇#${prereqIdent}</span>`;
+                    } else if (prereqIdent) {
+                        placeholderText = `Ganador Match #${prereqIdent}`;
+                    }
+                    return `
+                        <div class="${slotClasses}" data-slot="${slotNum}">
+                            <div class="flex items-center gap-1.5 min-w-0 flex-1 pr-1">
+                                <span class="lbl-seed-badge">-</span>
+                                <span class="text-[10px] font-bold ${isFromWbDrop ? 'text-orange-300/90' : (p.isBye ? 'text-amber-400/80' : 'text-slate-500')} italic truncate">${placeholderText}</span>
+                            </div>
+                            ${rightBadge}
+                            ${scoreBoxHtml}
+                        </div>`;
+                }
+
+                const cleanTeam = p.name.toLowerCase().trim();
+                const safeTeamAttr = cleanTeam.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const seedText = (p.seed !== null && p.seed !== undefined) ? p.seed : '-';
+                const avatarHtml = p.logo
+                    ? `<img src="${p.logo}" alt="${p.tag}" loading="lazy" onerror="this.onerror=null; this.src='${getFallbackImage(p.name)}';" class="w-5 h-5 rounded object-contain bg-black/50 p-0.5 border border-white/10 shrink-0">`
+                    : `<div class="w-5 h-5 rounded bg-[#0b1324] text-cyan-400/75 flex items-center justify-center shrink-0 border border-white/10"><i class="fas fa-shield-alt text-[8px]"></i></div>`;
+
+                const tagColor = isW ? (isGrandFinal ? 'text-yellow-300' : 'text-cyan-300') : 'text-cyan-200/80';
+                const nameColor = isW ? 'text-white font-bold' : 'text-slate-300 font-semibold';
+
+                return `
+                    <div class="${slotClasses}" data-slot="${slotNum}" data-team="${cleanTeam.replace(/"/g, '&quot;')}" onmouseenter="hoverBracketTeam('${safeTeamAttr}')" onmouseleave="unhoverBracketTeam()" title="[Seed #${seedText}] ${p.name} (${p.tag})">
+                        <div class="flex items-center gap-1.5 min-w-0 flex-1 pr-1">
+                            <span class="lbl-seed-badge" title="Seed #${seedText}">${seedText}</span>
+                            ${avatarHtml}
+                            <span class="text-[11px] font-black uppercase tracking-tight ${tagColor} shrink-0">${p.tag}</span>
+                            ${p.name !== p.tag ? `<span class="text-[10px] ${nameColor} uppercase tracking-tight truncate">${p.name}</span>` : ''}
+                        </div>
+                        ${scoreBoxHtml}
+                    </div>`;
+            };
+
+            let cardExtra = '';
+            if (isGrandFinal) cardExtra += ' card-grand-final';
+            if (isLive) cardExtra += ' card-live';
+
+            const p1DataTeam = p1.isDefined ? p1.name.toLowerCase().trim() : '';
+            const p2DataTeam = p2.isDefined ? p2.name.toLowerCase().trim() : '';
+
+            return `
+                <div id="bracket-match-${m.id}" data-match-id="${m.id}" data-identifier="${m.identifier || ''}" data-team-1="${p1DataTeam.replace(/"/g, '&quot;')}" data-team-2="${p2DataTeam.replace(/"/g, '&quot;')}" class="lbl-match-card bracket-match-node ${cardExtra}" style="left:${x}px; top:${y}px;">
+                    <div class="lbl-card-topbar">
+                        <span class="text-cyan-400/90 font-black flex items-center gap-1.5">
+                            <span>${matchIdent}</span>
+                            <span class="text-[8px] px-1 py-px rounded bg-white/[0.06] text-slate-300 border border-white/[0.08]">${boLabel}</span>
+                        </span>
+                        ${statusRightHtml}
+                    </div>
+                    ${renderSlotAbs(p1, 1, p1IsW, isCompleted && p2IsW, p1ScoreDisplay)}
+                    ${renderSlotAbs(p2, 2, p2IsW, isCompleted && p1IsW, p2ScoreDisplay)}
+                </div>`;
+        }
+
+        function construirHTMLPedestalCampeonPlayoffs(x, y, champSlot, esCopaLegion) {
+            const tituloTorneo = esCopaLegion ? 'CAMPEÓN COPA LEGION' : 'CAMPEÓN DEL TORNEO';
+            if (!champSlot || !champSlot.isDefined) {
+                return `
+                    <div style="position:absolute; left:${x}px; top:${y}px; width:216px; height:128px; z-index:10;" class="rounded-2xl bg-[#070d19]/95 border border-dashed border-yellow-500/40 flex flex-col items-center justify-center p-4 text-center shadow-2xl">
+                        <div class="w-11 h-11 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-2 shadow-inner">
+                            <i class="fas fa-trophy text-lg"></i>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-yellow-400">${tituloTorneo}</span>
+                        <span class="text-[11px] font-bold text-slate-400 mt-0.5">Se define en Gran Final</span>
+                    </div>`;
+            }
+
+            const logoHtml = champSlot.logo
+                ? `<img src="${champSlot.logo}" alt="${champSlot.tag}" onerror="this.onerror=null; this.src='${getFallbackImage(champSlot.name)}';" class="w-11 h-11 rounded-xl object-contain bg-black/50 p-1 border border-yellow-400/50 shrink-0">`
+                : `<div class="w-11 h-11 rounded-xl bg-yellow-500/15 border border-yellow-400/50 flex items-center justify-center text-yellow-300 shrink-0"><i class="fas fa-crown"></i></div>`;
+
+            return `
+                <div style="position:absolute; left:${x}px; top:${y}px; width:216px; height:128px; z-index:10;" class="rounded-2xl bg-gradient-to-br from-yellow-950/70 via-[#090d16] to-amber-950/50 border-2 border-yellow-400 shadow-[0_0_32px_rgba(234,179,8,0.28)] flex flex-col items-center justify-center p-3 text-center">
+                    <span class="px-2.5 py-0.5 rounded-full bg-yellow-400 text-slate-950 text-[9px] font-black uppercase tracking-widest mb-1.5 shadow">
+                        <i class="fas fa-crown mr-1"></i> CAMPEÓN OFICIAL
+                    </span>
+                    <div class="flex items-center gap-2.5 my-1 max-w-full">
+                        ${logoHtml}
+                        <div class="text-left min-w-0">
+                            <span class="text-sm font-black text-yellow-300 uppercase tracking-tight block leading-none">${champSlot.tag}</span>
+                            <span class="text-[10px] font-bold text-white truncate block max-w-[125px] mt-1 uppercase">${champSlot.name}</span>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function construirConectoresSVGGeometricos(cardPositions, allMatches, grandFinalMatch, champPos) {
+            const byId = new Map(allMatches.map(m => [String(m.id), m]));
+            let svgPaths = '';
+
+            cardPositions.forEach((tgtPos, tgtId) => {
+                const m = byId.get(String(tgtId));
+                if (!m) return;
+
+                [1, 2].forEach(slotNum => {
+                    const prereqId = slotNum === 1 ? m.player1_prereq_match_id : m.player2_prereq_match_id;
+                    let isLoser = slotNum === 1 ? !!m.player1_is_prereq_match_loser : !!m.player2_is_prereq_match_loser;
+                    if (!prereqId) return;
+
+                    const srcM = byId.get(String(prereqId));
+                    if (!srcM) return;
+
+                    if (!isLoser && m.round < 0 && srcM.round > 0) {
+                        isLoser = true;
+                    }
+                    // Nunca trazar líneas de caída al Lower Bracket ni líneas largas cruzadas entre LB y Gran Final
+                    if (isLoser) return;
+                    if ((srcM.round < 0 && m.round > 0) || (srcM.round > 0 && m.round < 0)) return;
+
+                    const srcPos = cardPositions.get(String(srcM.id));
+                    if (!srcPos || tgtPos.x <= srcPos.x) return;
+
+                    const x1 = srcPos.x + srcPos.w;
+                    const y1 = srcPos.y + Math.round(srcPos.h / 2);
+                    const x2 = tgtPos.x;
+                    const y2 = tgtPos.y + (slotNum === 1 ? 39 : 74);
+                    const midX = Math.round((x1 + x2) / 2);
+
+                    const pathData = Math.abs(y1 - y2) <= 1
+                        ? `M ${x1} ${y1} H ${x2}`
+                        : `M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`;
+
+                    const isCompleted = (srcM.state === 'completed' || srcM.state === 'complete' || !!srcM.winner_id);
+                    const pParsed = parseMatchScores(srcM);
+                    const winnerTeam = pParsed.p1Winner
+                        ? (srcM.player1?.nombre || srcM.player1?.name)
+                        : (pParsed.p2Winner ? (srcM.player2?.nombre || srcM.player2?.name) : '');
+                    const cleanActiveTeam = (winnerTeam || '').toLowerCase().trim();
+
+                    const isToGrandFinal = !!m._isGrandFinal;
+                    const isLower = m.round < 0;
+                    let strokeColor = isToGrandFinal
+                        ? 'rgba(234, 179, 8, 0.42)'
+                        : (isLower ? 'rgba(244, 63, 94, 0.34)' : 'rgba(6, 182, 212, 0.36)');
+                    let strokeWidth = 1.8;
+
+                    if (isCompleted && cleanActiveTeam) {
+                        strokeColor = isToGrandFinal ? '#eab308' : (isLower ? '#fb7185' : '#06b6d4');
+                        strokeWidth = 2.4;
+                    }
+
+                    svgPaths += `<path d="${pathData}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" class="bracket-svg-path transition-colors duration-200" data-team="${cleanActiveTeam.replace(/"/g, '&quot;')}" data-default-stroke="${strokeColor}" data-default-width="${strokeWidth}" data-source-id="${srcM.id}" data-target-id="${m.id}" />`;
+                });
+            });
+
+            // Conector dorado directo de Gran Final hacia el Pedestal del Campeón
+            if (grandFinalMatch && champPos && cardPositions.has(String(grandFinalMatch.id))) {
+                const gfPos = cardPositions.get(String(grandFinalMatch.id));
+                const x1 = gfPos.x + gfPos.w;
+                const y1 = gfPos.y + Math.round(gfPos.h / 2);
+                const x2 = champPos.x;
+                const gfDone = (grandFinalMatch.state === 'completed' || grandFinalMatch.state === 'complete' || !!grandFinalMatch.winner_id);
+                const gfStroke = gfDone ? '#eab308' : 'rgba(234, 179, 8, 0.35)';
+                const gfWidth = gfDone ? 2.6 : 1.8;
+                svgPaths += `<path d="M ${x1} ${y1} H ${x2}" fill="none" stroke="${gfStroke}" stroke-width="${gfWidth}" stroke-linecap="round" class="bracket-svg-path" data-default-stroke="${gfStroke}" data-default-width="${gfWidth}" />`;
+            }
+
+            return svgPaths;
+        }
+
+        function calcularPosYEnColumna(colIdx, mIdx, matchesInCol, prevRoundIdSet, cardPositions, prevColYs, baseTop, lastYInCol, CARD_H, ROW_GAP) {
+            const m = matchesInCol[mIdx];
+            let y = null;
+
+            if (colIdx === 0) {
+                y = baseTop + mIdx * (CARD_H + ROW_GAP);
+            } else {
+                const p1Id = m.player1_prereq_match_id ? String(m.player1_prereq_match_id) : null;
+                const p2Id = m.player2_prereq_match_id ? String(m.player2_prereq_match_id) : null;
+                const pos1 = (p1Id && prevRoundIdSet.has(p1Id) && cardPositions.has(p1Id)) ? cardPositions.get(p1Id) : null;
+                const pos2 = (p2Id && prevRoundIdSet.has(p2Id) && cardPositions.has(p2Id)) ? cardPositions.get(p2Id) : null;
+
+                if (pos1 && pos2) {
+                    y = Math.round((pos1.y + pos2.y) / 2);
+                } else if (pos1 || pos2) {
+                    y = (pos1 || pos2).y;
+                } else if (matchesInCol.length === prevColYs.length && prevColYs[mIdx] !== undefined) {
+                    y = prevColYs[mIdx];
+                } else if (matchesInCol.length * 2 === prevColYs.length && prevColYs[mIdx * 2] !== undefined && prevColYs[mIdx * 2 + 1] !== undefined) {
+                    y = Math.round((prevColYs[mIdx * 2] + prevColYs[mIdx * 2 + 1]) / 2);
+                } else {
+                    y = baseTop + mIdx * (CARD_H + ROW_GAP);
+                }
+            }
+
+            if (mIdx > 0 && lastYInCol !== null && y < lastYInCol + CARD_H + ROW_GAP) {
+                y = lastYInCol + CARD_H + ROW_GAP;
+            }
+            return y;
+        }
 
         function construirLayoutPlayoffsModular(playoffMatches, docTorneo) {
             if (!Array.isArray(playoffMatches) || playoffMatches.length === 0) {
@@ -3891,273 +4537,415 @@
             // 2. Detección de Doble Eliminación vs Simple Eliminación
             const isDoubleElim = regularMatches.some(m => m.round < 0);
 
-            // 3. Detección de Bracket Masivo (> 16 equipos / > 31 partidas, ej. +48 equipos con BYEs en Ronda 1)
+            // 3. Detección de Bracket Masivo (> 16 equipos / > 31 partidas)
             const numEquiposEst = docTorneo?.totalEquipos || docTorneo?.participantes?.length || docTorneo?.datosChallonge?.totalEquipos || 0;
             const esBracketMasivo = numEquiposEst > 16 || regularMatches.length > 31;
             const faseActiva = esBracketMasivo ? (window.filtroFasePlayoffsMasivo || 'fase_final') : 'completo';
+            const esCopaLegion = esTorneoScouting3(docTorneo);
+            const zoomActual = window._playoffsZoom || 1;
+
+            const zoomControlsHTML = `
+                <div class="flex items-center gap-1 bg-[#02050b] px-2 py-1 rounded-xl border border-gray-800 shrink-0">
+                    <button type="button" onclick="cambiarZoomPlayoffs(-0.1)" class="w-6 h-6 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 text-xs font-black flex items-center justify-center cursor-pointer transition-colors" title="Alejar">
+                        <i class="fas fa-minus text-[10px]"></i>
+                    </button>
+                    <span id="playoffs-zoom-label" class="text-[10px] font-black text-cyan-300 font-mono min-w-[38px] text-center">${Math.round(zoomActual * 100)}%</span>
+                    <button type="button" onclick="cambiarZoomPlayoffs(0.1)" class="w-6 h-6 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 text-xs font-black flex items-center justify-center cursor-pointer transition-colors" title="Acercar">
+                        <i class="fas fa-plus text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="ajustarZoomPlayoffs()" class="px-2 h-6 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-[9px] font-black uppercase tracking-wider cursor-pointer transition-colors ml-0.5" title="Ajustar todo el cuadrante a la pantalla">
+                        Ajustar
+                    </button>
+                </div>`;
 
             let selectorBracketMasivoHTML = '';
             if (esBracketMasivo) {
                 selectorBracketMasivoHTML = `
-                    <div class="mb-5 p-3 sm:p-4 rounded-2xl bg-[#040812] border border-cyan-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 shadow-lg">
+                    <div class="mb-4 p-3 sm:p-4 rounded-2xl bg-[#040812] border border-cyan-500/30 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 shadow-lg">
                         <div class="flex items-center gap-2.5">
                             <span class="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                                 <i class="fas fa-sitemap text-xs"></i>
                             </span>
                             <div>
                                 <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 block">Navegación Inteligente • Torneo Masivo (${numEquiposEst || '+32'} Equipos)</span>
-                                <p class="text-[11px] text-gray-400">Selecciona la etapa del cuadrante para visualizar cruces con máxima legibilidad o abre el mapa completo con zoom.</p>
+                                <p class="text-[11px] text-gray-400">Playoffs desde Cuartos de Final alineados simétricamente, o explora todas las rondas previas.</p>
                             </div>
                         </div>
-                        <div class="flex flex-wrap items-center gap-1.5 bg-[#02050b] p-1.5 rounded-xl border border-gray-800 shrink-0 w-full lg:w-auto">
-                            <button type="button" onclick="cambiarFaseBracketMasivo('fase_final')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'fase_final' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
-                                🏆 Fase Final (Top 8)
-                            </button>
-                            <button type="button" onclick="cambiarFaseBracketMasivo('rondas_previas')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'rondas_previas' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
-                                ⚔️ Rondas Iniciales & BYEs
-                            </button>
-                            <button type="button" onclick="cambiarFaseBracketMasivo('completo')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'completo' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
-                                📋 Todas las Rondas
-                            </button>
-                            <button type="button" onclick="cambiarEtapa('llave')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition-all cursor-pointer flex items-center gap-1">
-                                <i class="fas fa-expand-arrows-alt text-[10px]"></i> Mapa Zoom
-                            </button>
+                        <div class="flex flex-wrap items-center gap-2 w-full xl:w-auto justify-between xl:justify-end">
+                            <div class="flex flex-wrap items-center gap-1.5 bg-[#02050b] p-1.5 rounded-xl border border-gray-800">
+                                <button type="button" onclick="cambiarFaseBracketMasivo('fase_final')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'fase_final' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                    🏆 Fase Final (Desde 4tos)
+                                </button>
+                                <button type="button" onclick="cambiarFaseBracketMasivo('rondas_previas')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'rondas_previas' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                    ⚔️ Rondas Iniciales & BYEs
+                                </button>
+                                <button type="button" onclick="cambiarFaseBracketMasivo('completo')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer ${faseActiva === 'completo' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow' : 'text-gray-400 hover:text-white'}">
+                                    📋 Todas las Rondas
+                                </button>
+                                <button type="button" onclick="cambiarEtapa('llave')" class="px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition-all cursor-pointer flex items-center gap-1">
+                                    <i class="fas fa-expand-arrows-alt text-[10px]"></i> Mapa Zoom
+                                </button>
+                            </div>
+                            ${zoomControlsHTML}
                         </div>
+                    </div>`;
+            } else {
+                selectorBracketMasivoHTML = `
+                    <div class="mb-3 flex justify-end">
+                        ${zoomControlsHTML}
                     </div>`;
             }
 
-            let bracketHTML = '';
+            // Geometría simétrica unificada (inspirada en el motor Copa Legion Pick'em)
+            const CARD_W = 244;
+            const CARD_H = 92;
+            const CHAMP_W = 216;
+            const COL_GAP = 48;
+            const ROW_GAP = 18;
+            const HEADER_H = 46;
+            const LEFT_OFFSET = 16;
+
+            const cardPositions = new Map();
+            let htmlElements = '';
+            let maxX = 0;
+            let maxY = 0;
+            let grandFinalMatch = null;
+            let champPos = null;
 
             if (isDoubleElim) {
                 // ═══════════════════════════════════════════
-                //  FORMATO: DOBLE ELIMINACIÓN (UPPER & LOWER)
+                //  FORMATO: DOBLE ELIMINACIÓN GEOMÉTRICA
                 // ═══════════════════════════════════════════
-                const positiveMatches = regularMatches.filter(m => m.round > 0).sort((a, b) => (a.round - b.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id)));
-                const negativeMatches = regularMatches.filter(m => m.round < 0).sort((a, b) => (b.round - a.round) || ((a.suggested_play_order || a.id) - (b.suggested_play_order || b.id))); // -1, -2, -3...
+                const positiveMatches = regularMatches.filter(m => m.round > 0);
+                const negativeMatches = regularMatches.filter(m => m.round < 0);
 
                 const distinctPosRounds = [...new Set(positiveMatches.map(m => m.round))].sort((a, b) => a - b);
-                const distinctNegRounds = [...new Set(negativeMatches.map(m => m.round))].sort((a, b) => b - a); // -1, -2, -3...
+                const distinctNegRounds = [...new Set(negativeMatches.map(m => m.round))].sort((a, b) => b - a); // -1, -2, ...
 
-                // Identificar Gran Final y posible Bracket Reset
                 const maxPosRound = distinctPosRounds[distinctPosRounds.length - 1];
                 const matchesInFinalRound = positiveMatches.filter(m => m.round === maxPosRound);
-                
-                let grandFinalMatch = null;
-                let bracketResetMatch = null;
 
+                let bracketResetMatch = null;
                 if (matchesInFinalRound.length >= 1) {
-                    grandFinalMatch = matchesInFinalRound[0];
+                    grandFinalMatch = matchesInFinalRound.find(m => !m.optional) || matchesInFinalRound[0];
                     grandFinalMatch._isGrandFinal = true;
                     if (matchesInFinalRound.length > 1) {
-                        bracketResetMatch = matchesInFinalRound[1];
+                        bracketResetMatch = matchesInFinalRound.find(m => m !== grandFinalMatch) || matchesInFinalRound[1];
                         bracketResetMatch._isGrandFinal = true;
                     }
                 }
 
-                // Rondas de Winners (excluyendo la ronda de Gran Final)
                 const allUpperRounds = distinctPosRounds.filter(r => r !== maxPosRound);
                 let upperRounds = allUpperRounds;
                 let lowerRounds = distinctNegRounds;
                 let mostrarGrandFinal = true;
 
+                // Detectar la ronda de LB donde caen los perdedores de Cuartos WB (Top 8)
+                const wbQuarterRound = allUpperRounds.length >= 3 ? allUpperRounds[allUpperRounds.length - 3] : allUpperRounds[0];
+                const wbQuarterIds = new Set(positiveMatches.filter(m => m.round === wbQuarterRound).map(m => String(m.id)));
+                let lbDropFromQuarterRound = distinctNegRounds.find(r => {
+                    return negativeMatches.some(m => m.round === r && (
+                        (m.player1_prereq_match_id && wbQuarterIds.has(String(m.player1_prereq_match_id))) ||
+                        (m.player2_prereq_match_id && wbQuarterIds.has(String(m.player2_prereq_match_id)))
+                    ));
+                });
+                if (lbDropFromQuarterRound === undefined) {
+                    lbDropFromQuarterRound = distinctNegRounds.length >= 5 ? distinctNegRounds[distinctNegRounds.length - 5] : distinctNegRounds[0];
+                }
+
                 if (esBracketMasivo && faseActiva === 'fase_final') {
-                    // Últimas 3 rondas de Winners (Cuartos, Semis, Final Winners) y últimas 4 de Losers
+                    // Upper desde Cuartos (3 rondas) + Gran Final + Campeón (5 columnas)
                     upperRounds = allUpperRounds.slice(-3);
-                    lowerRounds = distinctNegRounds.slice(-4);
+                    // Lower desde la ronda de caída de Cuartos WB hasta Final de Perdedores (5 columnas alineadas)
+                    lowerRounds = distinctNegRounds.filter(r => r <= lbDropFromQuarterRound);
+                    if (lowerRounds.length === 0) lowerRounds = distinctNegRounds.slice(-5);
                     mostrarGrandFinal = true;
                 } else if (esBracketMasivo && faseActiva === 'rondas_previas') {
-                    // Primeras rondas clasificatorias antes del Top 8
                     upperRounds = allUpperRounds.length > 3 ? allUpperRounds.slice(0, -2) : allUpperRounds;
-                    lowerRounds = distinctNegRounds.length > 4 ? distinctNegRounds.slice(0, -3) : distinctNegRounds;
+                    lowerRounds = distinctNegRounds.filter(r => r > lbDropFromQuarterRound);
+                    if (lowerRounds.length === 0 && distinctNegRounds.length > 4) {
+                        lowerRounds = distinctNegRounds.slice(0, -3);
+                    }
                     mostrarGrandFinal = false;
                 }
 
-                // Función auxiliar para títulos dinámicos de Winners
+                const orderedWB = ordenarRondasPorArbolPlayoffs(positiveMatches, upperRounds, false);
+                const orderedLB = ordenarRondasPorArbolPlayoffs(negativeMatches, lowerRounds, true);
+
                 const getUpperRoundHeader = (r) => {
                     const globalIdx = allUpperRounds.indexOf(r);
                     const distFromEnd = allUpperRounds.length - 1 - globalIdx;
-                    let title = `Ronda ${r} Winners`;
-                    let sub = `Partidas Eliminatorias`;
-                    if (distFromEnd === 0) {
-                        title = `<i class="fas fa-trophy text-[10px] text-cyan-400"></i> Final de Ganadores`;
-                        sub = `Partida Bo5 • Pase a Gran Final`;
-                    } else if (distFromEnd === 1) {
-                        title = `<i class="fas fa-trophy text-[10px] text-cyan-400"></i> Semifinales Winners`;
-                        sub = `Partidas Bo3`;
-                    } else if (distFromEnd === 2) {
-                        title = `<i class="fas fa-shield-halved text-[10px] text-cyan-400"></i> Cuartos de Winners`;
-                        sub = `Partidas Bo3`;
-                    }
-                    return { title, sub };
+                    if (distFromEnd === 0) return { title: `<i class="fas fa-trophy text-[10px] text-cyan-400"></i> Final de Ganadores`, sub: `Bo5 • Pase a Gran Final` };
+                    if (distFromEnd === 1) return { title: `<i class="fas fa-trophy text-[10px] text-cyan-400"></i> Semifinales Winners`, sub: `Partidas Bo3` };
+                    if (distFromEnd === 2) return { title: `<i class="fas fa-shield-halved text-[10px] text-cyan-400"></i> Cuartos de Winners`, sub: `Top 8 • Partidas Bo3` };
+                    if (distFromEnd === 3) return { title: `Octavos de Winners`, sub: `Ronda ${r} • Top 16` };
+                    return { title: `Ronda ${r} Winners`, sub: `Llave Superior` };
                 };
 
-                // Función auxiliar para títulos dinámicos de Losers
                 const getLowerRoundHeader = (r) => {
                     const globalIdx = distinctNegRounds.indexOf(r);
                     const distFromEnd = distinctNegRounds.length - 1 - globalIdx;
-                    let title = `Ronda ${Math.abs(r)} Perdedores`;
-                    let sub = `Partidas Eliminatorias`;
-                    if (distFromEnd === 0) {
-                        title = `<i class="fas fa-trophy text-[10px] text-rose-400"></i> Final de Perdedores`;
-                        sub = `Partida Bo5 • Pase a Gran Final`;
-                    } else if (distFromEnd === 1) {
-                        title = `<i class="fas fa-shield-halved text-[10px] text-rose-400"></i> Semifinal Perdedores`;
-                        sub = `Partida Bo3`;
-                    } else {
-                        title = `<i class="fas fa-shield-halved text-[10px] text-rose-400"></i> Ronda ${Math.abs(r)} Perdedores`;
-                        sub = `Llave Inferior`;
-                    }
-                    return { title, sub };
+                    if (distFromEnd === 0) return { title: `<i class="fas fa-trophy text-[10px] text-rose-400"></i> Final de Perdedores`, sub: `Bo5 • Pase a Gran Final` };
+                    if (distFromEnd === 1) return { title: `<i class="fas fa-shield-halved text-[10px] text-rose-400"></i> Semifinal Perdedores`, sub: `Partida Bo3` };
+                    if (distFromEnd === 2) return { title: `Cuartos Finales LB`, sub: `Caída Semis WB • Bo3` };
+                    if (r === lbDropFromQuarterRound) return { title: `Cuartos Perdedores`, sub: `Caída 4tos WB • Ronda ${Math.abs(r)}` };
+                    return { title: `Ronda ${Math.abs(r)} Perdedores`, sub: `Llave Inferior` };
                 };
 
-                // Columnas de Upper Bracket
-                let upperColsHTML = '';
-                upperRounds.forEach((r, idx) => {
-                    const rMatches = positiveMatches.filter(m => m.round === r);
+                // --- BLOQUE 1: UPPER BRACKET + GRAN FINAL + CAMPEÓN ---
+                const wbHeaderY = 48;
+                const wbBaseTop = wbHeaderY + HEADER_H + 16; // 110
+                let wbBottomY = wbBaseTop;
+
+                htmlElements += `
+                    <div style="position:absolute; left:${LEFT_OFFSET}px; top:12px;" class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/35 text-cyan-300 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                            <i class="fas fa-crown text-[9px]"></i> ${mostrarGrandFinal ? 'Upper Bracket & Gran Final' : 'Upper Bracket (Rondas Previas)'}
+                        </span>
+                    </div>`;
+
+                let prevWbYs = [];
+                let prevWbIds = new Set();
+
+                upperRounds.forEach((r, colIdx) => {
+                    const colMatches = orderedWB.get(r) || [];
+                    const colX = LEFT_OFFSET + colIdx * (CARD_W + COL_GAP);
                     const head = getUpperRoundHeader(r);
-                    const isLastUpper = (r === allUpperRounds[allUpperRounds.length - 1]);
-                    upperColsHTML += `
-                        <div class="flex flex-col shrink-0 w-[255px]">
-                            <div class="mb-3.5 rounded-xl py-2 px-3 text-center border border-cyan-500/30 bg-[#060d1b] shadow-[0_0_15px_rgba(6,182,212,0.12)]">
-                                <h4 class="text-xs font-black text-cyan-300 uppercase tracking-widest flex items-center justify-center gap-1.5">
-                                    ${head.title}
-                                </h4>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub} (${rMatches.length})</span>
-                            </div>
-                            <div class="flex flex-col justify-around flex-1 py-1 gap-5 ${isLastUpper ? 'pt-[50px]' : ''}">
-                                ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
-                            </div>
+
+                    htmlElements += `
+                        <div class="lbl-round-header" style="left:${colX}px; top:${wbHeaderY}px;">
+                            <span class="text-[11px] font-black text-cyan-300 uppercase tracking-wider flex items-center gap-1.5 leading-none">${head.title}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase mt-1 leading-none">${head.sub} (${colMatches.length})</span>
                         </div>`;
+
+                    const currentYs = [];
+                    const currentIds = new Set();
+                    let lastY = null;
+
+                    colMatches.forEach((m, mIdx) => {
+                        const y = calcularPosYEnColumna(colIdx, mIdx, colMatches, prevWbIds, cardPositions, prevWbYs, wbBaseTop, lastY, CARD_H, ROW_GAP);
+                        lastY = y;
+                        currentYs.push(y);
+                        currentIds.add(String(m.id));
+                        cardPositions.set(String(m.id), { x: colX, y, w: CARD_W, h: CARD_H });
+                        htmlElements += renderPlayoffMatchCardAbs(m, colX, y, playoffMatches, docTorneo, false);
+                        maxX = Math.max(maxX, colX + CARD_W);
+                        wbBottomY = Math.max(wbBottomY, y + CARD_H);
+                    });
+
+                    prevWbYs = currentYs;
+                    prevWbIds = currentIds;
                 });
 
-                // Columnas de Lower Bracket
-                let lowerColsHTML = '';
-                lowerRounds.forEach((r, idx) => {
-                    const rMatches = negativeMatches.filter(m => m.round === r);
-                    const head = getLowerRoundHeader(r);
-                    const isLastLower = (r === distinctNegRounds[distinctNegRounds.length - 1]);
-                    const isSecondToLast = (r === distinctNegRounds[distinctNegRounds.length - 2]);
-                    const ptClass = (isLastLower || isSecondToLast) && rMatches.length === 1 ? 'pt-[50px]' : '';
-                    lowerColsHTML += `
-                        <div class="flex flex-col shrink-0 w-[255px]">
-                            <div class="mb-3.5 rounded-xl py-2 px-3 text-center border border-rose-500/30 bg-[#0e0714] shadow-[0_0_15px_rgba(244,63,94,0.1)]">
-                                <h4 class="text-xs font-black text-rose-300 uppercase tracking-widest flex items-center justify-center gap-1.5">
-                                    ${head.title}
-                                </h4>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase block mt-0.5">${head.sub} (${rMatches.length})</span>
-                            </div>
-                            <div class="flex flex-col justify-around flex-1 py-1 gap-5 ${ptClass}">
-                                ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
-                            </div>
-                        </div>`;
-                });
-
-                // Columna de Gran Final
-                let grandFinalColHTML = '';
+                // Gran Final & Pedestal del Campeón pegados a la derecha de Final WB
                 if (grandFinalMatch && mostrarGrandFinal) {
-                    const isResetActive = bracketResetMatch && (bracketResetMatch.state === 'open' || bracketResetMatch.state === 'underway' || bracketResetMatch.state === 'live' || bracketResetMatch.state === 'complete' || bracketResetMatch.state === 'completed');
-                    grandFinalColHTML = `
-                        <div class="flex flex-col shrink-0 w-[255px]">
-                            <div class="mb-3.5 rounded-xl border border-yellow-500/50 bg-gradient-to-b from-yellow-500/20 via-amber-500/10 to-[#070c14] py-2 px-3 text-center shadow-lg">
-                                <div class="flex items-center justify-center gap-1.5 mb-0.5">
-                                    <i class="fas fa-crown text-yellow-400 text-xs"></i>
-                                    <h4 class="text-xs font-black text-yellow-300 uppercase tracking-wider">GRAN FINAL 🏆</h4>
-                                </div>
-                                <span class="text-[9px] font-bold text-yellow-400/80 uppercase block">SERIE BO5 DE CAMPEONATO</span>
-                            </div>
-                            <div class="pt-[60px] space-y-4">
-                                ${renderPlayoffMatchCard(grandFinalMatch, playoffMatches, docTorneo)}
-                                ${isResetActive ? `
-                                    <div class="mt-4 pt-3 border-t border-yellow-500/20">
-                                        <div class="mb-2 text-center text-[10px] font-bold text-yellow-300/80 uppercase">Desempate • Bracket Reset</div>
-                                        ${renderPlayoffMatchCard(bracketResetMatch, playoffMatches, docTorneo)}
-                                    </div>` : ''}
-                            </div>
+                    const gfColIdx = upperRounds.length;
+                    const gfX = LEFT_OFFSET + gfColIdx * (CARD_W + COL_GAP);
+                    const gfY = prevWbYs.length > 0 ? prevWbYs[0] : (wbBaseTop + 120);
+
+                    htmlElements += `
+                        <div class="lbl-round-header final-header" style="left:${gfX}px; top:${wbHeaderY}px;">
+                            <span class="text-[11px] font-black text-yellow-300 uppercase tracking-wider flex items-center gap-1.5 leading-none">
+                                <i class="fas fa-crown text-[10px]"></i> GRAN FINAL 🏆
+                            </span>
+                            <span class="text-[9px] font-bold text-yellow-300/80 uppercase mt-1 leading-none">Serie Bo5 de Campeonato</span>
                         </div>`;
+
+                    cardPositions.set(String(grandFinalMatch.id), { x: gfX, y: gfY, w: CARD_W, h: CARD_H });
+                    htmlElements += renderPlayoffMatchCardAbs(grandFinalMatch, gfX, gfY, playoffMatches, docTorneo, false);
+                    maxX = Math.max(maxX, gfX + CARD_W);
+                    wbBottomY = Math.max(wbBottomY, gfY + CARD_H);
+
+                    const isResetActive = bracketResetMatch && ['open', 'underway', 'live', 'complete', 'completed'].includes((bracketResetMatch.state || '').toLowerCase());
+                    if (isResetActive) {
+                        const resetY = gfY + CARD_H + 30;
+                        htmlElements += `
+                            <div style="position:absolute; left:${gfX}px; top:${resetY - 18}px; width:${CARD_W}px;" class="text-center text-[9px] font-black text-yellow-300/85 uppercase tracking-wider">
+                                Desempate • Bracket Reset
+                            </div>`;
+                        cardPositions.set(String(bracketResetMatch.id), { x: gfX, y: resetY, w: CARD_W, h: CARD_H });
+                        htmlElements += renderPlayoffMatchCardAbs(bracketResetMatch, gfX, resetY, playoffMatches, docTorneo, false);
+                        wbBottomY = Math.max(wbBottomY, resetY + CARD_H);
+                    }
+
+                    // Determinar ganador oficial para el Pedestal del Campeón
+                    const finalDecider = (isResetActive && parseMatchScores(bracketResetMatch).isCompleted) ? bracketResetMatch : grandFinalMatch;
+                    const gfScores = parseMatchScores(finalDecider);
+                    let champSlot = null;
+                    if (gfScores.isCompleted) {
+                        champSlot = gfScores.p1Winner
+                            ? resolverParticipanteSlot(finalDecider, 1, playoffMatches, docTorneo)
+                            : (gfScores.p2Winner ? resolverParticipanteSlot(finalDecider, 2, playoffMatches, docTorneo) : null);
+                    }
+
+                    const champX = gfX + CARD_W + COL_GAP;
+                    const champY = gfY - 18;
+                    champPos = { x: champX, y: champY, w: CHAMP_W, h: 128 };
+                    htmlElements += construirHTMLPedestalCampeonPlayoffs(champX, champY, champSlot, esCopaLegion);
+                    maxX = Math.max(maxX, champX + CHAMP_W);
+                    wbBottomY = Math.max(wbBottomY, champY + 128);
                 }
 
-                bracketHTML = `
-                    <div class="flex items-start gap-10 sm:gap-12 pt-1">
-                        <!-- PANEL IZQUIERDO: UPPER + LOWER -->
-                        <div class="flex flex-col">
-                            <!-- 1. LLAVE SUPERIOR -->
-                            <div class="flex items-start gap-7 sm:gap-8 mb-8">
-                                ${upperColsHTML}
-                            </div>
-                            <!-- 2. LLAVE INFERIOR -->
-                            <div class="flex items-start gap-7 sm:gap-8">
-                                ${lowerColsHTML}
-                            </div>
-                        </div>
-                        <!-- PANEL DERECHO: GRAN FINAL -->
-                        ${grandFinalColHTML}
-                    </div>`;
+                maxY = Math.max(maxY, wbBottomY);
+
+                // --- BLOQUE 2: LOWER BRACKET ---
+                let lbTopStart = wbBottomY + 106;
+                let lbBottomY = lbTopStart;
+                if (lowerRounds.length > 0) {
+                    const lbSectionPillY = wbBottomY + 34;
+                    const lbHeaderY = lbSectionPillY + 32;
+                    lbTopStart = lbHeaderY + HEADER_H + 16;
+
+                    htmlElements += `
+                        <div style="position:absolute; left:${LEFT_OFFSET}px; top:${lbSectionPillY - 14}px; width:${Math.max(400, maxX - LEFT_OFFSET)}px; border-top:1px dashed rgba(255,255,255,0.08);"></div>
+                        <div style="position:absolute; left:${LEFT_OFFSET}px; top:${lbSectionPillY}px;" class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/35 text-rose-300 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                                <i class="fas fa-fire-alt text-[9px]"></i> Lower Bracket ${faseActiva === 'fase_final' ? '(Desde Cuartos)' : ''}
+                            </span>
+                        </div>`;
+
+                    let prevLbYs = [];
+                    let prevLbIds = new Set();
+
+                    lowerRounds.forEach((r, colIdx) => {
+                        const colMatches = orderedLB.get(r) || [];
+                        const colX = LEFT_OFFSET + colIdx * (CARD_W + COL_GAP);
+                        const head = getLowerRoundHeader(r);
+                        const isLowerFinal = (r === distinctNegRounds[distinctNegRounds.length - 1]);
+
+                        htmlElements += `
+                            <div class="lbl-round-header loser-header" style="left:${colX}px; top:${lbHeaderY}px;">
+                                <span class="text-[11px] font-black text-rose-300 uppercase tracking-wider flex items-center gap-1.5 leading-none">${head.title}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase mt-1 leading-none">${head.sub} (${colMatches.length})</span>
+                            </div>`;
+
+                        const currentYs = [];
+                        const currentIds = new Set();
+                        let lastY = null;
+
+                        colMatches.forEach((m, mIdx) => {
+                            const y = calcularPosYEnColumna(colIdx, mIdx, colMatches, prevLbIds, cardPositions, prevLbYs, lbTopStart, lastY, CARD_H, ROW_GAP);
+                            lastY = y;
+                            currentYs.push(y);
+                            currentIds.add(String(m.id));
+                            cardPositions.set(String(m.id), { x: colX, y, w: CARD_W, h: CARD_H });
+                            htmlElements += renderPlayoffMatchCardAbs(m, colX, y, playoffMatches, docTorneo, isLowerFinal);
+                            maxX = Math.max(maxX, colX + CARD_W);
+                            lbBottomY = Math.max(lbBottomY, y + CARD_H);
+                        });
+
+                        prevLbYs = currentYs;
+                        prevLbIds = currentIds;
+                    });
+
+                    maxY = Math.max(maxY, lbBottomY);
+                }
 
             } else {
                 // ═══════════════════════════════════════════
-                //  FORMATO: SIMPLE ELIMINACIÓN
+                //  FORMATO: SIMPLE ELIMINACIÓN GEOMÉTRICA
                 // ═══════════════════════════════════════════
                 const allRounds = [...new Set(regularMatches.map(m => m.round))].sort((a, b) => a - b);
                 let rounds = allRounds;
                 if (esBracketMasivo && faseActiva === 'fase_final') {
-                    rounds = allRounds.slice(-4);
+                    rounds = allRounds.slice(-3); // Cuartos, Semis, Gran Final
                 } else if (esBracketMasivo && faseActiva === 'rondas_previas') {
-                    rounds = allRounds.length > 4 ? allRounds.slice(0, -3) : allRounds;
+                    rounds = allRounds.length > 3 ? allRounds.slice(0, -2) : allRounds;
                 }
-                let colsHTML = '';
 
-                rounds.forEach((r) => {
-                    const rMatches = regularMatches.filter(m => m.round === r).sort((a, b) => (a.suggested_play_order || a.id) - (b.suggested_play_order || b.id));
+                const orderedSE = ordenarRondasPorArbolPlayoffs(regularMatches, rounds, false);
+                const headerY = 16;
+                const baseTop = headerY + HEADER_H + 18;
+                let prevYs = [];
+                let prevIds = new Set();
+                let lastFinalMatch = null;
+
+                rounds.forEach((r, colIdx) => {
+                    const colMatches = orderedSE.get(r) || [];
+                    const colX = LEFT_OFFSET + colIdx * (CARD_W + COL_GAP);
                     const globalIdx = allRounds.indexOf(r);
                     const distFromEnd = allRounds.length - 1 - globalIdx;
+
                     let title = `Ronda ${r}`;
-                    let sub = `Partidas Eliminatorias`;
+                    let sub = `Eliminatorias`;
                     let isFinal = false;
 
                     if (distFromEnd === 0) {
                         isFinal = true;
-                        title = `<i class="fas fa-crown text-yellow-400 text-xs mr-1"></i> GRAN FINAL 🏆`;
-                        sub = `SERIE DE CAMPEONATO`;
+                        title = `<i class="fas fa-crown text-yellow-400 text-[10px]"></i> GRAN FINAL 🏆`;
+                        sub = `Serie de Campeonato`;
+                        colMatches.forEach(m => m._isGrandFinal = true);
+                        lastFinalMatch = colMatches[0] || null;
                     } else if (distFromEnd === 1) {
                         title = `Semifinales`;
                         sub = `Pase a Gran Final`;
                     } else if (distFromEnd === 2) {
                         title = `Cuartos de Final`;
-                        sub = `Eliminatorias Directas`;
+                        sub = `Top 8 • Directas`;
                     } else if (distFromEnd === 3) {
                         title = `Octavos de Final`;
-                        sub = `Ronda Clasificatoria`;
+                        sub = `Top 16`;
                     }
 
-                    if (isFinal) {
-                        rMatches.forEach(m => m._isGrandFinal = true);
-                    }
-
-                    colsHTML += `
-                        <div class="flex flex-col shrink-0 w-[255px]">
-                            <div class="mb-3.5 rounded-xl py-2 px-3 text-center border ${isFinal ? 'border-yellow-500/50 bg-gradient-to-b from-yellow-500/20 to-[#070c14]' : 'border-cyan-500/30 bg-[#060d1b]'} shadow-lg">
-                                <h4 class="text-xs font-black ${isFinal ? 'text-yellow-300' : 'text-cyan-300'} uppercase tracking-widest flex items-center justify-center gap-1.5">
-                                    ${title}
-                                </h4>
-                                <span class="text-[9px] font-bold ${isFinal ? 'text-yellow-400/80' : 'text-slate-400'} uppercase block mt-0.5">${sub} (${rMatches.length})</span>
-                            </div>
-                            <div class="flex flex-col justify-around flex-1 py-1 gap-5">
-                                ${rMatches.map(m => renderPlayoffMatchCard(m, playoffMatches, docTorneo)).join('')}
-                            </div>
+                    htmlElements += `
+                        <div class="lbl-round-header ${isFinal ? 'final-header' : ''}" style="left:${colX}px; top:${headerY}px;">
+                            <span class="text-[11px] font-black ${isFinal ? 'text-yellow-300' : 'text-cyan-300'} uppercase tracking-wider flex items-center gap-1.5 leading-none">${title}</span>
+                            <span class="text-[9px] font-bold ${isFinal ? 'text-yellow-300/80' : 'text-slate-400'} uppercase mt-1 leading-none">${sub} (${colMatches.length})</span>
                         </div>`;
+
+                    const currentYs = [];
+                    const currentIds = new Set();
+                    let lastY = null;
+
+                    colMatches.forEach((m, mIdx) => {
+                        const y = calcularPosYEnColumna(colIdx, mIdx, colMatches, prevIds, cardPositions, prevYs, baseTop, lastY, CARD_H, ROW_GAP);
+                        lastY = y;
+                        currentYs.push(y);
+                        currentIds.add(String(m.id));
+                        cardPositions.set(String(m.id), { x: colX, y, w: CARD_W, h: CARD_H });
+                        htmlElements += renderPlayoffMatchCardAbs(m, colX, y, playoffMatches, docTorneo, false);
+                        maxX = Math.max(maxX, colX + CARD_W);
+                        maxY = Math.max(maxY, y + CARD_H);
+                    });
+
+                    prevYs = currentYs;
+                    prevIds = currentIds;
                 });
 
-                bracketHTML = `
-                    <div class="flex items-start gap-7 sm:gap-8 pt-1">
-                        ${colsHTML}
-                    </div>`;
+                if (lastFinalMatch && faseActiva !== 'rondas_previas') {
+                    grandFinalMatch = lastFinalMatch;
+                    const gfPos = cardPositions.get(String(lastFinalMatch.id));
+                    const gfScores = parseMatchScores(lastFinalMatch);
+                    let champSlot = null;
+                    if (gfScores.isCompleted) {
+                        champSlot = gfScores.p1Winner
+                            ? resolverParticipanteSlot(lastFinalMatch, 1, playoffMatches, docTorneo)
+                            : (gfScores.p2Winner ? resolverParticipanteSlot(lastFinalMatch, 2, playoffMatches, docTorneo) : null);
+                    }
+                    const champX = (gfPos ? gfPos.x : LEFT_OFFSET) + CARD_W + COL_GAP;
+                    const champY = (gfPos ? gfPos.y : baseTop) - 18;
+                    champPos = { x: champX, y: champY, w: CHAMP_W, h: 128 };
+                    htmlElements += construirHTMLPedestalCampeonPlayoffs(champX, champY, champSlot, esCopaLegion);
+                    maxX = Math.max(maxX, champX + CHAMP_W);
+                    maxY = Math.max(maxY, champY + 128);
+                }
             }
 
-            // Tercer puesto (si existe)
+            const totalW = Math.max(600, maxX + 24);
+            const totalH = Math.max(280, maxY + 24);
+            const svgPaths = construirConectoresSVGGeometricos(cardPositions, playoffMatches, grandFinalMatch, champPos);
+
+            const watermarkImg = esCopaLegion ? '/assets/logo_copa_legion.png' : '/assets/logo.webp';
+            const watermarkHTML = `
+                <div style="position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                    <img src="${watermarkImg}" alt="" style="width:420px; max-width:65%; opacity:${esCopaLegion ? '0.075' : '0.045'}; filter:drop-shadow(0 0 40px rgba(6,182,212,0.25)); user-select:none; pointer-events:none;">
+                </div>`;
+
+            // Tercer puesto (si existe en Simple Eliminación)
             let bronzeHTML = '';
             if (thirdPlaceMatch) {
                 bronzeHTML = `
-                    <div class="mt-8 pt-6 border-t border-gray-800/80 max-w-sm">
+                    <div class="mt-6 pt-5 border-t border-gray-800/80 max-w-sm">
                         <div class="mb-2 text-xs font-black text-amber-500 uppercase tracking-widest flex items-center gap-1.5">
                             <i class="fas fa-medal"></i> Definición de 3º y 4º Lugar (Bronce)
                         </div>
@@ -4168,11 +4956,15 @@
             return `
                 <div class="w-full">
                     ${selectorBracketMasivoHTML}
-                    <!-- CONTENEDOR DEL BRACKET LIBRE Y RESPONSIVO -->
-                    <div id="bracket-scroll-container" class="w-full overflow-x-auto pb-6 scrollbar-none xl:flex xl:justify-center" style="scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;">
-                        <div id="bracket-canvas" class="relative inline-block min-w-max py-2 px-1 sm:px-2">
-                            <svg id="bracket-svg-layer" class="absolute inset-0 pointer-events-none w-full h-full" style="z-index: 10; overflow: visible;"></svg>
-                            ${bracketHTML}
+                    <div id="bracket-scroll-container" class="lbl-bracket-viewport">
+                        <div id="bracket-zoom-stage" class="lbl-bracket-zoom-stage" style="width:${Math.ceil(totalW * zoomActual)}px; height:${Math.ceil(totalH * zoomActual)}px;">
+                            <div id="bracket-canvas" data-geometric="true" data-base-w="${totalW}" data-base-h="${totalH}" class="lbl-bracket-canvas" style="width:${totalW}px; height:${totalH}px; transform:scale(${zoomActual});">
+                                ${watermarkHTML}
+                                <svg id="bracket-svg-layer" class="absolute inset-0 pointer-events-none" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="z-index: 2;">
+                                    ${svgPaths}
+                                </svg>
+                                ${htmlElements}
+                            </div>
                         </div>
                     </div>
                     ${bronzeHTML}
@@ -4831,7 +5623,7 @@
 
         // --- SINCRONIZACIÓN BAJO DEMANDA DESDE CHALLONGE ---
         window.sincronizarBracketPlayoffs = async function(forzar = false) {
-            const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId) || listaTorneosRegistrados[0];
+            const docTorneo = obtenerTorneoActivoSeguro();
             if (!docTorneo) return;
 
             const btnSync = document.getElementById('btn-sync-playoffs');
@@ -5112,6 +5904,7 @@
         }
 
         function trazarConectoresSVG(canvas, allMatches) {
+            if (canvas && canvas.dataset && canvas.dataset.geometric === 'true') return;
             const svg = document.getElementById('bracket-svg-layer');
             if (!svg || !canvas || !Array.isArray(allMatches) || allMatches.length === 0) return;
             if (canvas.offsetHeight <= 10 || canvas.offsetWidth <= 10) return;
@@ -5249,13 +6042,14 @@
         window.hoverBracketTeam = (teamName) => {
             if (!teamName) return;
             const clean = teamName.toLowerCase().trim();
-            document.querySelectorAll(`.bracket-team-slot[data-team="${clean}"]`).forEach(el => {
-                el.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            const safeAttr = (window.CSS && CSS.escape) ? CSS.escape(clean) : clean.replace(/"/g, '\\"');
+            document.querySelectorAll(`.bracket-team-slot[data-team="${safeAttr}"]`).forEach(el => {
+                el.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
             });
             // QUITAR GLOW AL PASAR CURSOR (Solo trazo sólido definido)
-            document.querySelectorAll(`.bracket-svg-path[data-team="${clean}"]`).forEach(path => {
+            document.querySelectorAll(`.bracket-svg-path[data-team="${safeAttr}"]`).forEach(path => {
                 path.setAttribute('stroke', '#38bdf8');
-                path.setAttribute('stroke-width', '2.5');
+                path.setAttribute('stroke-width', '2.8');
             });
         };
 
@@ -5264,6 +6058,15 @@
                 el.style.backgroundColor = '';
             });
             const canvas = document.getElementById('bracket-canvas');
+            if (canvas && canvas.dataset && canvas.dataset.geometric === 'true') {
+                canvas.querySelectorAll('.bracket-svg-path').forEach(path => {
+                    const defStroke = path.getAttribute('data-default-stroke');
+                    const defWidth = path.getAttribute('data-default-width');
+                    if (defStroke) path.setAttribute('stroke', defStroke);
+                    if (defWidth) path.setAttribute('stroke-width', defWidth);
+                });
+                return;
+            }
             if (canvas && window._currentPlayoffMatches) {
                 trazarConectoresSVG(canvas, window._currentPlayoffMatches);
             }
@@ -5360,7 +6163,7 @@
         // Auto-sincronización viva cada 60 segundos si el torneo seleccionado está en vivo
         setInterval(() => {
             if (torneoSeleccionadoId) {
-                const docTorneo = listaTorneosRegistrados.find(t => t.id === torneoSeleccionadoId);
+                const docTorneo = obtenerTorneoActivoSeguro();
                 const est = (docTorneo?.estado || '').toLowerCase();
                 if (est !== 'finalizado' && est !== 'complete') {
                     renderizarTorneoDetalle(false);
