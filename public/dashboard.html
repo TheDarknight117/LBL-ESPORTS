@@ -48,7 +48,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=235">
+    <link rel="stylesheet" href="/dist/output.css?v=283">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -432,6 +432,9 @@
                     <a href="/smok" target="_blank" class="px-4 py-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 text-emerald-300 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md">
                         <i class="fas fa-circle-play text-emerald-400"></i> SMOK (Cocha)
                     </a>
+                    <button type="button" onclick="abrirModalAfluenciaLAN()" class="px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer">
+                        <i class="fas fa-chart-pie"></i> Afluencia LAN
+                    </button>
                     <button type="button" onclick="abrirModalCredencialesLAN()" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/25 active:scale-95 cursor-pointer">
                         <i class="fas fa-key"></i> Accesos LAN
                     </button>
@@ -959,9 +962,12 @@
                                 <input type="text" id="lan-input-nombre" required placeholder="ej: Carlos (Turno Tarde)" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Sede Permitida:</label>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Sede / Sucursal:</label>
                                 <select id="lan-input-sede" class="w-full bg-black/80 border border-gray-800 focus:border-purple-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                                    <option value="AMQ">AMQ (La Paz)</option>
+                                    <option value="AMQ|Miraflores">AMQ (La Paz) - Sucursal Miraflores</option>
+                                    <option value="AMQ|Murillo">AMQ (La Paz) - Sucursal Murillo</option>
+                                    <option value="AMQ|El Alto">AMQ (La Paz) - Sucursal El Alto</option>
+                                    <option value="AMQ">AMQ (La Paz - General)</option>
                                     <option value="SMOK">SMOK (Cochabamba)</option>
                                     <option value="TODAS">Ambas Sedes (Admin)</option>
                                 </select>
@@ -1007,6 +1013,163 @@
         </div>
     </div>
 
+    <!-- ============================================================== -->
+    <!-- MODAL DE REPORTE DE AFLUENCIA & MARKETING LAN CENTERS          -->
+    <!-- ============================================================== -->
+    <div id="modal-afluencia-lan" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalAfluenciaLAN()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-6 hidden">
+        <div class="bg-[#07090e] border border-red-500/40 rounded-2xl sm:rounded-3xl w-full max-w-5xl max-h-[94dvh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            
+            <!-- Encabezado -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0d111a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-400 text-xl shrink-0 shadow-[0_0_15px_rgba(239,68,68,0.25)]">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider truncate">Reporte de Afluencia por Sucursal</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600/30 text-red-300 border border-red-500/40">MKT & Control LBL</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">Comparativa de jugadores registrados en <strong>Aquí Me Quedo (Miraflores, Murillo, El Alto)</strong> y <strong>SMOK (Cochabamba)</strong>.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalAfluenciaLAN()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Contenido con Scroll -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#05070c]">
+                
+                <!-- Banner Líder AMQ -->
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-950/30 via-black/60 to-transparent border border-amber-500/30 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fas fa-fire text-amber-400 text-lg"></i>
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-wider text-amber-300 block">Sucursal AMQ con Mayor Afluencia</span>
+                            <span id="dash-afluencia-lider" class="text-sm sm:text-base font-black text-white">Consultando datos...</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="cargarAfluenciaLANFirestore()" class="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 text-xs font-bold uppercase flex items-center gap-1.5 cursor-pointer">
+                            <i class="fas fa-sync-alt text-cyan-400"></i> Actualizar
+                        </button>
+                        <button type="button" onclick="exportarAfluenciaLANCSV()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-black uppercase flex items-center gap-1.5 cursor-pointer">
+                            <i class="fas fa-file-csv"></i> Exportar CSV MKT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjetas Comparativas por Sucursal -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div onclick="cambiarFiltroAfluenciaLAN('Miraflores')" class="p-4 rounded-2xl bg-black/60 border border-red-500/30 hover:border-red-400/70 transition-all cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase text-red-400">AMQ Miraflores</span>
+                            <span id="dash-pct-miraflores" class="text-xs font-mono font-bold text-gray-300">0%</span>
+                        </div>
+                        <div class="text-2xl font-black text-white font-mono" id="dash-total-miraflores">0</div>
+                        <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                            <div id="dash-bar-miraflores" class="h-full bg-red-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="text-[11px] text-gray-400 flex justify-between">
+                            <span>Hoy: <strong id="dash-hoy-miraflores" class="text-emerald-400">0</strong></span>
+                            <span>Únicos: <strong id="dash-unicos-miraflores" class="text-cyan-400">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div onclick="cambiarFiltroAfluenciaLAN('Murillo')" class="p-4 rounded-2xl bg-black/60 border border-amber-500/30 hover:border-amber-400/70 transition-all cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase text-amber-400">AMQ Murillo</span>
+                            <span id="dash-pct-murillo" class="text-xs font-mono font-bold text-gray-300">0%</span>
+                        </div>
+                        <div class="text-2xl font-black text-white font-mono" id="dash-total-murillo">0</div>
+                        <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                            <div id="dash-bar-murillo" class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="text-[11px] text-gray-400 flex justify-between">
+                            <span>Hoy: <strong id="dash-hoy-murillo" class="text-emerald-400">0</strong></span>
+                            <span>Únicos: <strong id="dash-unicos-murillo" class="text-cyan-400">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div onclick="cambiarFiltroAfluenciaLAN('El Alto')" class="p-4 rounded-2xl bg-black/60 border border-emerald-500/30 hover:border-emerald-400/70 transition-all cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase text-emerald-400">AMQ El Alto</span>
+                            <span id="dash-pct-elalto" class="text-xs font-mono font-bold text-gray-300">0%</span>
+                        </div>
+                        <div class="text-2xl font-black text-white font-mono" id="dash-total-elalto">0</div>
+                        <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                            <div id="dash-bar-elalto" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="text-[11px] text-gray-400 flex justify-between">
+                            <span>Hoy: <strong id="dash-hoy-elalto" class="text-emerald-400">0</strong></span>
+                            <span>Únicos: <strong id="dash-unicos-elalto" class="text-cyan-400">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div onclick="cambiarFiltroAfluenciaLAN('SMOK')" class="p-4 rounded-2xl bg-black/60 border border-cyan-500/30 hover:border-cyan-400/70 transition-all cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase text-cyan-400">SMOK (Cocha)</span>
+                            <span class="text-[10px] font-bold uppercase text-gray-400">Sede Cbba</span>
+                        </div>
+                        <div class="text-2xl font-black text-white font-mono" id="dash-total-smok">0</div>
+                        <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                            <div class="h-full bg-cyan-500 rounded-full" style="width: 100%"></div>
+                        </div>
+                        <div class="text-[11px] text-gray-400 flex justify-between">
+                            <span>Hoy: <strong id="dash-hoy-smok" class="text-emerald-400">0</strong></span>
+                            <span>Únicos: <strong id="dash-unicos-smok" class="text-cyan-400">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros seccionados y Buscador -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button type="button" onclick="cambiarFiltroAfluenciaLAN('todas')" id="dash-tab-todas" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-red-600 text-white cursor-pointer">Todas</button>
+                        <button type="button" onclick="cambiarFiltroAfluenciaLAN('Miraflores')" id="dash-tab-miraflores" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-gray-900 text-gray-300 border border-gray-800 hover:bg-gray-800 cursor-pointer">Miraflores</button>
+                        <button type="button" onclick="cambiarFiltroAfluenciaLAN('Murillo')" id="dash-tab-murillo" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-gray-900 text-gray-300 border border-gray-800 hover:bg-gray-800 cursor-pointer">Murillo</button>
+                        <button type="button" onclick="cambiarFiltroAfluenciaLAN('El Alto')" id="dash-tab-elalto" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-gray-900 text-gray-300 border border-gray-800 hover:bg-gray-800 cursor-pointer">El Alto</button>
+                        <button type="button" onclick="cambiarFiltroAfluenciaLAN('SMOK')" id="dash-tab-smok" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-gray-900 text-gray-300 border border-gray-800 hover:bg-gray-800 cursor-pointer">SMOK Cocha</button>
+                    </div>
+                    <div class="relative w-full sm:w-64">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+                        <input type="text" id="dash-buscador-afluencia" oninput="renderizarModalAfluenciaLAN()" placeholder="Buscar jugador, C.I. o equipo..." class="w-full bg-black/80 border border-gray-800 focus:border-red-500 rounded-xl pl-8 pr-3 py-2 text-xs text-white outline-none">
+                    </div>
+                </div>
+
+                <!-- Tabla Detallada de Visitas -->
+                <div class="border border-gray-800/80 rounded-2xl bg-black/50 overflow-x-auto max-h-[320px] overflow-y-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-gray-800 text-[10px] uppercase font-black text-gray-400 bg-[#0d111a] sticky top-0">
+                                <th class="p-3">Fecha y Hora</th>
+                                <th class="p-3">Sucursal / Sede</th>
+                                <th class="p-3">Jugador</th>
+                                <th class="p-3">C.I.</th>
+                                <th class="p-3">Equipo / Torneo</th>
+                                <th class="p-3">Encargado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-tabla-afluencia-body" class="divide-y divide-gray-800/60">
+                            <tr>
+                                <td colspan="6" class="p-6 text-center text-gray-500">Cargando registros...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0d111a] flex justify-between items-center gap-2 shrink-0">
+                <span class="text-xs text-gray-400">Registros mostrados: <strong id="dash-afluencia-count" class="text-white">0</strong></span>
+                <button type="button" onclick="cerrarModalAfluenciaLAN()" class="px-5 py-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { db, auth } from "/firebase-config.js"; 
         import { collection, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -1022,7 +1185,7 @@
             cerrarSesionGlobal,
             esCorreoStaff
         } from "/auth-core.js?v=262";
-        import "/app-version.js?v=270";
+        import "/app-version.js?v=283";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -4217,6 +4380,7 @@
                     nombre: cFields.nombre?.stringValue || '--',
                     password: cFields.password?.stringValue || '',
                     sede: cFields.sede?.stringValue || 'AMQ',
+                    sucursal: cFields.sucursal?.stringValue || '',
                     activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
                     modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
                     updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
@@ -4374,8 +4538,38 @@
                 const c = cuentasLANActuales[k];
                 const esAmq = (c.sede || '').toUpperCase() === 'AMQ' || (c.sede || '').toUpperCase() === 'AQM';
                 const esSmok = (c.sede || '').toUpperCase() === 'SMOK';
-                const badgeColor = esAmq ? 'bg-red-950 text-red-300 border-red-500/40' : (esSmok ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-purple-950 text-purple-300 border-purple-500/40');
-                const badgeTexto = esAmq ? 'AMQ (La Paz)' : (esSmok ? 'SMOK (Cocha)' : 'Ambas Sedes');
+
+                let sucursalDetectada = c.sucursal || '';
+                if (!sucursalDetectada && esAmq) {
+                    const uLow = (c.usuario || k || '').toLowerCase();
+                    const nLow = (c.nombre || '').toLowerCase();
+                    if (uLow.includes('miraflores') || nLow.includes('miraflores')) sucursalDetectada = 'Miraflores';
+                    else if (uLow.includes('murillo') || nLow.includes('murillo')) sucursalDetectada = 'Murillo';
+                    else if (uLow.includes('elalto') || uLow.includes('el_alto') || nLow.includes('el alto') || nLow.includes('elalto')) sucursalDetectada = 'El Alto';
+                }
+
+                let badgeColor = 'bg-purple-950 text-purple-300 border-purple-500/40';
+                let badgeTexto = 'Ambas Sedes';
+
+                if (esAmq) {
+                    if (sucursalDetectada === 'Miraflores') {
+                        badgeColor = 'bg-red-950 text-red-300 border-red-500/40';
+                        badgeTexto = 'AMQ (Miraflores)';
+                    } else if (sucursalDetectada === 'Murillo') {
+                        badgeColor = 'bg-amber-950 text-amber-300 border-amber-500/40';
+                        badgeTexto = 'AMQ (Murillo)';
+                    } else if (sucursalDetectada === 'El Alto') {
+                        badgeColor = 'bg-emerald-950 text-emerald-300 border-emerald-500/40';
+                        badgeTexto = 'AMQ (El Alto)';
+                    } else {
+                        badgeColor = 'bg-red-950 text-red-300 border-red-500/40';
+                        badgeTexto = 'AMQ (La Paz)';
+                    }
+                } else if (esSmok) {
+                    badgeColor = 'bg-cyan-950 text-cyan-300 border-cyan-500/40';
+                    badgeTexto = 'SMOK (Cocha)';
+                }
+
                 const passVisible = !!passwordsVisiblesLAN[k];
                 const displayPass = passVisible ? escapeHTML(c.password || '') : '••••••••';
                 const safeUsuario = escapeHTML(c.usuario || k);
@@ -4424,7 +4618,18 @@
             const uInput = (document.getElementById('lan-input-usuario').value || '').trim().toLowerCase().replace(/\s+/g, '_');
             const pInput = (document.getElementById('lan-input-password').value || '').trim();
             const nInput = (document.getElementById('lan-input-nombre').value || '').trim();
-            const sInput = document.getElementById('lan-input-sede').value;
+            const sRaw = document.getElementById('lan-input-sede').value;
+            let sInput = sRaw;
+            let sucInput = '';
+            if (sRaw.includes('|')) {
+                const partes = sRaw.split('|');
+                sInput = partes[0];
+                sucInput = partes[1];
+            } else if (sRaw === 'AMQ') {
+                if (uInput.includes('miraflores') || nInput.toLowerCase().includes('miraflores')) sucInput = 'Miraflores';
+                else if (uInput.includes('murillo') || nInput.toLowerCase().includes('murillo')) sucInput = 'Murillo';
+                else if (uInput.includes('elalto') || uInput.includes('el_alto') || nInput.toLowerCase().includes('el alto') || nInput.toLowerCase().includes('elalto')) sucInput = 'El Alto';
+            }
             const btn = document.getElementById('btn-lan-guardar');
 
             if (!uInput || !pInput || !nInput) {
@@ -4453,6 +4658,7 @@
                     password: pInput,
                     nombre: nInput,
                     sede: sInput,
+                    sucursal: sucInput,
                     activo: true,
                     modificadoPor: nickStaff,
                     updatedAt: new Date().toISOString()
@@ -4470,7 +4676,7 @@
                 document.getElementById('lan-input-nombre').value = '';
 
                 renderizarTablaCredencialesLAN();
-                alert(`✅ Credencial "${uInput}" guardada en Firestore para ${sInput}.`);
+                alert(`✅ Credencial "${uInput}" guardada en Firestore para ${sInput}${sucInput ? ` (${sucInput})` : ''}.`);
             } catch (err) {
                 console.error("Error al guardar credencial LAN:", err);
                 alert("Error al guardar en Firestore: " + err.message);
@@ -4486,7 +4692,30 @@
             document.getElementById('lan-input-usuario').value = c.usuario || k;
             document.getElementById('lan-input-password').value = c.password || '';
             document.getElementById('lan-input-nombre').value = c.nombre || '';
-            document.getElementById('lan-input-sede').value = c.sede || 'AMQ';
+
+            let valSede = c.sede || 'AMQ';
+            if (c.sucursal) {
+                valSede = `${c.sede || 'AMQ'}|${c.sucursal}`;
+            } else if ((c.sede || '').toUpperCase() === 'AMQ') {
+                const uLow = (c.usuario || k || '').toLowerCase();
+                const nLow = (c.nombre || '').toLowerCase();
+                if (uLow.includes('miraflores') || nLow.includes('miraflores')) valSede = 'AMQ|Miraflores';
+                else if (uLow.includes('murillo') || nLow.includes('murillo')) valSede = 'AMQ|Murillo';
+                else if (uLow.includes('elalto') || uLow.includes('el_alto') || nLow.includes('el alto') || nLow.includes('elalto')) valSede = 'AMQ|El Alto';
+            }
+
+            const selEl = document.getElementById('lan-input-sede');
+            if (selEl) {
+                let found = false;
+                for (let i = 0; i < selEl.options.length; i++) {
+                    if (selEl.options[i].value === valSede) {
+                        selEl.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) selEl.value = c.sede || 'AMQ';
+            }
             document.getElementById('lan-input-usuario').focus();
         };
 
@@ -4508,11 +4737,367 @@
             }
         };
 
+        // ==============================================================
+        // REPORTE Y CONTROL DE AFLUENCIA LAN CENTERS (AMQ Y SMOK)
+        // ==============================================================
+        const DOC_VISITAS_AMQ = doc(db, "torneos_activos", "lan_visitas_amq");
+        const DOC_VISITAS_SMOK = doc(db, "torneos_activos", "lan_visitas_smok");
+        const FIRESTORE_REST_VISITAS_AMQ = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/lan_visitas_amq";
+        const FIRESTORE_REST_VISITAS_SMOK = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/lan_visitas_smok";
+
+        let visitasAMQActuales = [];
+        let visitasSMOKActuales = [];
+        let filtroAfluenciaSucursal = 'todas';
+
+        function normalizarSucursalDash(suc, usuario = '', encargado = '') {
+            const raw = `${suc || ''} ${usuario || ''} ${encargado || ''}`.toLowerCase();
+            if (raw.includes('murillo')) return 'Murillo';
+            if (raw.includes('alto')) return 'El Alto';
+            if (raw.includes('mira')) return 'Miraflores';
+            return 'Miraflores';
+        }
+
+        function esFechaHoyDash(fechaStr, timestamp) {
+            let d = null;
+            if (timestamp && typeof timestamp === 'number') {
+                d = new Date(timestamp);
+            } else if (fechaStr) {
+                // Soporta dd/mm/yyyy o ISO
+                if (/^\d{2}\/\d{2}\/\d{4}/.test(String(fechaStr))) {
+                    const parts = String(fechaStr).split(',')[0].trim().split('/');
+                    if (parts.length === 3) {
+                        const hoy = new Date();
+                        return parseInt(parts[0], 10) === hoy.getDate() &&
+                               parseInt(parts[1], 10) === (hoy.getMonth() + 1) &&
+                               parseInt(parts[2], 10) === hoy.getFullYear();
+                    }
+                }
+                d = new Date(fechaStr);
+            }
+            if (!d || isNaN(d.getTime())) return false;
+            const hoy = new Date();
+            return d.getDate() === hoy.getDate() &&
+                   d.getMonth() === hoy.getMonth() &&
+                   d.getFullYear() === hoy.getFullYear();
+        }
+
+        function parsearVisitasRestDash(fields, sedePorDefecto) {
+            if (!fields || !fields.visitas || !fields.visitas.arrayValue || !Array.isArray(fields.visitas.arrayValue.values)) {
+                return [];
+            }
+            return fields.visitas.arrayValue.values.map(item => {
+                const f = item.mapValue?.fields || {};
+                const usuarioLogin = f.usuarioLogin?.stringValue || '';
+                const encargado = f.encargado?.stringValue || '';
+                const rawSuc = f.sucursal?.stringValue || '';
+                const sede = f.sede?.stringValue || sedePorDefecto;
+                return {
+                    id: f.id?.stringValue || '',
+                    jugador: f.jugador?.stringValue || f.nombre?.stringValue || '--',
+                    riotId: f.riotId?.stringValue || '--',
+                    ci: f.ci?.stringValue || '--',
+                    equipo: f.equipo?.stringValue || '--',
+                    torneo: f.torneo?.stringValue || 'Liga LBL',
+                    encargado: encargado || '--',
+                    usuarioLogin,
+                    sede,
+                    sucursal: sede === 'SMOK' ? 'Cochabamba' : normalizarSucursalDash(rawSuc, usuarioLogin, encargado),
+                    fechaHora: f.fechaHora?.stringValue || f.fecha?.stringValue || '--',
+                    timestamp: parseInt(f.timestamp?.integerValue || f.timestamp?.doubleValue || '0', 10) || 0
+                };
+            });
+        }
+
+        window.abrirModalAfluenciaLAN = async function() {
+            const modal = document.getElementById('modal-afluencia-lan');
+            if (modal) modal.classList.remove('hidden');
+            await cargarAfluenciaLANFirestore();
+        };
+
+        window.cerrarModalAfluenciaLAN = function() {
+            const modal = document.getElementById('modal-afluencia-lan');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.cargarAfluenciaLANFirestore = async function() {
+            const tbody = document.getElementById('dash-tabla-afluencia-body');
+            const bannerLider = document.getElementById('dash-afluencia-lider');
+            if (bannerLider) bannerLider.textContent = 'Consultando registros en tiempo real...';
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i>Consultando Firestore (AMQ y SMOK)...</td></tr>`;
+            }
+
+            // Cargar AMQ
+            let amqOk = false;
+            try {
+                const snapAMQ = await getDoc(DOC_VISITAS_AMQ);
+                if (snapAMQ.exists() && Array.isArray(snapAMQ.data().visitas)) {
+                    visitasAMQActuales = snapAMQ.data().visitas.map(v => ({
+                        ...v,
+                        sede: 'AMQ',
+                        sucursal: normalizarSucursalDash(v.sucursal, v.usuarioLogin, v.encargado)
+                    }));
+                    amqOk = true;
+                } else if (snapAMQ.exists()) {
+                    visitasAMQActuales = [];
+                    amqOk = true;
+                }
+            } catch (e) {
+                console.warn("SDK getDoc AMQ fallback REST:", e);
+            }
+            if (!amqOk) {
+                try {
+                    const resAMQ = await fetch(FIRESTORE_REST_VISITAS_AMQ);
+                    if (resAMQ.ok) {
+                        const jsonAMQ = await resAMQ.json();
+                        visitasAMQActuales = parsearVisitasRestDash(jsonAMQ.fields, 'AMQ');
+                    } else {
+                        visitasAMQActuales = [];
+                    }
+                } catch (e) {
+                    visitasAMQActuales = [];
+                }
+            }
+
+            // Cargar SMOK
+            let smokOk = false;
+            try {
+                const snapSMOK = await getDoc(DOC_VISITAS_SMOK);
+                if (snapSMOK.exists() && Array.isArray(snapSMOK.data().visitas)) {
+                    visitasSMOKActuales = snapSMOK.data().visitas.map(v => ({
+                        ...v,
+                        sede: 'SMOK',
+                        sucursal: 'Cochabamba'
+                    }));
+                    smokOk = true;
+                } else if (snapSMOK.exists()) {
+                    visitasSMOKActuales = [];
+                    smokOk = true;
+                }
+            } catch (e) {
+                console.warn("SDK getDoc SMOK fallback REST:", e);
+            }
+            if (!smokOk) {
+                try {
+                    const resSMOK = await fetch(FIRESTORE_REST_VISITAS_SMOK);
+                    if (resSMOK.ok) {
+                        const jsonSMOK = await resSMOK.json();
+                        visitasSMOKActuales = parsearVisitasRestDash(jsonSMOK.fields, 'SMOK');
+                    } else {
+                        visitasSMOKActuales = [];
+                    }
+                } catch (e) {
+                    visitasSMOKActuales = [];
+                }
+            }
+
+            renderizarModalAfluenciaLAN();
+        };
+
+        window.cambiarFiltroAfluenciaLAN = function(sucursal) {
+            filtroAfluenciaSucursal = sucursal;
+            const mapaTabs = {
+                'todas': 'dash-tab-todas',
+                'Miraflores': 'dash-tab-miraflores',
+                'Murillo': 'dash-tab-murillo',
+                'El Alto': 'dash-tab-elalto',
+                'SMOK': 'dash-tab-smok'
+            };
+
+            Object.entries(mapaTabs).forEach(([key, id]) => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                if (key === sucursal) {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-red-600 text-white cursor-pointer shadow-sm';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-black uppercase bg-gray-900 text-gray-300 border border-gray-800 hover:bg-gray-800 cursor-pointer';
+                }
+            });
+
+            renderizarModalAfluenciaLAN();
+        };
+
+        function obtenerVisitasFiltradasDash() {
+            const q = (document.getElementById('dash-buscador-afluencia')?.value || '').trim().toLowerCase();
+            const todas = [...visitasAMQActuales, ...visitasSMOKActuales].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            return todas.filter(v => {
+                if (filtroAfluenciaSucursal === 'SMOK') {
+                    if (v.sede !== 'SMOK') return false;
+                } else if (filtroAfluenciaSucursal !== 'todas') {
+                    if (v.sede !== 'AMQ' || v.sucursal !== filtroAfluenciaSucursal) return false;
+                }
+
+                if (!q) return true;
+                const haystack = `${v.jugador || ''} ${v.riotId || ''} ${v.ci || ''} ${v.equipo || ''} ${v.torneo || ''} ${v.encargado || ''} ${v.sucursal || ''}`.toLowerCase();
+                return haystack.includes(q);
+            });
+        }
+
+        window.renderizarModalAfluenciaLAN = function() {
+            // 1. Calcular métricas por sucursal
+            const stats = {
+                Miraflores: { total: 0, hoy: 0, unicos: new Set() },
+                Murillo: { total: 0, hoy: 0, unicos: new Set() },
+                'El Alto': { total: 0, hoy: 0, unicos: new Set() },
+                SMOK: { total: 0, hoy: 0, unicos: new Set() }
+            };
+
+            visitasAMQActuales.forEach(v => {
+                const suc = normalizarSucursalDash(v.sucursal, v.usuarioLogin, v.encargado);
+                const bucket = stats[suc] || stats.Miraflores;
+                bucket.total++;
+                if (esFechaHoyDash(v.fechaHora, v.timestamp)) bucket.hoy++;
+                const idUnico = (v.ci || v.jugador || '').trim().toLowerCase();
+                if (idUnico) bucket.unicos.add(idUnico);
+            });
+
+            visitasSMOKActuales.forEach(v => {
+                stats.SMOK.total++;
+                if (esFechaHoyDash(v.fechaHora, v.timestamp)) stats.SMOK.hoy++;
+                const idUnico = (v.ci || v.jugador || '').trim().toLowerCase();
+                if (idUnico) stats.SMOK.unicos.add(idUnico);
+            });
+
+            const totalAMQ = stats.Miraflores.total + stats.Murillo.total + stats['El Alto'].total;
+            const pctMira = totalAMQ > 0 ? Math.round((stats.Miraflores.total / totalAMQ) * 100) : 0;
+            const pctMurillo = totalAMQ > 0 ? Math.round((stats.Murillo.total / totalAMQ) * 100) : 0;
+            const pctElAlto = totalAMQ > 0 ? Math.round((stats['El Alto'].total / totalAMQ) * 100) : 0;
+
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const setBar = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = `${pct}%`; };
+
+            setVal('dash-pct-miraflores', `${pctMira}%`);
+            setVal('dash-total-miraflores', stats.Miraflores.total);
+            setBar('dash-bar-miraflores', pctMira);
+            setVal('dash-hoy-miraflores', stats.Miraflores.hoy);
+            setVal('dash-unicos-miraflores', stats.Miraflores.unicos.size);
+
+            setVal('dash-pct-murillo', `${pctMurillo}%`);
+            setVal('dash-total-murillo', stats.Murillo.total);
+            setBar('dash-bar-murillo', pctMurillo);
+            setVal('dash-hoy-murillo', stats.Murillo.hoy);
+            setVal('dash-unicos-murillo', stats.Murillo.unicos.size);
+
+            setVal('dash-pct-elalto', `${pctElAlto}%`);
+            setVal('dash-total-elalto', stats['El Alto'].total);
+            setBar('dash-bar-elalto', pctElAlto);
+            setVal('dash-hoy-elalto', stats['El Alto'].hoy);
+            setVal('dash-unicos-elalto', stats['El Alto'].unicos.size);
+
+            setVal('dash-total-smok', stats.SMOK.total);
+            setVal('dash-hoy-smok', stats.SMOK.hoy);
+            setVal('dash-unicos-smok', stats.SMOK.unicos.size);
+
+            const bannerLider = document.getElementById('dash-afluencia-lider');
+            if (bannerLider) {
+                if (totalAMQ === 0) {
+                    bannerLider.innerHTML = 'Sin visitas registradas en AMQ todavía <span class="text-xs text-gray-400 font-normal">(0 registros en La Paz)</span>';
+                } else {
+                    const ranking = [
+                        { nombre: 'Sucursal Miraflores', total: stats.Miraflores.total, pct: pctMira, color: 'text-red-400' },
+                        { nombre: 'Sucursal Murillo', total: stats.Murillo.total, pct: pctMurillo, color: 'text-amber-400' },
+                        { nombre: 'Sucursal El Alto', total: stats['El Alto'].total, pct: pctElAlto, color: 'text-emerald-400' }
+                    ].sort((a, b) => b.total - a.total);
+                    const top = ranking[0];
+                    bannerLider.innerHTML = `<span class="${top.color}">${top.nombre}</span> lidera con <strong>${top.total}</strong> visitas (${top.pct}% del total AMQ)`;
+                }
+            }
+
+            // 2. Renderizar tabla filtrada
+            const tbody = document.getElementById('dash-tabla-afluencia-body');
+            const filtradas = obtenerVisitasFiltradasDash();
+            setVal('dash-afluencia-count', filtradas.length);
+
+            if (!tbody) return;
+            if (filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-500">No hay registros de visitas que coincidan con el filtro actual.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtradas.map(v => {
+                let badgeCls = 'bg-red-950 text-red-300 border-red-500/40';
+                let sucTexto = `AMQ • ${v.sucursal || 'Miraflores'}`;
+                if (v.sede === 'SMOK') {
+                    badgeCls = 'bg-cyan-950 text-cyan-300 border-cyan-500/40';
+                    sucTexto = 'SMOK • Cocha';
+                } else if (v.sucursal === 'Murillo') {
+                    badgeCls = 'bg-amber-950 text-amber-300 border-amber-500/40';
+                } else if (v.sucursal === 'El Alto') {
+                    badgeCls = 'bg-emerald-950 text-emerald-300 border-emerald-500/40';
+                }
+
+                return `
+                    <tr class="hover:bg-white/[0.02] transition-colors">
+                        <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${escapeHTML(v.fechaHora || '--')}</td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${badgeCls}">
+                                ${escapeHTML(sucTexto)}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-bold text-white">${escapeHTML(v.jugador || '--')}</div>
+                            <div class="text-[10px] text-gray-400 font-mono">${escapeHTML(v.riotId || '')}</div>
+                        </td>
+                        <td class="p-3 font-mono text-yellow-300 font-bold">${escapeHTML(v.ci || '--')}</td>
+                        <td class="p-3">
+                            <div class="font-semibold text-gray-200">${escapeHTML(v.equipo || '--')}</div>
+                            <div class="text-[10px] text-cyan-400 font-bold uppercase">${escapeHTML(v.torneo || 'Liga LBL')}</div>
+                        </td>
+                        <td class="p-3 text-gray-300 text-[11px]">${escapeHTML(v.encargado || '--')}</td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        window.exportarAfluenciaLANCSV = function() {
+            const registros = obtenerVisitasFiltradasDash();
+            if (!registros || registros.length === 0) {
+                alert("No hay registros de visitas para exportar.");
+                return;
+            }
+
+            const escaparCSV = (val) => {
+                const s = String(val ?? '').replace(/"/g, '""');
+                return `"${s}"`;
+            };
+
+            const headers = ['Fecha y Hora', 'Sede', 'Sucursal', 'Jugador', 'Riot ID', 'C.I.', 'Equipo', 'Torneo', 'Encargado', 'Usuario Login'];
+            const filas = registros.map(v => [
+                escaparCSV(v.fechaHora || '--'),
+                escaparCSV(v.sede || 'AMQ'),
+                escaparCSV(v.sucursal || 'Miraflores'),
+                escaparCSV(v.jugador || '--'),
+                escaparCSV(v.riotId || '--'),
+                escaparCSV(v.ci || '--'),
+                escaparCSV(v.equipo || '--'),
+                escaparCSV(v.torneo || 'Liga LBL'),
+                escaparCSV(v.encargado || '--'),
+                escaparCSV(v.usuarioLogin || '')
+            ].join(','));
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...filas].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const fecha = new Date().toISOString().split('T')[0];
+            a.setAttribute('href', url);
+            a.setAttribute('download', `lbl_afluencia_lan_${filtroAfluenciaSucursal.toLowerCase().replace(/\s+/g, '_')}_${fecha}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        };
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const modalLan = document.getElementById('modal-credenciales-lan');
                 if (modalLan && !modalLan.classList.contains('hidden')) {
                     cerrarModalCredencialesLAN();
+                }
+                const modalAfluencia = document.getElementById('modal-afluencia-lan');
+                if (modalAfluencia && !modalAfluencia.classList.contains('hidden')) {
+                    cerrarModalAfluenciaLAN();
                 }
             }
         });

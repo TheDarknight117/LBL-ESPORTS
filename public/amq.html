@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="/assets/Logos%20Sponsor/AQMlogo.png">
     
     <!-- Tailwind CSS Compilado & FontAwesome -->
-    <link rel="stylesheet" href="/dist/output.css?v=260">
+    <link rel="stylesheet" href="/dist/output.css?v=283">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
@@ -189,9 +189,13 @@
                         AQUÍ ME QUEDO LAN (AMQ) x LBL
                     </span>
                     <span class="hidden sm:inline-block h-3.5 w-px bg-gray-800"></span>
-                    <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-red-400 shrink-0">
-                        <i class="fas fa-location-dot text-[9px]"></i> SEDE LA PAZ
-                    </span>
+                    <div id="badge-sucursal-header" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-500/40 text-[11px] font-black uppercase tracking-wider text-red-300 shrink-0 shadow-sm">
+                        <i class="fas fa-store text-red-400 text-[10px]"></i>
+                        <span id="texto-sucursal-header">Miraflores</span>
+                        <button type="button" id="btn-cambiar-sucursal" onclick="abrirSelectorSucursalModal()" class="hidden ml-1 text-gray-400 hover:text-white text-[10px] cursor-pointer" title="Cambiar sucursal activa en este terminal">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -284,6 +288,103 @@
             </div>
         </div>
 
+        <!-- PANEL DE MARKETING: AFLUENCIA COMPARATIVA POR SUCURSALES -->
+        <div class="amq-glass rounded-2xl p-4 sm:p-5 border border-red-900/50 bg-gradient-to-r from-red-950/30 via-black/40 to-transparent space-y-3.5 shadow-xl">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2.5 border-b border-white/[0.08]">
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    <span class="w-8 h-8 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 text-sm">
+                        <i class="fas fa-chart-simple"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2 flex-wrap">
+                            <span>Afluencia por Sucursales AMQ</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-500/30 font-mono font-bold">Métricas MKT</span>
+                        </h3>
+                        <p class="text-[11px] text-gray-400">Comparativa en tiempo real de tráfico presencial entre Miraflores, Murillo y El Alto.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div id="badge-sucursal-lider" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider shadow-sm">
+                        <i class="fas fa-fire text-amber-400"></i>
+                        <span>Mayor Afluencia: <strong id="nombre-sucursal-lider" class="text-white">Sin registros</strong></span>
+                    </div>
+                    <button type="button" onclick="exportarVisitasCSV()" class="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-200 text-[11px] font-bold uppercase transition-colors inline-flex items-center gap-1.5 cursor-pointer" title="Descargar reporte CSV para Marketing">
+                        <i class="fas fa-file-csv text-emerald-400"></i> Reporte MKT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de las 3 Sucursales -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <!-- Miraflores -->
+                <div onclick="filtrarHistorialPorSucursalYAbrir('Miraflores')" class="p-3.5 rounded-xl bg-black/60 border border-red-500/30 hover:border-red-400/70 transition-all cursor-pointer group space-y-2 hover:bg-red-950/20" title="Ver visitas registradas en Sucursal Miraflores">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase text-red-400 flex items-center gap-1.5">
+                            <i class="fas fa-location-dot"></i> Miraflores
+                        </span>
+                        <span id="pct-afluencia-miraflores" class="text-[11px] font-mono font-bold text-gray-300">0%</span>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-2">
+                        <div>
+                            <span class="text-xl sm:text-2xl font-black text-white font-mono" id="visitas-sucursal-miraflores">0</span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold ml-1">visitas</span>
+                        </div>
+                        <div class="text-right text-[10px] text-gray-400">
+                            Hoy: <strong id="hoy-sucursal-miraflores" class="text-emerald-400 font-mono font-bold">0</strong> · Únicos: <strong id="unicos-sucursal-miraflores" class="text-cyan-400 font-mono font-bold">0</strong>
+                        </div>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                        <div id="barra-afluencia-miraflores" class="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Murillo -->
+                <div onclick="filtrarHistorialPorSucursalYAbrir('Murillo')" class="p-3.5 rounded-xl bg-black/60 border border-amber-500/30 hover:border-amber-400/70 transition-all cursor-pointer group space-y-2 hover:bg-amber-950/20" title="Ver visitas registradas en Sucursal Murillo">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                            <i class="fas fa-location-dot"></i> Murillo
+                        </span>
+                        <span id="pct-afluencia-murillo" class="text-[11px] font-mono font-bold text-gray-300">0%</span>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-2">
+                        <div>
+                            <span class="text-xl sm:text-2xl font-black text-white font-mono" id="visitas-sucursal-murillo">0</span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold ml-1">visitas</span>
+                        </div>
+                        <div class="text-right text-[10px] text-gray-400">
+                            Hoy: <strong id="hoy-sucursal-murillo" class="text-emerald-400 font-mono font-bold">0</strong> · Únicos: <strong id="unicos-sucursal-murillo" class="text-cyan-400 font-mono font-bold">0</strong>
+                        </div>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                        <div id="barra-afluencia-murillo" class="h-full bg-gradient-to-r from-amber-600 to-yellow-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- El Alto -->
+                <div onclick="filtrarHistorialPorSucursalYAbrir('El Alto')" class="p-3.5 rounded-xl bg-black/60 border border-emerald-500/30 hover:border-emerald-400/70 transition-all cursor-pointer group space-y-2 hover:bg-emerald-950/20" title="Ver visitas registradas en Sucursal El Alto">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase text-emerald-400 flex items-center gap-1.5">
+                            <i class="fas fa-location-dot"></i> El Alto
+                        </span>
+                        <span id="pct-afluencia-elalto" class="text-[11px] font-mono font-bold text-gray-300">0%</span>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-2">
+                        <div>
+                            <span class="text-xl sm:text-2xl font-black text-white font-mono" id="visitas-sucursal-elalto">0</span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold ml-1">visitas</span>
+                        </div>
+                        <div class="text-right text-[10px] text-gray-400">
+                            Hoy: <strong id="hoy-sucursal-elalto" class="text-emerald-400 font-mono font-bold">0</strong> · Únicos: <strong id="unicos-sucursal-elalto" class="text-cyan-400 font-mono font-bold">0</strong>
+                        </div>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                        <div id="barra-afluencia-elalto" class="h-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Barra de Búsqueda Express (Exclusiva La Paz) -->
         <div class="amq-glass rounded-2xl p-5 sm:p-6 border border-red-900/40 space-y-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
@@ -297,7 +398,7 @@
 
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400">
-                        <i class="fas fa-location-dot text-[10px]"></i> AMQ • SEDE LA PAZ
+                        <i class="fas fa-location-dot text-[10px]"></i> AMQ • <span id="texto-sucursal-buscador">MIRAFLORES</span>
                     </span>
                 </div>
             </div>
@@ -462,6 +563,23 @@
                 </button>
             </div>
 
+            <!-- Filtro por Sucursal en el Modal -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2.5 pb-2 border-b border-red-950/60 shrink-0">
+                <span class="text-[10px] uppercase font-black tracking-wider text-gray-400 mr-1">Seccionar por sucursal:</span>
+                <button type="button" onclick="cambiarFiltroSucursalHistorial('todas')" id="tab-historial-todas" class="px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-red-600 text-white shadow-sm cursor-pointer">
+                    Todas (<span id="count-historial-todas">0</span>)
+                </button>
+                <button type="button" onclick="cambiarFiltroSucursalHistorial('Miraflores')" id="tab-historial-miraflores" class="px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-900/50 cursor-pointer">
+                    Miraflores (<span id="count-historial-miraflores">0</span>)
+                </button>
+                <button type="button" onclick="cambiarFiltroSucursalHistorial('Murillo')" id="tab-historial-murillo" class="px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-amber-950/40 text-amber-300 border border-amber-500/30 hover:bg-amber-900/50 cursor-pointer">
+                    Murillo (<span id="count-historial-murillo">0</span>)
+                </button>
+                <button type="button" onclick="cambiarFiltroSucursalHistorial('El Alto')" id="tab-historial-elalto" class="px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-900/50 cursor-pointer">
+                    El Alto (<span id="count-historial-elalto">0</span>)
+                </button>
+            </div>
+
             <!-- Filtro de Búsqueda Rápida en el Historial -->
             <div class="py-3 shrink-0 flex flex-col sm:flex-row gap-2 items-center justify-between">
                 <div class="relative w-full sm:w-72">
@@ -485,6 +603,7 @@
                     <thead>
                         <tr class="border-b border-red-950/80 bg-red-950/40 text-[11px] font-black uppercase tracking-wider text-red-300 sticky top-0 backdrop-blur-md">
                             <th class="p-3">Fecha y Hora</th>
+                            <th class="p-3">Sucursal</th>
                             <th class="p-3">Jugador</th>
                             <th class="p-3">C.I.</th>
                             <th class="p-3">Equipo</th>
@@ -513,7 +632,7 @@
     <!-- ============================================================== -->
     <script type="module">
         import { db, auth } from "/firebase-config.js";
-        import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, arrayUnion, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import {
             GoogleAuthProvider,
             signInWithPopup,
@@ -522,6 +641,7 @@
             signOut
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { STAFF_DIRECTORY, getStaffNick } from "/staff-config.js";
+        import "/app-version.js?v=283";
 
         // Configuración y Constantes
         const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
@@ -537,8 +657,20 @@
         let jugadoresFiltrados = [];
         let jugadorSeleccionado = null;
         let encargadoActual = "Encargado AMQ";
+        let usuarioLoginActual = "amq_miraflores";
+        let sucursalActual = "Miraflores"; // "Miraflores" | "Murillo" | "El Alto"
+        let filtroSucursalHistorial = "todas"; // "todas" | "Miraflores" | "Murillo" | "El Alto"
+        let esStaffOSedeGeneral = false;
         let historialVisitas = [];
         let filtroTorneoActivo = "todos"; // "todos" | "liga" | "scouting"
+
+        function normalizarSucursal(sucursalRaw, usuarioRaw, nombreRaw) {
+            const all = `${sucursalRaw || ''} ${usuarioRaw || ''} ${nombreRaw || ''}`.toLowerCase();
+            if (all.includes('miraflores')) return 'Miraflores';
+            if (all.includes('murillo')) return 'Murillo';
+            if (all.includes('elalto') || all.includes('el alto') || all.includes('alto')) return 'El Alto';
+            return 'Miraflores';
+        }
 
         // Sanitización XSS estándar para renderizado seguro
         function escapeHTML(str) {
@@ -695,11 +827,11 @@
 
                 // Validar que la sede de la cuenta sea AMQ / AQM o TODAS
                 const sedeUser = (cuenta.sede || 'AMQ').toUpperCase();
-                if (sedeUser !== 'AMQ' && sedeUser !== 'AQM' && sedeUser !== 'TODAS' && sedeUser !== 'AMBAS') {
+                if (sedeUser !== 'AMQ' && sedeUser !== 'AQM' && sedeUser !== 'TODAS' && sedeUser !== 'AMBAS' && !sedeUser.includes('AMQ')) {
                     throw new Error(`Esta credencial no tiene permisos para operar en la sede La Paz (AMQ).`);
                 }
 
-                desbloquearPanel(cuenta.nombre || cuenta.usuario);
+                desbloquearPanel(cuenta.nombre || cuenta.usuario, cuenta);
             } catch (err) {
                 errMsg.textContent = err.message || "Error al autenticar.";
                 errBox.classList.remove('hidden');
@@ -732,7 +864,7 @@
                     const nick = getStaffNick(mail) || res.user.displayName || 'Staff LBL';
                     localStorage.setItem('lbl_staff_logged_in', 'true');
                     localStorage.setItem('lbl_staff_nick', nick);
-                    desbloquearPanel(`Staff LBL (${nick})`);
+                    desbloquearPanel(`Staff LBL (${nick})`, { usuario: 'staff_lbl', nombre: `Staff LBL (${nick})`, sede: 'TODAS' });
                     return;
                 }
             } catch (err) {
@@ -748,17 +880,98 @@
             }
         };
 
-        function desbloquearPanel(nombreEncargado) {
+        function actualizarBadgeSucursalUI() {
+            const txtHeader = document.getElementById('texto-sucursal-header');
+            const txtBuscador = document.getElementById('texto-sucursal-buscador');
+            const btnCambiar = document.getElementById('btn-cambiar-sucursal');
+            const badgeHeader = document.getElementById('badge-sucursal-header');
+
+            if (txtHeader) txtHeader.textContent = sucursalActual;
+            if (txtBuscador) txtBuscador.textContent = sucursalActual.toUpperCase();
+
+            if (badgeHeader) {
+                if (sucursalActual === 'Miraflores') {
+                    badgeHeader.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-500/40 text-[11px] font-black uppercase tracking-wider text-red-300 shrink-0 shadow-sm";
+                } else if (sucursalActual === 'Murillo') {
+                    badgeHeader.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500/40 text-[11px] font-black uppercase tracking-wider text-amber-300 shrink-0 shadow-sm";
+                } else if (sucursalActual === 'El Alto') {
+                    badgeHeader.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-[11px] font-black uppercase tracking-wider text-emerald-300 shrink-0 shadow-sm";
+                }
+            }
+
+            if (btnCambiar) {
+                if (esStaffOSedeGeneral) {
+                    btnCambiar.classList.remove('hidden');
+                } else {
+                    btnCambiar.classList.add('hidden');
+                }
+            }
+        }
+
+        window.abrirSelectorSucursalModal = function() {
+            const elegida = prompt("Selecciona la sucursal activa para este terminal:\n1. Miraflores\n2. Murillo\n3. El Alto", sucursalActual);
+            if (!elegida) return;
+            const norm = normalizarSucursal(elegida, elegida, elegida);
+            cambiarSucursalActiva(norm);
+        };
+
+        window.cambiarSucursalActiva = function(nuevaSucursal) {
+            sucursalActual = nuevaSucursal;
+            localStorage.setItem('amq_sucursal_activa', sucursalActual);
+            const sesionStr = localStorage.getItem(STORAGE_KEY_AUTH);
+            if (sesionStr) {
+                try {
+                    const sesionObj = JSON.parse(sesionStr);
+                    sesionObj.sucursal = sucursalActual;
+                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(sesionObj));
+                } catch(e) {}
+            }
+            actualizarBadgeSucursalUI();
+            actualizarMetricas();
+        };
+
+        function desbloquearPanel(nombreEncargado, cuentaObj = null) {
             encargadoActual = nombreEncargado || "Encargado AMQ";
+            let loginUser = cuentaObj?.usuario || '';
+            let suc = 'Miraflores';
+
+            if (cuentaObj) {
+                loginUser = cuentaObj.usuario || '';
+                suc = normalizarSucursal(cuentaObj.sucursal, cuentaObj.usuario, cuentaObj.nombre);
+                esStaffOSedeGeneral = (loginUser === 'aquimequedo' || loginUser === 'admin_lbl' || (cuentaObj.sede || '').toUpperCase() === 'TODAS');
+            } else if (nombreEncargado && nombreEncargado.includes('Staff')) {
+                loginUser = 'staff_lbl';
+                suc = localStorage.getItem('amq_sucursal_activa') || 'Miraflores';
+                esStaffOSedeGeneral = true;
+            } else {
+                suc = normalizarSucursal('', loginUser, nombreEncargado);
+                esStaffOSedeGeneral = (loginUser === 'aquimequedo' || loginUser === 'cajero_amq' || loginUser === 'cajero_aqm');
+            }
+
+            // Si hay preferencia manual guardada en navegador (por ejemplo staff)
+            const sucursalGuardada = localStorage.getItem('amq_sucursal_activa');
+            if (esStaffOSedeGeneral && sucursalGuardada) {
+                suc = sucursalGuardada;
+            }
+
+            sucursalActual = suc;
+            usuarioLoginActual = loginUser || 'amq_cajero';
+
             const sesion = {
                 usuario: encargadoActual,
+                usuarioLogin: usuarioLoginActual,
+                sucursal: sucursalActual,
+                esAdmin: esStaffOSedeGeneral,
                 timestamp: Date.now(),
                 activo: true
             };
             localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(sesion));
+            localStorage.setItem('amq_sucursal_activa', sucursalActual);
+
             document.getElementById('auth-screen').classList.add('hidden');
             const displayEncargado = document.getElementById('display-encargado');
             if (displayEncargado) displayEncargado.textContent = encargadoActual;
+            actualizarBadgeSucursalUI();
             iniciarApp();
         }
 
@@ -808,7 +1021,12 @@
                     const data = JSON.parse(s);
                     const catorceHoras = 14 * 60 * 60 * 1000;
                     if (data && data.activo && (Date.now() - (data.timestamp || 0)) < catorceHoras) {
-                        desbloquearPanel(data.usuario || data.nombre);
+                        desbloquearPanel(data.usuario || data.nombre, {
+                            usuario: data.usuarioLogin || data.usuario,
+                            nombre: data.usuario || data.nombre,
+                            sucursal: data.sucursal,
+                            sede: data.esAdmin ? 'TODAS' : 'AMQ'
+                        });
                         return;
                     }
                 }
@@ -1405,6 +1623,36 @@
             jugadorSeleccionado = null;
         };
 
+        function obtenerSucursalDeVisita(v) {
+            if (!v) return 'Miraflores';
+            if (v.sucursal === 'Miraflores' || v.sucursal === 'Murillo' || v.sucursal === 'El Alto') {
+                return v.sucursal;
+            }
+            return normalizarSucursal(v.sucursal || v.sede, v.usuarioLogin, v.encargado);
+        }
+
+        function construirResumenSucursales(visitas) {
+            const hoyStr = new Date().toLocaleDateString('es-BO');
+            const stats = {
+                'Miraflores': { total: 0, hoy: 0, unicosSet: new Set() },
+                'Murillo': { total: 0, hoy: 0, unicosSet: new Set() },
+                'El Alto': { total: 0, hoy: 0, unicosSet: new Set() }
+            };
+            (visitas || []).forEach(v => {
+                const suc = obtenerSucursalDeVisita(v);
+                if (!stats[suc]) return;
+                stats[suc].total++;
+                if ((v.fechaHora || '').includes(hoyStr)) stats[suc].hoy++;
+                const keyUnico = (v.ci && v.ci !== 'Sin C.I.' && v.ci !== 'S/N') ? `ci_${v.ci}` : (v.jugadorId || v.nombre || '');
+                if (keyUnico) stats[suc].unicosSet.add(keyUnico);
+            });
+            return {
+                Miraflores: { total: stats.Miraflores.total, hoy: stats.Miraflores.hoy, unicos: stats.Miraflores.unicosSet.size },
+                Murillo: { total: stats.Murillo.total, hoy: stats.Murillo.hoy, unicos: stats.Murillo.unicosSet.size },
+                'El Alto': { total: stats['El Alto'].total, hoy: stats['El Alto'].hoy, unicos: stats['El Alto'].unicosSet.size }
+            };
+        }
+
         window.registrarVisitaJugadorDirecta = async function() {
             if (!jugadorSeleccionado) return;
 
@@ -1417,7 +1665,7 @@
             }
 
             const nuevaVisita = {
-                id: 'vis_' + Date.now(),
+                id: 'vis_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
                 jugadorId: jugadorSeleccionado.id,
                 nombre: jugadorSeleccionado.nombreCompleto,
                 ci: ciFinal || 'Sin C.I.',
@@ -1427,40 +1675,114 @@
                 fechaHora: new Date().toLocaleString('es-BO'),
                 timestamp: Date.now(),
                 encargado: encargadoActual,
-                sede: 'AQUÍ ME QUEDO LAN (AMQ - La Paz)'
+                usuarioLogin: usuarioLoginActual,
+                sucursal: sucursalActual,
+                sede: 'AQUÍ ME QUEDO LAN'
             };
 
-            // 1. Guardar localmente
-            historialVisitas.unshift(nuevaVisita);
+            // 1. Guardar localmente (evitando duplicados)
+            historialVisitas = [nuevaVisita, ...historialVisitas.filter(v => v.id !== nuevaVisita.id)];
             localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
 
-            // 2. Sincronizar en Firestore
+            // 2. Sincronizar atómicamente en Firestore para que las 3 sucursales nunca se pisen entre sí
             try {
-                const visitasRecientes = historialVisitas.slice(0, 500);
-                const payload = {
-                    sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
-                    ciudad: "La Paz",
-                    visitas: visitasRecientes,
-                    totalHistorico: historialVisitas.length,
-                    updatedAt: Date.now()
-                };
-                await setDoc(DOC_VISITAS_AMQ, payload);
+                await runTransaction(db, async (tx) => {
+                    const snap = await tx.get(DOC_VISITAS_AMQ);
+                    const existentes = (snap.exists() && Array.isArray(snap.data().visitas)) ? snap.data().visitas : [];
+                    const mapIds = new Map();
+                    mapIds.set(nuevaVisita.id, nuevaVisita);
+                    existentes.forEach(item => {
+                        if (item && item.id && !mapIds.has(item.id)) {
+                            mapIds.set(item.id, item);
+                        }
+                    });
+                    const combinadas = Array.from(mapIds.values())
+                        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                        .slice(0, 1500);
+                    const resumenSucursales = construirResumenSucursales(combinadas);
+                    tx.set(DOC_VISITAS_AMQ, {
+                        sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
+                        ciudad: "La Paz",
+                        visitas: combinadas,
+                        resumenSucursales,
+                        totalHistorico: combinadas.length,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                });
             } catch (err) {
-                console.warn("Aviso: Visita guardada localmente, sincronizará con Firestore:", err);
+                console.warn("Aviso transacción Firestore, intentando arrayUnion:", err);
+                try {
+                    await setDoc(DOC_VISITAS_AMQ, {
+                        sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
+                        ciudad: "La Paz",
+                        visitas: arrayUnion(nuevaVisita),
+                        resumenSucursales: construirResumenSucursales(historialVisitas),
+                        totalHistorico: historialVisitas.length,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                } catch (err2) {
+                    console.warn("Aviso: Visita guardada localmente, sincronizará con Firestore:", err2);
+                }
             }
 
             actualizarMetricas();
             renderizarTarjetas();
             cerrarModalCanje();
-            alert(`✅ ¡Visita registrada para ${nuevaVisita.nombre} (CI: ${nuevaVisita.ci})!\nCompetición: ${nuevaVisita.torneo}\nTotal de visitas acumuladas: ${contarVisitasDeJugador(jugadorSeleccionado)}`);
+            alert(`✅ ¡Visita registrada en Sucursal ${sucursalActual}!\nJugador: ${nuevaVisita.nombre} (CI: ${nuevaVisita.ci})\nCompetición: ${nuevaVisita.torneo}\nTotal de visitas acumuladas: ${contarVisitasDeJugador(jugadorSeleccionado)}`);
         };
 
         // ==============================================================
         // 8. HISTORIAL GENERAL DE VISITAS Y DESGLOSE DETALLADO
         // ==============================================================
+        window.filtrarHistorialPorSucursalYAbrir = function(sucursal) {
+            filtroSucursalHistorial = sucursal || 'todas';
+            const inputBusq = document.getElementById('buscador-historial');
+            if (inputBusq) inputBusq.value = '';
+            actualizarTabsSucursalHistorialUI();
+            renderizarTablaHistorial();
+            document.getElementById('modal-historial').classList.remove('hidden');
+        };
+
+        window.cambiarFiltroSucursalHistorial = function(sucursal) {
+            filtroSucursalHistorial = sucursal || 'todas';
+            actualizarTabsSucursalHistorialUI();
+            filtrarTablaHistorial();
+        };
+
+        function actualizarTabsSucursalHistorialUI() {
+            const mapaTabs = {
+                'todas': document.getElementById('tab-historial-todas'),
+                'Miraflores': document.getElementById('tab-historial-miraflores'),
+                'Murillo': document.getElementById('tab-historial-murillo'),
+                'El Alto': document.getElementById('tab-historial-elalto')
+            };
+            Object.entries(mapaTabs).forEach(([key, btn]) => {
+                if (!btn) return;
+                const active = key === filtroSucursalHistorial;
+                if (key === 'todas') {
+                    btn.className = active
+                        ? 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-red-600 text-white shadow-sm cursor-pointer'
+                        : 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-zinc-900 text-gray-300 border border-gray-800 hover:bg-zinc-800 cursor-pointer';
+                } else if (key === 'Miraflores') {
+                    btn.className = active
+                        ? 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-red-600 text-white border border-red-400 shadow-sm cursor-pointer'
+                        : 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-900/50 cursor-pointer';
+                } else if (key === 'Murillo') {
+                    btn.className = active
+                        ? 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-amber-600 text-black border border-amber-400 shadow-sm cursor-pointer'
+                        : 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-amber-950/40 text-amber-300 border border-amber-500/30 hover:bg-amber-900/50 cursor-pointer';
+                } else if (key === 'El Alto') {
+                    btn.className = active
+                        ? 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-emerald-600 text-black border border-emerald-400 shadow-sm cursor-pointer'
+                        : 'px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-900/50 cursor-pointer';
+                }
+            });
+        }
+
         window.abrirModalHistorial = function() {
             const inputBusq = document.getElementById('buscador-historial');
             if (inputBusq) inputBusq.value = '';
+            actualizarTabsSucursalHistorialUI();
             renderizarTablaHistorial();
             document.getElementById('modal-historial').classList.remove('hidden');
         };
@@ -1478,27 +1800,35 @@
         function renderizarTablaHistorial(filtro = '') {
             const tbody = document.getElementById('tabla-visitas-body');
             const totalCountEl = document.getElementById('historial-total-count');
-            if (totalCountEl) totalCountEl.textContent = historialVisitas.length;
 
             let lista = historialVisitas;
+            if (filtroSucursalHistorial && filtroSucursalHistorial !== 'todas') {
+                lista = lista.filter(v => obtenerSucursalDeVisita(v) === filtroSucursalHistorial);
+            }
             if (filtro) {
-                lista = historialVisitas.filter(v => {
+                lista = lista.filter(v => {
                     const norm = (str) => String(str || '').toLowerCase();
+                    const suc = obtenerSucursalDeVisita(v);
                     return norm(v.nombre).includes(filtro) ||
                            norm(v.ci).includes(filtro) ||
                            norm(v.equipo).includes(filtro) ||
                            norm(v.riotId).includes(filtro) ||
-                           norm(v.encargado).includes(filtro);
+                           norm(v.encargado).includes(filtro) ||
+                           norm(suc).includes(filtro);
                 });
             }
 
+            if (totalCountEl) totalCountEl.textContent = lista.length;
+
             if (lista.length === 0) {
-                const mensajeVacio = filtro 
+                const mensajeVacio = filtro
                     ? `No se encontraron visitas que coincidan con "${escapeHTML(filtro)}".`
-                    : "No se ha registrado ninguna visita en este terminal todavía.";
+                    : (filtroSucursalHistorial !== 'todas'
+                        ? `No se ha registrado ninguna visita en Sucursal ${escapeHTML(filtroSucursalHistorial)} todavía.`
+                        : "No se ha registrado ninguna visita en este terminal todavía.");
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-gray-500 font-medium">
+                        <td colspan="7" class="p-8 text-center text-gray-500 font-medium">
                             <i class="fas fa-inbox text-2xl mb-2 block opacity-40"></i>
                             ${mensajeVacio}
                         </td>
@@ -1514,10 +1844,21 @@
                 const safeFecha = escapeHTML(v.fechaHora || '--');
                 const safeEquipo = escapeHTML(v.equipo || '--');
                 const safeEncargado = escapeHTML(v.encargado || 'Cajero');
+                const suc = obtenerSucursalDeVisita(v);
+
+                let badgeSucursal = '';
+                if (suc === 'Miraflores') {
+                    badgeSucursal = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-red-950 text-red-300 border border-red-500/40 whitespace-nowrap">Miraflores</span>';
+                } else if (suc === 'Murillo') {
+                    badgeSucursal = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-950 text-amber-300 border border-amber-500/40 whitespace-nowrap">Murillo</span>';
+                } else {
+                    badgeSucursal = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-950 text-emerald-300 border border-emerald-500/40 whitespace-nowrap">El Alto</span>';
+                }
 
                 return `
                     <tr class="hover:bg-red-950/20 transition-colors">
                         <td class="p-3 font-mono font-bold text-gray-400 whitespace-nowrap">${safeFecha}</td>
+                        <td class="p-3 whitespace-nowrap">${badgeSucursal}</td>
                         <td class="p-3 font-bold text-white">${safeNombre}</td>
                         <td class="p-3 font-mono font-black text-red-400 whitespace-nowrap">${safeCi}</td>
                         <td class="p-3 text-gray-300">${safeEquipo}</td>
@@ -1543,7 +1884,9 @@
             }
 
             const visita = historialVisitas[idx];
+            const sucVisita = obtenerSucursalDeVisita(visita);
             const msgConfirm = `⚠️ ¿Deseas anular y ELIMINAR el registro de visita para:\n\n` +
+                               `• Sucursal: ${sucVisita}\n` +
                                `• Jugador: ${visita.nombre}\n` +
                                `• C.I.: ${visita.ci}\n` +
                                `• Fecha/Hora: ${visita.fechaHora}\n` +
@@ -1556,14 +1899,25 @@
             historialVisitas.splice(idx, 1);
             localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
 
-            // 2. Sincronizar actualización en Firestore
+            // 2. Sincronizar actualización en Firestore de forma atómica
             try {
-                await setDoc(DOC_VISITAS_AMQ, {
-                    sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
-                    ciudad: "La Paz",
-                    visitas: historialVisitas.slice(0, 500),
-                    totalHistorico: historialVisitas.length,
-                    updatedAt: Date.now()
+                await runTransaction(db, async (tx) => {
+                    const snap = await tx.get(DOC_VISITAS_AMQ);
+                    const existentes = (snap.exists() && Array.isArray(snap.data().visitas)) ? snap.data().visitas : historialVisitas;
+                    const filtradas = existentes.filter(v => {
+                        const matchId = v.id === visitaId || (v.timestamp && ('vis_legacy_' + v.timestamp === visitaId));
+                        return !matchId;
+                    });
+                    historialVisitas = filtradas;
+                    localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
+                    tx.set(DOC_VISITAS_AMQ, {
+                        sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
+                        ciudad: "La Paz",
+                        visitas: filtradas.slice(0, 1500),
+                        resumenSucursales: construirResumenSucursales(filtradas),
+                        totalHistorico: filtradas.length,
+                        updatedAt: Date.now()
+                    }, { merge: true });
                 });
             } catch (err) {
                 console.error("Error al actualizar Firestore al eliminar visita:", err);
@@ -1592,11 +1946,22 @@
                 return;
             }
 
-            let csv = "ID,FechaHora,Jugador,CI,RiotID,Equipo,Torneo,Encargado,Sede\n";
-            historialVisitas.forEach(v => {
+            const listaExportar = (filtroSucursalHistorial && filtroSucursalHistorial !== 'todas')
+                ? historialVisitas.filter(v => obtenerSucursalDeVisita(v) === filtroSucursalHistorial)
+                : historialVisitas;
+
+            if (listaExportar.length === 0) {
+                alert(`No hay visitas registradas en la sucursal ${filtroSucursalHistorial} para exportar.`);
+                return;
+            }
+
+            let csv = "ID,FechaHora,Sucursal,Jugador,CI,RiotID,Equipo,Torneo,Encargado,Sede\n";
+            listaExportar.forEach(v => {
+                const suc = obtenerSucursalDeVisita(v);
                 const fila = [
                     v.id,
                     `"${v.fechaHora}"`,
+                    `"${suc}"`,
                     `"${(v.nombre || '').replace(/"/g, '""')}"`,
                     `"${v.ci}"`,
                     `"${(v.riotId || '').replace(/"/g, '""')}"`,
@@ -1612,7 +1977,8 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `visitas_amq_lapaz_${new Date().toISOString().slice(0, 10)}.csv`;
+            const sufijo = filtroSucursalHistorial === 'todas' ? 'sucursales' : filtroSucursalHistorial.toLowerCase().replace(/\s+/g, '_');
+            a.download = `afluencia_amq_${sufijo}_${new Date().toISOString().slice(0, 10)}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         };
@@ -1626,6 +1992,7 @@
                         sede: "AQUÍ ME QUEDO (AMQ) LAN CENTER",
                         ciudad: "La Paz",
                         visitas: [],
+                        resumenSucursales: construirResumenSucursales([]),
                         totalHistorico: 0,
                         updatedAt: Date.now()
                     });
@@ -1663,6 +2030,56 @@
             const elSc3 = document.getElementById('conteo-filtro-scouting');
             if (elLiga) elLiga.textContent = countLiga;
             if (elSc3) elSc3.textContent = countScouting;
+
+            // Métricas comparativas de Afluencia por Sucursal (Marketing AMQ)
+            const resumen = construirResumenSucursales(historialVisitas);
+            const sucursalesMeta = [
+                { nombre: 'Miraflores', slug: 'miraflores', data: resumen.Miraflores },
+                { nombre: 'Murillo', slug: 'murillo', data: resumen.Murillo },
+                { nombre: 'El Alto', slug: 'elalto', data: resumen['El Alto'] }
+            ];
+
+            let maxTotal = 0;
+            let lideres = [];
+
+            sucursalesMeta.forEach(s => {
+                const pct = totalVisitas > 0 ? Math.round((s.data.total / totalVisitas) * 100) : 0;
+                const elTotal = document.getElementById(`visitas-sucursal-${s.slug}`);
+                const elHoy = document.getElementById(`hoy-sucursal-${s.slug}`);
+                const elUnicos = document.getElementById(`unicos-sucursal-${s.slug}`);
+                const elPct = document.getElementById(`pct-afluencia-${s.slug}`);
+                const elBarra = document.getElementById(`barra-afluencia-${s.slug}`);
+                const elCountModal = document.getElementById(`count-historial-${s.slug}`);
+
+                if (elTotal) elTotal.textContent = s.data.total;
+                if (elHoy) elHoy.textContent = s.data.hoy;
+                if (elUnicos) elUnicos.textContent = s.data.unicos;
+                if (elPct) elPct.textContent = `${pct}%`;
+                if (elBarra) elBarra.style.width = `${pct}%`;
+                if (elCountModal) elCountModal.textContent = s.data.total;
+
+                if (s.data.total > maxTotal) {
+                    maxTotal = s.data.total;
+                    lideres = [s.nombre];
+                } else if (s.data.total > 0 && s.data.total === maxTotal) {
+                    lideres.push(s.nombre);
+                }
+            });
+
+            const elTodasModal = document.getElementById('count-historial-todas');
+            if (elTodasModal) elTodasModal.textContent = totalVisitas;
+
+            const elLider = document.getElementById('nombre-sucursal-lider');
+            if (elLider) {
+                if (totalVisitas === 0) {
+                    elLider.textContent = 'Sin registros aún';
+                } else if (lideres.length === 1) {
+                    const pctLider = Math.round((maxTotal / totalVisitas) * 100);
+                    elLider.textContent = `${lideres[0]} (${pctLider}%)`;
+                } else {
+                    elLider.textContent = `Empate (${lideres.join(' / ')})`;
+                }
+            }
         }
 
         function iniciarListenerFirestoreVisitas() {
@@ -1671,11 +2088,16 @@
                 onSnapshot(DOC_VISITAS_AMQ, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if (Array.isArray(data.visitas) && data.visitas.length > 0) {
-                            historialVisitas = data.visitas;
+                        if (Array.isArray(data.visitas)) {
+                            historialVisitas = [...data.visitas].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                             localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas));
                             actualizarMetricas();
                             renderizarTarjetas();
+                            const modalHist = document.getElementById('modal-historial');
+                            if (modalHist && !modalHist.classList.contains('hidden')) {
+                                const term = (document.getElementById('buscador-historial')?.value || '').trim().toLowerCase();
+                                renderizarTablaHistorial(term);
+                            }
                         }
                     } else {
                         // Intentar recuperar visitas históricas previas de AQM
