@@ -262,7 +262,7 @@ const server = http.createServer((req, res) => {
         const tagLine = (urlObj.searchParams.get('tagLine') || '').trim().replace(/^#+/, '');
         const queryPuuid = (urlObj.searchParams.get('puuid') || '').trim();
         const region = (urlObj.searchParams.get('region') || 'la2').toLowerCase();
-        const apiKey = (urlObj.searchParams.get('apiKey') || process.env.RIOT_API_KEY || '').trim();
+        const apiKey = (urlObj.searchParams.get('apiKey') || process.env.RIOT_API_KEY || 'RGAPI-7d514ad3-3115-4677-948d-0282d0d60c7a').trim();
 
         if (!queryPuuid && (!gameName || !tagLine)) {
             res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
