@@ -1,6 +1,6 @@
-const CACHE_CODE_NAME = 'lbl-code-v285';
-const CACHE_ASSETS_NAME = 'lbl-static-assets-v1';
-const CACHE_LOGOS_NAME = 'lbl-team-logos-cache';
+const CACHE_CODE_NAME = 'lbl-code-v286';
+const CACHE_ASSETS_NAME = 'lbl-static-assets-v2';
+const CACHE_LOGOS_NAME = 'lbl-team-logos-cache-v2';
 
 // Pre-cache mínimo esencial (evita descargas masivas en segundo plano al primer ingreso)
 const SHELL_ASSETS = [
@@ -8,7 +8,13 @@ const SHELL_ASSETS = [
   '/dist/output.css',
   '/assets/logo.webp',
   '/assets/fonts/Square-One-Bold.ttf',
-  '/assets/default-user.svg'
+  '/assets/default-user.svg',
+  '/assets/roles/position-top.svg',
+  '/assets/roles/position-jungle.svg',
+  '/assets/roles/position-middle.svg',
+  '/assets/roles/position-bottom.svg',
+  '/assets/roles/position-utility.svg',
+  '/assets/roles/position-fill.svg'
 ];
 
 // Install Event - pre-cache únicamente el shell esencial
@@ -50,7 +56,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Imágenes externas (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, CommunityDragon, etc.) -> Cache-First Puro con Timeout de Seguridad
+  // Imágenes externas (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.) -> Cache-First Puro y Seguro
   if (!e.request.url.startsWith(self.location.origin)) {
     const isImage = e.request.destination === 'image' || 
                     e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
@@ -61,40 +67,25 @@ self.addEventListener('fetch', (e) => {
                     e.request.url.includes('postimages.org') ||
                     e.request.url.includes('ui-avatars.com') ||
                     e.request.url.includes('firebasestorage') ||
-                    e.request.url.includes('communitydragon.org') ||
                     e.request.url.includes('googleusercontent.com');
 
     if (isImage) {
       e.respondWith(
-        caches.open(CACHE_LOGOS_NAME).then(async (cache) => {
-          const cachedResponse = await cache.match(e.request);
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-
-          // Timeout de seguridad (2.8 segundos) para evitar que CDNs externos lentos (como communitydragon) congelen la carga de la web
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 2800);
-
-          try {
-            // Solicitar sin cabeceras condicionales para forzar respuesta 200 completa y cacheable en disco
-            const netRes = await fetch(e.request.url, {
-              signal: controller.signal,
-              cache: 'force-cache'
-            });
-            clearTimeout(timeoutId);
-
-            if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) {
-              cache.put(e.request, netRes.clone());
+        caches.open(CACHE_LOGOS_NAME).then((cache) => {
+          return cache.match(e.request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
             }
-            return netRes;
-          } catch (netErr) {
-            clearTimeout(timeoutId);
-            // Si el servidor externo se cuelga (+2.8s) o falla la conexión, servir avatar por defecto para carga instantánea
-            const fallback = await caches.match('/assets/default-user.svg');
-            if (fallback) return fallback;
-            return fetch('/assets/default-user.svg');
-          }
+            return fetch(e.request).then((netRes) => {
+              if (netRes && (netRes.ok || netRes.type === 'opaque' || netRes.status === 200)) {
+                cache.put(e.request, netRes.clone());
+              }
+              return netRes;
+            }).catch(() => {
+              // Respuesta 404 para que el tag <img> maneje su onerror naturalmente sin contaminar con avatares
+              return new Response(null, { status: 404, statusText: 'Image Not Found' });
+            });
+          });
         })
       );
       return;

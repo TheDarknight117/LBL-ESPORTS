@@ -5,7 +5,7 @@
  * y limpie automáticamente CacheStorage y localStorage sin requerir que el usuario borre datos de navegación.
  */
 
-export const APP_BUILD_VERSION = 'lbl-v2026.11.12-285';
+export const APP_BUILD_VERSION = 'lbl-v2026.11.12-286';
 
 export function inicializarControlDeVersiones() {
     try {
@@ -35,7 +35,7 @@ export function inicializarControlDeVersiones() {
 
             // 2. Purgar CacheStorage del navegador (solo buckets de código, protegiendo las cachés de imágenes/logos)
             if ('caches' in window) {
-                const preservedCaches = new Set(['lbl-static-assets-v1', 'lbl-team-logos-cache']);
+                const preservedCaches = new Set(['lbl-static-assets-v2', 'lbl-team-logos-cache-v2']);
                 caches.keys().then(keys => {
                     return Promise.all(keys.filter(k => !preservedCaches.has(k)).map(k => caches.delete(k)));
                 }).catch(() => {});
