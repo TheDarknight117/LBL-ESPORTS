@@ -21,7 +21,7 @@ export const STAFF_DIRECTORY = {
     "silesgalarzabts@hotmail.com": "LBL Ketwi",
     "lf2018.00@gmail.com" : "LBL Luchot",
     "torricocarolina44@gmail.com": "LBL Andy",
-     
+    "yhor7788@gmail.com": "LBL Yhor",
 };
 
 /**

@@ -1208,8 +1208,30 @@ export async function guardarPasswordAccesoUsuario(nuevaPassword) {
         mostrarToastAuth("La contraseña debe tener al menos 6 caracteres.", "warning");
         return false;
     }
+
+    const user = auth.currentUser;
+    const userEmail = (user.email || currentUserProfile?.email || '').toLowerCase().trim();
+
+    const vincularOActualizarPassword = async (targetUser) => {
+        const hasPassword = targetUser.providerData?.some(p => p.providerId === 'password');
+        if (!hasPassword && userEmail) {
+            try {
+                const emailCred = EmailAuthProvider.credential(userEmail, cleanPass);
+                await linkWithCredential(targetUser, emailCred);
+                return true;
+            } catch (linkErr) {
+                // Si ya está vinculado o requiere update directo
+                await updatePassword(targetUser, cleanPass);
+                return true;
+            }
+        } else {
+            await updatePassword(targetUser, cleanPass);
+            return true;
+        }
+    };
+
     try {
-        await updatePassword(auth.currentUser, cleanPass);
+        await vincularOActualizarPassword(user);
         try {
             sessionStorage.setItem('lbl_session_pwd', cleanPass);
         } catch (e) {}
@@ -1217,17 +1239,25 @@ export async function guardarPasswordAccesoUsuario(nuevaPassword) {
         mostrarToastAuth("¡Credencial de contraseña activada y sincronizada!", "success");
         return true;
     } catch (err) {
-        if (err.code === 'auth/requires-recent-login') {
+        if (err.code === 'auth/requires-recent-login' || err.code === 'auth/credential-already-in-use') {
             try {
                 mostrarToastAuth("Confirmando identidad con Google para activar tu contraseña...", "info");
+                googleProvider.setCustomParameters({ prompt: 'select_account', login_hint: userEmail });
                 const gRes = await signInWithPopup(auth, googleProvider);
+                googleProvider.setCustomParameters({ prompt: 'select_account' });
                 if (gRes && gRes.user) {
-                    await updatePassword(gRes.user, cleanPass);
+                    await vincularOActualizarPassword(gRes.user);
+                    try {
+                        sessionStorage.setItem('lbl_session_pwd', cleanPass);
+                    } catch (e) {}
                     await sincronizarPerfilFirestore(gRes.user);
                     mostrarToastAuth("¡Credencial de contraseña activada con éxito!", "success");
                     return true;
                 }
-            } catch (e2) {}
+            } catch (e2) {
+                mostrarToastAuth("Error de confirmación: " + (e2.message || ''), "error");
+                return false;
+            }
         }
         mostrarToastAuth("No se pudo actualizar la contraseña: " + (err.message || ''), "error");
         return false;

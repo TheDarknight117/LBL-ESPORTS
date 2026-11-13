@@ -48,7 +48,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
-    <link rel="stylesheet" href="/dist/output.css?v=283">
+    <link rel="stylesheet" href="/dist/output.css?v=285">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #050505; color: #e5e7eb; }
@@ -1184,8 +1184,8 @@
             loginStaffConGoogle,
             cerrarSesionGlobal,
             esCorreoStaff
-        } from "/auth-core.js?v=262";
-        import "/app-version.js?v=283";
+        } from "/auth-core.js?v=285";
+        import "/app-version.js?v=285";
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -2093,10 +2093,24 @@
             }
         });
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             const emailLower = (user?.email || '').toLowerCase().trim();
-            // Permitir acceso al Dashboard si el correo está en STAFF_DIRECTORY o si inició con correo/contraseña de Staff
-            const isAuthorizedStaff = Boolean(user && (esCorreoStaff(emailLower) || user.providerData?.some(p => p.providerId === 'password')));
+            // Permitir acceso al Dashboard si el correo está en STAFF_DIRECTORY, por credencial de Staff o si tiene rol ADMIN en Firestore
+            let isAuthorizedStaff = Boolean(user && (esCorreoStaff(emailLower) || user.providerData?.some(p => p.providerId === 'password')));
+
+            if (user && !isAuthorizedStaff) {
+                const curProfile = obtenerUsuarioActual();
+                if (curProfile?.rol === 'ADMIN') {
+                    isAuthorizedStaff = true;
+                } else {
+                    try {
+                        const snap = await getDoc(doc(db, "usuarios_lbl", user.uid));
+                        if (snap.exists() && snap.data()?.rol === 'ADMIN') {
+                            isAuthorizedStaff = true;
+                        }
+                    } catch (e) {}
+                }
+            }
 
             if (user && isAuthorizedStaff) {
                 // Si venía redirigido desde Scouting T3 u otra sección protegida, enviarlo allí directamente
