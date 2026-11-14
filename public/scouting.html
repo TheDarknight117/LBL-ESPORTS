@@ -53,7 +53,7 @@
     <meta name="apple-mobile-web-app-title" content="LBL Esports">
 
     <link rel="stylesheet" href="/dist/output.css?v=287">
-    <script type="module" src="/app-version.js?v=270"></script>
+    <script type="module" src="/app-version.js?v=288"></script>
     <script src="/sc3-logos.js?v=243"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -61,6 +61,7 @@
         
         .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
         .glass-panel { background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .scouting-card-panel { background: rgba(10, 12, 18, 0.88); border: 1px solid rgba(255, 255, 255, 0.06); contain: layout style; }
         
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -751,7 +752,7 @@
 
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxu9funupVszSkq-kR3czuW_uTDKUjO13-jY3NtQluWG4y7XAeOh5T6qed6YJL5dGL3w/exec";
         const SCOUTING3_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
-        const S3_STORAGE_KEY = 'lbl_scouting3_public_sanitized_v214';
+        const S3_STORAGE_KEY = 'lbl_scouting3_public_sanitized_v288';
 
         let activeTournament = 4; // Por defecto mostrar Scouting 3 (Copa Legion x Torneo Scouting 3)
         let scoutingTeams = [];
@@ -921,7 +922,7 @@
         // ==============================================================================
         // SCOUTING 3: SANITIZACIÓN DE PRIVACIDAD ESTRICTA, LOGOS DRIVE Y TIEMPO REAL
         // ==============================================================================
-        function normalizarUrlDriveImagen(url, size = 's800') {
+        function normalizarUrlDriveImagen(url, size = 's200') {
             if (!url || typeof url !== 'string') return '';
             const str = url.trim();
             const idMatch = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -1038,7 +1039,8 @@
                 isScouting3: true,
                 name: nombreEquipo,
                 tag: tagEquipo,
-                logo: localLogo || normalizarUrlDriveImagen(rawLogo, 's800'),
+                logo: localLogo || normalizarUrlDriveImagen(rawLogo, 's200'),
+                logoModal: localLogo || normalizarUrlDriveImagen(rawLogo, 's400'),
                 logoRaw: rawLogo,
                 estado: estadoEq,
                 repPhone: String(rawEq.capitan?.telefono || rawEq.repPhone || '').trim(),
@@ -1106,6 +1108,16 @@
             }
         }
 
+        let sc3RefreshTimer = null;
+        function programarRefrescoScouting3() {
+            if (sc3RefreshTimer) clearTimeout(sc3RefreshTimer);
+            sc3RefreshTimer = setTimeout(() => {
+                sc3RefreshTimer = null;
+                ocultarSkeletonYMostrarGrilla();
+                refrescarVistaScouting3Viva();
+            }, 120);
+        }
+
         function refrescarVistaScouting3Viva() {
             actualizarIndexadorTorneo();
             if (activeTournament === 4) {
@@ -1149,8 +1161,7 @@
                             lastScouting3DataHash = nuevoHash;
                             scouting3Teams = sanitized;
                             try { localStorage.setItem(S3_STORAGE_KEY, JSON.stringify(sanitized)); } catch (e) {}
-                            ocultarSkeletonYMostrarGrilla();
-                            refrescarVistaScouting3Viva();
+                            programarRefrescoScouting3();
                         }
                     }
                 }
@@ -1177,8 +1188,7 @@
                                 lastScouting3DataHash = nuevoHash;
                                 scouting3Teams = sanitized;
                                 try { localStorage.setItem(S3_STORAGE_KEY, JSON.stringify(sanitized)); } catch (e) {}
-                                ocultarSkeletonYMostrarGrilla();
-                                refrescarVistaScouting3Viva();
+                                programarRefrescoScouting3();
                             }
                         }
                     }
@@ -1198,7 +1208,7 @@
                     }
                     lastReportesDataHash = reportesHash;
                     reportesComunidadActivos = nuevaLista;
-                    refrescarVistaScouting3Viva();
+                    programarRefrescoScouting3();
                 }, (err) => {
                     console.warn("Firestore reportes listener aviso:", err);
                 });
@@ -1241,6 +1251,7 @@
                     const parsedS3 = JSON.parse(cachedS3);
                     if (Array.isArray(parsedS3) && parsedS3.length > 0) {
                         scouting3Teams = ordenarEquiposAlfabeticamente(parsedS3);
+                        lastScouting3DataHash = generarHashEquiposScouting3(scouting3Teams);
                     }
                 }
                 const cachedS2 = localStorage.getItem(S2_STORAGE_KEY);
@@ -1511,6 +1522,8 @@
             grid.classList.remove('hidden');
             emptyState.classList.add('hidden');
 
+            const fragment = document.createDocumentFragment();
+
             sortedData.forEach(eq => {
                 const displayTag = eq.tag ? eq.tag.substring(0,4).toUpperCase() : (eq.name ? eq.name.substring(0,3).toUpperCase() : 'TBD');
                 const esBaneado = esEquipoBaneado(eq.name, eq.tag);
@@ -1525,15 +1538,15 @@
                 const card = document.createElement('div');
                 
                 if (esBaneado) {
-                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
+                    card.className = "scouting-card-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim banned-card-glow bg-gradient-to-b from-red-950/30 to-black/95";
                 } else if (tieneJugadorBaneado) {
-                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
+                    card.className = "scouting-card-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim warning-card-glow bg-gradient-to-b from-amber-950/25 to-black/95";
                 } else if (totalNotasActivas > 0) {
-                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim border-amber-500/45 hover:border-amber-400 bg-gradient-to-b from-amber-950/15 to-black/95";
+                    card.className = "scouting-card-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 relative overflow-hidden team-card-anim border-amber-500/45 hover:border-amber-400 bg-gradient-to-b from-amber-950/15 to-black/95";
                 } else if (activeTournament === 4) {
-                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
+                    card.className = "scouting-card-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
                 } else {
-                    card.className = "glass-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
+                    card.className = "scouting-card-panel rounded-2xl p-4 sm:p-5 text-left group cursor-pointer hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden team-card-anim";
                 }
                 
                 card.onclick = () => abrirModalSeguro(eq);
@@ -1542,7 +1555,7 @@
 
                 const shieldHTML = hasValidLogo
                     ? `<div class="w-14 h-14 rounded-2xl bg-[#040812] border ${totalNotasActivas > 0 ? 'border-amber-500/60' : 'border-emerald-500/40 group-hover:border-emerald-400'} flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_18px_rgba(16,185,129,0.18)] relative">
-                            <img src="${eq.logo}" alt="${displayTag}" loading="lazy" class="w-full h-full object-contain p-1 transition-transform duration-300 group-hover:scale-110" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
+                            <img src="${eq.logo}" alt="${displayTag}" loading="lazy" decoding="async" class="w-full h-full object-contain p-1 transition-transform duration-300 group-hover:scale-110" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
                             <div class="hidden w-full h-full items-center justify-center text-emerald-400 font-black text-base italic">${displayTag}</div>
                        </div>`
                     : (esBaneado
@@ -1601,8 +1614,9 @@
                         ${btnActionHTML}
                     </div>
                 `;
-                grid.appendChild(card);
+                fragment.appendChild(card);
             });
+            grid.appendChild(fragment);
         }
 
         document.getElementById('searchInput').addEventListener('input', ejecutarFiltro);
@@ -1903,11 +1917,12 @@
                 const displayTag = equipo.tag ? equipo.tag.substring(0,4).toUpperCase() : (equipo.name ? equipo.name.substring(0,3).toUpperCase() : 'TBD');
                 const modalInitial = document.getElementById('modal-initial');
                 const modalLogoImg = document.getElementById('modal-team-logo');
-                const hasLogo = activeTournament === 4 && equipo.logo && (String(equipo.logo).startsWith('http') || String(equipo.logo).startsWith('/'));
+                const modalLogoUrl = equipo.logoModal || equipo.logo;
+                const hasLogo = activeTournament === 4 && modalLogoUrl && (String(modalLogoUrl).startsWith('http') || String(modalLogoUrl).startsWith('/'));
 
                 if (modalLogoImg && modalInitial) {
                     if (hasLogo) {
-                        modalLogoImg.src = equipo.logo;
+                        modalLogoImg.src = modalLogoUrl;
                         modalLogoImg.classList.remove('hidden');
                         modalInitial.classList.add('hidden');
                         modalLogoImg.onerror = () => {

@@ -1,6 +1,6 @@
-const CACHE_CODE_NAME = 'lbl-code-v287';
+const CACHE_CODE_NAME = 'lbl-code-v288';
 const CACHE_ASSETS_NAME = 'lbl-static-assets-v2';
-const CACHE_LOGOS_NAME = 'lbl-team-logos-cache-v2';
+const CACHE_LOGOS_NAME = 'lbl-team-logos-cache-v3';
 
 // Pre-cache mínimo esencial (evita descargas masivas en segundo plano al primer ingreso)
 const SHELL_ASSETS = [
@@ -56,7 +56,9 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Imágenes externas (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.) -> Cache-First Puro y Seguro
+  // Imágenes externas (ImgBB, PostImg, UI-Avatars, Discord CDN, Imgur, Firebase Storage, Google, etc.)
+  // CacheStorage solo almacena respuestas CORS legítimas; las respuestas 'opaque' pasan directo al HTTP Cache nativo
+  // para evitar el padding de ~7 MB por imagen que impone Chromium en CacheStorage.
   if (!e.request.url.startsWith(self.location.origin)) {
     const isImage = e.request.destination === 'image' || 
                     e.request.url.match(/\.(png|jpg|jpeg|svg|webp|gif)(\?.*)?$/i) ||
@@ -77,7 +79,8 @@ self.addEventListener('fetch', (e) => {
               return cachedResponse;
             }
             return fetch(e.request).then((netRes) => {
-              if (netRes && (netRes.ok || netRes.type === 'opaque' || netRes.status === 200)) {
+              // Guardar en CacheStorage únicamente respuestas CORS reales (nunca 'opaque')
+              if (netRes && netRes.ok && netRes.type !== 'opaque') {
                 cache.put(e.request, netRes.clone());
               }
               return netRes;
