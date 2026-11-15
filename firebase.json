@@ -30,7 +30,8 @@
       "assets/heraldo.png",
       "assets/open_qualifier.png",
       "**/*.mp3",
-      "**/*.pdf"
+      "**/*.pdf",
+      "**/*.mp4"
     ],
     "headers": [
       {
@@ -206,6 +207,24 @@
       },
       {
         "source": "/smok",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/overlay-control",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/overlay-schedule",
         "headers": [
           {
             "key": "Cache-Control",

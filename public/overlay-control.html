@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=243">
+    <link rel="stylesheet" href="/dist/output.css?v=289">
 
     <style>
         @font-face {
@@ -73,8 +73,8 @@
                 </div>
             </div>
 
-            <!-- Selector de Canal Activo (Darkcito vs LBL Esports) -->
-            <div class="flex items-center gap-3">
+            <!-- Selector de Canal Activo (Darkcito vs LBL Esports) y Herramientas -->
+            <div class="flex flex-wrap items-center gap-2.5">
                 
                 <div class="flex items-center bg-black rounded-lg border border-zinc-800 p-1">
                     <button id="tab-channel-darkcito" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all">
@@ -84,6 +84,16 @@
                         <i class="fa-solid fa-tower-broadcast mr-1"></i> LBL Esports
                     </button>
                 </div>
+
+                <!-- Botón Fondo Prueba (Solo vista previa en navegador, nunca afecta a OBS) -->
+                <button id="btn-toggle-test-bg" type="button" title="Activar/desactivar fondo oscuro en la vista previa del navegador" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye"></i> Fondo Prueba
+                </button>
+
+                <!-- Botón Simular Estados en Vista Previa -->
+                <button id="btn-sim-overlay-state" type="button" title="Simular transición Próximo -> En Vivo -> Finalizado en la vista previa" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-amber-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate"></i> Simular Estados
+                </button>
 
                 <!-- Botón Copiar URL OBS -->
                 <button id="btn-copy-obs-url" class="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-1.5">
@@ -251,42 +261,42 @@
                     </div>
                 </div>
 
-                <!-- 3. MULTIMEDIA DE SPONSORS & TRANSMISIÓN (ESTILO WORLDS 2026: VIDEO MP4 O FLYER) -->
+                <!-- 3. BIBLIOTECA COMPARTIDA DE MEDIOS & BUCLE (ASSETS PERSISTENTES POR CANAL) -->
                 <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800 flex-wrap gap-2">
                         <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider">
-                            <i class="fa-solid fa-film text-red-500"></i> Multimedia Sponsors (Estilo Worlds)
+                            <i class="fa-solid fa-film text-red-500"></i> Biblioteca de Medios Compartida
                         </div>
-                        <span class="px-2.5 py-0.5 text-[10px] font-bold bg-red-950 text-red-400 rounded border border-red-500/40 uppercase">
-                            Video MP4 / Flyer 16:9
+                        <span class="px-2.5 py-0.5 text-[10px] font-bold bg-emerald-950/80 text-emerald-400 rounded border border-emerald-500/40 uppercase">
+                            Darkcito ↔ LBL • Bucle Multi-Asset
                         </span>
                     </div>
 
                     <div class="space-y-4">
-                        <!-- ZONA DE CARGA DE ARCHIVO LOCAL (DIRECTA, SIN LINKS) -->
+                        <!-- ZONA DE CARGA MULTI-ARCHIVO (SIN CONSUMIR CUOTA DE HOSTING) -->
                         <div>
                             <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-                                <span>Cargar Medio Local:</span>
-                                <span class="text-[10px] text-red-400 font-bold">Cero links • Carga directa desde tu PC</span>
+                                <span>Subir Flyers / Videos (Múltiples):</span>
+                                <span class="text-[10px] text-emerald-400 font-bold">Persistente entre canales y OBS</span>
                             </label>
                             
                             <div id="drop-zone-media" class="relative border-2 border-dashed border-red-500/50 hover:border-red-400 bg-[#0c0c11] hover:bg-[#14141a] rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all group">
-                                <input id="input-file-media" type="file" accept="video/mp4,video/webm,image/png,image/jpeg,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <input id="input-file-media" type="file" multiple accept="video/mp4,video/webm,image/png,image/jpeg,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                                 
-                                <div class="w-12 h-12 rounded-full bg-red-600/20 group-hover:bg-red-600/30 flex items-center justify-center text-red-500 mb-2 transition-transform group-hover:scale-110">
-                                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                                <div class="w-11 h-11 rounded-full bg-red-600/20 group-hover:bg-red-600/30 flex items-center justify-center text-red-500 mb-2 transition-transform group-hover:scale-110">
+                                    <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                                 </div>
                                 <span class="text-sm font-bold text-white tracking-wide">
-                                    Haz clic para buscar archivo o arrástralo aquí
+                                    Haz clic o arrastra varios archivos aquí
                                 </span>
                                 <span class="text-[11px] text-zinc-400 mt-0.5">
-                                    Soporta <b class="text-red-400">Video MP4</b> o <b class="text-cyan-400">Flyer (PNG, JPG, WebP)</b>
+                                    Soporta <b class="text-cyan-400">Flyers (auto-WebP 980×720)</b> y <b class="text-red-400">Videos MP4/WebM (máx. 25 MB)</b>
                                 </span>
                                 
                                 <div id="upload-status-box" class="w-full mt-3 pt-2.5 border-t border-zinc-800 text-xs hidden">
-                                    <div class="flex items-center justify-between text-[11px] px-1">
+                                    <div class="flex items-center justify-between text-[11px] px-1 gap-2">
                                         <span id="upload-filename-label" class="font-bold text-white truncate max-w-[200px]">archivo.mp4</span>
-                                        <span id="upload-badge-status" class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm">LISTO EN OBS</span>
+                                        <span id="upload-badge-status" class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm shrink-0">GUARDADO</span>
                                     </div>
                                     <div id="upload-bar-wrap" class="w-full bg-zinc-800 rounded-full h-1.5 mt-2 overflow-hidden hidden">
                                         <div id="upload-bar-fill" class="bg-red-600 h-full w-0 transition-all duration-200"></div>
@@ -295,58 +305,76 @@
                             </div>
                         </div>
 
-                        <!-- Selector de Formato Multimedia -->
-                        <div>
-                            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">
-                                Formato Activo:
+                        <!-- Estado en Vivo de Ambos Canales + Selector Independiente -->
+                        <div class="p-2.5 rounded-xl bg-black/70 border border-zinc-800 space-y-2">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <span class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                                    Configurando Canal:
+                                </span>
+                                <span id="media-active-channel-badge" class="px-2 py-0.5 text-[10px] font-black rounded bg-red-600/20 text-red-400 border border-red-500/40 uppercase tracking-wider">
+                                    @DARKCITO
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+                                <div class="px-2 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-1">
+                                    <span class="font-bold text-zinc-400">DARKCITO:</span>
+                                    <span id="channel-status-pill-darkcito" class="font-black text-emerald-400 truncate">Galería Código</span>
+                                </div>
+                                <div class="px-2 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-1">
+                                    <span class="font-bold text-zinc-400">LBL ESPORTS:</span>
+                                    <span id="channel-status-pill-lbl_oficial" class="font-black text-emerald-400 truncate">Galería Código</span>
+                                </div>
+                            </div>
+
+                            <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">
+                                Qué muestra ESTE canal ahora:
                             </label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
-                                    <input type="radio" name="media-type" value="video" class="accent-red-600" checked>
-                                    <i class="fa-solid fa-video text-red-500"></i> Video MP4
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
+                                    <input type="radio" name="media-type" value="playlist" class="accent-red-600">
+                                    <i class="fa-solid fa-layer-group text-red-500"></i> Assets Cargados
                                 </label>
-                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
-                                    <input type="radio" name="media-type" value="image" class="accent-red-600">
-                                    <i class="fa-solid fa-image text-cyan-400"></i> Flyer Imagen
-                                </label>
-                                <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
-                                    <input type="radio" name="media-type" value="default" class="accent-red-600">
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-emerald-500 transition-colors text-xs font-bold text-zinc-200">
+                                    <input type="radio" name="media-type" value="default" class="accent-red-600" checked>
                                     <i class="fa-solid fa-rotate text-emerald-400"></i> Galería Código
                                 </label>
                             </div>
+                            <input id="input-media-url" type="hidden" value="">
+                            <input id="input-flyer-url" type="hidden" value="">
                         </div>
 
-                        <!-- Presets de 1 Clic y Entrada Avanzada -->
-                        <div>
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Presets de Transmisión:</span>
-                                <button type="button" id="btn-toggle-manual-url" class="text-[10px] text-zinc-500 hover:text-red-400 underline">
-                                    Ver ruta interna
-                                </button>
-                            </div>
-                            
-                            <div class="flex gap-1.5 flex-wrap">
-                                <button type="button" id="btn-preset-media-video" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-red-400 border border-zinc-800 flex items-center gap-1.5 transition-colors">
-                                    <i class="fa-solid fa-trophy"></i> Video Copa Legion (MP4 Oficial)
-                                </button>
-                                <button type="button" id="btn-preset-media-default" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5 transition-colors">
-                                    <i class="fa-solid fa-rotate"></i> Galería Predeterminada
-                                </button>
+                        <!-- Biblioteca Compartida de Assets (Activación independiente ON/OFF por canal) -->
+                        <div class="p-3 rounded-xl bg-black/70 border border-zinc-800 space-y-2.5">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-black text-white uppercase tracking-wider">Assets Guardados</span>
+                                    <span id="shared-assets-count" class="px-2 py-0.5 text-[10px] font-black rounded bg-zinc-800 text-zinc-300 border border-zinc-700">0</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" id="btn-activate-all-assets" class="text-[10px] font-bold px-2 py-1 rounded bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 transition-colors">
+                                        Activar Todos
+                                    </button>
+                                    <button type="button" id="btn-deactivate-all-assets" class="text-[10px] font-bold px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-400 border border-zinc-700 transition-colors">
+                                        Pausar Todos
+                                    </button>
+                                </div>
                             </div>
 
-                            <div id="manual-url-container" class="mt-2 hidden">
-                                <input id="input-media-url" type="text" value="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" class="w-full bg-black text-white text-xs px-3 py-2 rounded-lg border border-zinc-800 font-mono text-zinc-400">
-                                <input id="input-flyer-url" type="hidden" value="">
+                            <div id="shared-assets-list" class="max-h-[300px] overflow-y-auto space-y-2 pr-1">
+                                <div class="text-xs text-zinc-500 text-center py-4 italic">
+                                    No hay assets subidos aún. Sube flyers o un video arriba para compartirlos entre ambos canales.
+                                </div>
                             </div>
                         </div>
 
                         <!-- Mini Vista Previa Multimedia -->
                         <div class="p-2.5 rounded-xl bg-black/60 border border-zinc-800 flex flex-col items-center justify-center">
-                            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa Multimedia en Vivo (Clic para reproducir)</span>
+                            <span id="ctrl-preview-caption" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa del Bucle Activo</span>
                             <div class="w-full h-32 bg-black rounded-lg overflow-hidden flex items-center justify-center relative border border-zinc-800/80">
-                                <video id="ctrl-preview-video" src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" preload="none" controls loop muted playsinline class="w-full h-full object-contain"></video>
+                                <video id="ctrl-preview-video" preload="none" controls loop muted playsinline class="w-full h-full object-contain hidden"></video>
                                 <img id="ctrl-preview-image" src="" alt="Preview" class="w-full h-full object-contain hidden">
-                                <div id="ctrl-preview-fallback" class="text-xs text-zinc-500 flex items-center gap-2 hidden">
+                                <div id="ctrl-preview-fallback" class="text-xs text-zinc-500 flex items-center gap-2">
                                     <i class="fa-solid fa-images"></i> Galería de Sponsors por Código activa
                                 </div>
                             </div>
@@ -401,10 +429,10 @@
                             </select>
                         </div>
 
-                        <!-- Sponsor Secundario Inferior -->
+                        <!-- Sponsor Inicial en Galería Superior (Bucle 6s) -->
                         <div>
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
-                                Sponsor Destacado Inferior:
+                                Sponsor Inicial en Galería Superior (Bucle 6s):
                             </label>
                             <select id="select-secondary-sponsor" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
                                 <option value="/assets/Logos Sponsor/LOGO_VOLT_NEW.png">VOLT Energy Drink (Logo Nuevo)</option>
@@ -412,6 +440,9 @@
                                 <option value="/assets/Logos Sponsor/logoLegion.png">Legion Gamer Store</option>
                                 <option value="/assets/Logos Sponsor/AQMlogo.png">AMQ Bolivia (Aquí Me Quedo)</option>
                             </select>
+                            <p class="text-[10px] text-zinc-400 mt-1.5 leading-tight">
+                                Los logos rotan automáticamente en bucle de 6 segundos en el encabezado superior, dejando el 100% de la barra inferior libre para la alineación 5v5.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -531,8 +562,16 @@
          ==================================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection, onSnapshot, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { OFFICIAL_LBL_TEAM_LOGOS } from "/challonge-core.js";
+        import {
+            MEDIA_LIBRARY_COLLECTION,
+            MEDIA_LIBRARY_DOC,
+            uploadSharedMediaAsset,
+            resolveAssetPlayableUrl,
+            deleteSharedMediaAsset,
+            pruneOrphanLocalAssets
+        } from "/overlay-media-db.js?v=289";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -547,7 +586,11 @@
         const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
         const syncChannel = new BroadcastChannel('lbl_overlay_sync');
 
-        let currentChannel = 'darkcito';
+        const controlUrlParams = new URLSearchParams(window.location.search);
+        const requestedCtrlChannel = (controlUrlParams.get('channel') || '').toLowerCase();
+        let currentChannel = (requestedCtrlChannel === 'lbl_oficial' || requestedCtrlChannel === 'lblesports' || requestedCtrlChannel === 'lbl')
+            ? 'lbl_oficial'
+            : 'darkcito';
         let currentFilter = 'hoy';
 
         // Directorio oficial de logos PNG locales sin fondo para Equipos Scouting 3
@@ -1094,8 +1137,10 @@
             timerRunning: false,
             timerTargetTimestamp: null,
             flyerUrl: "",
-            mediaType: "video",
-            mediaUrl: "/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4",
+            mediaType: "default",
+            mediaUrl: "",
+            disabledAssetIds: [],
+            assetOrderIds: [],
             footerMode: "spotlight",
             secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
             matches: [],
@@ -1903,27 +1948,51 @@
             });
         }
 
+        let testBgPreviewActive = false;
+
+        function updatePreviewLinkHref() {
+            const linkEl = document.getElementById('link-preview-obs');
+            if (!linkEl) return;
+            linkEl.href = `/overlay-schedule.html?channel=${currentChannel}${testBgPreviewActive ? '&bg=1' : ''}`;
+        }
+
         // 5. Selector de Canales
-        function switchChannel(channelName) {
+        function switchChannel(channelName, skipLoad = false) {
             currentChannel = channelName;
-            document.getElementById('link-preview-obs').href = `/overlay-schedule.html?channel=${channelName}`;
+            updatePreviewLinkHref();
+            try {
+                const nextUrl = new URL(window.location.href);
+                nextUrl.searchParams.set('channel', channelName);
+                window.history.replaceState({}, '', nextUrl.toString());
+            } catch(e) {}
 
             const btnDark = document.getElementById('tab-channel-darkcito');
             const btnLbl = document.getElementById('tab-channel-lbl');
             const activeChannelLabel = document.getElementById('active-channel-name');
+            const mediaBadge = document.getElementById('media-active-channel-badge');
 
             if (channelName === 'darkcito') {
                 btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
                 btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
                 if (activeChannelLabel) activeChannelLabel.textContent = "@DARKCITO";
+                if (mediaBadge) {
+                    mediaBadge.textContent = "@DARKCITO";
+                    mediaBadge.className = "px-2 py-0.5 text-[10px] font-black rounded bg-red-600/20 text-red-400 border border-red-500/40 uppercase tracking-wider";
+                }
             } else {
                 btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
                 btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
                 if (activeChannelLabel) activeChannelLabel.textContent = "LBL ESPORTS";
+                if (mediaBadge) {
+                    mediaBadge.textContent = "LBL ESPORTS";
+                    mediaBadge.className = "px-2 py-0.5 text-[10px] font-black rounded bg-cyan-600/20 text-cyan-300 border border-cyan-500/40 uppercase tracking-wider";
+                }
             }
 
-            renderCronogramaTable();
-            loadActiveChannelData(channelName);
+            if (!skipLoad) {
+                renderCronogramaTable();
+                loadActiveChannelData(channelName);
+            }
         }
 
         document.getElementById('tab-channel-darkcito').addEventListener('click', () => switchChannel('darkcito'));
@@ -1931,6 +2000,11 @@
 
         async function loadActiveChannelData(channel) {
             state.matches = [];
+            state.disabledAssetIds = [];
+            state.assetOrderIds = [];
+            state.mediaType = 'default';
+            const defRadio = document.querySelector('input[name="media-type"][value="default"]');
+            if (defRadio) defRadio.checked = true;
 
             const localData = localStorage.getItem(`lbl_overlay_${channel}`);
             if (localData) {
@@ -1947,36 +2021,216 @@
             renderMatchesEditor();
             populateSpotlightDropdown();
             updateTimerDisplay();
+            renderSharedAssetsList();
+            updateMediaPreview();
         }
 
-        function updateMediaPreview() {
+        // Estado global compartido entre canales para la Biblioteca de Medios
+        let sharedMediaAssets = [];
+        const sharedObjectUrls = new Map();
+        let previewCycleTimeout = null;
+        let previewCycleIndex = 0;
+
+        function getOrderedLibraryAssets() {
+            const orderIds = Array.isArray(state.assetOrderIds) ? state.assetOrderIds : [];
+            if (orderIds.length === 0) return [...sharedMediaAssets];
+            const mapById = new Map(sharedMediaAssets.map(a => [a.id, a]));
+            const ordered = [];
+            orderIds.forEach(id => {
+                if (mapById.has(id)) {
+                    ordered.push(mapById.get(id));
+                    mapById.delete(id);
+                }
+            });
+            mapById.forEach(a => ordered.push(a));
+            return ordered;
+        }
+
+        function getOrderedActiveAssets() {
+            const disabledSet = new Set(Array.isArray(state.disabledAssetIds) ? state.disabledAssetIds : []);
+            return getOrderedLibraryAssets().filter(a => !disabledSet.has(a.id));
+        }
+
+        function updateChannelStatusPill(chId, data) {
+            const pillEl = document.getElementById(`channel-status-pill-${chId}`);
+            if (!pillEl || !data) return;
+            const mType = data.mediaType || 'default';
+            const disabledSet = new Set(Array.isArray(data.disabledAssetIds) ? data.disabledAssetIds : []);
+            const activeCount = sharedMediaAssets.filter(a => !disabledSet.has(a.id)).length;
+            if (mType === 'playlist') {
+                pillEl.textContent = activeCount > 0 ? `Assets (${activeCount} ON)` : 'Assets (vacío → Código)';
+                pillEl.className = activeCount > 0 ? 'font-black text-red-400 truncate' : 'font-black text-amber-400 truncate';
+            } else {
+                pillEl.textContent = 'Galería Código';
+                pillEl.className = 'font-black text-emerald-400 truncate';
+            }
+        }
+
+        async function persistMediaLibraryIndex(mutatorOrAssets) {
+            const libRef = doc(db, MEDIA_LIBRARY_COLLECTION, MEDIA_LIBRARY_DOC);
+            let finalAssets = typeof mutatorOrAssets === 'function' ? mutatorOrAssets(sharedMediaAssets) : mutatorOrAssets;
+            try {
+                finalAssets = await runTransaction(db, async (tx) => {
+                    const snap = await tx.get(libRef);
+                    const serverAssets = (snap.exists() && Array.isArray(snap.data()?.assets)) ? snap.data().assets : [];
+                    const resolved = typeof mutatorOrAssets === 'function' ? mutatorOrAssets(serverAssets) : mutatorOrAssets;
+                    tx.set(libRef, { assets: resolved, updatedAt: Date.now() }, { merge: true });
+                    return resolved;
+                });
+            } catch (e) {
+                console.warn('Error guardando índice de biblioteca con transacción, usando fallback:', e);
+                try {
+                    await setDoc(libRef, { assets: finalAssets, updatedAt: Date.now() }, { merge: true });
+                } catch (_) {}
+            }
+            sharedMediaAssets = Array.isArray(finalAssets) ? finalAssets : [];
+            try { localStorage.setItem('lbl_overlay_media_library', JSON.stringify(sharedMediaAssets)); } catch(e) {}
+            try { syncChannel.postMessage({ type: 'MEDIA_LIBRARY_UPDATED', assets: sharedMediaAssets }); } catch(e) {}
+            renderSharedAssetsList();
+            updateMediaPreview();
+        }
+
+        function renderSharedAssetsList() {
+            const listEl = document.getElementById('shared-assets-list');
+            const countEl = document.getElementById('shared-assets-count');
+            if (!listEl) return;
+
+            const disabledSet = new Set(Array.isArray(state.disabledAssetIds) ? state.disabledAssetIds : []);
+            const orderedActive = getOrderedActiveAssets();
+            const activeCount = orderedActive.length;
+            if (countEl) {
+                countEl.textContent = `${activeCount}/${sharedMediaAssets.length} ON`;
+                countEl.className = activeCount > 0
+                    ? 'px-2 py-0.5 text-[10px] font-black rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40'
+                    : 'px-2 py-0.5 text-[10px] font-black rounded bg-zinc-800 text-zinc-300 border border-zinc-700';
+            }
+
+            if (sharedMediaAssets.length === 0) {
+                listEl.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4 italic">No hay assets subidos aún. Sube flyers o un video arriba para compartirlos entre ambos canales.</div>`;
+                return;
+            }
+
+            // Mostrar primero los activos en su orden de reproducción, luego los pausados (OFF)
+            const orderedAll = getOrderedLibraryAssets();
+            const orderedAssets = [
+                ...orderedActive,
+                ...orderedAll.filter(a => disabledSet.has(a.id))
+            ];
+            const activeIdsOrder = orderedActive.map(a => a.id);
+
+            listEl.innerHTML = orderedAssets.map(asset => {
+                const isActive = !disabledSet.has(asset.id);
+                const activePos = isActive ? activeIdsOrder.indexOf(asset.id) : -1;
+                const isVideo = asset.type === 'video';
+                const sizeMb = ((asset.sizeBytes || 0) / (1024 * 1024)).toFixed(2);
+                const dur = asset.durationSec || 8;
+                const safeName = (asset.name || 'asset').replace(/[<>&"]/g, '');
+
+                return `
+                    <div class="p-2.5 rounded-xl border ${isActive ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-zinc-950/80 border-zinc-800'} flex items-center justify-between gap-2 transition-all">
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isVideo ? 'bg-red-600/20 text-red-400 border border-red-500/30' : 'bg-cyan-600/20 text-cyan-400 border border-cyan-500/30'}">
+                                <i class="fa-solid ${isVideo ? 'fa-film' : 'fa-image'} text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold text-white truncate" title="${safeName}">${safeName}</div>
+                                <div class="text-[10px] text-zinc-400 flex items-center gap-2 flex-wrap">
+                                    <span>${isVideo ? 'VIDEO' : 'FLYER'} • ${sizeMb} MB</span>
+                                    ${!isVideo ? `
+                                        <label class="inline-flex items-center gap-1 text-cyan-300">
+                                            <span>Dur:</span>
+                                            <select data-asset-dur="${asset.id}" class="bg-black border border-zinc-700 rounded px-1 py-0 text-[10px] text-white outline-none">
+                                                ${[5, 6, 8, 10, 12, 15].map(s => `<option value="${s}" ${dur === s ? 'selected' : ''}>${s}s</option>`).join('')}
+                                            </select>
+                                        </label>
+                                    ` : `<span class="text-red-300">Auto (fin del video)</span>`}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1 shrink-0">
+                            ${isActive && orderedActive.length > 1 ? `
+                                <button type="button" data-asset-move="up:${asset.id}" ${activePos === 0 ? 'disabled' : ''} title="Subir en bucle" class="w-6 h-6 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-zinc-300 text-[10px] border border-zinc-700 flex items-center justify-center">↑</button>
+                                <button type="button" data-asset-move="down:${asset.id}" ${activePos === orderedActive.length - 1 ? 'disabled' : ''} title="Bajar en bucle" class="w-6 h-6 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-zinc-300 text-[10px] border border-zinc-700 flex items-center justify-center">↓</button>
+                            ` : ''}
+                            <button type="button" data-asset-toggle="${asset.id}" class="px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider border transition-colors ${isActive ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-600'}">
+                                ${isActive ? 'ON' : 'OFF'}
+                            </button>
+                            <button type="button" data-asset-delete="${asset.id}" title="Eliminar de ambos canales" class="w-7 h-7 rounded bg-red-950/60 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-trash text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function updateMediaPreview() {
+            if (previewCycleTimeout) { clearTimeout(previewCycleTimeout); previewCycleTimeout = null; }
             const vidEl = document.getElementById('ctrl-preview-video');
             const imgEl = document.getElementById('ctrl-preview-image');
             const fallbackEl = document.getElementById('ctrl-preview-fallback');
-            const mediaUrl = (document.getElementById('input-media-url')?.value || '').trim();
-            const mediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'video';
+            const captionEl = document.getElementById('ctrl-preview-caption');
 
-            const isVideo = mediaType === 'video' || (mediaType !== 'image' && (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm')));
+            const mediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'default';
+            const orderedActive = getOrderedActiveAssets();
 
-            if (mediaType === 'default' || !mediaUrl) {
+            if (mediaType === 'default' || orderedActive.length === 0) {
+                if (vidEl) { vidEl.pause(); vidEl.removeAttribute('src'); vidEl.classList.add('hidden'); }
+                if (imgEl) imgEl.classList.add('hidden');
+                if (fallbackEl) fallbackEl.classList.remove('hidden');
+                if (captionEl) captionEl.textContent = mediaType === 'playlist' ? 'Sin assets en ON (Mostrando Galería Código)' : 'Vista Previa • Galería Código';
+                return;
+            }
+
+            if (previewCycleIndex >= orderedActive.length) previewCycleIndex = 0;
+            const currentAsset = orderedActive[previewCycleIndex];
+            if (captionEl) captionEl.textContent = `Vista Previa (${previewCycleIndex + 1}/${orderedActive.length}): ${currentAsset.name}`;
+
+            let playableUrl = '';
+            try {
+                playableUrl = await resolveAssetPlayableUrl(currentAsset, db, sharedObjectUrls);
+            } catch (err) {
+                console.warn('No se pudo previsualizar asset:', currentAsset.id, err);
+            }
+
+            if (!playableUrl) {
                 if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }
                 if (imgEl) imgEl.classList.add('hidden');
                 if (fallbackEl) fallbackEl.classList.remove('hidden');
-            } else if (isVideo) {
+                return;
+            }
+
+            if (currentAsset.type === 'video') {
                 if (imgEl) imgEl.classList.add('hidden');
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (vidEl) {
                     vidEl.classList.remove('hidden');
-                    if (vidEl.getAttribute('src') !== mediaUrl) {
-                        vidEl.setAttribute('src', mediaUrl);
+                    vidEl.loop = orderedActive.length === 1;
+                    if (vidEl.getAttribute('src') !== playableUrl) {
+                        vidEl.setAttribute('src', playableUrl);
+                        vidEl.play().catch(() => {});
                     }
+                    vidEl.onended = () => {
+                        if (orderedActive.length > 1) {
+                            previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+                            updateMediaPreview();
+                        }
+                    };
                 }
             } else {
-                if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }
+                if (vidEl) { vidEl.pause(); vidEl.onended = null; vidEl.classList.add('hidden'); }
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (imgEl) {
-                    imgEl.src = mediaUrl;
+                    imgEl.src = playableUrl;
                     imgEl.classList.remove('hidden');
+                }
+                if (orderedActive.length > 1) {
+                    const ms = Math.max(3, Number(currentAsset.durationSec) || 8) * 1000;
+                    previewCycleTimeout = setTimeout(() => {
+                        previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+                        updateMediaPreview();
+                    }, ms);
                 }
             }
         }
@@ -1986,14 +2240,27 @@
             if (data.stageTitle) document.getElementById('input-stage-title').value = data.stageTitle;
             if (data.subTitle) document.getElementById('input-stage-subtitle').value = data.subTitle;
             
-            const incomingMediaUrl = data.mediaUrl || data.flyerUrl || '';
-            const incomingMediaType = data.mediaType || (incomingMediaUrl.endsWith('.mp4') || incomingMediaUrl.endsWith('.webm') ? 'video' : (incomingMediaUrl ? 'image' : 'default'));
+            state.disabledAssetIds = Array.isArray(data.disabledAssetIds) ? data.disabledAssetIds : [];
+            state.assetOrderIds = Array.isArray(data.assetOrderIds) ? data.assetOrderIds : [];
+
+            const rawIncomingUrl = data.mediaUrl || data.flyerUrl || '';
+            const incomingMediaUrl = (rawIncomingUrl.startsWith('blob:') || rawIncomingUrl.includes('20261023_RenownedObedient')) ? '' : rawIncomingUrl;
+            let incomingMediaType = data.mediaType || 'default';
+            if (incomingMediaType !== 'playlist' && incomingMediaType !== 'default') {
+                incomingMediaType = 'default';
+            }
+            state.mediaType = incomingMediaType;
+            state.mediaUrl = incomingMediaUrl;
+            state.flyerUrl = incomingMediaUrl;
             
             if (document.getElementById('input-media-url')) document.getElementById('input-media-url').value = incomingMediaUrl;
             if (document.getElementById('input-flyer-url')) document.getElementById('input-flyer-url').value = incomingMediaUrl;
             
             const radioEl = document.querySelector(`input[name="media-type"][value="${incomingMediaType}"]`);
             if (radioEl) radioEl.checked = true;
+            updateChannelStatusPill(data.channelId || currentChannel, state);
+            renderSharedAssetsList();
+            updateMediaPreview();
 
             if (data.footerMode && document.getElementById('select-footer-mode')) {
                 document.getElementById('select-footer-mode').value = data.footerMode;
@@ -2294,15 +2561,18 @@
             state.stageTitle = document.getElementById('input-stage-title').value;
             state.subTitle = document.getElementById('input-stage-subtitle').value;
 
-            const selectedMediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'video';
+            const selectedMediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'default';
             const mediaUrlVal = (document.getElementById('input-media-url')?.value || '').trim();
             const footerModeVal = document.getElementById('select-footer-mode')?.value || 'spotlight';
 
             state.mediaType = selectedMediaType;
             state.mediaUrl = mediaUrlVal;
             state.flyerUrl = mediaUrlVal;
+            state.disabledAssetIds = Array.isArray(state.disabledAssetIds) ? state.disabledAssetIds : [];
+            state.assetOrderIds = Array.isArray(state.assetOrderIds) ? state.assetOrderIds : [];
             state.footerMode = footerModeVal;
             state.secondarySponsorUrl = document.getElementById('select-secondary-sponsor').value;
+            updateChannelStatusPill(currentChannel, state);
 
             const spotName = document.getElementById('select-spotlight-team').value;
             const s3Obj = resolveScouting3Team(spotName);
@@ -2345,6 +2615,8 @@
                 mediaType: state.mediaType,
                 mediaUrl: state.mediaUrl,
                 flyerUrl: state.flyerUrl,
+                disabledAssetIds: state.disabledAssetIds,
+                assetOrderIds: state.assetOrderIds,
                 footerMode: state.footerMode,
                 secondarySponsorUrl: state.secondarySponsorUrl,
                 spotlight: state.spotlight,
@@ -2388,7 +2660,8 @@
                 pendingSavePayload = null;
 
                 try {
-                    await setDoc(doc(db, "torneos_activos", `overlay_${currentChannel}`), toSave, { merge: true });
+                    const targetChannel = toSave.channelId || currentChannel;
+                    await setDoc(doc(db, "torneos_activos", `overlay_${targetChannel}`), toSave, { merge: true });
                     if (statusEl && (Date.now() - lastFeedbackEpoch < 4000)) {
                         statusEl.textContent = "✓ ¡Actualizado en OBS (<100ms)!";
                         statusEl.className = "text-xs font-bold text-emerald-400";
@@ -2432,6 +2705,26 @@
 
         document.getElementById('btn-save-all').addEventListener('click', () => saveChanges(true));
 
+        document.getElementById('btn-toggle-test-bg')?.addEventListener('click', (e) => {
+            testBgPreviewActive = !testBgPreviewActive;
+            const btn = e.currentTarget;
+            if (testBgPreviewActive) {
+                btn.className = "px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/60 text-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5";
+            } else {
+                btn.className = "px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5";
+            }
+            updatePreviewLinkHref();
+            try {
+                syncChannel.postMessage({ type: 'TEST_BG_TOGGLE', channelId: currentChannel, active: testBgPreviewActive });
+            } catch (_) {}
+        });
+
+        document.getElementById('btn-sim-overlay-state')?.addEventListener('click', () => {
+            try {
+                syncChannel.postMessage({ type: 'SIMULATE_STATE', channelId: currentChannel });
+            } catch (_) {}
+        });
+
         document.getElementById('btn-copy-obs-url').addEventListener('click', () => {
             const currentOrigin = window.location.origin;
             const obsUrl = `${currentOrigin}/overlay-schedule.html?channel=${currentChannel}`;
@@ -2451,76 +2744,69 @@
         const uploadBarWrap = document.getElementById('upload-bar-wrap');
         const uploadBarFill = document.getElementById('upload-bar-fill');
 
-        async function handleFileUpload(file) {
-            if (!file) return;
+        async function handleFilesUpload(fileList) {
+            const files = Array.from(fileList || []).filter(Boolean);
+            if (files.length === 0) return;
 
-            const isVideo = file.type.startsWith('video/') || file.name.endsWith('.mp4') || file.name.endsWith('.webm') || file.name.endsWith('.m4v');
-            
-            // Auto-seleccionar el radio correcto (Video o Flyer)
-            const radioVal = isVideo ? 'video' : 'image';
-            const radioEl = document.querySelector(`input[name="media-type"][value="${radioVal}"]`);
-            if (radioEl) radioEl.checked = true;
-
-            // Mostrar estado en la caja
             if (uploadStatusBox) uploadStatusBox.classList.remove('hidden');
-            if (uploadFilenameLabel) uploadFilenameLabel.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
-            if (uploadBadgeStatus) {
-                uploadBadgeStatus.textContent = "SUBIENDO...";
-                uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-600 text-white";
-            }
             if (uploadBarWrap) uploadBarWrap.classList.remove('hidden');
-            if (uploadBarFill) uploadBarFill.style.width = '35%';
 
-            try {
-                // Subir al endpoint local del servidor /api/upload-media
-                const res = await fetch('/api/upload-media', {
-                    method: 'POST',
-                    headers: {
-                        'x-file-name': encodeURIComponent(file.name),
-                        'content-type': file.type || 'application/octet-stream'
-                    },
-                    body: file
-                });
-
-                if (uploadBarFill) uploadBarFill.style.width = '100%';
-
-                if (res.ok) {
-                    const data = await res.json();
-                    const finalUrl = data.url;
-                    
-                    document.getElementById('input-media-url').value = finalUrl;
-                    document.getElementById('input-flyer-url').value = finalUrl;
-
-                    if (uploadBadgeStatus) {
-                        uploadBadgeStatus.textContent = "✓ LISTO EN OBS";
-                        uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm";
-                    }
-
-                    updateMediaPreview();
-                    saveChanges(true);
-                } else {
-                    throw new Error('Servidor retornó código ' + res.status);
+            const newlyAddedAssets = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (uploadFilenameLabel) {
+                    uploadFilenameLabel.textContent = `[${i + 1}/${files.length}] ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
                 }
-            } catch (err) {
-                console.warn('Subida por API falló, usando URL Blob directa:', err);
-                const blobUrl = URL.createObjectURL(file);
-                document.getElementById('input-media-url').value = blobUrl;
-                document.getElementById('input-flyer-url').value = blobUrl;
                 if (uploadBadgeStatus) {
-                    uploadBadgeStatus.textContent = "✓ EN VIVO (LOCAL)";
-                    uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white";
+                    uploadBadgeStatus.textContent = "PROCESANDO...";
+                    uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-600 text-white shrink-0";
                 }
-                updateMediaPreview();
-                saveChanges(true);
+                if (uploadBarFill) uploadBarFill.style.width = '5%';
+
+                try {
+                    const meta = await uploadSharedMediaAsset(file, db, {
+                        uploadedBy: currentChannel,
+                        onProgress: (pct) => {
+                            if (uploadBarFill) uploadBarFill.style.width = `${Math.max(5, Math.min(100, pct))}%`;
+                        }
+                    });
+                    newlyAddedAssets.push(meta);
+                } catch (err) {
+                    console.error('Error subiendo archivo compartido:', file.name, err);
+                    alert(`No se pudo subir "${file.name}": ${err.message || 'Error desconocido'}`);
+                }
             }
+
+            if (newlyAddedAssets.length > 0) {
+                // Todos los assets recién subidos quedan ON por defecto en ambos canales (opt-out)
+                // sin forzar ni sobrescribir el modo elegido (Galería Código vs Assets Cargados) del canal actual
+                if (!Array.isArray(state.disabledAssetIds)) state.disabledAssetIds = [];
+                const addedSet = new Set(newlyAddedAssets.map(a => a.id));
+                state.disabledAssetIds = state.disabledAssetIds.filter(id => !addedSet.has(id));
+
+                await persistMediaLibraryIndex((latest) => {
+                    const existingIds = new Set(latest.map(a => a.id));
+                    return [...latest, ...newlyAddedAssets.filter(a => !existingIds.has(a.id))];
+                });
+                saveChanges(true);
+
+                if (uploadBadgeStatus) {
+                    uploadBadgeStatus.textContent = `✓ ${newlyAddedAssets.length} GUARDADO${newlyAddedAssets.length > 1 ? 'S' : ''}`;
+                    uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm shrink-0";
+                }
+            } else if (uploadBadgeStatus) {
+                uploadBadgeStatus.textContent = "ERROR";
+                uploadBadgeStatus.className = "px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shrink-0";
+            }
+
+            if (fileInput) fileInput.value = '';
         }
 
         fileInput?.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFileUpload(file);
+            if (e.target.files?.length) handleFilesUpload(e.target.files);
         });
 
-        // Arrastrar y soltar (Drag & Drop)
+        // Arrastrar y soltar (Drag & Drop multi-archivo)
         dropZone?.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('border-red-400', 'bg-red-950/30');
@@ -2531,43 +2817,92 @@
         dropZone?.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('border-red-400', 'bg-red-950/30');
-            const file = e.dataTransfer.files[0];
-            if (file) handleFileUpload(file);
+            if (e.dataTransfer.files?.length) handleFilesUpload(e.dataTransfer.files);
         });
 
-        document.getElementById('btn-toggle-manual-url')?.addEventListener('click', () => {
-            const c = document.getElementById('manual-url-container');
-            if (c) c.classList.toggle('hidden');
-        });
-
-        // Eventos de Multimedia y Modo Worlds
-        document.getElementById('btn-preset-media-video')?.addEventListener('click', () => {
-            const r = document.querySelector('input[name="media-type"][value="video"]');
-            if (r) r.checked = true;
-            document.getElementById('input-media-url').value = '/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4';
-            if (uploadStatusBox) uploadStatusBox.classList.add('hidden');
+        // Controles de activación masiva por canal (sin pisar el modo Galería Código vs Assets Cargados)
+        document.getElementById('btn-activate-all-assets')?.addEventListener('click', () => {
+            state.disabledAssetIds = [];
+            renderSharedAssetsList();
             updateMediaPreview();
             saveChanges(true);
         });
 
-        document.getElementById('btn-preset-media-default')?.addEventListener('click', () => {
-            const r = document.querySelector('input[name="media-type"][value="default"]');
-            if (r) r.checked = true;
-            document.getElementById('input-media-url').value = '';
-            if (uploadStatusBox) uploadStatusBox.classList.add('hidden');
+        document.getElementById('btn-deactivate-all-assets')?.addEventListener('click', () => {
+            state.disabledAssetIds = sharedMediaAssets.map(a => a.id);
+            renderSharedAssetsList();
             updateMediaPreview();
             saveChanges(true);
+        });
+
+        // Delegación de eventos sobre la lista de Assets Compartidos
+        const sharedAssetsListEl = document.getElementById('shared-assets-list');
+        sharedAssetsListEl?.addEventListener('click', async (e) => {
+            const toggleBtn = e.target.closest('[data-asset-toggle]');
+            if (toggleBtn) {
+                const assetId = toggleBtn.getAttribute('data-asset-toggle');
+                if (!Array.isArray(state.disabledAssetIds)) state.disabledAssetIds = [];
+                if (state.disabledAssetIds.includes(assetId)) {
+                    state.disabledAssetIds = state.disabledAssetIds.filter(id => id !== assetId);
+                } else {
+                    state.disabledAssetIds.push(assetId);
+                }
+                renderSharedAssetsList();
+                updateMediaPreview();
+                saveChanges(true);
+                return;
+            }
+
+            const moveBtn = e.target.closest('[data-asset-move]');
+            if (moveBtn) {
+                const [dir, assetId] = moveBtn.getAttribute('data-asset-move').split(':');
+                const ids = getOrderedActiveAssets().map(a => a.id);
+                const idx = ids.indexOf(assetId);
+                if (idx === -1) return;
+                const swapWith = dir === 'up' ? idx - 1 : idx + 1;
+                if (swapWith < 0 || swapWith >= ids.length) return;
+                [ids[idx], ids[swapWith]] = [ids[swapWith], ids[idx]];
+                const disabledOrder = getOrderedLibraryAssets().filter(a => !ids.includes(a.id)).map(a => a.id);
+                state.assetOrderIds = [...ids, ...disabledOrder];
+                renderSharedAssetsList();
+                updateMediaPreview();
+                saveChanges(true);
+                return;
+            }
+
+            const delBtn = e.target.closest('[data-asset-delete]');
+            if (delBtn) {
+                const assetId = delBtn.getAttribute('data-asset-delete');
+                const asset = sharedMediaAssets.find(a => a.id === assetId);
+                if (!asset) return;
+                if (!confirm(`¿Eliminar "${asset.name}" permanentemente de la biblioteca de AMBOS canales?`)) return;
+
+                delBtn.disabled = true;
+                try {
+                    await deleteSharedMediaAsset(asset, db, sharedObjectUrls);
+                } catch (err) {
+                    console.warn('Error borrando chunks del asset:', err);
+                }
+                state.disabledAssetIds = (state.disabledAssetIds || []).filter(id => id !== assetId);
+                state.assetOrderIds = (state.assetOrderIds || []).filter(id => id !== assetId);
+                await persistMediaLibraryIndex((latest) => latest.filter(a => a.id !== assetId));
+                saveChanges(true);
+            }
+        });
+
+        sharedAssetsListEl?.addEventListener('change', async (e) => {
+            const durSelect = e.target.closest('[data-asset-dur]');
+            if (!durSelect) return;
+            const assetId = durSelect.getAttribute('data-asset-dur');
+            const newDur = Math.max(3, Number(durSelect.value) || 8);
+            await persistMediaLibraryIndex((latest) => latest.map(a => a.id === assetId ? { ...a, durationSec: newDur } : a));
         });
 
         document.querySelectorAll('input[name="media-type"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 updateMediaPreview();
-                saveChanges(false);
+                saveChanges(true);
             });
-        });
-
-        document.getElementById('input-media-url')?.addEventListener('input', () => {
-            updateMediaPreview();
         });
 
         document.getElementById('select-footer-mode')?.addEventListener('change', () => {
@@ -2578,14 +2913,54 @@
             saveChanges(false);
         });
 
+        function applyMediaLibraryUpdate(incomingAssets) {
+            sharedMediaAssets = Array.isArray(incomingAssets) ? incomingAssets : [];
+            const validIds = new Set(sharedMediaAssets.map(a => a.id));
+            if (Array.isArray(state.disabledAssetIds)) {
+                state.disabledAssetIds = state.disabledAssetIds.filter(id => validIds.has(id));
+            }
+            if (Array.isArray(state.assetOrderIds)) {
+                state.assetOrderIds = state.assetOrderIds.filter(id => validIds.has(id));
+            }
+            try { localStorage.setItem('lbl_overlay_media_library', JSON.stringify(sharedMediaAssets)); } catch(e) {}
+            pruneOrphanLocalAssets(validIds, sharedObjectUrls).catch(() => {});
+            updateChannelStatusPill(currentChannel, state);
+            renderSharedAssetsList();
+            updateMediaPreview();
+        }
+
         // Inicialización y sincronizaciones en tiempo real
         (async () => {
+            switchChannel(currentChannel, true);
+
+            try {
+                const cachedLib = localStorage.getItem('lbl_overlay_media_library');
+                if (cachedLib) applyMediaLibraryUpdate(JSON.parse(cachedLib));
+            } catch(e) {}
+
             await fetchScouting3RegisteredTeams();
             await detectActiveTournamentFromGestor();
             await loadActiveChannelData(currentChannel);
-            updateMediaPreview();
 
-            // 1. Escuchar actualizaciones de asignaciones en Firestore (tiempo real entre casters)
+            // 1. Escuchar Biblioteca Compartida de Medios en Firestore (sincronización automática Darkcito <-> LBL)
+            try {
+                onSnapshot(doc(db, MEDIA_LIBRARY_COLLECTION, MEDIA_LIBRARY_DOC), (snap) => {
+                    if (snap.exists() && Array.isArray(snap.data()?.assets)) {
+                        applyMediaLibraryUpdate(snap.data().assets);
+                    }
+                });
+            } catch(e) {}
+
+            // 1b. Escuchar estado en vivo de ambos canales para el indicador simultáneo
+            ['darkcito', 'lbl_oficial'].forEach(ch => {
+                try {
+                    onSnapshot(doc(db, "torneos_activos", `overlay_${ch}`), (snap) => {
+                        if (snap.exists()) updateChannelStatusPill(ch, snap.data());
+                    });
+                } catch(e) {}
+            });
+
+            // 2. Escuchar actualizaciones de asignaciones en Firestore (tiempo real entre casters)
             try {
                 onSnapshot(doc(db, "torneos_activos", "overlay_match_assignments"), (snap) => {
                     if (snap.exists() && snap.data()?.assignments) {
@@ -2604,7 +2979,7 @@
                 });
             } catch(e) {}
 
-            // 2. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
+            // 3. Escuchar BroadcastChannel para sincronización instantánea entre pestañas
             try {
                 syncChannel.onmessage = (event) => {
                     if ((event.data?.type === 'TIMER_HEARTBEAT' || event.data?.type === 'TIMER_SYNC') && event.data.channelId === currentChannel) {
@@ -2615,6 +2990,10 @@
                             state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                             updateTimerDisplay();
                         }
+                        return;
+                    }
+                    if (event.data?.type === 'MEDIA_LIBRARY_UPDATED' && Array.isArray(event.data.assets)) {
+                        applyMediaLibraryUpdate(event.data.assets);
                         return;
                     }
                     if (event.data?.type === 'MATCH_ASSIGNMENTS_UPDATE' && event.data.assignments) {

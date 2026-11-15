@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=243">
+    <link rel="stylesheet" href="/dist/output.css?v=289">
 
     <style>
         @font-face {
@@ -170,8 +170,9 @@
             pointer-events: auto;
         }
 
-        /* Logos alternantes del Header cada 10 segundos en GPU */
-        .header-cycle-logo {
+        /* Logos alternantes del Header cada 10 segundos y Galería de Sponsors cada 6 segundos en GPU */
+        .header-cycle-logo,
+        .header-sponsor-slide {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -179,7 +180,8 @@
             transform: translateZ(0);
             backface-visibility: hidden;
         }
-        .header-cycle-logo.active {
+        .header-cycle-logo.active,
+        .header-sponsor-slide.active {
             opacity: 1;
             pointer-events: auto;
         }
@@ -212,10 +214,10 @@
              1. HEADER SUPERIOR (Logo Copa Legion x Scouting 3 Alternante + Timer)
              ==================================================================== -->
         <header class="w-full flex flex-col">
-            <div class="w-full h-[115px] panel-header rounded-2xl px-10 flex items-center justify-between relative overflow-hidden">
+            <div class="w-full h-[115px] panel-header rounded-2xl px-10 flex items-center justify-between gap-6 relative overflow-hidden">
                 
                 <!-- IZQUIERDA: Logos Oficiales Copa Legion y Scouting 3 (Alternan cada 10s con fade) -->
-                <div class="flex items-center gap-8 z-10">
+                <div class="flex items-center gap-8 z-10 shrink-0">
                     <div class="relative h-20 w-[210px] flex items-center justify-center shrink-0">
                         <img id="header-logo-legion" 
                              src="/assets/Logos Sponsor/logo_copa_Legion.png" 
@@ -237,8 +239,36 @@
                     </div>
                 </div>
 
+                <!-- CENTRO: Galería en bucle cada 6 segundos solo con los logos íntegros de patrocinadores -->
+                <div class="flex-1 flex items-center justify-center min-w-0 h-full px-4 z-10">
+                    <div class="h-12 w-[1px] bg-white/10 shrink-0"></div>
+                    <div id="header-sponsor-gallery" class="relative h-20 w-[260px] flex items-center justify-center mx-6 shrink-0">
+                        <img data-sponsor="volt"
+                             src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png"
+                             alt="VOLT Energy Drink"
+                             decoding="async"
+                             class="header-sponsor-slide active absolute max-h-[72px] max-w-[230px] object-contain drop-shadow-[0_0_16px_rgba(37,99,235,0.85)]">
+                        <img data-sponsor="iconic"
+                             src="/assets/Logos Sponsor/iconiclogo.png"
+                             alt="ICONIC"
+                             decoding="async"
+                             class="header-sponsor-slide absolute max-h-[54px] max-w-[230px] object-contain drop-shadow-[0_0_14px_rgba(255,255,255,0.45)]">
+                        <img data-sponsor="legion"
+                             src="/assets/Logos Sponsor/logoLegion.png"
+                             alt="Legion Gamer Store"
+                             decoding="async"
+                             class="header-sponsor-slide absolute max-h-20 max-w-[240px] object-contain drop-shadow-[0_0_16px_rgba(220,38,38,0.65)]">
+                        <img data-sponsor="amq"
+                             src="/assets/Logos Sponsor/AQMlogo.png"
+                             alt="AMQ Bolivia"
+                             decoding="async"
+                             class="header-sponsor-slide absolute max-h-20 max-w-[200px] object-contain drop-shadow-[0_0_16px_rgba(6,182,212,0.7)]">
+                    </div>
+                    <div class="h-12 w-[1px] bg-white/10 shrink-0"></div>
+                </div>
+
                 <!-- DERECHA: Título de Fase / Torneo -->
-                <div class="z-10 flex flex-col items-end">
+                <div class="z-10 flex flex-col items-end shrink-0">
                     <span class="text-sm font-black text-red-500 tracking-[0.3em] uppercase font-rajdhani">
                         COPA LEGION • TORNEO SCOUTING 3
                     </span>
@@ -304,13 +334,12 @@
                         
                         <!-- 1. VIDEO SPONSOR / TROFEO (MP4 / WebM Autoplay Loop estilo Worlds) -->
                         <video id="sponsor-video" 
-                               src="/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4" 
                                autoplay 
                                loop 
                                muted 
                                playsinline 
-                               preload="metadata"
-                               class="w-full h-full object-contain rounded-xl bg-black">
+                               preload="none"
+                               class="w-full h-full object-contain rounded-xl bg-black hidden">
                         </video>
 
                         <!-- 2. IMAGEN / FLYER OFICIAL DE PRODUCTO O PATROCINIO -->
@@ -321,7 +350,7 @@
                              class="w-full h-full object-contain rounded-xl hidden">
 
                         <!-- 3. GALERÍA DE PARTNERS OFICIALES (FALLBACK CUANDO NO HAY MEDIA ACTIVA) -->
-                        <div id="partners-gallery-container" class="w-full h-full relative rounded-xl overflow-hidden hidden">
+                        <div id="partners-gallery-container" class="w-full h-full relative rounded-xl overflow-hidden">
                             
                             <!-- SLIDE 1: LEGION GAMER STORE (TIENDA DE COMPUTADORAS) -->
                             <div class="partner-gallery-slide active rounded-xl bg-gradient-to-br from-[#121216] via-[#09090b] to-[#040405] p-8 flex flex-col justify-between">
@@ -504,36 +533,31 @@
                 <!-- BARRA INFERIOR: SPOTLIGHT DE EQUIPO O BARRA DE SPONSORS OFICIALES ESTILO WORLDS -->
                 <div class="w-full h-[105px] relative">
                     
-                    <!-- MODO 1: ROSTER SPOTLIGHT (Alineación 5v5 + VOLT) -->
-                    <div id="footer-spotlight-bar" class="w-full h-full flex gap-5">
-                        <div id="spotlight-container" class="flex-1 panel-unified rounded-2xl px-6 py-2 flex items-center overflow-hidden">
-                            <div id="spotlight-bar-inner" class="w-full flex items-center justify-between">
+                    <!-- MODO 1: ROSTER SPOTLIGHT (Alineación 5v5 extendida a todo el ancho disponible) -->
+                    <div id="footer-spotlight-bar" class="w-full h-full flex">
+                        <div id="spotlight-container" class="w-full h-full panel-unified rounded-2xl px-6 py-2 flex items-center overflow-hidden">
+                            <div id="spotlight-bar-inner" class="w-full flex items-center justify-between gap-4">
                                 <!-- Equipo Destacado -->
-                                <div class="flex items-center gap-4 pr-5 border-r border-white/10 min-w-[210px] shrink-0">
-                                    <div id="spotlight-avatar-container">
+                                <div class="flex items-center gap-3.5 pr-5 border-r border-white/10 w-[230px] shrink-0">
+                                    <div id="spotlight-avatar-container" class="shrink-0">
                                         <!-- Imagen o Shield inyectado -->
                                     </div>
-                                    <div class="min-w-0">
-                                        <span id="spotlight-team-tag" class="block font-worlds font-black text-3xl text-white tracking-wider leading-none truncate max-w-[150px]">
+                                    <div class="min-w-0 flex-1">
+                                        <span id="spotlight-team-tag" class="block font-worlds font-black text-3xl text-white tracking-wider leading-none truncate">
                                             PENT-HEXCH
                                         </span>
-                                        <span id="spotlight-team-seed" class="text-xs font-bold text-red-500 tracking-widest uppercase flex items-center gap-1.5 mt-0.5">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 live-pulse-badge"></span>
-                                            <span id="spotlight-team-seed-text">EQUIPO 1 • ENFRENTAMIENTO</span>
+                                        <span id="spotlight-team-seed" class="text-[11px] font-bold text-red-500 tracking-widest uppercase flex items-center gap-1.5 mt-1 min-w-0">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 live-pulse-badge shrink-0"></span>
+                                            <span id="spotlight-team-seed-text" class="truncate">EQUIPO 1 • ENFRENTAMIENTO</span>
                                         </span>
                                     </div>
                                 </div>
 
-                                <!-- 5 Jugadores del Roster con sus NICKS REALES en columnas directas -->
-                                <div id="spotlight-players-container" class="flex-1 flex items-center justify-around pl-4">
+                                <!-- 5 Jugadores del Roster con sus NICKS REALES en 5 columnas amplias y equilibradas -->
+                                <div id="spotlight-players-container" class="flex-1 grid grid-cols-5 gap-2.5 items-center min-w-0">
                                     <!-- Inyectados limpiamente por JS -->
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Logo Secundario de Patrocinio VOLT Libre (Con Glow Azul Eléctrico Optimizado) -->
-                        <div class="w-[240px] flex items-center justify-center relative p-1 shrink-0">
-                            <img id="secondary-sponsor-logo" src="/assets/Logos Sponsor/LOGO_VOLT_NEW.png" alt="VOLT" decoding="async" class="h-16 max-w-[200px] object-contain drop-shadow-[0_0_16px_rgba(37,99,235,0.85)] filter transition-all">
                         </div>
                     </div>
 
@@ -580,22 +604,18 @@
 
     </div>
 
-    <!-- BOTONES DE PRUEBA (DESARROLLO) -->
-    <div id="dev-toolbar" class="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-black/90 border border-zinc-800 p-2 rounded-xl text-xs text-white opacity-30 hover:opacity-100 transition-opacity">
-        <button id="btn-toggle-bg" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded font-bold">
-            <i class="fa-solid fa-eye mr-1"></i> Fondo Prueba
-        </button>
-        <button id="btn-sim-state" class="px-3 py-1.5 bg-red-700 hover:bg-red-600 rounded font-bold">
-            <i class="fa-solid fa-rotate mr-1"></i> Simular Estados
-        </button>
-    </div>
-
     <!-- ====================================================================
          LÓGICA JAVASCRIPT: PARTIDAS REALES DE SCOUTING 3 Y AVATARES DE ESCUDO
          ==================================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { initializeFirestore, doc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            MEDIA_LIBRARY_COLLECTION,
+            MEDIA_LIBRARY_DOC,
+            resolveAssetPlayableUrl,
+            pruneOrphanLocalAssets
+        } from "/overlay-media-db.js?v=289";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -1200,8 +1220,10 @@
                 }
             ],
             flyerUrl: "",
-            mediaType: "video",
-            mediaUrl: "/assets/Logos Sponsor/20261023_RenownedObedientInternWutFace-QCIcse2hyN0pX3ht_source.mp4",
+            mediaType: "default",
+            mediaUrl: "",
+            disabledAssetIds: [],
+            assetOrderIds: [],
             footerMode: "spotlight",
             secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
             spotlight: {
@@ -1540,11 +1562,13 @@
                 container.innerHTML = '';
                 playersList.forEach(p => {
                     const cleanNick = limpiarRiotNick(p.name).toUpperCase();
+                    const nickLen = cleanNick.length;
+                    const nickSizeClass = nickLen >= 14 ? 'text-[14px]' : (nickLen >= 11 ? 'text-[17px]' : 'text-xl');
                     const col = document.createElement('div');
-                    col.className = "flex flex-col items-center justify-center px-2 min-w-0";
+                    col.className = "flex flex-col items-center justify-center px-1 min-w-0 w-full";
                     col.innerHTML = `
                         <span class="font-rajdhani font-black text-xs text-red-500 tracking-[0.2em] uppercase mb-0.5">${p.role.toUpperCase()}</span>
-                        <span class="font-rajdhani font-black text-xl text-white tracking-wide uppercase leading-tight truncate max-w-[130px]">${cleanNick}</span>
+                        <span class="block w-full text-center font-rajdhani font-black ${nickSizeClass} text-white tracking-wide uppercase leading-tight truncate">${cleanNick}</span>
                     `;
                     container.appendChild(col);
                 });
@@ -1593,6 +1617,29 @@
             }, 10000);
         }
 
+        // Rotación de Galería de Sponsors en el Header en bucle cada 6 segundos
+        let headerSponsorIdx = 0;
+        let headerSponsorInterval = null;
+
+        function setHeaderSponsorSlide(idx) {
+            const slides = document.querySelectorAll('#header-sponsor-gallery .header-sponsor-slide');
+            if (!slides || slides.length === 0) return;
+            const safeIdx = ((idx % slides.length) + slides.length) % slides.length;
+            slides.forEach((el, i) => {
+                el.classList.toggle('active', i === safeIdx);
+            });
+            headerSponsorIdx = safeIdx;
+        }
+
+        function startHeaderSponsorRotation() {
+            if (headerSponsorInterval) clearInterval(headerSponsorInterval);
+            const slides = document.querySelectorAll('#header-sponsor-gallery .header-sponsor-slide');
+            if (!slides || slides.length <= 1) return;
+            headerSponsorInterval = setInterval(() => {
+                setHeaderSponsorSlide(headerSponsorIdx + 1);
+            }, 6000);
+        }
+
         // Rotación de Galería de Partners con fade cada 5 segundos
         let partnerSlideIdx = 0;
         let partnerSlideInterval = null;
@@ -1608,24 +1655,200 @@
             }, 5000);
         }
 
-        // Gestión de Multimedia Dinámica (Video MP4 en bucle estilo Worlds, Flyer Imagen o Galería Fallback)
-        function renderMedia(mediaType = 'video', mediaUrl = '') {
+        // Gestión de Multimedia Compartida & Bucle Mixto (IndexedDB + Firestore Chunked + Galería Fallback)
+        let sharedMediaLibrary = [];
+        const playlistObjectUrls = new Map();
+        let playlistTimerId = null;
+        let playlistIndex = 0;
+        let lastPlaylistSignature = '';
+        let playbackToken = 0;
+
+        function clearPlaylistTimers() {
+            if (playlistTimerId) {
+                clearTimeout(playlistTimerId);
+                playlistTimerId = null;
+            }
+        }
+
+        function showPartnersFallbackGallery() {
+            const videoEl = document.getElementById('sponsor-video');
+            const imgEl = document.getElementById('flyer-image');
+            const galleryEl = document.getElementById('partners-gallery-container');
+
+            clearPlaylistTimers();
+            if (videoEl) {
+                videoEl.onended = null;
+                videoEl.onerror = null;
+                videoEl.pause();
+                videoEl.removeAttribute('src');
+                videoEl.classList.add('hidden');
+            }
+            if (imgEl) {
+                imgEl.onerror = null;
+                imgEl.classList.add('hidden');
+            }
+            if (galleryEl) {
+                galleryEl.classList.remove('hidden');
+                startPartnerSlideRotation();
+            }
+        }
+
+        function getOrderedActivePlaylistAssets() {
+            const disabledSet = new Set(Array.isArray(state.disabledAssetIds) ? state.disabledAssetIds : []);
+            const orderIds = Array.isArray(state.assetOrderIds) ? state.assetOrderIds : [];
+            let ordered = [...sharedMediaLibrary];
+            if (orderIds.length > 0) {
+                const mapById = new Map(sharedMediaLibrary.map(a => [a.id, a]));
+                ordered = [];
+                orderIds.forEach(id => {
+                    if (mapById.has(id)) {
+                        ordered.push(mapById.get(id));
+                        mapById.delete(id);
+                    }
+                });
+                mapById.forEach(a => ordered.push(a));
+            }
+            return ordered.filter(a => !disabledSet.has(a.id));
+        }
+
+        async function playPlaylistItem(orderedAssets, idx, token) {
+            if (token !== playbackToken || !orderedAssets.length) return;
+            clearPlaylistTimers();
+
+            const videoEl = document.getElementById('sponsor-video');
+            const imgEl = document.getElementById('flyer-image');
+            const galleryEl = document.getElementById('partners-gallery-container');
+
+            const safeIdx = idx % orderedAssets.length;
+            playlistIndex = safeIdx;
+            const asset = orderedAssets[safeIdx];
+
+            // Pre-cargar el siguiente elemento en IndexedDB para transición instantánea
+            if (orderedAssets.length > 1) {
+                const nextAsset = orderedAssets[(safeIdx + 1) % orderedAssets.length];
+                resolveAssetPlayableUrl(nextAsset, db, playlistObjectUrls).catch(() => {});
+            }
+
+            let playableUrl = '';
+            try {
+                playableUrl = await resolveAssetPlayableUrl(asset, db, playlistObjectUrls);
+            } catch (err) {
+                console.warn('Error resolviendo asset en overlay:', asset.id, err);
+            }
+
+            if (token !== playbackToken) return;
+
+            const advanceNext = () => {
+                if (token !== playbackToken) return;
+                playPlaylistItem(orderedAssets, (safeIdx + 1) % orderedAssets.length, token);
+            };
+
+            if (!playableUrl) {
+                if (orderedAssets.length > 1) {
+                    playlistTimerId = setTimeout(advanceNext, 2000);
+                } else {
+                    showPartnersFallbackGallery();
+                }
+                return;
+            }
+
+            if (galleryEl) galleryEl.classList.add('hidden');
+            if (partnerSlideInterval) clearInterval(partnerSlideInterval);
+
+            if (asset.type === 'video') {
+                if (imgEl) imgEl.classList.add('hidden');
+                if (videoEl) {
+                    videoEl.classList.remove('hidden');
+                    videoEl.loop = orderedAssets.length === 1;
+                    videoEl.onended = orderedAssets.length > 1 ? advanceNext : null;
+                    videoEl.onerror = () => {
+                        if (orderedAssets.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
+                    };
+                    if (videoEl.getAttribute('src') !== playableUrl) {
+                        videoEl.src = playableUrl;
+                        videoEl.load();
+                    }
+                    const playPromise = videoEl.play();
+                    if (playPromise !== undefined) playPromise.catch(() => {});
+                }
+            } else {
+                if (videoEl) {
+                    videoEl.onended = null;
+                    videoEl.pause();
+                    videoEl.classList.add('hidden');
+                }
+                if (imgEl) {
+                    imgEl.onerror = () => {
+                        if (orderedAssets.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
+                    };
+                    imgEl.src = playableUrl;
+                    imgEl.classList.remove('hidden');
+                }
+                if (orderedAssets.length > 1) {
+                    const durMs = Math.max(3, Number(asset.durationSec) || 8) * 1000;
+                    playlistTimerId = setTimeout(advanceNext, durMs);
+                }
+            }
+        }
+
+        function isIgnoredLegacyMediaUrl(url) {
+            if (!url || typeof url !== 'string') return false;
+            return url.startsWith('blob:') || url.includes('20261023_RenownedObedient');
+        }
+
+        function updateOverlayMediaPlayback(forceRestart = false) {
+            const mode = state.mediaType || 'default';
+            const orderedAssets = mode === 'playlist' ? getOrderedActivePlaylistAssets() : [];
+            const rawLegacyUrl = (state.mediaUrl || '').trim();
+            const legacyUrl = isIgnoredLegacyMediaUrl(rawLegacyUrl) ? '' : rawLegacyUrl;
+            const isLegacyExplicit = (mode === 'video' || mode === 'image') && legacyUrl;
+
+            const signature = mode === 'playlist'
+                ? `playlist|${orderedAssets.map(a => `${a.id}:${a.durationSec || 8}`).join(',')}`
+                : (isLegacyExplicit ? `${mode}|${legacyUrl}` : 'default');
+
+            if (!forceRestart && signature === lastPlaylistSignature) return;
+            lastPlaylistSignature = signature;
+            playbackToken += 1;
+            const currentToken = playbackToken;
+
+            if (mode === 'playlist' && orderedAssets.length > 0) {
+                playlistIndex = 0;
+                playPlaylistItem(orderedAssets, 0, currentToken);
+                return;
+            }
+
+            if (isLegacyExplicit) {
+                renderMedia(mode, legacyUrl);
+                return;
+            }
+
+            showPartnersFallbackGallery();
+        }
+
+        // Gestión Legacy Directa (URL externa explícita o Galería Fallback)
+        function renderMedia(mediaType = 'default', mediaUrl = '') {
             const videoEl = document.getElementById('sponsor-video');
             const imgEl = document.getElementById('flyer-image');
             const galleryEl = document.getElementById('partners-gallery-container');
             const cleanUrl = (mediaUrl || '').trim();
 
+            clearPlaylistTimers();
+
             const isExplicitVideo = mediaType === 'video';
             const isVideoExt = cleanUrl.endsWith('.mp4') || cleanUrl.endsWith('.webm') || cleanUrl.endsWith('.ogg');
             const isVideo = cleanUrl ? (isExplicitVideo || isVideoExt) : false;
 
-            if (cleanUrl) {
+            if (cleanUrl && mediaType !== 'default' && !isIgnoredLegacyMediaUrl(cleanUrl)) {
                 if (isVideo) {
                     if (imgEl) imgEl.classList.add('hidden');
                     if (galleryEl) galleryEl.classList.add('hidden');
                     if (partnerSlideInterval) clearInterval(partnerSlideInterval);
 
                     if (videoEl) {
+                        videoEl.loop = true;
+                        videoEl.onended = null;
+                        videoEl.onerror = () => showPartnersFallbackGallery();
                         videoEl.classList.remove('hidden');
                         if (videoEl.getAttribute('src') !== cleanUrl) {
                             videoEl.src = cleanUrl;
@@ -1638,6 +1861,7 @@
                     }
                 } else {
                     if (videoEl) {
+                        videoEl.onended = null;
                         videoEl.pause();
                         videoEl.classList.add('hidden');
                     }
@@ -1645,21 +1869,13 @@
                     if (partnerSlideInterval) clearInterval(partnerSlideInterval);
 
                     if (imgEl) {
+                        imgEl.onerror = () => showPartnersFallbackGallery();
                         imgEl.src = cleanUrl;
                         imgEl.classList.remove('hidden');
                     }
                 }
             } else {
-                // Fallback a galería de partners por código
-                if (videoEl) {
-                    videoEl.pause();
-                    videoEl.classList.add('hidden');
-                }
-                if (imgEl) imgEl.classList.add('hidden');
-                if (galleryEl) {
-                    galleryEl.classList.remove('hidden');
-                    startPartnerSlideRotation();
-                }
+                showPartnersFallbackGallery();
             }
         }
 
@@ -1823,14 +2039,18 @@
         }
 
         function updateSecondarySponsorLogo(url) {
-            const secImg = document.getElementById('secondary-sponsor-logo');
-            if (!secImg) return;
-            secImg.src = url || "/assets/Logos Sponsor/LOGO_VOLT_NEW.png";
-            if ((url || '').toLowerCase().includes('volt')) {
-                // Glow Azul Eléctrico Optimizado en VOLT (Sin doble filtro pesado)
-                secImg.className = "h-16 max-w-[200px] object-contain drop-shadow-[0_0_16px_rgba(37,99,235,0.85)] filter transition-all";
-            } else {
-                secImg.className = "h-16 max-w-[200px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] filter transition-all";
+            const slides = document.querySelectorAll('#header-sponsor-gallery .header-sponsor-slide');
+            if (!slides || slides.length === 0) return;
+            const u = (url || '').toLowerCase();
+            let targetKey = 'volt';
+            if (u.includes('iconic')) targetKey = 'iconic';
+            else if (u.includes('legion')) targetKey = 'legion';
+            else if (u.includes('aqm') || u.includes('amq')) targetKey = 'amq';
+
+            const matchIdx = Array.from(slides).findIndex(el => el.dataset.sponsor === targetKey);
+            if (matchIdx >= 0) {
+                setHeaderSponsorSlide(matchIdx);
+                startHeaderSponsorRotation();
             }
         }
 
@@ -1882,16 +2102,18 @@
                 updateSecondarySponsorLogo(state.secondarySponsorUrl);
             }
 
-            const incomingMediaUrl = typeof data.mediaUrl !== 'undefined' ? data.mediaUrl : (typeof data.flyerUrl !== 'undefined' ? data.flyerUrl : null);
-            const incomingMediaType = data.mediaType || (incomingMediaUrl && (incomingMediaUrl.endsWith('.mp4') || incomingMediaUrl.endsWith('.webm')) ? 'video' : (incomingMediaUrl ? 'image' : 'default'));
+            const incomingMediaUrl = typeof data.mediaUrl !== 'undefined' ? data.mediaUrl : (typeof data.flyerUrl !== 'undefined' ? data.flyerUrl : '');
+            const incomingDisabled = Array.isArray(data.disabledAssetIds) ? data.disabledAssetIds : state.disabledAssetIds;
+            const incomingOrder = Array.isArray(data.assetOrderIds) ? data.assetOrderIds : state.assetOrderIds;
+            const incomingMediaType = data.mediaType || state.mediaType || 'default';
 
-            if (incomingMediaUrl !== null && (incomingMediaUrl !== lastMediaUrl || incomingMediaType !== lastMediaType)) {
-                lastMediaUrl = incomingMediaUrl;
-                lastMediaType = incomingMediaType;
-                state.mediaUrl = incomingMediaUrl;
-                state.mediaType = incomingMediaType;
-                renderMedia(incomingMediaType, incomingMediaUrl);
-            }
+            state.mediaUrl = incomingMediaUrl;
+            state.disabledAssetIds = Array.isArray(incomingDisabled) ? incomingDisabled : [];
+            state.assetOrderIds = Array.isArray(incomingOrder) ? incomingOrder : [];
+            state.mediaType = incomingMediaType;
+            lastMediaUrl = incomingMediaUrl;
+            lastMediaType = incomingMediaType;
+            updateOverlayMediaPlayback(false);
 
             if (data.footerMode && data.footerMode !== lastFooterMode) {
                 lastFooterMode = data.footerMode;
@@ -1921,32 +2143,35 @@
             if (channelBadgeEl) channelBadgeEl.textContent = formatChannelDisplayName(data.channelId || channelId);
         }
 
+        function syncMediaLibrarySnapshot(incomingAssets) {
+            sharedMediaLibrary = Array.isArray(incomingAssets) ? incomingAssets : [];
+            try { localStorage.setItem('lbl_overlay_media_library', JSON.stringify(sharedMediaLibrary)); } catch(e) {}
+            const validIds = new Set(sharedMediaLibrary.map(a => a.id));
+            pruneOrphanLocalAssets(validIds, playlistObjectUrls).catch(() => {});
+            updateOverlayMediaPlayback(false);
+        }
+
         // Sincronizaciones tri-capa
         try {
             const syncChannel = new BroadcastChannel('lbl_overlay_sync');
             syncChannel.onmessage = (event) => {
                 if (!event.data) return;
-                if (event.data.channelId && event.data.channelId !== channelId) return;
-
-                if (event.data.type === 'TIMER_HEARTBEAT' || event.data.type === 'TIMER_SYNC') { syncTimerFromPayload(event.data); return; } /*
-                    if (typeof event.data.timerRunning === 'boolean') {
-                        state.timerRunning = event.data.timerRunning;
-                    }
-                    if (typeof event.data.timerTargetTimestamp === 'number') {
-                        state.timerTargetTimestamp = event.data.timerTargetTimestamp;
-                    }
-                    if (typeof event.data.timerSeconds === 'number') {
-                        state.timerSeconds = event.data.timerSeconds;
-                    }
-                    if (state.timerRunning && state.timerTargetTimestamp) {
-                        const diffMs = state.timerTargetTimestamp - Date.now();
-                        state.timerSeconds = Math.max(0, Math.ceil(diffMs / 1000));
-                    }
-                    forceRenderTimerUI();
+                if (event.data.type === 'MEDIA_LIBRARY_UPDATED' && Array.isArray(event.data.assets)) {
+                    syncMediaLibrarySnapshot(event.data.assets);
                     return;
                 }
+                if (event.data.channelId && event.data.channelId !== channelId) return;
 
-                */ if (event.data) {
+                if (event.data.type === 'TIMER_HEARTBEAT' || event.data.type === 'TIMER_SYNC') { syncTimerFromPayload(event.data); return; }
+                if (event.data.type === 'TEST_BG_TOGGLE') {
+                    document.body.classList.toggle('test-bg-active', Boolean(event.data.active));
+                    return;
+                }
+                if (event.data.type === 'SIMULATE_STATE') {
+                    simularSiguienteEstadoDemo();
+                    return;
+                }
+                if (event.data) {
                     applyData(event.data);
                 }
             };
@@ -1955,13 +2180,29 @@
         window.addEventListener('storage', (event) => {
             if (event.key === `lbl_overlay_${channelId}`) {
                 try { applyData(JSON.parse(event.newValue)); } catch(e) {}
+            } else if (event.key === 'lbl_overlay_media_library') {
+                try { syncMediaLibrarySnapshot(JSON.parse(event.newValue)); } catch(e) {}
             }
         });
+
+        try {
+            const cachedMediaLib = localStorage.getItem('lbl_overlay_media_library');
+            if (cachedMediaLib) sharedMediaLibrary = JSON.parse(cachedMediaLib);
+        } catch(e) {}
 
         const savedLocal = localStorage.getItem(`lbl_overlay_${channelId}`);
         if (savedLocal) {
             try { applyData(JSON.parse(savedLocal)); } catch(e) {}
         }
+
+        try {
+            const mediaLibRef = doc(db, MEDIA_LIBRARY_COLLECTION, MEDIA_LIBRARY_DOC);
+            onSnapshot(mediaLibRef, (snap) => {
+                if (snap.exists() && Array.isArray(snap.data()?.assets)) {
+                    syncMediaLibrarySnapshot(snap.data().assets);
+                }
+            }, () => {});
+        } catch (e) {}
 
         try {
             const docRef = doc(db, "torneos_activos", `overlay_${channelId}`);
@@ -1995,20 +2236,22 @@
         lastFooterMode = state.footerMode;
         lastSecondaryUrl = state.secondarySponsorUrl;
         renderMatches(state.matches);
-        renderMedia(state.mediaType, state.mediaUrl);
+        updateOverlayMediaPlayback(false);
         renderFooter(state.footerMode);
         updateSecondarySponsorLogo(state.secondarySponsorUrl);
         if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
 
         startHeaderLogoRotation();
+        startHeaderSponsorRotation();
         startSpotlightRotation();
         fetchScouting3RegisteredTeams();
 
-        document.getElementById('btn-toggle-bg').addEventListener('click', () => {
-            document.body.classList.toggle('test-bg-active');
-        });
+        if (urlParams.get('bg') === '1' || urlParams.get('testbg') === '1') {
+            document.body.classList.add('test-bg-active');
+        }
 
-        document.getElementById('btn-sim-state').addEventListener('click', () => {
+        function simularSiguienteEstadoDemo() {
+            if (!state.matches || state.matches.length === 0) return;
             const current = state.matches[0].status;
             if (current === 'UPCOMING') {
                 state.matches[0].status = 'LIVE';
@@ -2027,7 +2270,7 @@
             }
             renderMatches(state.matches);
             updateSpotlightFromUpcomingMatch();
-        });
+        }
     </script>
 </body>
 </html>
