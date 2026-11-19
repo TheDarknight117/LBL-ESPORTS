@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=289">
+    <link rel="stylesheet" href="/dist/output.css?v=290">
 
     <style>
         @font-face {
@@ -231,7 +231,7 @@
                              class="header-cycle-logo absolute max-h-20 max-w-[200px] object-contain p-1">
                     </div>
                     
-                    <div class="h-12 w-[1px] bg-white/20 mx-1"></div>
+                    <div id="header-timer-divider" class="h-12 w-[1px] bg-white/20 mx-1"></div>
 
                     <!-- Cronómetro Grande Nítido con Fuente Oficial Compacta BT Roman -->
                     <div id="header-timer" class="font-compacta text-[100px] leading-none tracking-[0.05em] text-white tabular-nums select-none pt-1">
@@ -615,7 +615,7 @@
             MEDIA_LIBRARY_DOC,
             resolveAssetPlayableUrl,
             pruneOrphanLocalAssets
-        } from "/overlay-media-db.js?v=289";
+        } from "/overlay-media-db.js?v=290";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -1172,6 +1172,7 @@
             headerLogo: "/assets/Logos Sponsor/logo_copa_Legion.png",
             timerSeconds: 10 * 60,
             timerRunning: false,
+            timerVisible: true,
             timerTargetTimestamp: null,
             matches: [
                 {
@@ -1902,6 +1903,7 @@
 
         // Elementos DOM cacheados para evitar consultas repetitivas al layout
         const headerTimerEl = document.getElementById('header-timer');
+        const headerTimerDividerEl = document.getElementById('header-timer-divider');
         const stageTitleEl = document.getElementById('stage-title');
         const stageSubtitleEl = document.getElementById('stage-subtitle');
 
@@ -1944,6 +1946,12 @@
                 headerTimerEl.textContent = text;
             }
             lastRenderedTimerSec = state.timerSeconds;
+        }
+
+        function updateTimerVisibilityUI() {
+            const visible = state.timerVisible !== false;
+            if (headerTimerEl) headerTimerEl.classList.toggle('hidden', !visible);
+            if (headerTimerDividerEl) headerTimerDividerEl.classList.toggle('hidden', !visible);
         }
 
         function calculateCurrentRemainingSec() {
@@ -2035,6 +2043,11 @@
                 }
             }
 
+            if (typeof data.timerVisible === 'boolean') {
+                state.timerVisible = data.timerVisible;
+                updateTimerVisibilityUI();
+            }
+
             forceRenderTimerUI();
         }
 
@@ -2120,6 +2133,13 @@
                 state.footerMode = data.footerMode;
                 renderFooter(state.footerMode);
             }
+
+            if (typeof data.timerVisible === 'boolean') {
+                state.timerVisible = data.timerVisible;
+            } else if (typeof state.timerVisible !== 'boolean') {
+                state.timerVisible = true;
+            }
+            updateTimerVisibilityUI();
 
             syncTimerFromPayload(data); /*
                 state.timerRunning = data.timerRunning;
@@ -2240,6 +2260,7 @@
         renderFooter(state.footerMode);
         updateSecondarySponsorLogo(state.secondarySponsorUrl);
         if (headerTimerEl) headerTimerEl.textContent = formatTimer(state.timerSeconds);
+        updateTimerVisibilityUI();
 
         startHeaderLogoRotation();
         startHeaderSponsorRotation();
