@@ -1,4 +1,4 @@
-const CACHE_CODE_NAME = 'lbl-code-v288';
+const CACHE_CODE_NAME = 'lbl-code-v289';
 const CACHE_ASSETS_NAME = 'lbl-static-assets-v2';
 const CACHE_LOGOS_NAME = 'lbl-team-logos-cache-v3';
 

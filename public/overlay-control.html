@@ -1402,7 +1402,8 @@
                         if (m.round > 0) {
                             computedBestOf = (m.round >= 6) ? 'BO5' : 'BO3';
                         } else {
-                            computedBestOf = (Math.abs(m.round) >= 5) ? 'BO3' : 'BO1';
+                            const absR = Math.abs(m.round);
+                            computedBestOf = (absR >= 9) ? 'BO5' : ((absR >= 5) ? 'BO3' : 'BO1');
                         }
                     }
 
