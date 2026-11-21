@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=290">
+    <link rel="stylesheet" href="/dist/output.css?v=291">
 
     <style>
         @font-face {
@@ -59,49 +59,49 @@
 <body class="min-h-full font-sans antialiased pb-28">
 
     <!-- BARRA SUPERIOR DE NAVEGACIÓN Y DISTRIBUCIÓN DE CANALES -->
-    <header class="sticky top-0 z-40 bg-[#0a0a0d]/95 border-b border-red-900/30 backdrop-blur-md px-6 py-4 shadow-xl">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <header class="sticky top-0 z-40 bg-[#0a0a0d]/95 border-b border-red-900/30 backdrop-blur-md px-4 sm:px-6 py-3 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
             
             <!-- Logo Copa Legion x Scouting 3 + Título -->
-            <div class="flex items-center gap-4">
-                <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" class="h-12 object-contain shrink-0">
+            <div class="flex items-center gap-3">
+                <img src="/assets/Logos Sponsor/logo_copa_Legion.png" alt="Copa Legion" class="h-10 sm:h-11 object-contain shrink-0">
                 <div>
-                    <h1 class="font-worlds font-black text-2xl tracking-wider text-white uppercase flex items-center gap-2.5">
-                        COPA LEGION x SCOUTING 3 <span class="px-2 py-0.5 text-xs font-bold font-rajdhani tracking-widest bg-red-600 text-white rounded">GESTOR DE TRANSMISIÓN</span>
+                    <h1 class="font-worlds font-black text-xl sm:text-2xl tracking-wider text-white uppercase flex items-center gap-2 flex-wrap">
+                        COPA LEGION x SCOUTING 3 <span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold font-rajdhani tracking-widest bg-red-600 text-white rounded">GESTOR OBS</span>
                     </h1>
-                    <p class="text-xs text-zinc-400 font-medium">Torneo en curso sincronizado desde el Gestor de Torneos (<span class="text-red-400 font-bold">SLUG: TS3LBL</span>)</p>
+                    <p class="text-[11px] sm:text-xs text-zinc-400 font-medium hidden sm:block">Sincronizado desde el Gestor de Torneos (<span class="text-red-400 font-bold">TS3LBL</span>)</p>
                 </div>
             </div>
 
             <!-- Selector de Canal Activo (Darkcito vs LBL Esports) y Herramientas -->
-            <div class="flex flex-wrap items-center gap-2.5">
+            <div class="flex flex-wrap items-center gap-2">
                 
                 <div class="flex items-center bg-black rounded-lg border border-zinc-800 p-1">
-                    <button id="tab-channel-darkcito" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all">
+                    <button id="tab-channel-darkcito" class="px-3 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all cursor-pointer">
                         <i class="fa-brands fa-twitch mr-1"></i> Darkcito
                     </button>
-                    <button id="tab-channel-lbl" class="px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all">
+                    <button id="tab-channel-lbl" class="px-3 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all cursor-pointer">
                         <i class="fa-solid fa-tower-broadcast mr-1"></i> LBL Esports
                     </button>
                 </div>
 
-                <!-- Botón Fondo Prueba (Solo vista previa en navegador, nunca afecta a OBS) -->
-                <button id="btn-toggle-test-bg" type="button" title="Activar/desactivar fondo oscuro en la vista previa del navegador" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-eye"></i> Fondo Prueba
-                </button>
-
-                <!-- Botón Simular Estados en Vista Previa -->
-                <button id="btn-sim-overlay-state" type="button" title="Simular transición Próximo -> En Vivo -> Finalizado en la vista previa" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-amber-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate"></i> Simular Estados
-                </button>
+                <!-- Grupo compacto de Vista Previa (solo afectan al preview del navegador) -->
+                <div class="flex items-center bg-zinc-900/80 border border-zinc-800 rounded-lg p-0.5 gap-0.5">
+                    <button id="btn-toggle-test-bg" type="button" title="Activar/desactivar fondo oscuro en la vista previa del navegador" class="px-2.5 py-1 bg-transparent hover:bg-zinc-800 text-zinc-300 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-eye"></i> <span class="hidden xl:inline">Fondo</span>
+                    </button>
+                    <button id="btn-sim-overlay-state" type="button" title="Simular transición Próximo → En Vivo → Finalizado en la vista previa" class="px-2.5 py-1 bg-transparent hover:bg-zinc-800 text-amber-300 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-rotate"></i> <span class="hidden xl:inline">Simular</span>
+                    </button>
+                </div>
 
                 <!-- Botón Copiar URL OBS -->
-                <button id="btn-copy-obs-url" class="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-link text-red-400"></i> Copiar URL OBS
+                <button id="btn-copy-obs-url" title="Copiar enlace de Browser Source para OBS (1920x1080)" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-link text-red-400"></i> <span id="btn-copy-obs-url-text">Copiar URL OBS</span>
                 </button>
 
                 <!-- Botón Abrir Overlay -->
-                <a id="link-preview-obs" href="/overlay-schedule.html?channel=darkcito" target="_blank" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+                <a id="link-preview-obs" href="/overlay-schedule.html?channel=darkcito" target="_blank" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Overlay
                 </a>
             </div>
@@ -133,21 +133,29 @@
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
-                    <div class="flex items-center bg-black p-1 rounded-lg border border-zinc-800 text-xs font-bold">
-                        <button id="filter-hoy" class="px-3 py-1 rounded bg-red-600 text-white font-bold flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hoy
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+                        <input id="cronograma-search-input" type="text" placeholder="Buscar equipo, tag o ronda..." class="bg-black border border-zinc-800 focus:border-red-500 text-white text-xs font-medium pl-8 pr-7 py-1.5 rounded-lg outline-none w-48 sm:w-56 transition-colors placeholder-zinc-500">
+                        <button id="btn-clear-cronograma-search" type="button" title="Limpiar búsqueda" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-xs cursor-pointer">
+                            <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button id="filter-proximos" class="px-3 py-1 rounded text-zinc-400 hover:text-white">Próximos</button>
-                        <button id="filter-live" class="px-3 py-1 rounded text-zinc-400 hover:text-white">En Vivo</button>
-                        <button id="filter-todos" class="px-3 py-1 rounded text-zinc-400 hover:text-white">Todos</button>
                     </div>
 
-                    <button id="btn-sync-cronograma" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
+                    <div class="flex items-center bg-black p-1 rounded-lg border border-zinc-800 text-xs font-bold">
+                        <button id="filter-hoy" class="px-3 py-1 rounded bg-red-600 text-white font-bold flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hoy
+                        </button>
+                        <button id="filter-proximos" class="px-3 py-1 rounded text-zinc-400 hover:text-white cursor-pointer">Próximos</button>
+                        <button id="filter-live" class="px-3 py-1 rounded text-zinc-400 hover:text-white cursor-pointer">En Vivo</button>
+                        <button id="filter-todos" class="px-3 py-1 rounded text-zinc-400 hover:text-white cursor-pointer">Todos</button>
+                    </div>
+
+                    <button id="btn-sync-cronograma" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-rotate text-red-400"></i> Revalidar
                     </button>
 
-                    <button id="btn-load-selected-to-overlay" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-check-double"></i> Cargar Seleccionadas a mi OBS
+                    <button id="btn-load-selected-to-overlay" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer shadow-md">
+                        <i class="fa-solid fa-check-double"></i> <span id="btn-load-selected-text">Cargar Seleccionadas a mi OBS</span>
                     </button>
                 </div>
             </div>
@@ -193,41 +201,50 @@
                                 <i class="fa-solid fa-eye"></i>
                                 <span id="btn-timer-visibility-text">ON</span>
                             </button>
-                            <span id="timer-state-pill" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white">
-                                CORRIENDO
+                            <span id="timer-state-pill" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-amber-600 text-white">
+                                PAUSADO
                             </span>
                         </div>
                     </div>
 
                     <div class="text-center py-3 bg-black rounded-xl border border-zinc-800 mb-4 relative">
                         <div id="control-timer-display" class="font-compacta text-7xl text-white tracking-wider transition-opacity">
-                            52:26
+                            10:00
+                        </div>
+                        <div id="control-timer-eta" class="hidden text-[10px] font-bold uppercase tracking-wider text-emerald-400/90 mt-1">
+                            Termina aprox. --:-- BOL
                         </div>
                         <div id="control-timer-hidden-badge" class="hidden text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-1">
                             <i class="fa-solid fa-eye-slash text-zinc-500 mr-1"></i> Oculto en OBS
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2.5 mb-4">
-                        <button id="btn-timer-toggle" class="py-2.5 px-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg">
-                            <i class="fa-solid fa-pause"></i> <span id="btn-timer-toggle-text">Pausar Reloj</span>
+                    <div class="grid grid-cols-2 gap-2.5 mb-3">
+                        <button id="btn-timer-toggle" class="py-2.5 px-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer">
+                            <i class="fa-solid fa-play"></i> <span id="btn-timer-toggle-text">Iniciar Reloj</span>
                         </button>
-                        <button id="btn-timer-reset" class="py-2.5 px-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+                        <button id="btn-timer-reset" class="py-2.5 px-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-arrow-rotate-left"></i> Reset 10m
                         </button>
                     </div>
 
+                    <div class="grid grid-cols-3 gap-2 mb-2.5">
+                        <button type="button" data-set-sec="300" class="btn-preset-time py-1 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[11px] font-bold text-cyan-300 cursor-pointer transition-colors">Fijar 5m</button>
+                        <button type="button" data-set-sec="600" class="btn-preset-time py-1 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[11px] font-bold text-cyan-300 cursor-pointer transition-colors">Fijar 10m</button>
+                        <button type="button" data-set-sec="900" class="btn-preset-time py-1 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[11px] font-bold text-cyan-300 cursor-pointer transition-colors">Fijar 15m</button>
+                    </div>
+
                     <div class="grid grid-cols-4 gap-2 mb-4">
-                        <button data-add-sec="300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">+5m</button>
-                        <button data-add-sec="60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">+1m</button>
-                        <button data-add-sec="-60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">-1m</button>
-                        <button data-add-sec="-300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200">-5m</button>
+                        <button data-add-sec="300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200 cursor-pointer">+5m</button>
+                        <button data-add-sec="60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200 cursor-pointer">+1m</button>
+                        <button data-add-sec="-60" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200 cursor-pointer">-1m</button>
+                        <button data-add-sec="-300" class="btn-quick-time py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-200 cursor-pointer">-5m</button>
                     </div>
 
                     <div class="flex items-center gap-2 pt-3 border-t border-zinc-800">
-                        <input id="input-manual-minutes" type="number" min="0" max="59" value="50" placeholder="Min (máx 59)" class="w-1/2 bg-black text-center font-bold text-white text-sm px-3 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-red-500">
+                        <input id="input-manual-minutes" type="number" min="0" max="59" value="10" placeholder="Min (máx 59)" class="w-1/2 bg-black text-center font-bold text-white text-sm px-3 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-red-500">
                         <input id="input-manual-seconds" type="number" min="0" max="59" value="00" placeholder="Seg" class="w-1/2 bg-black text-center font-bold text-white text-sm px-3 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-red-500">
-                        <button id="btn-set-manual-time" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shrink-0 transition-colors">
+                        <button id="btn-set-manual-time" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shrink-0 transition-colors cursor-pointer">
                             Fijar
                         </button>
                     </div>
@@ -246,12 +263,12 @@
                             </label>
                             <input id="input-stage-title" type="text" value="RONDA 2" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
                             <div class="flex gap-1.5 mt-2 flex-wrap">
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 1</button>
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 2</button>
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">RONDA 3</button>
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">FASE DE GRUPOS</button>
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">PLAYOFFS</button>
-                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">GRAN FINAL</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">CUARTOS</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">SEMIFINALES</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">FINAL WINNER</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">SEMIS LOWER</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">FINAL LOWER</button>
+                                <button type="button" class="btn-preset-title text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">GRAN FINAL</button>
                             </div>
                         </div>
 
@@ -261,10 +278,10 @@
                             </label>
                             <input id="input-stage-subtitle" type="text" value="COPA LEGION • TORNEO SCOUTING 3" class="w-full bg-black text-white font-bold text-sm px-3.5 py-2.5 rounded-xl border border-zinc-700 focus:outline-none focus:border-red-500">
                             <div class="flex gap-1.5 mt-2 flex-wrap">
-                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 1 - BEST OF 1S</button>
-                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ROUND 2 - BEST OF 1S</button>
-                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">ELIMINACIÓN DIRECTA</button>
-                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300">BEST OF 3 (BO3)</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">BEST OF 3 (BO3)</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">BEST OF 5 (BO5)</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">DOBLE ELIMINACIÓN</button>
+                                <button type="button" class="btn-preset-subtitle text-[11px] font-semibold px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 cursor-pointer">PLAYOFFS COPA LEGION</button>
                             </div>
                         </div>
                     </div>
@@ -379,9 +396,14 @@
 
                         <!-- Mini Vista Previa Multimedia -->
                         <div class="p-2.5 rounded-xl bg-black/60 border border-zinc-800 flex flex-col items-center justify-center">
-                            <span id="ctrl-preview-caption" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Vista Previa del Bucle Activo</span>
+                            <div class="w-full flex items-center justify-between gap-2 mb-1.5 px-0.5">
+                                <span id="ctrl-preview-caption" class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">Vista Previa del Bucle Activo</span>
+                                <button id="btn-preview-next" type="button" title="Saltar al siguiente slide activo" class="hidden px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-[10px] font-bold border border-zinc-700 shrink-0 cursor-pointer transition-colors">
+                                    Siguiente <i class="fa-solid fa-forward-step ml-1 text-[9px]"></i>
+                                </button>
+                            </div>
                             <div class="w-full h-32 bg-black rounded-lg overflow-hidden flex items-center justify-center relative border border-zinc-800/80">
-                                <video id="ctrl-preview-video" preload="none" controls loop muted playsinline class="w-full h-full object-contain hidden"></video>
+                                <video id="ctrl-preview-video" autoplay preload="auto" controls loop muted playsinline class="w-full h-full object-contain hidden"></video>
                                 <img id="ctrl-preview-image" src="" alt="Preview" class="w-full h-full object-contain hidden">
                                 <div id="ctrl-preview-fallback" class="text-xs text-zinc-500 flex items-center gap-2">
                                     <i class="fa-solid fa-images"></i> Galería de Sponsors por Código activa
@@ -389,46 +411,57 @@
                             </div>
                         </div>
 
-                        <!-- Ficha de Dimensiones y Especificaciones Técnicas Recomendadas -->
-                        <div class="p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl space-y-2.5 text-xs">
-                            <div class="font-black text-red-400 flex items-center justify-between text-[11px] uppercase tracking-wider border-b border-zinc-800/80 pb-1.5">
-                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-red-500"></i> Especificaciones Técnicas (OBS 1080p)</span><span class="text-[9px] text-zinc-500 font-semibold px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800">CANVAS 1920×1080</span>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
-                                <div class="bg-black/40 border border-zinc-800/70 rounded-lg p-2.5 flex flex-col justify-between">
-                                    <div class="font-bold text-red-400 flex items-center gap-1.5 text-[11px] mb-1">
-                                        <i class="fa-solid fa-video text-red-500 text-[10px]"></i> Video Horizontal (16:9)
+                        <!-- Ficha Colapsable de Dimensiones y Especificaciones Técnicas -->
+                        <details class="group bg-zinc-950/80 border border-zinc-800 rounded-xl text-xs overflow-hidden">
+                            <summary class="px-3.5 py-2.5 font-black text-red-400 flex items-center justify-between text-[11px] uppercase tracking-wider cursor-pointer hover:bg-zinc-900/50 transition-colors list-none select-none">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-red-500"></i> Especificaciones Técnicas (OBS 1080p)</span>
+                                <span class="flex items-center gap-2">
+                                    <span class="text-[9px] text-zinc-500 font-semibold px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800">1920×1080</span>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-zinc-400 transition-transform group-open:rotate-180"></i>
+                                </span>
+                            </summary>
+                            <div class="p-3 pt-2 border-t border-zinc-800/80 space-y-2.5">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <div class="bg-black/40 border border-zinc-800/70 rounded-lg p-2.5 flex flex-col justify-between">
+                                        <div class="font-bold text-red-400 flex items-center gap-1.5 text-[11px] mb-1">
+                                            <i class="fa-solid fa-video text-red-500 text-[10px]"></i> Video Horizontal (16:9)
+                                        </div>
+                                        <div class="text-[11px] text-zinc-300 space-y-0.5">
+                                            <div><span class="text-zinc-500">Medida:</span> <b>1920 × 1080 px</b></div>
+                                            <div><span class="text-zinc-500">Fluidez:</span> <b class="text-red-300">30 fps</b> <span class="text-zinc-500 text-[9px]">(Bajo CPU)</span></div>
+                                            <div><span class="text-zinc-500">Formato:</span> <b>MP4 (H.264) / WebM</b></div>
+                                            <div class="text-[9px] text-zinc-400 pt-0.5">Bucle automático silenciado</div>
+                                        </div>
                                     </div>
-                                    <div class="text-[11px] text-zinc-300 space-y-0.5">
-                                        <div><span class="text-zinc-500">Medida:</span> <b>1920 × 1080 px</b> <span class="text-zinc-500 text-[9px]">(o 940×530)</span></div>
-                                        <div><span class="text-zinc-500">Fluidez:</span> <b class="text-red-300">30 fps</b> <span class="text-zinc-500 text-[9px]">(Bajo CPU OBS)</span></div>
-                                        <div><span class="text-zinc-500">Formato:</span> <b>MP4 (H.264) / WebM</b></div>
-                                        <div class="text-[9px] text-zinc-400 pt-0.5">Bucle automático silenciado</div>
+                                    <div class="bg-black/40 border border-emerald-900/40 rounded-lg p-2.5 flex flex-col justify-between">
+                                        <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-[11px] mb-1">
+                                            <i class="fa-solid fa-image text-emerald-500 text-[10px]"></i> Imagen Ads Publicitarios
+                                        </div>
+                                        <div class="text-[11px] text-zinc-300 space-y-0.5">
+                                            <div><span class="text-zinc-500">Medida:</span> <span class="text-emerald-300 font-bold bg-emerald-950/80 border border-emerald-500/40 px-1 py-0.5 rounded">980 × 720 px</span></div>
+                                            <div><span class="text-zinc-500">Alta 2X:</span> <b>1960 × 1440 px</b></div>
+                                            <div><span class="text-zinc-500">Formato:</span> <b>PNG / JPG / WebP</b></div>
+                                            <div class="text-[9px] text-emerald-400/90 pt-0.5 font-medium">100% lleno sin bordes negros</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="bg-black/40 border border-emerald-900/40 rounded-lg p-2.5 flex flex-col justify-between">
-                                    <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-[11px] mb-1">
-                                        <i class="fa-solid fa-image text-emerald-500 text-[10px]"></i> Imagen Ads Publicitarios
-                                    </div>
-                                    <div class="text-[11px] text-zinc-300 space-y-0.5">
-                                        <div><span class="text-zinc-500">Medida:</span> <span class="text-emerald-300 font-bold bg-emerald-950/80 border border-emerald-500/40 px-1 py-0.5 rounded">980 × 720 px</span></div>
-                                        <div><span class="text-zinc-500">Alta 2X:</span> <b>1960 × 1440 px</b></div>
-                                        <div><span class="text-zinc-500">Formato:</span> <b>PNG / JPG / WebP</b></div>
-                                        <div class="text-[9px] text-emerald-400/90 pt-0.5 font-medium">100% lleno sin bordes negros</div><!--
-                                    </div>
-                                </div>
+                                <p class="text-[10px] text-zinc-400 bg-black/40 rounded px-2.5 py-1.5 border border-zinc-800/60 flex items-center gap-1.5 leading-tight">
+                                    <i class="fa-solid fa-circle-check text-emerald-400 text-[10px] shrink-0"></i>
+                                    <span>Las imágenes a <b>980 × 720 px</b> cubren el 100% del cuadro publicitario en OBS.</span>
+                                </p>
                             </div>
+                        </details>
+                    </div>
+                </div>
 
+                <!-- 4. BARRA INFERIOR Y SPONSORS DEL HEADER -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider mb-4 pb-3 border-b border-zinc-800">
+                        <i class="fa-solid fa-star text-red-500"></i> Barra Inferior & Sponsors
+                    </div>
 
-
-
-
-                            </div>
---></div></div></div><p class="text-[10px] text-zinc-400 mt-2 bg-black/40 rounded px-2.5 py-1.5 border border-zinc-800/60 flex items-center gap-1.5 leading-tight"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px] shrink-0"></i> <span>Las imágenes a <b>980 × 720 px</b> cubren el 100% del cuadro publicitario (idéntico a los ads por código).</span></p>
-                        </div>
-
-                        <!-- Configuración de Barra Inferior (Worlds vs Spotlight) -->
-                        <div class="pt-2 border-t border-zinc-800">
+                    <div class="space-y-4">
+                        <div>
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
                                 Modo de Barra Inferior:
                             </label>
@@ -438,7 +471,6 @@
                             </select>
                         </div>
 
-                        <!-- Sponsor Inicial en Galería Superior (Bucle 6s) -->
                         <div>
                             <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
                                 Sponsor Inicial en Galería Superior (Bucle 6s):
@@ -450,7 +482,7 @@
                                 <option value="/assets/Logos Sponsor/AQMlogo.png">AMQ Bolivia (Aquí Me Quedo)</option>
                             </select>
                             <p class="text-[10px] text-zinc-400 mt-1.5 leading-tight">
-                                Los logos rotan automáticamente en bucle de 6 segundos en el encabezado superior, dejando el 100% de la barra inferior libre para la alineación 5v5.
+                                Los logos rotan automáticamente cada 6 segundos en el header superior, dejando la barra inferior libre para la alineación 5v5.
                             </p>
                         </div>
                     </div>
@@ -486,20 +518,25 @@
                         <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider">
                             <i class="fa-solid fa-users text-red-500"></i> Roster del Game que va a Comenzar
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button id="btn-detect-upcoming-roster" class="px-2.5 py-1 text-xs font-bold bg-red-600 hover:bg-red-500 text-white rounded transition-colors flex items-center gap-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button id="btn-detect-upcoming-roster" class="px-2.5 py-1 text-xs font-bold bg-red-600 hover:bg-red-500 text-white rounded transition-colors flex items-center gap-1 cursor-pointer">
                                 <i class="fa-solid fa-crosshairs"></i> Detectar Próximo
                             </button>
-                            <button id="btn-toggle-team1" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700">
+                            <button id="btn-toggle-team1" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700 cursor-pointer transition-colors">
                                 Equipo 1
                             </button>
-                            <button id="btn-toggle-team2" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700">
+                            <button id="btn-toggle-team2" class="px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700 cursor-pointer transition-colors">
                                 Equipo 2
                             </button>
                             <span id="roster-detect-badge" class="px-2.5 py-0.5 text-[10px] font-bold bg-zinc-900 text-zinc-400 rounded border border-zinc-700">
                                 DETECCIÓN AUTOMÁTICA
                             </span>
                         </div>
+                    </div>
+
+                    <div id="spotlight-footer-warning" class="hidden mb-4 px-3 py-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400 shrink-0"></i>
+                        <span>La barra inferior está en modo <b>Sponsors</b>; este roster no se mostrará en OBS hasta cambiar a <b>Alineación 5v5</b>.</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
@@ -548,18 +585,24 @@
 
     </main>
 
+    <!-- CONTENEDOR DE NOTIFICACIONES NO BLOQUEANTES (TOASTS) -->
+    <div id="ui-toast-container" class="fixed bottom-24 right-4 sm:right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
     <!-- BARRA INFERIOR FLOTANTE DE GUARDADO Y SINCRONIZACIÓN -->
-    <footer class="fixed bottom-0 inset-x-0 bg-[#070709]/95 border-t border-red-600/40 p-4 backdrop-blur-md z-50 shadow-2xl">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3 text-xs text-zinc-300">
-                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                <span>Los cambios se sincronizan en vivo con OBS en <b>&lt;100 ms</b> (Cero llamadas a Challonge API).</span>
+    <footer class="fixed bottom-0 inset-x-0 bg-[#070709]/95 border-t border-red-600/40 px-4 sm:px-6 py-3.5 backdrop-blur-md z-50 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 text-xs text-zinc-300">
+                <span id="save-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span id="footer-sync-summary" class="hidden sm:inline">Sincronización en vivo con OBS en <b>&lt;100 ms</b></span>
+                <span id="dirty-badge" class="hidden px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-black uppercase text-[10px] tracking-wider animate-pulse">
+                    ● Cambios sin aplicar (Ctrl+S)
+                </span>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 ml-auto">
                 <span id="save-status-text" class="text-xs font-bold text-zinc-400 transition-opacity"></span>
                 
-                <button id="btn-save-all" class="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-worlds font-black text-xl tracking-wider uppercase rounded-xl shadow-lg transition-all flex items-center gap-2">
+                <button id="btn-save-all" class="px-6 sm:px-8 py-2.5 sm:py-3 bg-red-600 hover:bg-red-500 text-white font-worlds font-black text-lg sm:text-xl tracking-wider uppercase rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-bolt"></i> Aplicar a la Transmisión
                 </button>
             </div>
@@ -580,7 +623,7 @@
             resolveAssetPlayableUrl,
             deleteSharedMediaAsset,
             pruneOrphanLocalAssets
-        } from "/overlay-media-db.js?v=290";
+        } from "/overlay-media-db.js?v=291";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -601,6 +644,96 @@
             ? 'lbl_oficial'
             : 'darkcito';
         let currentFilter = 'hoy';
+        let cronogramaSearchQuery = '';
+        let hasUnsavedChanges = false;
+        let activeSpotlightSide = null;
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('ui-toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const styles = {
+                success: 'bg-emerald-950/95 border-emerald-500/60 text-emerald-200',
+                warning: 'bg-amber-950/95 border-amber-500/60 text-amber-200',
+                error: 'bg-red-950/95 border-red-500/60 text-red-200',
+                info: 'bg-zinc-900/95 border-zinc-700 text-zinc-100'
+            };
+            const icons = {
+                success: 'fa-circle-check text-emerald-400',
+                warning: 'fa-triangle-exclamation text-amber-400',
+                error: 'fa-circle-xmark text-red-400',
+                info: 'fa-circle-info text-cyan-400'
+            };
+            toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl border shadow-2xl backdrop-blur-md text-xs font-bold flex items-center gap-2.5 transition-all duration-300 ${styles[type] || styles.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-sm shrink-0"></i><span>${String(message || '').replace(/[<>&]/g, '')}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        function markUnsavedChanges(isDirty = true) {
+            hasUnsavedChanges = Boolean(isDirty);
+            const dirtyBadge = document.getElementById('dirty-badge');
+            const saveDot = document.getElementById('save-dot');
+            const saveBtn = document.getElementById('btn-save-all');
+            if (dirtyBadge) dirtyBadge.classList.toggle('hidden', !hasUnsavedChanges);
+            if (saveDot) {
+                saveDot.className = hasUnsavedChanges
+                    ? 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping shrink-0'
+                    : 'w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0';
+            }
+            if (saveBtn) {
+                saveBtn.classList.toggle('ring-2', hasUnsavedChanges);
+                saveBtn.classList.toggle('ring-amber-400/80', hasUnsavedChanges);
+            }
+        }
+
+        function updateSpotlightFooterWarning() {
+            const footerSelect = document.getElementById('select-footer-mode');
+            const warningEl = document.getElementById('spotlight-footer-warning');
+            if (warningEl && footerSelect) {
+                warningEl.classList.toggle('hidden', footerSelect.value !== 'sponsors');
+            }
+            const btn1 = document.getElementById('btn-toggle-team1');
+            const btn2 = document.getElementById('btn-toggle-team2');
+            if (btn1) {
+                btn1.className = activeSpotlightSide === 1
+                    ? 'px-2.5 py-1 text-xs font-bold bg-cyan-600/30 text-cyan-200 rounded border border-cyan-400 cursor-pointer transition-colors'
+                    : 'px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700 cursor-pointer transition-colors';
+            }
+            if (btn2) {
+                btn2.className = activeSpotlightSide === 2
+                    ? 'px-2.5 py-1 text-xs font-bold bg-cyan-600/30 text-cyan-200 rounded border border-cyan-400 cursor-pointer transition-colors'
+                    : 'px-2.5 py-1 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded border border-zinc-700 cursor-pointer transition-colors';
+            }
+        }
+
+        function updateSelectedMatchesCounter() {
+            const count = document.querySelectorAll('.chk-cronograma-item:checked').length;
+            const labelEl = document.getElementById('btn-load-selected-text');
+            if (labelEl) {
+                labelEl.textContent = count > 0
+                    ? `Cargar (${count}) a mi OBS`
+                    : 'Cargar Seleccionadas a mi OBS';
+            }
+        }
+
+        function aplicarBusquedaTablaCronograma() {
+            const tbody = document.getElementById('cronograma-table-body');
+            if (!tbody) return;
+            const q = (cronogramaSearchQuery || '').trim().toLowerCase();
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(tr => {
+                if (!q) {
+                    tr.classList.remove('hidden');
+                    return;
+                }
+                const haystack = (tr.dataset.search || '').toLowerCase();
+                tr.classList.toggle('hidden', !haystack.includes(q));
+            });
+        }
 
         // Directorio oficial de logos PNG locales sin fondo para Equipos Scouting 3
         const LOCAL_SC3_LOGOS = {
@@ -1534,6 +1667,7 @@
             filtered.forEach((m, idx) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-zinc-900/40 transition-colors";
+                tr.dataset.search = `${m.p1?.name || ''} ${m.p1?.tag || ''} ${m.p2?.name || ''} ${m.p2?.tag || ''} ${m.bracket || ''} ${m.rondaDisplay || ''} ${m.bestOf || ''} ${m.timeDisplay || ''}`.toLowerCase();
                 
                 const isAssignedToActive = m.channel === currentChannel || m.channel === 'ambos';
                 const isAssignedToOther = m.channel === otherChannel;
@@ -1684,7 +1818,24 @@
                     renderCronogramaTable();
                 });
             });
+
+            aplicarBusquedaTablaCronograma();
+            updateSelectedMatchesCounter();
         }
+
+        const cronoSearchEl = document.getElementById('cronograma-search-input');
+        const btnClearCronoSearch = document.getElementById('btn-clear-cronograma-search');
+        cronoSearchEl?.addEventListener('input', (e) => {
+            cronogramaSearchQuery = e.target.value || '';
+            if (btnClearCronoSearch) btnClearCronoSearch.classList.toggle('hidden', !cronogramaSearchQuery.trim());
+            aplicarBusquedaTablaCronograma();
+        });
+        btnClearCronoSearch?.addEventListener('click', () => {
+            cronogramaSearchQuery = '';
+            if (cronoSearchEl) cronoSearchEl.value = '';
+            btnClearCronoSearch.classList.add('hidden');
+            aplicarBusquedaTablaCronograma();
+        });
 
         // Filtros
         document.getElementById('filter-hoy').addEventListener('click', () => {
@@ -1726,7 +1877,7 @@
             const selected = liveCronogramaMatches.filter(m => chkIds.includes(m.id)).slice(0, 12);
 
             if (selected.length === 0) {
-                alert("Marca al menos 1 partida con la casilla para cargarla en tu overlay.");
+                showToast("Marca al menos 1 partida con la casilla para cargarla en tu overlay.", "warning");
                 return;
             }
 
@@ -1798,7 +1949,7 @@
 
         document.getElementById('btn-add-manual-match')?.addEventListener('click', () => {
             if (state.matches.length >= 12) {
-                alert("El overlay admite un máximo de 12 enfrentamientos (3 páginas de 4).");
+                showToast("El overlay admite un máximo de 12 enfrentamientos (3 páginas de 4).", "warning");
                 return;
             }
             const idx = state.matches.length;
@@ -1815,6 +1966,21 @@
             renderMatchesEditor();
             saveChanges(true);
         });
+
+        function syncMatchesInputsToState() {
+            (state.matches || []).forEach((m, idx) => {
+                const numEl = document.getElementById(`match-number-${idx}`);
+                const timeEl = document.getElementById(`match-time-${idx}`);
+                const brEl = document.getElementById(`match-bracket-${idx}`);
+                const boEl = document.getElementById(`match-bestof-${idx}`);
+                const stEl = document.getElementById(`match-status-${idx}`);
+                if (numEl) m.matchNumber = numEl.value || `MATCH ${idx + 1}`;
+                if (timeEl) m.timeDisplay = formatMinimizedTimeDisplay(timeEl.value.trim() || m.timeDisplay || '19:00 • HOY');
+                if (brEl) m.bracket = brEl.value ?? m.bracket ?? 'WINNER BRACKET';
+                if (boEl) m.bestOf = boEl.value ?? m.bestOf ?? 'BO1';
+                if (stEl) m.status = stEl.value || 'UPCOMING';
+            });
+        }
 
         // 4. Editor de Partidas Activas
         function renderMatchesEditor() {
@@ -1839,55 +2005,66 @@
                 const pageNum = Math.floor(idx / 4) + 1;
                 const row = document.createElement('div');
                 row.className = "p-4 rounded-xl bg-black border border-zinc-800 space-y-3";
+                const t1Tag = (m.team1?.tag || (m.team1?.name || 'T1').substring(0, 3)).toUpperCase();
+                const t2Tag = (m.team2?.tag || (m.team2?.name || 'T2').substring(0, 3)).toUpperCase();
 
                 row.innerHTML = `
                     <div class="flex items-center justify-between pb-2 border-b border-zinc-800 flex-wrap gap-2">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <span class="w-6 h-6 rounded bg-zinc-900 text-red-500 font-worlds font-black text-sm flex items-center justify-center">
                                 ${idx + 1}
                             </span>
                             <span class="px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase bg-zinc-900 border border-zinc-700 text-red-400">Pág ${pageNum}</span>
-                            <input type="text" value="${m.matchNumber || `MATCH ${idx + 1}`}" id="match-number-${idx}" class="bg-zinc-900 font-worlds font-bold text-sm text-white px-2.5 py-1 rounded border border-zinc-700 w-24 uppercase">
-                            <select id="match-bracket-${idx}" class="bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-zinc-200" title="Fase o Bracket">
+                            <input type="text" value="${m.matchNumber || `MATCH ${idx + 1}`}" id="match-number-${idx}" class="match-dirty-field bg-zinc-900 font-worlds font-bold text-sm text-white px-2.5 py-1 rounded border border-zinc-700 w-24 uppercase">
+                            <select id="match-bracket-${idx}" class="match-dirty-field bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-zinc-200" title="Fase o Bracket">
                                 <option value="WINNER BRACKET" ${(m.bracket || '').includes('WINNER') ? 'selected' : ''}>🏆 Winner Bracket</option>
                                 <option value="LOSER BRACKET" ${(m.bracket || '').includes('LOSER') ? 'selected' : ''}>🛡️ Loser Bracket</option>
                                 <option value="SWISS STAGE" ${(m.bracket || '').includes('SWISS') ? 'selected' : ''}>⚔️ Swiss Stage</option>
                                 <option value="" ${!m.bracket ? 'selected' : ''}>Sin Bracket</option>
                             </select>
-                            <select id="match-bestof-${idx}" class="bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-cyan-300" title="Formato de Partida">
+                            <select id="match-bestof-${idx}" class="match-dirty-field bg-zinc-900 text-xs font-bold px-2 py-1 rounded border border-zinc-700 text-cyan-300" title="Formato de Partida">
                                 <option value="BO1" ${(m.bestOf || 'BO1') === 'BO1' ? 'selected' : ''}>BO1</option>
                                 <option value="BO3" ${m.bestOf === 'BO3' ? 'selected' : ''}>BO3</option>
                                 <option value="BO5" ${m.bestOf === 'BO5' ? 'selected' : ''}>BO5</option>
                             </select>
                             <div class="flex items-center gap-1.5 bg-zinc-900 px-2.5 py-1 rounded border border-zinc-700">
                                 <i class="fa-regular fa-clock text-red-400 text-xs"></i>
-                                <input type="text" value="${formatMinimizedTimeDisplay(m.timeDisplay || (idx === 0 ? '19:00 • HOY' : '21:00 • HOY'))}" id="match-time-${idx}" placeholder="19:00 • HOY" class="bg-transparent font-rajdhani font-bold text-xs text-zinc-100 focus:outline-none w-28" title="Hora y Día en formato HORA • DIA (ej. 17:00 • HOY)">
+                                <input type="text" value="${formatMinimizedTimeDisplay(m.timeDisplay || (idx === 0 ? '19:00 • HOY' : '21:00 • HOY'))}" id="match-time-${idx}" placeholder="19:00 • HOY" class="match-dirty-field bg-transparent font-rajdhani font-bold text-xs text-zinc-100 focus:outline-none w-28" title="Hora y Día en formato HORA • DIA (ej. 17:00 • HOY)">
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-zinc-400 uppercase">Estado:</label>
-                            <select id="match-status-${idx}" class="bg-zinc-900 text-xs font-bold px-2.5 py-1 rounded border border-zinc-700 text-white">
+                        <div class="flex items-center gap-1.5">
+                            <label class="text-xs font-bold text-zinc-400 uppercase hidden sm:inline">Estado:</label>
+                            <select id="match-status-${idx}" class="match-dirty-field bg-zinc-900 text-xs font-bold px-2.5 py-1 rounded border border-zinc-700 text-white">
                                 <option value="UPCOMING" ${m.status === 'UPCOMING' ? 'selected' : ''}>Próxima (VS)</option>
                                 <option value="LIVE" ${m.status === 'LIVE' ? 'selected' : ''}>En Vivo (LIVE)</option>
                                 <option value="COMPLETED" ${m.status === 'COMPLETED' ? 'selected' : ''}>Finalizada (Ganador)</option>
                             </select>
-                            <button type="button" class="btn-delete-match text-zinc-500 hover:text-red-400 p-1.5 transition-colors" data-idx="${idx}" title="Eliminar enfrentamiento">
+                            ${state.matches.length > 1 ? `
+                                <button type="button" class="btn-move-match-up w-7 h-7 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-zinc-300 border border-zinc-700 flex items-center justify-center text-xs cursor-pointer transition-colors" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Subir posición">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                </button>
+                                <button type="button" class="btn-move-match-down w-7 h-7 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-zinc-300 border border-zinc-700 flex items-center justify-center text-xs cursor-pointer transition-colors" data-idx="${idx}" ${idx === state.matches.length - 1 ? 'disabled' : ''} title="Bajar posición">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </button>
+                            ` : ''}
+                            <button type="button" class="btn-delete-match text-zinc-500 hover:text-red-400 w-7 h-7 rounded hover:bg-red-950/40 flex items-center justify-center transition-colors cursor-pointer" data-idx="${idx}" title="Eliminar enfrentamiento">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-11 gap-3 items-center text-xs">
-                        <div class="col-span-5 flex items-center gap-2">
+                    <div class="grid grid-cols-11 gap-2 sm:gap-3 items-center text-xs">
+                        <div class="col-span-5 flex items-center gap-2 min-w-0">
                             <div id="editor-avatar-1-${idx}">
                                 ${renderAvatarBadgeHTML(m.team1.logo, m.team1.name, m.team1.tag)}
                             </div>
-                            <input type="text" value="${m.team1.name}" id="input-team1-${idx}" class="w-full bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700">
+                            <span id="editor-tag-1-${idx}" class="hidden md:inline-block px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-[10px] font-mono font-bold text-cyan-400 shrink-0">[${t1Tag}]</span>
+                            <input type="text" value="${m.team1.name}" id="input-team1-${idx}" class="w-full min-w-0 bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700 focus:outline-none focus:border-red-500">
                             <div class="flex items-center gap-1 shrink-0">
-                                <button type="button" class="btn-score-dec w-6 h-6 bg-zinc-800 rounded font-bold" data-idx="${idx}" data-team="1">-</button>
+                                <button type="button" class="btn-score-dec w-7 h-7 bg-zinc-800 hover:bg-zinc-700 active:scale-95 rounded-lg font-bold text-sm cursor-pointer transition-all" data-idx="${idx}" data-team="1">-</button>
                                 <span id="score-text-1-${idx}" class="w-6 text-center font-worlds font-black text-xl text-white">${m.team1.score ?? 0}</span>
-                                <button type="button" class="btn-score-inc w-6 h-6 bg-red-600 rounded font-bold" data-idx="${idx}" data-team="1">+</button>
+                                <button type="button" class="btn-score-inc w-7 h-7 bg-red-600 hover:bg-red-500 active:scale-95 rounded-lg font-bold text-sm cursor-pointer transition-all" data-idx="${idx}" data-team="1">+</button>
                             </div>
                         </div>
 
@@ -1895,13 +2072,14 @@
                             VS
                         </div>
 
-                        <div class="col-span-5 flex items-center gap-2">
+                        <div class="col-span-5 flex items-center gap-2 min-w-0">
                             <div class="flex items-center gap-1 shrink-0">
-                                <button type="button" class="btn-score-dec w-6 h-6 bg-zinc-800 rounded font-bold" data-idx="${idx}" data-team="2">-</button>
+                                <button type="button" class="btn-score-dec w-7 h-7 bg-zinc-800 hover:bg-zinc-700 active:scale-95 rounded-lg font-bold text-sm cursor-pointer transition-all" data-idx="${idx}" data-team="2">-</button>
                                 <span id="score-text-2-${idx}" class="w-6 text-center font-worlds font-black text-xl text-white">${m.team2.score ?? 0}</span>
-                                <button type="button" class="btn-score-inc w-6 h-6 bg-red-600 rounded font-bold" data-idx="${idx}" data-team="2">+</button>
+                                <button type="button" class="btn-score-inc w-7 h-7 bg-red-600 hover:bg-red-500 active:scale-95 rounded-lg font-bold text-sm cursor-pointer transition-all" data-idx="${idx}" data-team="2">+</button>
                             </div>
-                            <input type="text" value="${m.team2.name}" id="input-team2-${idx}" class="w-full bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700 text-right">
+                            <input type="text" value="${m.team2.name}" id="input-team2-${idx}" class="w-full min-w-0 bg-zinc-900 font-bold text-white rounded p-1.5 border border-zinc-700 text-right focus:outline-none focus:border-red-500">
+                            <span id="editor-tag-2-${idx}" class="hidden md:inline-block px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-[10px] font-mono font-bold text-cyan-400 shrink-0">[${t2Tag}]</span>
                             <div id="editor-avatar-2-${idx}">
                                 ${renderAvatarBadgeHTML(m.team2.logo, m.team2.name, m.team2.tag)}
                             </div>
@@ -1914,10 +2092,24 @@
                 row.querySelector(`#input-team1-${idx}`).addEventListener('input', (e) => {
                     m.team1.name = e.target.value.toUpperCase();
                     m.team1.tag = (resolveScouting3Team(e.target.value).tag || e.target.value.substring(0, 3)).toUpperCase();
+                    const tagEl = document.getElementById(`editor-tag-1-${idx}`);
+                    if (tagEl) tagEl.textContent = `[${m.team1.tag || 'T1'}]`;
+                    markUnsavedChanges(true);
                 });
                 row.querySelector(`#input-team2-${idx}`).addEventListener('input', (e) => {
                     m.team2.name = e.target.value.toUpperCase();
                     m.team2.tag = (resolveScouting3Team(e.target.value).tag || e.target.value.substring(0, 3)).toUpperCase();
+                    const tagEl = document.getElementById(`editor-tag-2-${idx}`);
+                    if (tagEl) tagEl.textContent = `[${m.team2.tag || 'T2'}]`;
+                    markUnsavedChanges(true);
+                });
+                row.querySelectorAll('.match-dirty-field').forEach(el => {
+                    if (el.tagName === 'SELECT') {
+                        el.addEventListener('change', () => saveChanges(true));
+                    } else {
+                        el.addEventListener('input', () => markUnsavedChanges(true));
+                        el.addEventListener('change', () => markUnsavedChanges(true));
+                    }
                 });
             });
 
@@ -1932,6 +2124,13 @@
                         state.matches[idx].team2.score = (state.matches[idx].team2.score || 0) + 1;
                         document.getElementById(`score-text-2-${idx}`).textContent = state.matches[idx].team2.score;
                     }
+                    const newScore = t === '1' ? state.matches[idx].team1.score : state.matches[idx].team2.score;
+                    if (state.matches[idx].status === 'UPCOMING' && newScore > 0) {
+                        state.matches[idx].status = 'LIVE';
+                        const statusSel = document.getElementById(`match-status-${idx}`);
+                        if (statusSel) statusSel.value = 'LIVE';
+                    }
+                    saveChanges(true);
                 });
             });
 
@@ -1946,12 +2145,36 @@
                         state.matches[idx].team2.score = Math.max(0, (state.matches[idx].team2.score || 0) - 1);
                         document.getElementById(`score-text-2-${idx}`).textContent = state.matches[idx].team2.score;
                     }
+                    saveChanges(true);
+                });
+            });
+
+            container.querySelectorAll('.btn-move-match-up').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    if (idx <= 0) return;
+                    syncMatchesInputsToState();
+                    [state.matches[idx - 1], state.matches[idx]] = [state.matches[idx], state.matches[idx - 1]];
+                    renderMatchesEditor();
+                    saveChanges(true);
+                });
+            });
+
+            container.querySelectorAll('.btn-move-match-down').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    if (idx >= state.matches.length - 1) return;
+                    syncMatchesInputsToState();
+                    [state.matches[idx], state.matches[idx + 1]] = [state.matches[idx + 1], state.matches[idx]];
+                    renderMatchesEditor();
+                    saveChanges(true);
                 });
             });
 
             container.querySelectorAll('.btn-delete-match').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const idx = parseInt(btn.dataset.idx);
+                    syncMatchesInputsToState();
                     state.matches.splice(idx, 1);
                     renderMatchesEditor();
                     saveChanges(true);
@@ -1970,6 +2193,7 @@
         // 5. Selector de Canales
         function switchChannel(channelName, skipLoad = false) {
             currentChannel = channelName;
+            activeSpotlightSide = null;
             updatePreviewLinkHref();
             try {
                 const nextUrl = new URL(window.location.href);
@@ -1983,16 +2207,16 @@
             const mediaBadge = document.getElementById('media-active-channel-badge');
 
             if (channelName === 'darkcito') {
-                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
-                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+                btnDark.className = "px-3 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md cursor-pointer";
+                btnLbl.className = "px-3 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all cursor-pointer";
                 if (activeChannelLabel) activeChannelLabel.textContent = "@DARKCITO";
                 if (mediaBadge) {
                     mediaBadge.textContent = "@DARKCITO";
                     mediaBadge.className = "px-2 py-0.5 text-[10px] font-black rounded bg-red-600/20 text-red-400 border border-red-500/40 uppercase tracking-wider";
                 }
             } else {
-                btnLbl.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md";
-                btnDark.className = "px-3.5 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all";
+                btnLbl.className = "px-3 py-1 rounded text-xs font-black uppercase tracking-wider bg-red-600 text-white transition-all shadow-md cursor-pointer";
+                btnDark.className = "px-3 py-1 rounded text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-white transition-all cursor-pointer";
                 if (activeChannelLabel) activeChannelLabel.textContent = "LBL ESPORTS";
                 if (mediaBadge) {
                     mediaBadge.textContent = "LBL ESPORTS";
@@ -2035,6 +2259,8 @@
             updateTimerDisplay();
             renderSharedAssetsList();
             updateMediaPreview();
+            updateSpotlightFooterWarning();
+            markUnsavedChanges(false);
         }
 
         // Estado global compartido entre canales para la Biblioteca de Medios
@@ -2141,7 +2367,7 @@
                 return `
                     <div class="p-2.5 rounded-xl border ${isActive ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-zinc-950/80 border-zinc-800'} flex items-center justify-between gap-2 transition-all">
                         <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isVideo ? 'bg-red-600/20 text-red-400 border border-red-500/30' : 'bg-cyan-600/20 text-cyan-400 border border-cyan-500/30'}">
+                            <div data-asset-thumb="${asset.id}" class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 overflow-hidden ${isVideo ? 'bg-red-600/20 text-red-400 border border-red-500/30' : 'bg-cyan-600/20 text-cyan-400 border border-cyan-500/30'}">
                                 <i class="fa-solid ${isVideo ? 'fa-film' : 'fa-image'} text-xs"></i>
                             </div>
                             <div class="min-w-0 flex-1">
@@ -2175,20 +2401,86 @@
                     </div>
                 `;
             }).join('');
+
+            orderedAssets.forEach(asset => {
+                if (asset.type === 'video') return;
+                resolveAssetPlayableUrl(asset, db, sharedObjectUrls).then(url => {
+                    if (!url) return;
+                    const thumbEl = listEl.querySelector(`[data-asset-thumb="${asset.id}"]`);
+                    if (thumbEl) {
+                        thumbEl.innerHTML = `<img src="${url}" alt="" class="w-full h-full object-cover">`;
+                    }
+                }).catch(() => {});
+            });
+        }
+
+        let userPausedPreviewVideo = false;
+        let previewKeepAliveBound = false;
+
+        function ensurePreviewVideoPlaying() {
+            const vidEl = document.getElementById('ctrl-preview-video');
+            if (!vidEl || vidEl.classList.contains('hidden') || !vidEl.getAttribute('src')) return;
+            if (!userPausedPreviewVideo && vidEl.paused && !vidEl.ended) {
+                vidEl.play().catch(() => {});
+            }
+        }
+
+        function bindPreviewVideoKeepAlive() {
+            if (previewKeepAliveBound) return;
+            const vidEl = document.getElementById('ctrl-preview-video');
+            if (!vidEl) return;
+            previewKeepAliveBound = true;
+
+            vidEl.addEventListener('play', () => { userPausedPreviewVideo = false; });
+            vidEl.addEventListener('playing', () => { userPausedPreviewVideo = false; });
+            vidEl.addEventListener('pause', () => {
+                if (vidEl.dataset.programmaticPause === '1') {
+                    delete vidEl.dataset.programmaticPause;
+                    return;
+                }
+                if (!document.hidden && document.hasFocus() && !vidEl.ended) {
+                    userPausedPreviewVideo = true;
+                } else if (!document.hidden) {
+                    setTimeout(ensurePreviewVideoPlaying, 120);
+                }
+            });
+            vidEl.addEventListener('canplay', ensurePreviewVideoPlaying);
+            vidEl.addEventListener('stalled', () => setTimeout(ensurePreviewVideoPlaying, 350));
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) ensurePreviewVideoPlaying();
+            });
+            window.addEventListener('focus', ensurePreviewVideoPlaying);
+            window.addEventListener('pageshow', ensurePreviewVideoPlaying);
+            setInterval(() => {
+                if (!document.hidden) ensurePreviewVideoPlaying();
+            }, 1500);
+        }
+
+        function pausePreviewVideoProgrammatically(vidEl) {
+            if (!vidEl) return;
+            vidEl.dataset.programmaticPause = '1';
+            vidEl.pause();
         }
 
         async function updateMediaPreview() {
+            bindPreviewVideoKeepAlive();
             if (previewCycleTimeout) { clearTimeout(previewCycleTimeout); previewCycleTimeout = null; }
             const vidEl = document.getElementById('ctrl-preview-video');
             const imgEl = document.getElementById('ctrl-preview-image');
             const fallbackEl = document.getElementById('ctrl-preview-fallback');
             const captionEl = document.getElementById('ctrl-preview-caption');
+            const nextBtn = document.getElementById('btn-preview-next');
 
             const mediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'default';
             const orderedActive = getOrderedActiveAssets();
 
+            if (nextBtn) {
+                nextBtn.classList.toggle('hidden', !(mediaType === 'playlist' && orderedActive.length > 1));
+            }
+
             if (mediaType === 'default' || orderedActive.length === 0) {
-                if (vidEl) { vidEl.pause(); vidEl.removeAttribute('src'); vidEl.classList.add('hidden'); }
+                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.removeAttribute('src'); vidEl.classList.add('hidden'); }
                 if (imgEl) imgEl.classList.add('hidden');
                 if (fallbackEl) fallbackEl.classList.remove('hidden');
                 if (captionEl) captionEl.textContent = mediaType === 'playlist' ? 'Sin assets en ON (Mostrando Galería Código)' : 'Vista Previa • Galería Código';
@@ -2207,7 +2499,7 @@
             }
 
             if (!playableUrl) {
-                if (vidEl) { vidEl.pause(); vidEl.classList.add('hidden'); }
+                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.classList.add('hidden'); }
                 if (imgEl) imgEl.classList.add('hidden');
                 if (fallbackEl) fallbackEl.classList.remove('hidden');
                 return;
@@ -2220,7 +2512,10 @@
                     vidEl.classList.remove('hidden');
                     vidEl.loop = orderedActive.length === 1;
                     if (vidEl.getAttribute('src') !== playableUrl) {
+                        userPausedPreviewVideo = false;
                         vidEl.setAttribute('src', playableUrl);
+                        vidEl.play().catch(() => {});
+                    } else if (vidEl.paused && !userPausedPreviewVideo) {
                         vidEl.play().catch(() => {});
                     }
                     vidEl.onended = () => {
@@ -2231,7 +2526,7 @@
                     };
                 }
             } else {
-                if (vidEl) { vidEl.pause(); vidEl.onended = null; vidEl.classList.add('hidden'); }
+                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.onended = null; vidEl.classList.add('hidden'); }
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (imgEl) {
                     imgEl.src = playableUrl;
@@ -2325,9 +2620,12 @@
                 selectEl.appendChild(opt);
             });
 
-            selectEl.addEventListener('change', (e) => {
+            selectEl.onchange = (e) => {
+                activeSpotlightSide = null;
+                updateSpotlightFooterWarning();
                 autoFillSpotlight(e.target.value);
-            });
+                markUnsavedChanges(true);
+            };
         }
 
         function limpiarRiotNick(raw) {
@@ -2364,6 +2662,8 @@
                 if (selectEl) {
                     selectEl.value = nextMatch.team1.name;
                     autoFillSpotlight(nextMatch.team1.name);
+                    activeSpotlightSide = 1;
+                    updateSpotlightFooterWarning();
                 }
             }
         }
@@ -2379,6 +2679,8 @@
                 if (selectEl) {
                     selectEl.value = team.name;
                     autoFillSpotlight(team.name);
+                    activeSpotlightSide = teamNum;
+                    updateSpotlightFooterWarning();
                     saveChanges(true);
                 }
             }
@@ -2430,6 +2732,26 @@
             }
             if (dispEl) dispEl.classList.toggle('opacity-30', !isVisible);
             if (hiddenBadge) hiddenBadge.classList.toggle('hidden', isVisible);
+
+            const etaEl = document.getElementById('control-timer-eta');
+            if (etaEl) {
+                if (state.timerRunning && state.timerTargetTimestamp && state.timerSeconds > 0) {
+                    try {
+                        const etaFmt = new Intl.DateTimeFormat('es-BO', {
+                            timeZone: 'America/La_Paz',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        }).format(new Date(state.timerTargetTimestamp));
+                        etaEl.textContent = `Termina aprox. ${etaFmt} BOL`;
+                        etaEl.classList.remove('hidden');
+                    } catch (_) {
+                        etaEl.classList.add('hidden');
+                    }
+                } else {
+                    etaEl.classList.add('hidden');
+                }
+            }
         }
 
         let lastRenderedControlSec = -1;
@@ -2563,6 +2885,16 @@
             saveChanges(false);
         });
 
+        document.querySelectorAll('.btn-preset-time').forEach(b => {
+            b.addEventListener('click', () => {
+                const sec = parseInt(b.dataset.setSec) || 600;
+                state.timerSeconds = sec;
+                if (state.timerRunning) state.timerTargetTimestamp = Date.now() + (state.timerSeconds * 1000); else state.timerTargetTimestamp = null;
+                updateTimerDisplay();
+                saveChanges(false);
+            });
+        });
+
         document.querySelectorAll('.btn-quick-time').forEach(b => {
             b.addEventListener('click', () => {
                 const add = parseInt(b.dataset.addSec);
@@ -2634,8 +2966,12 @@
             state.matches = (state.matches || []).map(m => {
                 const s1 = resolveScouting3Team(m.team1?.name, m.team1?.tag);
                 const s2 = resolveScouting3Team(m.team2?.name, m.team2?.tag);
+                const score1 = m.team1?.score || 0;
+                const score2 = m.team2?.score || 0;
+                const winner = (m.status === 'COMPLETED' && score1 !== score2) ? (score1 > score2 ? 'team1' : 'team2') : null;
                 return {
                     ...m,
+                    winner,
                     team1: { ...m.team1, tag: s1.tag || m.team1.tag, logo: s1.logo || resolveTeamLogo(m.team1, s1) },
                     team2: { ...m.team2, tag: s2.tag || m.team2.tag, logo: s2.logo || resolveTeamLogo(m.team2, s2) }
                 };
@@ -2666,6 +3002,7 @@
 
             try { syncChannel.postMessage(payload); } catch(e) {}
             try { localStorage.setItem(`lbl_overlay_${currentChannel}`, JSON.stringify(payload)); } catch(e) {}
+            markUnsavedChanges(false);
 
             try {
                 triggerFirestoreSync(payload, showFeedback); return;
@@ -2750,9 +3087,9 @@
             testBgPreviewActive = !testBgPreviewActive;
             const btn = e.currentTarget;
             if (testBgPreviewActive) {
-                btn.className = "px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/60 text-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5";
+                btn.className = "px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/60 text-emerald-300 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer";
             } else {
-                btn.className = "px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5";
+                btn.className = "px-2.5 py-1 bg-transparent hover:bg-zinc-800 text-zinc-300 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer";
             }
             updatePreviewLinkHref();
             try {
@@ -2763,16 +3100,23 @@
         document.getElementById('btn-sim-overlay-state')?.addEventListener('click', () => {
             try {
                 syncChannel.postMessage({ type: 'SIMULATE_STATE', channelId: currentChannel });
+                showToast('Estado simulado en vista previa', 'info');
             } catch (_) {}
         });
 
         document.getElementById('btn-copy-obs-url').addEventListener('click', () => {
             const currentOrigin = window.location.origin;
             const obsUrl = `${currentOrigin}/overlay-schedule.html?channel=${currentChannel}`;
+            const labelEl = document.getElementById('btn-copy-obs-url-text');
             navigator.clipboard.writeText(obsUrl).then(() => {
-                alert(`¡URL copiada al portapapeles!\n\n${obsUrl}\n\nPégala en OBS como fuente de Navegador a 1920x1080.`);
+                if (labelEl) {
+                    const prev = labelEl.textContent;
+                    labelEl.textContent = '✓ ¡Copiada!';
+                    setTimeout(() => { labelEl.textContent = prev; }, 2200);
+                }
+                showToast(`URL de OBS copiada (${currentChannel === 'darkcito' ? '@Darkcito' : 'LBL Esports'})`, 'success');
             }).catch(() => {
-                prompt("Copia esta URL para OBS:", obsUrl);
+                showToast(`Copia manual: ${obsUrl}`, 'warning');
             });
         });
 
@@ -2814,7 +3158,7 @@
                     newlyAddedAssets.push(meta);
                 } catch (err) {
                     console.error('Error subiendo archivo compartido:', file.name, err);
-                    alert(`No se pudo subir "${file.name}": ${err.message || 'Error desconocido'}`);
+                    showToast(`No se pudo subir "${file.name}": ${err.message || 'Error desconocido'}`, 'error');
                 }
             }
 
@@ -2946,8 +3290,27 @@
             });
         });
 
+        document.getElementById('btn-preview-next')?.addEventListener('click', () => {
+            const orderedActive = getOrderedActiveAssets();
+            if (orderedActive.length <= 1) return;
+            previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+            updateMediaPreview();
+        });
+
         document.getElementById('select-footer-mode')?.addEventListener('change', () => {
+            updateSpotlightFooterWarning();
             saveChanges(false);
+        });
+
+        ['input-stage-title', 'input-stage-subtitle', 'spot-p-0', 'spot-p-1', 'spot-p-2', 'spot-p-3', 'spot-p-4'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', () => markUnsavedChanges(true));
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                saveChanges(true);
+            }
         });
 
         document.getElementById('select-secondary-sponsor')?.addEventListener('change', () => {

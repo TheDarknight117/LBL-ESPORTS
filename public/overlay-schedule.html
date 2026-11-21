@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=290">
+    <link rel="stylesheet" href="/dist/output.css?v=291">
 
     <style>
         @font-face {
@@ -338,7 +338,7 @@
                                loop 
                                muted 
                                playsinline 
-                               preload="none"
+                               preload="auto"
                                class="w-full h-full object-contain rounded-xl bg-black hidden">
                         </video>
 
@@ -615,7 +615,7 @@
             MEDIA_LIBRARY_DOC,
             resolveAssetPlayableUrl,
             pruneOrphanLocalAssets
-        } from "/overlay-media-db.js?v=290";
+        } from "/overlay-media-db.js?v=291";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -1466,7 +1466,7 @@
             const isLive = match.status === 'LIVE';
             const isCompleted = match.status === 'COMPLETED';
 
-            if (isLive || isCompleted) {
+            if (isLive || isCompleted || s1 > 0 || s2 > 0) {
                 return `
                     <div class="flex items-center justify-center whitespace-nowrap px-1">
                         <span class="font-worlds font-black text-[46px] tracking-widest text-white whitespace-nowrap tabular-nums leading-none select-none flex items-center gap-2 drop-shadow-lg">
@@ -1769,6 +1769,7 @@
                         videoEl.src = playableUrl;
                         videoEl.load();
                     }
+                    bindOverlayVideoKeepAlive();
                     const playPromise = videoEl.play();
                     if (playPromise !== undefined) playPromise.catch(() => {});
                 }
@@ -1855,6 +1856,7 @@
                             videoEl.src = cleanUrl;
                             videoEl.load();
                         }
+                        bindOverlayVideoKeepAlive();
                         const playPromise = videoEl.play();
                         if (playPromise !== undefined) {
                             playPromise.catch(() => {});
@@ -1879,6 +1881,39 @@
                 showPartnersFallbackGallery();
             }
         }
+
+        let overlayVideoKeepAliveBound = false;
+        function ensureOverlayVideoPlaying() {
+            const videoEl = document.getElementById('sponsor-video');
+            if (!videoEl || videoEl.classList.contains('hidden') || !videoEl.getAttribute('src')) return;
+            if (videoEl.ended && typeof videoEl.onended === 'function') {
+                videoEl.onended();
+                return;
+            }
+            if (videoEl.paused) {
+                const playPromise = videoEl.play();
+                if (playPromise !== undefined) playPromise.catch(() => {});
+            }
+        }
+
+        function bindOverlayVideoKeepAlive() {
+            if (overlayVideoKeepAliveBound) return;
+            const videoEl = document.getElementById('sponsor-video');
+            if (!videoEl) return;
+            overlayVideoKeepAliveBound = true;
+
+            videoEl.addEventListener('pause', () => {
+                if (!videoEl.classList.contains('hidden') && !document.hidden) {
+                    setTimeout(ensureOverlayVideoPlaying, 120);
+                }
+            });
+            videoEl.addEventListener('stalled', () => setTimeout(ensureOverlayVideoPlaying, 350));
+            videoEl.addEventListener('canplay', ensureOverlayVideoPlaying);
+            setInterval(() => {
+                if (!document.hidden) ensureOverlayVideoPlaying();
+            }, 1500);
+        }
+        bindOverlayVideoKeepAlive();
 
         // Modo de Barra Inferior: 'spotlight' (Roster 5v5) o 'sponsors' (Estilo Worlds 26)
         function renderFooter(mode = 'spotlight') {
@@ -2001,6 +2036,7 @@
                     state.timerSeconds = calculateCurrentRemainingSec();
                 }
                 forceRenderTimerUI();
+                ensureOverlayVideoPlaying();
                 const matchBox = document.getElementById('matches-container');
                 if (matchBox) matchBox.style.opacity = '1';
             }
@@ -2010,7 +2046,9 @@
                 state.timerSeconds = calculateCurrentRemainingSec();
             }
             forceRenderTimerUI();
+            ensureOverlayVideoPlaying();
         });
+        window.addEventListener('pageshow', ensureOverlayVideoPlaying);
 
         function syncTimerFromPayload(data) {
             if (!data) return;
