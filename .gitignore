@@ -8,3 +8,9 @@ public/assets/*.xlsx
 
 # Local dev uploads
 public/uploads/
+
+# Secrets y cache local de herramientas
+.env
+.env.local
+.env.*.local
+.wrangler/

@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=291">
+    <link rel="stylesheet" href="/dist/output.css?v=292">
 
     <style>
         @font-face {
@@ -356,14 +356,21 @@
                             <label class="block text-xs font-bold text-zinc-300 uppercase tracking-wider pt-1">
                                 Qué muestra ESTE canal ahora:
                             </label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500 transition-colors text-xs font-bold text-zinc-200">
-                                    <input type="radio" name="media-type" value="playlist" class="accent-red-600">
-                                    <i class="fa-solid fa-layer-group text-red-500"></i> Assets Cargados
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <label id="lbl-source-assets" title="Assets cargados (Flyers / Videos)" class="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-red-500/70 transition-colors text-[11px] font-bold text-zinc-200 select-none">
+                                    <input id="radio-source-assets" type="radio" name="media-type" value="playlist" class="accent-red-600 cursor-pointer shrink-0">
+                                    <i class="fa-solid fa-layer-group text-red-500 text-xs shrink-0"></i>
+                                    <span>Assets</span>
                                 </label>
-                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-emerald-500 transition-colors text-xs font-bold text-zinc-200">
-                                    <input type="radio" name="media-type" value="default" class="accent-red-600" checked>
-                                    <i class="fa-solid fa-rotate text-emerald-400"></i> Galería Código
+                                <label id="lbl-source-code" title="Galería de Partners por Código" class="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-emerald-500/60 bg-emerald-950/20 cursor-pointer hover:border-emerald-400 transition-colors text-[11px] font-bold text-zinc-200 select-none">
+                                    <input id="radio-source-code" type="radio" name="media-type" value="default" class="accent-emerald-500 cursor-pointer shrink-0" checked>
+                                    <i class="fa-solid fa-rotate text-emerald-400 text-xs shrink-0"></i>
+                                    <span>Código</span>
+                                </label>
+                                <label id="lbl-source-clips" title="Clips recientes de Twitch (!clip)" class="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-zinc-700 bg-black cursor-pointer hover:border-purple-500/70 transition-colors text-[11px] font-bold text-zinc-200 select-none">
+                                    <input id="radio-source-clips" type="radio" name="media-type" value="clips" class="accent-purple-500 cursor-pointer shrink-0">
+                                    <i class="fa-brands fa-twitch text-purple-400 text-xs shrink-0"></i>
+                                    <span>Clips</span>
                                 </label>
                             </div>
                             <input id="input-media-url" type="hidden" value="">
@@ -451,6 +458,65 @@
                                 </p>
                             </div>
                         </details>
+                    </div>
+                </div>
+
+                <!-- 3b. CLIPS DE TWITCH EN VIVO (!clip • ÚLTIMOS 40 MIN) -->
+                <div class="panel-clean-surface rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-3 pb-3 border-b border-zinc-800 gap-2 flex-wrap">
+                        <div class="flex items-center gap-2 text-white font-worlds text-lg font-bold uppercase tracking-wider">
+                            <i class="fa-brands fa-twitch text-purple-400"></i> Clips Recientes (40 min)
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="clips-twitch-channel-badge" class="px-2 py-0.5 text-[10px] font-black rounded bg-purple-950/80 text-purple-300 border border-purple-500/40 tracking-wider">
+                                @el_darkcito
+                            </span>
+                            <button id="btn-toggle-clips-enabled" type="button" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-colors cursor-pointer bg-emerald-600 text-white border-emerald-400">
+                                ON
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="clips-controls-body" class="space-y-3">
+                        <p class="text-[11px] text-zinc-400 leading-tight">
+                            Captura automática del canal (!clip vía TheFyrewire / Streamer.bot o Twitch). Se reproduce en OBS al elegir <b class="text-purple-300">Clips</b> arriba.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Ventana</label>
+                                <select id="select-clips-window" class="w-full bg-black text-white font-bold text-[11px] px-2 py-1.5 rounded-lg border border-zinc-700 focus:outline-none focus:border-purple-500">
+                                    <option value="40">Últimos 40 min</option>
+                                    <option value="20">Últimos 20 min</option>
+                                    <option value="60">Última 1 hora</option>
+                                    <option value="300">Últimas 5 horas</option>
+                                    <option value="4320">Últimos 3 días</option>
+                                    <option value="historical">Prueba: Históricos</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Audio OBS</label>
+                                <select id="select-clips-muted" class="w-full bg-black text-white font-bold text-[11px] px-2 py-1.5 rounded-lg border border-zinc-700 focus:outline-none focus:border-purple-500">
+                                    <option value="muted">Silenciado</option>
+                                    <option value="unmuted">Con Audio</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-1">
+                            <span id="clips-detected-count" class="px-2 py-0.5 text-[10px] font-black rounded bg-zinc-800 text-zinc-300 border border-zinc-700">
+                                Buscando clips...
+                            </span>
+                            <button id="btn-refresh-clips" type="button" class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 text-purple-200 border border-purple-500/40 flex items-center gap-1.5 transition-colors cursor-pointer">
+                                <i class="fa-solid fa-rotate text-[10px]"></i> Actualizar
+                            </button>
+                        </div>
+
+                        <div id="twitch-clips-list" class="max-h-[240px] overflow-y-auto space-y-2 pr-1">
+                            <div class="text-xs text-zinc-500 text-center py-4 italic">
+                                Consultando clips de Twitch...
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -622,8 +688,16 @@
             uploadSharedMediaAsset,
             resolveAssetPlayableUrl,
             deleteSharedMediaAsset,
-            pruneOrphanLocalAssets
-        } from "/overlay-media-db.js?v=291";
+            pruneOrphanLocalAssets,
+            resolveTwitchLoginForOverlayChannel,
+            normalizeClipsConfig,
+            normalizeMediaSources,
+            formatClipRelativeAge,
+            filterActiveRecentClips,
+            fetchRecentTwitchClips,
+            getCachedClipPlayableUrl,
+            prefetchClipBlobUrl
+        } from "/overlay-media-db.js?v=292";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -1284,6 +1358,8 @@
             mediaUrl: "",
             disabledAssetIds: [],
             assetOrderIds: [],
+            mediaSources: normalizeMediaSources({ mediaType: "default" }),
+            clipsConfig: normalizeClipsConfig({ enabled: false }),
             footerMode: "spotlight",
             secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
             matches: [],
@@ -2224,7 +2300,13 @@
                 }
             }
 
+            const clipsChanBadge = document.getElementById('clips-twitch-channel-badge');
+            if (clipsChanBadge) clipsChanBadge.textContent = `@${resolveTwitchLoginForOverlayChannel(channelName)}`;
+
             if (!skipLoad) {
+                rawChannelClips = [];
+                previewManualClip = null;
+                renderControlTwitchClips();
                 renderCronogramaTable();
                 loadActiveChannelData(channelName);
             }
@@ -2237,10 +2319,12 @@
             state.matches = [];
             state.disabledAssetIds = [];
             state.assetOrderIds = [];
+            state.mediaSources = normalizeMediaSources({ mediaType: 'default' });
+            state.clipsConfig = normalizeClipsConfig({ enabled: false });
             state.mediaType = 'default';
             state.timerVisible = true;
-            const defRadio = document.querySelector('input[name="media-type"][value="default"]');
-            if (defRadio) defRadio.checked = true;
+            syncMediaSourcesUI();
+            syncClipsConfigUI();
 
             const localData = localStorage.getItem(`lbl_overlay_${channel}`);
             if (localData) {
@@ -2258,6 +2342,8 @@
             populateSpotlightDropdown();
             updateTimerDisplay();
             renderSharedAssetsList();
+            syncClipsConfigUI();
+            refreshControlTwitchClips(true);
             updateMediaPreview();
             updateSpotlightFooterWarning();
             markUnsavedChanges(false);
@@ -2292,12 +2378,15 @@
         function updateChannelStatusPill(chId, data) {
             const pillEl = document.getElementById(`channel-status-pill-${chId}`);
             if (!pillEl || !data) return;
-            const mType = data.mediaType || 'default';
+            const sources = normalizeMediaSources(data);
             const disabledSet = new Set(Array.isArray(data.disabledAssetIds) ? data.disabledAssetIds : []);
             const activeCount = sharedMediaAssets.filter(a => !disabledSet.has(a.id)).length;
-            if (mType === 'playlist') {
+            if (sources.assets) {
                 pillEl.textContent = activeCount > 0 ? `Assets (${activeCount} ON)` : 'Assets (vacío → Código)';
                 pillEl.className = activeCount > 0 ? 'font-black text-red-400 truncate' : 'font-black text-amber-400 truncate';
+            } else if (sources.clips) {
+                pillEl.textContent = 'Clips Twitch';
+                pillEl.className = 'font-black text-purple-400 truncate';
             } else {
                 pillEl.textContent = 'Galería Código';
                 pillEl.className = 'font-black text-emerald-400 truncate';
@@ -2463,6 +2552,156 @@
             vidEl.pause();
         }
 
+        let rawChannelClips = [];
+        let isFetchingChannelClips = false;
+        let lastClipsError = '';
+        let previewManualClip = null;
+
+        function syncMediaSourcesUI() {
+            const sources = normalizeMediaSources(state);
+            state.mediaSources = sources;
+            state.mediaType = sources.assets ? 'playlist' : (sources.clips ? 'clips' : 'default');
+
+            const rAssets = document.getElementById('radio-source-assets');
+            const rCode = document.getElementById('radio-source-code');
+            const rClips = document.getElementById('radio-source-clips');
+            const lblAssets = document.getElementById('lbl-source-assets');
+            const lblCode = document.getElementById('lbl-source-code');
+            const lblClips = document.getElementById('lbl-source-clips');
+
+            if (rAssets) rAssets.checked = sources.assets;
+            if (rCode) rCode.checked = sources.codeGallery;
+            if (rClips) rClips.checked = sources.clips;
+
+            const baseCls = 'flex items-center justify-center gap-1.5 p-2 rounded-xl border cursor-pointer transition-colors text-[11px] font-bold select-none';
+            if (lblAssets) {
+                lblAssets.className = `${baseCls} ${sources.assets ? 'border-red-500/80 bg-red-950/35 text-white' : 'border-zinc-700 bg-black text-zinc-400 hover:border-red-500/60'}`;
+            }
+            if (lblCode) {
+                lblCode.className = `${baseCls} ${sources.codeGallery ? 'border-emerald-500/80 bg-emerald-950/30 text-white' : 'border-zinc-700 bg-black text-zinc-400 hover:border-emerald-500/60'}`;
+            }
+            if (lblClips) {
+                lblClips.className = `${baseCls} ${sources.clips ? 'border-purple-500/80 bg-purple-950/35 text-white' : 'border-zinc-700 bg-black text-zinc-400 hover:border-purple-500/60'}`;
+            }
+        }
+
+        function syncClipsConfigUI() {
+            const sources = normalizeMediaSources(state);
+            const cfg = normalizeClipsConfig({ ...state.clipsConfig, enabled: sources.clips });
+            state.clipsConfig = cfg;
+
+            const toggleBtn = document.getElementById('btn-toggle-clips-enabled');
+            if (toggleBtn) {
+                toggleBtn.textContent = sources.clips ? 'EN OBS' : 'Usar en OBS';
+                toggleBtn.className = sources.clips
+                    ? 'px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-colors cursor-pointer bg-purple-600 text-white border-purple-400'
+                    : 'px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-colors cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-600';
+            }
+
+            const winSel = document.getElementById('select-clips-window');
+            if (winSel) {
+                winSel.value = cfg.testHistorical ? 'historical' : String([20, 40, 60, 300, 4320].includes(cfg.windowMinutes) ? cfg.windowMinutes : 40);
+            }
+
+            const muteSel = document.getElementById('select-clips-muted');
+            if (muteSel) muteSel.value = cfg.muted ? 'muted' : 'unmuted';
+
+            const badge = document.getElementById('clips-twitch-channel-badge');
+            if (badge) badge.textContent = `@${resolveTwitchLoginForOverlayChannel(currentChannel)}`;
+        }
+
+        function renderControlTwitchClips() {
+            const listEl = document.getElementById('twitch-clips-list');
+            const countEl = document.getElementById('clips-detected-count');
+            if (!listEl) return;
+
+            const cfg = normalizeClipsConfig(state.clipsConfig);
+            const blockedSet = new Set(cfg.blockedClipIds);
+            const visibleActive = filterActiveRecentClips(rawChannelClips, cfg);
+            const twitchLogin = resolveTwitchLoginForOverlayChannel(currentChannel);
+
+            if (countEl) {
+                if (isFetchingChannelClips) {
+                    countEl.textContent = 'Actualizando...';
+                } else if (lastClipsError) {
+                    countEl.textContent = 'Error API Twitch';
+                    countEl.className = 'px-2 py-0.5 text-[10px] font-black rounded bg-red-950 text-red-300 border border-red-500/40';
+                } else {
+                    countEl.textContent = `${visibleActive.length} activos en cola`;
+                    countEl.className = visibleActive.length > 0
+                        ? 'px-2 py-0.5 text-[10px] font-black rounded bg-purple-950 text-purple-200 border border-purple-500/40'
+                        : 'px-2 py-0.5 text-[10px] font-black rounded bg-zinc-800 text-zinc-300 border border-zinc-700';
+                }
+            }
+
+            if (lastClipsError) {
+                const safeErr = String(lastClipsError).replace(/[<>&"]/g, '');
+                listEl.innerHTML = `<div class="text-xs text-red-400 bg-red-950/30 border border-red-500/30 rounded-xl p-3">${safeErr}</div>`;
+                return;
+            }
+
+            if (!rawChannelClips.length) {
+                listEl.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4 italic">${cfg.testHistorical ? `No hay clips guardados en @${twitchLogin}.` : `Sin clips nuevos en @${twitchLogin} durante los últimos ${cfg.windowMinutes} min.`}</div>`;
+                return;
+            }
+
+            listEl.innerHTML = rawChannelClips.map((clip) => {
+                const isBlocked = blockedSet.has(clip.id);
+                const safeTitle = String(clip.title || 'Clip sin título').replace(/[<>&"]/g, '');
+                const safeCreator = String(clip.creatorName || 'Twitch').replace(/[<>&"]/g, '');
+                const safeThumb = String(clip.thumbnailUrl || '').replace(/"/g, '&quot;');
+                const durTxt = `${Math.round(Number(clip.duration) || 30)}s`;
+                const ageTxt = formatClipRelativeAge(clip.createdAt);
+
+                return `
+                    <div class="p-2 rounded-xl border ${!isBlocked ? 'bg-purple-950/20 border-purple-500/40' : 'bg-zinc-950/80 border-zinc-800 opacity-55'} flex items-center justify-between gap-2 transition-all">
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                            <img src="${safeThumb}" alt="" class="w-12 h-8 rounded object-cover bg-black border border-zinc-800 shrink-0">
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold text-white truncate" title="${safeTitle}">${safeTitle}</div>
+                                <div class="text-[10px] text-zinc-400 truncate">
+                                    @${safeCreator} • ${ageTxt} • ${durTxt}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            ${clip.mp4Url ? `
+                                <button type="button" data-clip-preview="${clip.id}" title="Previsualizar clip" class="px-2 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-[10px] font-bold border border-zinc-700 cursor-pointer">
+                                    Ver
+                                </button>
+                            ` : ''}
+                            <button type="button" data-clip-block="${clip.id}" class="px-2 py-1 rounded text-[10px] font-black uppercase border cursor-pointer transition-colors ${isBlocked ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-600' : 'bg-purple-600/80 hover:bg-purple-500 text-white border-purple-400'}">
+                                ${isBlocked ? 'Mostrar' : 'Ocultar'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function refreshControlTwitchClips(force = false) {
+            if (isFetchingChannelClips && !force) return;
+            const cfg = normalizeClipsConfig(state.clipsConfig);
+            const twitchLogin = resolveTwitchLoginForOverlayChannel(currentChannel);
+
+            isFetchingChannelClips = true;
+            lastClipsError = '';
+            renderControlTwitchClips();
+            try {
+                const res = await fetchRecentTwitchClips(twitchLogin, cfg);
+                rawChannelClips = Array.isArray(res?.clips) ? res.clips : [];
+            } catch (err) {
+                rawChannelClips = [];
+                lastClipsError = err.message || 'No se pudieron obtener clips de Twitch';
+            } finally {
+                isFetchingChannelClips = false;
+                renderControlTwitchClips();
+                if (normalizeMediaSources(state).clips) {
+                    updateMediaPreview();
+                }
+            }
+        }
+
         async function updateMediaPreview() {
             bindPreviewVideoKeepAlive();
             if (previewCycleTimeout) { clearTimeout(previewCycleTimeout); previewCycleTimeout = null; }
@@ -2472,24 +2711,113 @@
             const captionEl = document.getElementById('ctrl-preview-caption');
             const nextBtn = document.getElementById('btn-preview-next');
 
-            const mediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'default';
-            const orderedActive = getOrderedActiveAssets();
-
-            if (nextBtn) {
-                nextBtn.classList.toggle('hidden', !(mediaType === 'playlist' && orderedActive.length > 1));
-            }
-
-            if (mediaType === 'default' || orderedActive.length === 0) {
-                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.removeAttribute('src'); vidEl.classList.add('hidden'); }
+            if (previewManualClip && previewManualClip.mp4Url) {
                 if (imgEl) imgEl.classList.add('hidden');
-                if (fallbackEl) fallbackEl.classList.remove('hidden');
-                if (captionEl) captionEl.textContent = mediaType === 'playlist' ? 'Sin assets en ON (Mostrando Galería Código)' : 'Vista Previa • Galería Código';
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+                if (nextBtn) nextBtn.classList.remove('hidden');
+                if (captionEl) captionEl.textContent = `Clip Preview (@${previewManualClip.broadcasterLogin}): ${previewManualClip.title}`;
+                if (vidEl) {
+                    vidEl.classList.remove('hidden');
+                    vidEl.loop = false;
+                    const manualKey = `manual:${previewManualClip.id}`;
+                    const clipSrc = getCachedClipPlayableUrl(previewManualClip, { fastFallback: true });
+                    vidEl.poster = previewManualClip.thumbnailUrl || '';
+                    if (vidEl.dataset.previewKey !== manualKey) {
+                        vidEl.dataset.previewKey = manualKey;
+                        userPausedPreviewVideo = false;
+                        vidEl.setAttribute('src', clipSrc);
+                        vidEl.play().catch(() => {});
+                    }
+                    vidEl.onplaying = () => { prefetchClipBlobUrl(previewManualClip, previewManualClip.id).catch(() => {}); };
+                    vidEl.onended = () => {
+                        previewManualClip = null;
+                        updateMediaPreview();
+                    };
+                }
                 return;
             }
 
-            if (previewCycleIndex >= orderedActive.length) previewCycleIndex = 0;
-            const currentAsset = orderedActive[previewCycleIndex];
-            if (captionEl) captionEl.textContent = `Vista Previa (${previewCycleIndex + 1}/${orderedActive.length}): ${currentAsset.name}`;
+            const sources = normalizeMediaSources(state);
+            const orderedActive = sources.assets ? getOrderedActiveAssets() : [];
+            const activeClips = sources.clips
+                ? filterActiveRecentClips(rawChannelClips, { ...state.clipsConfig, enabled: true }).filter(c => Boolean(c.mp4Url))
+                : [];
+
+            const previewItems = [
+                ...orderedActive.map(asset => ({ kind: 'ad', asset })),
+                ...activeClips.map(clip => ({ kind: 'clip', clip }))
+            ];
+
+            if (nextBtn) {
+                nextBtn.classList.toggle('hidden', previewItems.length <= 1);
+            }
+
+            if (previewItems.length === 0) {
+                if (vidEl) {
+                    delete vidEl.dataset.previewKey;
+                    pausePreviewVideoProgrammatically(vidEl);
+                    vidEl.removeAttribute('src');
+                    vidEl.classList.add('hidden');
+                }
+                if (imgEl) imgEl.classList.add('hidden');
+                if (fallbackEl) fallbackEl.classList.remove('hidden');
+                if (captionEl) {
+                    const labels = [];
+                    if (sources.assets && orderedActive.length === 0) labels.push('Sin assets en ON');
+                    if (sources.clips && activeClips.length === 0) labels.push('Sin clips en ventana');
+                    if (sources.codeGallery) labels.push('Galería Código');
+                    captionEl.textContent = labels.length ? `Vista Previa • ${labels.join(' • ')}` : 'Vista Previa • Galería Código';
+                }
+                return;
+            }
+
+            if (previewCycleIndex >= previewItems.length) previewCycleIndex = 0;
+            const currentItem = previewItems[previewCycleIndex];
+
+            if (currentItem.kind === 'clip') {
+                const clip = currentItem.clip;
+                const advancePreview = () => {
+                    if (previewItems.length > 1) {
+                        previewCycleIndex = (previewCycleIndex + 1) % previewItems.length;
+                        updateMediaPreview();
+                    }
+                };
+                if (captionEl) captionEl.textContent = `Vista Previa (${previewCycleIndex + 1}/${previewItems.length}) • Clip: ${clip.title}`;
+                if (imgEl) imgEl.classList.add('hidden');
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+                if (vidEl) {
+                    vidEl.classList.remove('hidden');
+                    vidEl.loop = previewItems.length === 1;
+                    vidEl.poster = clip.thumbnailUrl || '';
+                    const clipKey = `clip:${clip.id}`;
+                    const clipSrc = getCachedClipPlayableUrl(clip, { fastFallback: true });
+                    if (vidEl.dataset.previewKey !== clipKey) {
+                        vidEl.dataset.previewKey = clipKey;
+                        userPausedPreviewVideo = false;
+                        vidEl.setAttribute('src', clipSrc);
+                        vidEl.play().catch(() => {});
+                    } else if (vidEl.paused && !userPausedPreviewVideo) {
+                        vidEl.play().catch(() => {});
+                    }
+                    vidEl.onplaying = () => {
+                        if (previewItems.length > 1) {
+                            const nextPreview = previewItems[(previewCycleIndex + 1) % previewItems.length];
+                            if (nextPreview?.kind === 'clip' && nextPreview.clip) {
+                                prefetchClipBlobUrl(nextPreview.clip, clip.id).catch(() => {});
+                            }
+                        }
+                    };
+                    vidEl.onended = previewItems.length > 1 ? advancePreview : null;
+                    vidEl.onerror = previewItems.length > 1 ? () => setTimeout(advancePreview, 1500) : null;
+                    if (previewItems.length > 1) {
+                        previewCycleTimeout = setTimeout(advancePreview, Math.round((Number(clip.duration) || 30) * 1000) + 5000);
+                    }
+                }
+                return;
+            }
+
+            const currentAsset = currentItem.asset;
+            if (captionEl) captionEl.textContent = `Vista Previa (${previewCycleIndex + 1}/${previewItems.length}): ${currentAsset.name}`;
 
             let playableUrl = '';
             try {
@@ -2499,7 +2827,7 @@
             }
 
             if (!playableUrl) {
-                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.classList.add('hidden'); }
+                if (vidEl) { delete vidEl.dataset.previewKey; pausePreviewVideoProgrammatically(vidEl); vidEl.classList.add('hidden'); }
                 if (imgEl) imgEl.classList.add('hidden');
                 if (fallbackEl) fallbackEl.classList.remove('hidden');
                 return;
@@ -2510,8 +2838,10 @@
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (vidEl) {
                     vidEl.classList.remove('hidden');
-                    vidEl.loop = orderedActive.length === 1;
-                    if (vidEl.getAttribute('src') !== playableUrl) {
+                    vidEl.loop = previewItems.length === 1;
+                    const adKey = `ad:${currentAsset.id}`;
+                    if (vidEl.dataset.previewKey !== adKey || vidEl.getAttribute('src') !== playableUrl) {
+                        vidEl.dataset.previewKey = adKey;
                         userPausedPreviewVideo = false;
                         vidEl.setAttribute('src', playableUrl);
                         vidEl.play().catch(() => {});
@@ -2519,23 +2849,23 @@
                         vidEl.play().catch(() => {});
                     }
                     vidEl.onended = () => {
-                        if (orderedActive.length > 1) {
-                            previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+                        if (previewItems.length > 1) {
+                            previewCycleIndex = (previewCycleIndex + 1) % previewItems.length;
                             updateMediaPreview();
                         }
                     };
                 }
             } else {
-                if (vidEl) { pausePreviewVideoProgrammatically(vidEl); vidEl.onended = null; vidEl.classList.add('hidden'); }
+                if (vidEl) { delete vidEl.dataset.previewKey; pausePreviewVideoProgrammatically(vidEl); vidEl.onended = null; vidEl.classList.add('hidden'); }
                 if (fallbackEl) fallbackEl.classList.add('hidden');
                 if (imgEl) {
                     imgEl.src = playableUrl;
                     imgEl.classList.remove('hidden');
                 }
-                if (orderedActive.length > 1) {
+                if (previewItems.length > 1) {
                     const ms = Math.max(3, Number(currentAsset.durationSec) || 8) * 1000;
                     previewCycleTimeout = setTimeout(() => {
-                        previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+                        previewCycleIndex = (previewCycleIndex + 1) % previewItems.length;
                         updateMediaPreview();
                     }, ms);
                 }
@@ -2549,13 +2879,16 @@
             
             state.disabledAssetIds = Array.isArray(data.disabledAssetIds) ? data.disabledAssetIds : [];
             state.assetOrderIds = Array.isArray(data.assetOrderIds) ? data.assetOrderIds : [];
+            const incomingSources = normalizeMediaSources(data);
+            state.mediaSources = incomingSources;
+            state.clipsConfig = normalizeClipsConfig({ ...data.clipsConfig, enabled: incomingSources.clips });
+            syncMediaSourcesUI();
+            syncClipsConfigUI();
+            renderControlTwitchClips();
 
             const rawIncomingUrl = data.mediaUrl || data.flyerUrl || '';
             const incomingMediaUrl = (rawIncomingUrl.startsWith('blob:') || rawIncomingUrl.includes('20261023_RenownedObedient')) ? '' : rawIncomingUrl;
-            let incomingMediaType = data.mediaType || 'default';
-            if (incomingMediaType !== 'playlist' && incomingMediaType !== 'default') {
-                incomingMediaType = 'default';
-            }
+            const incomingMediaType = incomingSources.assets ? 'playlist' : (incomingSources.codeGallery ? 'default' : 'clips');
             state.mediaType = incomingMediaType;
             state.mediaUrl = incomingMediaUrl;
             state.flyerUrl = incomingMediaUrl;
@@ -2563,8 +2896,6 @@
             if (document.getElementById('input-media-url')) document.getElementById('input-media-url').value = incomingMediaUrl;
             if (document.getElementById('input-flyer-url')) document.getElementById('input-flyer-url').value = incomingMediaUrl;
             
-            const radioEl = document.querySelector(`input[name="media-type"][value="${incomingMediaType}"]`);
-            if (radioEl) radioEl.checked = true;
             updateChannelStatusPill(data.channelId || currentChannel, state);
             renderSharedAssetsList();
             updateMediaPreview();
@@ -2934,14 +3265,17 @@
             state.subTitle = document.getElementById('input-stage-subtitle').value;
 
             const selectedMediaType = document.querySelector('input[name="media-type"]:checked')?.value || 'default';
+            const sources = normalizeMediaSources({ mediaType: selectedMediaType });
             const mediaUrlVal = (document.getElementById('input-media-url')?.value || '').trim();
             const footerModeVal = document.getElementById('select-footer-mode')?.value || 'spotlight';
 
+            state.mediaSources = sources;
             state.mediaType = selectedMediaType;
             state.mediaUrl = mediaUrlVal;
             state.flyerUrl = mediaUrlVal;
             state.disabledAssetIds = Array.isArray(state.disabledAssetIds) ? state.disabledAssetIds : [];
             state.assetOrderIds = Array.isArray(state.assetOrderIds) ? state.assetOrderIds : [];
+            state.clipsConfig = normalizeClipsConfig({ ...state.clipsConfig, enabled: sources.clips });
             state.footerMode = footerModeVal;
             state.secondarySponsorUrl = document.getElementById('select-secondary-sponsor').value;
             updateChannelStatusPill(currentChannel, state);
@@ -2990,10 +3324,12 @@
                 timerUpdatedAt: Date.now(),
                 matches: state.matches,
                 mediaType: state.mediaType,
+                mediaSources: normalizeMediaSources(state),
                 mediaUrl: state.mediaUrl,
                 flyerUrl: state.flyerUrl,
                 disabledAssetIds: state.disabledAssetIds,
                 assetOrderIds: state.assetOrderIds,
+                clipsConfig: normalizeClipsConfig(state.clipsConfig),
                 footerMode: state.footerMode,
                 secondarySponsorUrl: state.secondarySponsorUrl,
                 spotlight: state.spotlight,
@@ -3283,19 +3619,97 @@
             await persistMediaLibraryIndex((latest) => latest.map(a => a.id === assetId ? { ...a, durationSec: newDur } : a));
         });
 
-        document.querySelectorAll('input[name="media-type"]').forEach(radio => {
+        function applyMediaModeSelection(nextMode) {
+            const validMode = (nextMode === 'playlist' || nextMode === 'clips') ? nextMode : 'default';
+            const wasClipsOff = state.mediaType !== 'clips';
+            state.mediaType = validMode;
+            state.mediaSources = normalizeMediaSources({ mediaType: validMode });
+            state.clipsConfig = normalizeClipsConfig({ ...state.clipsConfig, enabled: validMode === 'clips' });
+            syncMediaSourcesUI();
+            syncClipsConfigUI();
+            renderControlTwitchClips();
+            updateMediaPreview();
+            saveChanges(true);
+            if (validMode === 'clips' && wasClipsOff) {
+                refreshControlTwitchClips(true);
+            }
+        }
+
+        document.querySelectorAll('input[name="media-type"]').forEach((radio) => {
             radio.addEventListener('change', () => {
-                updateMediaPreview();
-                saveChanges(true);
+                if (radio.checked) applyMediaModeSelection(radio.value);
             });
         });
 
         document.getElementById('btn-preview-next')?.addEventListener('click', () => {
-            const orderedActive = getOrderedActiveAssets();
-            if (orderedActive.length <= 1) return;
-            previewCycleIndex = (previewCycleIndex + 1) % orderedActive.length;
+            if (previewManualClip) {
+                previewManualClip = null;
+                updateMediaPreview();
+                return;
+            }
+            previewCycleIndex += 1;
             updateMediaPreview();
         });
+
+        document.getElementById('btn-toggle-clips-enabled')?.addEventListener('click', () => {
+            const nextMode = state.mediaType === 'clips' ? 'default' : 'clips';
+            applyMediaModeSelection(nextMode);
+            showToast(nextMode === 'clips' ? 'Clips de Twitch ACTIVADOS en OBS' : 'Cambiado a Galería Código en OBS', 'info');
+        });
+
+        document.getElementById('select-clips-window')?.addEventListener('change', (e) => {
+            const cfg = normalizeClipsConfig(state.clipsConfig);
+            const val = e.target.value;
+            if (val === 'historical') {
+                cfg.testHistorical = true;
+            } else {
+                cfg.testHistorical = false;
+                cfg.windowMinutes = Math.max(5, parseInt(val, 10) || 40);
+            }
+            state.clipsConfig = cfg;
+            syncClipsConfigUI();
+            refreshControlTwitchClips(true);
+            saveChanges(true);
+        });
+
+        document.getElementById('select-clips-muted')?.addEventListener('change', (e) => {
+            const cfg = normalizeClipsConfig(state.clipsConfig);
+            cfg.muted = e.target.value !== 'unmuted';
+            state.clipsConfig = cfg;
+            saveChanges(true);
+        });
+
+        document.getElementById('btn-refresh-clips')?.addEventListener('click', () => {
+            refreshControlTwitchClips(true);
+        });
+
+        document.getElementById('twitch-clips-list')?.addEventListener('click', (e) => {
+            const previewBtn = e.target.closest('[data-clip-preview]');
+            if (previewBtn) {
+                const clipId = previewBtn.getAttribute('data-clip-preview');
+                const found = rawChannelClips.find(c => c.id === clipId);
+                if (found && found.mp4Url) {
+                    previewManualClip = found;
+                    updateMediaPreview();
+                }
+                return;
+            }
+            const blockBtn = e.target.closest('[data-clip-block]');
+            if (blockBtn) {
+                const clipId = blockBtn.getAttribute('data-clip-block');
+                const cfg = normalizeClipsConfig(state.clipsConfig);
+                if (cfg.blockedClipIds.includes(clipId)) {
+                    cfg.blockedClipIds = cfg.blockedClipIds.filter(id => id !== clipId);
+                } else {
+                    cfg.blockedClipIds = [...cfg.blockedClipIds, clipId];
+                }
+                state.clipsConfig = cfg;
+                renderControlTwitchClips();
+                saveChanges(true);
+            }
+        });
+
+        setInterval(() => refreshControlTwitchClips(false), 45000);
 
         document.getElementById('select-footer-mode')?.addEventListener('change', () => {
             updateSpotlightFooterWarning();

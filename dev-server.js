@@ -3,6 +3,184 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
+function loadLocalEnvFiles() {
+    ['.env', '.env.local'].forEach((fileName) => {
+        const fullPath = path.join(__dirname, fileName);
+        if (!fs.existsSync(fullPath)) return;
+        const lines = fs.readFileSync(fullPath, 'utf8').split(/\r?\n/);
+        for (const rawLine of lines) {
+            const line = rawLine.trim();
+            if (!line || line.startsWith('#')) continue;
+            const eqIdx = line.indexOf('=');
+            if (eqIdx <= 0) continue;
+            const key = line.slice(0, eqIdx).trim();
+            const val = line.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+            if (key && !(key in process.env)) {
+                process.env[key] = val;
+            }
+        }
+    });
+}
+loadLocalEnvFiles();
+
+const TWITCH_GQL_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko';
+const TWITCH_CLIP_GQL_HASH = '36b89d2507fce29e5ca551df756d27c1cfe079e2609642b4390aa4c35796eb11';
+const twitchTokenCache = { accessToken: null, expiresAt: 0 };
+const twitchBroadcasterCache = new Map();
+
+async function getTwitchAppAccessToken(clientId, clientSecret) {
+    if (twitchTokenCache.accessToken && Date.now() < twitchTokenCache.expiresAt) {
+        return twitchTokenCache.accessToken;
+    }
+    const resp = await fetch('https://id.twitch.tv/oauth2/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'client_credentials'
+        }).toString()
+    });
+    if (!resp.ok) {
+        throw new Error(`Twitch OAuth fallo HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    twitchTokenCache.accessToken = data.access_token;
+    twitchTokenCache.expiresAt = Date.now() + Math.max(60, (Number(data.expires_in) || 3600) - 120) * 1000;
+    return twitchTokenCache.accessToken;
+}
+
+async function getTwitchBroadcasterInfo(login, clientId, accessToken) {
+    const clean = String(login || '').trim().toLowerCase();
+    if (twitchBroadcasterCache.has(clean)) {
+        return twitchBroadcasterCache.get(clean);
+    }
+    const resp = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(clean)}`, {
+        headers: { 'Client-Id': clientId, 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!resp.ok) throw new Error(`Twitch Users API HTTP ${resp.status}`);
+    const json = await resp.json();
+    const user = json?.data?.[0];
+    if (!user?.id) throw new Error(`Canal Twitch no encontrado: ${clean}`);
+    const info = { id: user.id, login: user.login, displayName: user.display_name || user.login };
+    twitchBroadcasterCache.set(clean, info);
+    return info;
+}
+
+async function resolveClipMp4ViaGql(slug) {
+    try {
+        const resp = await fetch('https://gql.twitch.tv/gql', {
+            method: 'POST',
+            headers: {
+                'Client-Id': TWITCH_GQL_CLIENT_ID,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify([{
+                operationName: 'VideoAccessToken_Clip',
+                variables: { slug },
+                extensions: {
+                    persistedQuery: { version: 1, sha256Hash: TWITCH_CLIP_GQL_HASH }
+                }
+            }])
+        });
+        if (!resp.ok) return null;
+        const payload = await resp.json();
+        const clipData = payload?.[0]?.data?.clip;
+        const qualities = Array.isArray(clipData?.videoQualities) ? clipData.videoQualities : [];
+        const sig = clipData?.playbackAccessToken?.signature;
+        const token = clipData?.playbackAccessToken?.value;
+        if (!qualities.length || !sig || !token) return { mp4Url: null, mp4FastUrl: null };
+
+        const signQualityUrl = (q) => {
+            if (!q?.sourceURL) return null;
+            const sep = q.sourceURL.includes('?') ? '&' : '?';
+            return `${q.sourceURL}${sep}sig=${encodeURIComponent(sig)}&token=${encodeURIComponent(token)}`;
+        };
+
+        const chosen720 =
+            qualities.find(q => Number(q.quality) === 720) ||
+            qualities.find(q => Number(q.quality) > 0 && Number(q.quality) <= 720) ||
+            qualities.find(q => Number(q.quality) <= 1080) ||
+            qualities[0];
+
+        const chosenFast =
+            qualities.find(q => Number(q.quality) === 480) ||
+            qualities.find(q => Number(q.quality) === 360) ||
+            chosen720;
+
+        return {
+            mp4Url: signQualityUrl(chosen720),
+            mp4FastUrl: signQualityUrl(chosenFast)
+        };
+    } catch (_) {
+        return { mp4Url: null, mp4FastUrl: null };
+    }
+}
+
+async function fetchRecentTwitchClips(channelLogin, { windowMinutes = 40, limit = 8, testHistorical = false } = {}) {
+    const clientId = (process.env.TWITCH_CLIENT_ID || '').trim();
+    const clientSecret = (process.env.TWITCH_CLIENT_SECRET || '').trim();
+    if (!clientId || !clientSecret) {
+        throw new Error('Falta TWITCH_CLIENT_ID o TWITCH_CLIENT_SECRET en .env.local');
+    }
+
+    const token = await getTwitchAppAccessToken(clientId, clientSecret);
+    const broadcaster = await getTwitchBroadcasterInfo(channelLogin, clientId, token);
+
+    const nowMs = Date.now();
+    const mins = Math.min(Math.max(1, Number(windowMinutes) || 40), 10080);
+    const maxItems = Math.min(Math.max(1, Number(limit) || 8), 20);
+
+    const params = new URLSearchParams({
+        broadcaster_id: broadcaster.id,
+        first: '50'
+    });
+    if (!testHistorical) {
+        params.set('started_at', new Date(nowMs - mins * 60 * 1000).toISOString());
+        params.set('ended_at', new Date(nowMs).toISOString());
+    }
+
+    const clipsResp = await fetch(`https://api.twitch.tv/helix/clips?${params.toString()}`, {
+        headers: { 'Client-Id': clientId, 'Authorization': `Bearer ${token}` }
+    });
+    if (!clipsResp.ok) throw new Error(`Twitch Clips API HTTP ${clipsResp.status}`);
+    const clipsJson = await clipsResp.json();
+    const rawClips = Array.isArray(clipsJson?.data) ? clipsJson.data : [];
+
+    rawClips.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const sliced = rawClips.slice(0, maxItems);
+
+    const enriched = await Promise.all(sliced.map(async (c) => {
+        const media = await resolveClipMp4ViaGql(c.id);
+        return {
+            id: c.id,
+            title: c.title || 'Clip de Twitch',
+            url: c.url,
+            embedUrl: c.embed_url || `https://clips.twitch.tv/embed?clip=${c.id}`,
+            mp4Url: media?.mp4Url || null,
+            mp4FastUrl: media?.mp4FastUrl || media?.mp4Url || null,
+            broadcasterId: c.broadcaster_id,
+            broadcasterLogin: broadcaster.login,
+            broadcasterName: c.broadcaster_name || broadcaster.displayName,
+            creatorName: c.creator_name || 'Twitch',
+            duration: Number(c.duration) || 30,
+            viewCount: Number(c.view_count) || 0,
+            createdAt: c.created_at,
+            thumbnailUrl: c.thumbnail_url || '',
+            isHistoricalTest: Boolean(testHistorical)
+        };
+    }));
+
+    return {
+        fetchedAt: new Date(nowMs).toISOString(),
+        channel: broadcaster.login,
+        broadcasterId: broadcaster.id,
+        windowMinutes: testHistorical ? 0 : mins,
+        testHistorical: Boolean(testHistorical),
+        clips: enriched
+    };
+}
+
 const PORT = 8000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
@@ -367,6 +545,34 @@ const server = http.createServer((req, res) => {
                 return res.end(JSON.stringify({ error: 'Error consultando Riot API: ' + err.message }));
             }
         })();
+        return;
+    }
+
+    // 0.2 PROXY TWITCH CLIPS RECIENTES (Helix + GQL MP4, sin exponer TWITCH_CLIENT_SECRET)
+    if (pathname === '/api/twitch-recent-clips' && req.method === 'GET') {
+        const channel = (urlObj.searchParams.get('channel') || '').trim().toLowerCase();
+        const minutes = parseInt(urlObj.searchParams.get('minutes') || '40', 10);
+        const limit = parseInt(urlObj.searchParams.get('limit') || '8', 10);
+        const testHistorical = urlObj.searchParams.get('testHistorical') === '1';
+
+        if (!channel || !/^[a-z0-9_]{2,30}$/.test(channel)) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+            return res.end(JSON.stringify({ error: 'Parámetro channel inválido o vacío' }));
+        }
+
+        fetchRecentTwitchClips(channel, { windowMinutes: minutes, limit, testHistorical })
+            .then((result) => {
+                res.writeHead(200, {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate'
+                });
+                res.end(JSON.stringify(result));
+            })
+            .catch((err) => {
+                res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+                res.end(JSON.stringify({ error: err.message, clips: [] }));
+            });
         return;
     }
 

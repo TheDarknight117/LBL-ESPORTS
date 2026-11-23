@@ -316,3 +316,183 @@ export async function deleteSharedMediaAsset(asset, firestoreDb, objectUrlMap = 
         objectUrlMap.delete(asset.id);
     }
 }
+
+export const TWITCH_CHANNEL_MAP = {
+    darkcito: "el_darkcito",
+    lbl_oficial: "lbl_esports"
+};
+
+export const TWITCH_CLIPS_WORKER_ENDPOINT = "https://lbl-cors-proxy.hill-donkey.workers.dev/twitch/recent-clips";
+
+export function resolveTwitchLoginForOverlayChannel(channelId) {
+    const clean = String(channelId || "").toLowerCase().trim();
+    if (clean === "lbl_oficial" || clean === "lblesports" || clean === "lbl" || clean.includes("lbl")) {
+        return TWITCH_CHANNEL_MAP.lbl_oficial;
+    }
+    return TWITCH_CHANNEL_MAP.darkcito;
+}
+
+export function normalizeClipsConfig(rawConfig) {
+    const src = rawConfig && typeof rawConfig === "object" ? rawConfig : {};
+    const validMix = src.mixMode === "interleaved" ? "interleaved" : "ads_then_clips";
+    return {
+        enabled: typeof src.enabled === "boolean" ? src.enabled : true,
+        windowMinutes: Math.min(Math.max(5, Number(src.windowMinutes) || 40), 10080),
+        maxClips: Math.min(Math.max(1, Number(src.maxClips) || 6), 15),
+        mixMode: validMix,
+        muted: typeof src.muted === "boolean" ? src.muted : true,
+        testHistorical: Boolean(src.testHistorical),
+        blockedClipIds: Array.isArray(src.blockedClipIds) ? src.blockedClipIds.filter(Boolean) : []
+    };
+}
+
+export function normalizeMediaSources(dataOrSources) {
+    const raw = dataOrSources && typeof dataOrSources === "object" ? dataOrSources : {};
+    const mType = raw.mediaType;
+    if (mType === "playlist") return { assets: true, codeGallery: false, clips: false };
+    if (mType === "clips") return { assets: false, codeGallery: false, clips: true };
+    if (mType === "default") return { assets: false, codeGallery: true, clips: false };
+
+    const src = raw.mediaSources && typeof raw.mediaSources === "object"
+        ? raw.mediaSources
+        : (typeof raw.assets === "boolean" || typeof raw.codeGallery === "boolean" || typeof raw.clips === "boolean" ? raw : null);
+
+    if (src) {
+        if (src.assets) return { assets: true, codeGallery: false, clips: false };
+        if (src.clips) return { assets: false, codeGallery: false, clips: true };
+    }
+    return { assets: false, codeGallery: true, clips: false };
+}
+
+export function formatClipRelativeAge(createdAtIso) {
+    const ts = new Date(createdAtIso || "").getTime();
+    if (!Number.isFinite(ts)) return "reciente";
+    const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+    if (diffSec < 60) return "hace <1m";
+    const mins = Math.floor(diffSec / 60);
+    if (mins < 60) return `hace ${mins}m`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `hace ${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `hace ${days}d`;
+}
+
+export function filterActiveRecentClips(clips, clipsConfig) {
+    const cfg = normalizeClipsConfig(clipsConfig);
+    if (!cfg.enabled || !Array.isArray(clips)) return [];
+    const blocked = new Set(cfg.blockedClipIds);
+    const cutoffMs = Date.now() - cfg.windowMinutes * 60 * 1000;
+    return clips
+        .filter((c) => {
+            if (!c || !c.id || blocked.has(c.id)) return false;
+            if (cfg.testHistorical) return true;
+            const createdMs = new Date(c.createdAt || "").getTime();
+            return Number.isFinite(createdMs) && createdMs >= cutoffMs;
+        })
+        .slice(0, cfg.maxClips);
+}
+
+export async function fetchRecentTwitchClips(channelLogin, clipsConfig) {
+    const cfg = normalizeClipsConfig(clipsConfig);
+    const cleanLogin = String(channelLogin || "").trim().toLowerCase();
+    if (!cleanLogin) return { clips: [], error: "Canal Twitch no definido" };
+
+    const isLocalHost =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+    const baseEndpoint = isLocalHost ? "/api/twitch-recent-clips" : TWITCH_CLIPS_WORKER_ENDPOINT;
+    const params = new URLSearchParams({
+        channel: cleanLogin,
+        minutes: String(cfg.windowMinutes),
+        limit: String(Math.max(cfg.maxClips, 10))
+    });
+    if (cfg.testHistorical) params.set("testHistorical", "1");
+
+    const resp = await fetch(`${baseEndpoint}?${params.toString()}`, { cache: "no-store" });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+        throw new Error(data?.error || `HTTP ${resp.status}`);
+    }
+    return data;
+}
+
+export function buildHybridMediaQueue(orderedAds = [], activeClips = [], mixMode = "ads_then_clips") {
+    const adItems = (Array.isArray(orderedAds) ? orderedAds : []).map((asset) =>
+        asset?.kind ? asset : { kind: "ad", asset }
+    );
+    const clipItems = (Array.isArray(activeClips) ? activeClips : []).map((clip) => ({
+        kind: "clip",
+        clip
+    }));
+
+    if (mixMode === "interleaved" && adItems.length > 0 && clipItems.length > 0) {
+        const result = [];
+        const maxLen = Math.max(adItems.length, clipItems.length);
+        for (let i = 0; i < maxLen; i++) {
+            if (i < adItems.length) result.push(adItems[i]);
+            if (i < clipItems.length) result.push(clipItems[i]);
+        }
+        return result;
+    }
+
+    return [...adItems, ...clipItems];
+}
+
+const clipBlobUrlCache = new Map();
+const clipBlobInFlight = new Map();
+const MAX_CACHED_CLIP_BLOBS = 8;
+
+export function getCachedClipPlayableUrl(clip, { fastFallback = false } = {}) {
+    if (!clip || !clip.id) return clip?.mp4FastUrl || clip?.mp4Url || "";
+    const cached = clipBlobUrlCache.get(clip.id);
+    if (cached?.blobUrl) return cached.blobUrl;
+    if (fastFallback && clip.mp4FastUrl) return clip.mp4FastUrl;
+    return clip.mp4FastUrl || clip.mp4Url || "";
+}
+
+export async function prefetchClipBlobUrl(clip, keepClipId = null) {
+    // Priorizar siempre 480p (mp4FastUrl ~3.4 MB vs 10-16 MB en 720p) para carga instantánea en RAM sin cortes
+    const targetUrl = clip?.mp4FastUrl || clip?.mp4Url || "";
+    if (!clip || !clip.id || !targetUrl) return "";
+    const existing = clipBlobUrlCache.get(clip.id);
+    if (existing?.blobUrl) return existing.blobUrl;
+
+    if (clipBlobInFlight.has(clip.id)) {
+        return clipBlobInFlight.get(clip.id);
+    }
+
+    const job = (async () => {
+        try {
+            const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+            const timer = controller ? setTimeout(() => controller.abort(), 25000) : null;
+            const resp = await fetch(targetUrl, controller ? { signal: controller.signal } : undefined);
+            if (timer) clearTimeout(timer);
+            if (!resp.ok) return "";
+
+            const blob = await resp.blob();
+            if (!blob || blob.size < 1024) return "";
+
+            while (clipBlobUrlCache.size >= MAX_CACHED_CLIP_BLOBS) {
+                const candidateKey = Array.from(clipBlobUrlCache.keys()).find((k) => k !== keepClipId && k !== clip.id);
+                if (!candidateKey) break;
+                const victim = clipBlobUrlCache.get(candidateKey);
+                clipBlobUrlCache.delete(candidateKey);
+                if (victim?.blobUrl) {
+                    try { URL.revokeObjectURL(victim.blobUrl); } catch (_) {}
+                }
+            }
+
+            const blobUrl = URL.createObjectURL(blob);
+            clipBlobUrlCache.set(clip.id, { blobUrl, createdAt: Date.now() });
+            return blobUrl;
+        } catch (_) {
+            return "";
+        } finally {
+            clipBlobInFlight.delete(clip.id);
+        }
+    })();
+
+    clipBlobInFlight.set(clip.id, job);
+    return job;
+}

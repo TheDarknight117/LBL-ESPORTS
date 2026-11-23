@@ -31,7 +31,8 @@
       "assets/open_qualifier.png",
       "**/*.mp3",
       "**/*.pdf",
-      "**/*.mp4"
+      "**/*.mp4",
+      "**/*.psd"
     ],
     "headers": [
       {

@@ -14,7 +14,7 @@
     <!-- Tailwind Compilado de LBL -->
     <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
     <link rel="shortcut icon" type="image/png" href="/assets/pwa-icon-192.png">
-    <link rel="stylesheet" href="/dist/output.css?v=291">
+    <link rel="stylesheet" href="/dist/output.css?v=292">
 
     <style>
         @font-face {
@@ -332,14 +332,21 @@
                     
                     <div id="media-wrapper" class="w-full h-full relative flex items-center justify-center p-2.5">
                         
-                        <!-- 1. VIDEO SPONSOR / TROFEO (MP4 / WebM Autoplay Loop estilo Worlds) -->
+                        <!-- 1. DOBLE BUFFER VIDEO PING-PONG (Cero pantallas negras entre clips y ads) -->
                         <video id="sponsor-video" 
                                autoplay 
-                               loop 
                                muted 
                                playsinline 
                                preload="auto"
-                               class="w-full h-full object-contain rounded-xl bg-black hidden">
+                               style="transform: translateZ(0); will-change: transform, opacity;"
+                               class="absolute inset-2.5 w-[calc(100%-1.25rem)] h-[calc(100%-1.25rem)] object-contain rounded-xl opacity-0 transition-opacity duration-200 hidden z-10">
+                        </video>
+                        <video id="sponsor-video-buffer" 
+                               muted 
+                               playsinline 
+                               preload="auto"
+                               style="transform: translateZ(0); will-change: transform, opacity;"
+                               class="absolute inset-2.5 w-[calc(100%-1.25rem)] h-[calc(100%-1.25rem)] object-contain rounded-xl opacity-0 transition-opacity duration-200 pointer-events-none hidden z-0">
                         </video>
 
                         <!-- 2. IMAGEN / FLYER OFICIAL DE PRODUCTO O PATROCINIO -->
@@ -347,7 +354,15 @@
                              src="" 
                              alt="Sponsor Media" 
                              decoding="async"
-                             class="w-full h-full object-contain rounded-xl hidden">
+                             class="absolute inset-2.5 w-[calc(100%-1.25rem)] h-[calc(100%-1.25rem)] object-contain rounded-xl hidden z-10">
+
+                        <!-- 2b. FALLBACK IFRAME TWITCH CLIP (solo si falla el MP4 directo) -->
+                        <iframe id="twitch-clip-iframe"
+                                src="about:blank"
+                                allow="autoplay; fullscreen"
+                                allowfullscreen
+                                class="absolute inset-2.5 w-[calc(100%-1.25rem)] h-[calc(100%-1.25rem)] rounded-xl bg-black hidden border-0 z-20">
+                        </iframe>
 
                         <!-- 3. GALERÍA DE PARTNERS OFICIALES (FALLBACK CUANDO NO HAY MEDIA ACTIVA) -->
                         <div id="partners-gallery-container" class="w-full h-full relative rounded-xl overflow-hidden">
@@ -614,8 +629,16 @@
             MEDIA_LIBRARY_COLLECTION,
             MEDIA_LIBRARY_DOC,
             resolveAssetPlayableUrl,
-            pruneOrphanLocalAssets
-        } from "/overlay-media-db.js?v=291";
+            pruneOrphanLocalAssets,
+            resolveTwitchLoginForOverlayChannel,
+            normalizeClipsConfig,
+            normalizeMediaSources,
+            filterActiveRecentClips,
+            fetchRecentTwitchClips,
+            buildHybridMediaQueue,
+            getCachedClipPlayableUrl,
+            prefetchClipBlobUrl
+        } from "/overlay-media-db.js?v=292";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCd-xJD1OUH7GeAHkIek7dC2tj3KWWHPE",
@@ -1225,6 +1248,8 @@
             mediaUrl: "",
             disabledAssetIds: [],
             assetOrderIds: [],
+            mediaSources: normalizeMediaSources({ mediaType: "default" }),
+            clipsConfig: normalizeClipsConfig({ enabled: false }),
             footerMode: "spotlight",
             secondarySponsorUrl: "/assets/Logos Sponsor/LOGO_VOLT_NEW.png",
             spotlight: {
@@ -1656,13 +1681,17 @@
             }, 5000);
         }
 
-        // Gestión de Multimedia Compartida & Bucle Mixto (IndexedDB + Firestore Chunked + Galería Fallback)
+        // Gestión de Multimedia Compartida & Bucle Mixto (Sponsors ADS + Clips Twitch Recientes)
         let sharedMediaLibrary = [];
         const playlistObjectUrls = new Map();
         let playlistTimerId = null;
         let playlistIndex = 0;
         let lastPlaylistSignature = '';
         let playbackToken = 0;
+        let rawRecentTwitchClips = [];
+        let lastClipsFetchKey = '';
+        let activePlayingClipId = null;
+        let pendingHybridQueueRefresh = false;
 
         function clearPlaylistTimers() {
             if (playlistTimerId) {
@@ -1671,19 +1700,137 @@
             }
         }
 
+        function hideClipIframeOnly() {
+            const iframeEl = document.getElementById('twitch-clip-iframe');
+            if (iframeEl) {
+                if (!iframeEl.classList.contains('hidden')) iframeEl.classList.add('hidden');
+                if (iframeEl.getAttribute('src') !== 'about:blank') iframeEl.setAttribute('src', 'about:blank');
+            }
+        }
+
+        let currentVideoSlotIdx = 0;
+
+        function getVideoSlots() {
+            return [
+                document.getElementById('sponsor-video'),
+                document.getElementById('sponsor-video-buffer')
+            ];
+        }
+
+        function getActiveVideoEl() {
+            const slots = getVideoSlots();
+            return slots[currentVideoSlotIdx] || slots[0];
+        }
+
+        function getStandbyVideoEl() {
+            const slots = getVideoSlots();
+            return slots[1 - currentVideoSlotIdx] || slots[1];
+        }
+
+        function clearVideoSlotListeners(v) {
+            if (!v) return;
+            if (v._frameRevealTimer) {
+                clearTimeout(v._frameRevealTimer);
+                v._frameRevealTimer = null;
+            }
+            v.onended = null;
+            v.onerror = null;
+            v.onplaying = null;
+            v.onloadeddata = null;
+            v.oncanplay = null;
+            v.ontimeupdate = null;
+        }
+
+        function hideVideoSlot(v) {
+            if (!v) return;
+            v.dataset.activeSlot = '0';
+            delete v.dataset.playingItemKey;
+            delete v.dataset.preloadedKey;
+            clearVideoSlotListeners(v);
+            v.pause();
+            v.removeAttribute('src');
+            v.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+            v.classList.remove('opacity-100', 'z-10', 'z-[5]', 'z-0');
+        }
+
+        function demoteVideoSlotToUnderlay(v) {
+            if (!v || v.classList.contains('hidden')) return;
+            v.dataset.activeSlot = '0';
+            clearVideoSlotListeners(v);
+            v.classList.remove('z-10', 'z-0', 'opacity-0');
+            v.classList.add('z-[5]', 'opacity-100', 'pointer-events-none');
+        }
+
+        function resetAllVideoSlots() {
+            getVideoSlots().forEach(hideVideoSlot);
+        }
+
+        async function warmClipInStandbySlot(clip, keepClipId = null) {
+            if (!clip || !clip.id || !(clip.mp4FastUrl || clip.mp4Url)) return '';
+            const targetKey = `clip:${clip.id}`;
+            const currentStandby = getStandbyVideoEl();
+            if (currentStandby && currentStandby.dataset.activeSlot !== '1' && currentStandby.dataset.preloadedKey === targetKey && currentStandby.readyState >= 3) {
+                return currentStandby.src;
+            }
+
+            // Descargar 480p a RAM Blob primero para cero stalling; si falla, pre-búfer directo en standby
+            const blobUrl = await prefetchClipBlobUrl(clip, keepClipId);
+            const resolvedUrl = blobUrl || clip.mp4FastUrl || clip.mp4Url || '';
+            if (!resolvedUrl) return '';
+
+            const standby = getStandbyVideoEl();
+            if (!standby || standby.dataset.activeSlot === '1') return resolvedUrl;
+            if (standby.dataset.preloadedKey === targetKey && standby.readyState >= 3 && standby.src === resolvedUrl) {
+                return resolvedUrl;
+            }
+
+            standby.dataset.activeSlot = '0';
+            standby.dataset.preloadedKey = targetKey;
+            delete standby.dataset.playingItemKey;
+            standby.muted = true;
+            standby.loop = false;
+            standby.preload = 'auto';
+            clearVideoSlotListeners(standby);
+            standby.classList.remove('hidden', 'z-10', 'z-[5]', 'opacity-100');
+            standby.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+            standby.src = resolvedUrl;
+            standby.load();
+            return resolvedUrl;
+        }
+
+        function warmNextQueueItem(queueItems, safeIdx, currentClipId = null) {
+            if (!Array.isArray(queueItems) || queueItems.length <= 1) return;
+            const nextItem = queueItems[(safeIdx + 1) % queueItems.length];
+            const afterNextItem = queueItems.length > 2 ? queueItems[(safeIdx + 2) % queueItems.length] : null;
+
+            const warmAfterNext = () => {
+                if (afterNextItem?.kind === 'clip' && afterNextItem.clip && afterNextItem.clip.id !== nextItem?.clip?.id) {
+                    prefetchClipBlobUrl(afterNextItem.clip, currentClipId).catch(() => {});
+                } else if (afterNextItem?.kind === 'ad' && afterNextItem.asset) {
+                    resolveAssetPlayableUrl(afterNextItem.asset, db, playlistObjectUrls).catch(() => {});
+                }
+            };
+
+            if (nextItem?.kind === 'ad' && nextItem.asset) {
+                resolveAssetPlayableUrl(nextItem.asset, db, playlistObjectUrls)
+                    .catch(() => {})
+                    .finally(warmAfterNext);
+            } else if (nextItem?.kind === 'clip' && nextItem.clip) {
+                warmClipInStandbySlot(nextItem.clip, currentClipId)
+                    .catch(() => {})
+                    .finally(warmAfterNext);
+            }
+        }
+
         function showPartnersFallbackGallery() {
-            const videoEl = document.getElementById('sponsor-video');
             const imgEl = document.getElementById('flyer-image');
             const galleryEl = document.getElementById('partners-gallery-container');
 
             clearPlaylistTimers();
-            if (videoEl) {
-                videoEl.onended = null;
-                videoEl.onerror = null;
-                videoEl.pause();
-                videoEl.removeAttribute('src');
-                videoEl.classList.add('hidden');
-            }
+            hideClipIframeOnly();
+            activePlayingClipId = null;
+            resetAllVideoSlots();
+
             if (imgEl) {
                 imgEl.onerror = null;
                 imgEl.classList.add('hidden');
@@ -1712,40 +1859,261 @@
             return ordered.filter(a => !disabledSet.has(a.id));
         }
 
-        async function playPlaylistItem(orderedAssets, idx, token) {
-            if (token !== playbackToken || !orderedAssets.length) return;
-            clearPlaylistTimers();
+        function playClipViaIframe(clip, totalQueueLen, advanceNext) {
+            const imgEl = document.getElementById('flyer-image');
+            const galleryEl = document.getElementById('partners-gallery-container');
+            const iframeEl = document.getElementById('twitch-clip-iframe');
 
-            const videoEl = document.getElementById('sponsor-video');
+            if (imgEl) imgEl.classList.add('hidden');
+            if (galleryEl) galleryEl.classList.add('hidden');
+            resetAllVideoSlots();
+
+            if (!iframeEl || !clip?.id) {
+                if (totalQueueLen > 1) playlistTimerId = setTimeout(advanceNext, 1500);
+                return;
+            }
+
+            const hostParent = window.location.hostname || 'localhost';
+            const isMuted = state.clipsConfig?.muted !== false;
+            const parents = Array.from(new Set([hostParent, 'lbl-esports.web.app', 'localhost'])).filter(Boolean);
+            const parentQs = parents.map(p => `parent=${encodeURIComponent(p)}`).join('&');
+            const embedSrc = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(clip.id)}&${parentQs}&autoplay=true&muted=${isMuted}`;
+
+            iframeEl.setAttribute('src', embedSrc);
+            iframeEl.classList.remove('hidden');
+
+            if (totalQueueLen > 1) {
+                const durMs = Math.max(6, Math.round(Number(clip.duration) || 30)) * 1000 + 1200;
+                playlistTimerId = setTimeout(advanceNext, durMs);
+            }
+        }
+
+        function playVideoViaPingPong({ targetKey, srcUrl, isMuted, shouldLoop, onEndFn, onErrFn, clipObj, queueItems, safeIdx, token }) {
+            const activeVid = getActiveVideoEl();
+            const standbyVid = getStandbyVideoEl();
             const imgEl = document.getElementById('flyer-image');
             const galleryEl = document.getElementById('partners-gallery-container');
 
-            const safeIdx = idx % orderedAssets.length;
-            playlistIndex = safeIdx;
-            const asset = orderedAssets[safeIdx];
-
-            // Pre-cargar el siguiente elemento en IndexedDB para transición instantánea
-            if (orderedAssets.length > 1) {
-                const nextAsset = orderedAssets[(safeIdx + 1) % orderedAssets.length];
-                resolveAssetPlayableUrl(nextAsset, db, playlistObjectUrls).catch(() => {});
+            // 1. Si el video activo ya es exactamente el mismo clip/ad, solo refrescar controles sin reiniciar
+            if (activeVid && activeVid.dataset.activeSlot === '1' && activeVid.dataset.playingItemKey === targetKey) {
+                activeVid.muted = isMuted;
+                activeVid.loop = shouldLoop;
+                activeVid.onended = onEndFn;
+                activeVid.onerror = onErrFn;
+                if (activeVid.paused) activeVid.play().catch(() => {});
+                warmNextQueueItem(queueItems, safeIdx, clipObj?.id || null);
+                return;
             }
+
+            // 2. Elegir el slot entrante (usar el standby pre-decodificado si existe; si no, cargar en standby sin tapar lo visible)
+            const hasStandbySlot = Boolean(standbyVid && standbyVid !== activeVid);
+            let incomingVid = hasStandbySlot ? standbyVid : activeVid;
+            let previousVid = hasStandbySlot ? activeVid : null;
+
+            if (!incomingVid) return;
+
+            const isStandbyPreloaded = incomingVid.dataset.preloadedKey === targetKey && incomingVid.readyState >= 2;
+            if (hasStandbySlot) {
+                currentVideoSlotIdx = 1 - currentVideoSlotIdx;
+            }
+
+            if (previousVid && previousVid !== incomingVid) {
+                demoteVideoSlotToUnderlay(previousVid);
+            }
+
+            clearVideoSlotListeners(incomingVid);
+            incomingVid.dataset.activeSlot = '1';
+            incomingVid.dataset.playingItemKey = targetKey;
+            delete incomingVid.dataset.preloadedKey;
+            incomingVid.muted = isMuted;
+            incomingVid.loop = shouldLoop;
+            incomingVid.preload = 'auto';
+            incomingVid.onended = onEndFn;
+            incomingVid.onerror = onErrFn;
+
+            // Mostrar capa en opacity-0 para que Chromium decodifique sin tapar la capa anterior ni mostrar negro
+            incomingVid.classList.remove('hidden', 'pointer-events-none', 'z-0', 'z-[5]');
+            incomingVid.classList.add('opacity-0', 'z-10');
+
+            let frameCommitted = false;
+            const commitVisibleFrame = () => {
+                if (frameCommitted || token !== playbackToken || incomingVid.dataset.activeSlot !== '1') return;
+                frameCommitted = true;
+                if (incomingVid._frameRevealTimer) {
+                    clearTimeout(incomingVid._frameRevealTimer);
+                    incomingVid._frameRevealTimer = null;
+                }
+                incomingVid.onplaying = null;
+                incomingVid.onloadeddata = null;
+                incomingVid.oncanplay = null;
+                incomingVid.ontimeupdate = null;
+
+                incomingVid.classList.remove('opacity-0');
+                incomingVid.classList.add('opacity-100');
+                hideClipIframeOnly();
+
+                if (imgEl) imgEl.classList.add('hidden');
+                if (galleryEl) galleryEl.classList.add('hidden');
+                if (partnerSlideInterval) clearInterval(partnerSlideInterval);
+
+                if (previousVid && previousVid !== incomingVid) {
+                    setTimeout(() => {
+                        if (previousVid && previousVid.dataset.activeSlot !== '1') {
+                            hideVideoSlot(previousVid);
+                        }
+                        if (token === playbackToken) {
+                            warmNextQueueItem(queueItems, safeIdx, clipObj?.id || null);
+                        }
+                    }, 240);
+                } else {
+                    warmNextQueueItem(queueItems, safeIdx, clipObj?.id || null);
+                }
+            };
+
+            const scheduleFrameCommitCheck = () => {
+                if (frameCommitted || token !== playbackToken || incomingVid.dataset.activeSlot !== '1') return;
+                if (incomingVid.videoWidth <= 0 || incomingVid.readyState < 2) return;
+
+                if (typeof incomingVid.requestVideoFrameCallback === 'function') {
+                    incomingVid.requestVideoFrameCallback(() => {
+                        requestAnimationFrame(commitVisibleFrame);
+                    });
+                } else if (!incomingVid.paused && (incomingVid.currentTime > 0.02 || incomingVid.readyState >= 3)) {
+                    requestAnimationFrame(commitVisibleFrame);
+                }
+
+                if (!incomingVid._frameRevealTimer) {
+                    incomingVid._frameRevealTimer = setTimeout(() => {
+                        if (!incomingVid.paused && incomingVid.videoWidth > 0 && incomingVid.readyState >= 3) {
+                            commitVisibleFrame();
+                        }
+                    }, 500);
+                }
+            };
+
+            incomingVid.onplaying = scheduleFrameCommitCheck;
+            incomingVid.oncanplay = scheduleFrameCommitCheck;
+            incomingVid.ontimeupdate = () => {
+                if (incomingVid.currentTime > 0.02 && incomingVid.videoWidth > 0) {
+                    commitVisibleFrame();
+                }
+            };
+
+            if (!isStandbyPreloaded) {
+                incomingVid.src = srcUrl;
+                incomingVid.load();
+            }
+
+            bindOverlayVideoKeepAlive();
+            const playPromise = incomingVid.play();
+            if (playPromise !== undefined) {
+                playPromise.catch((err) => {
+                    if (err && err.name === 'NotAllowedError' && !incomingVid.muted) {
+                        incomingVid.muted = true;
+                        incomingVid.play().catch(() => {});
+                    }
+                });
+            }
+
+            if (isStandbyPreloaded || incomingVid.readyState >= 3) {
+                scheduleFrameCommitCheck();
+            }
+        }
+
+        async function playPlaylistItem(queueItems, idx, token) {
+            if (token !== playbackToken || !queueItems.length) return;
+            clearPlaylistTimers();
+            activePlayingClipId = null;
+
+            const imgEl = document.getElementById('flyer-image');
+            const galleryEl = document.getElementById('partners-gallery-container');
+
+            const safeIdx = idx % queueItems.length;
+            playlistIndex = safeIdx;
+            const item = queueItems[safeIdx];
+
+            const advanceNext = () => {
+                if (token !== playbackToken) return;
+                if (pendingHybridQueueRefresh) {
+                    pendingHybridQueueRefresh = false;
+                    updateOverlayMediaPlayback(true);
+                    return;
+                }
+                playPlaylistItem(queueItems, (safeIdx + 1) % queueItems.length, token);
+            };
+
+            if (item.kind === 'partners_gallery') {
+                hideClipIframeOnly();
+                activePlayingClipId = null;
+                resetAllVideoSlots();
+                if (imgEl) imgEl.classList.add('hidden');
+                if (galleryEl) {
+                    galleryEl.classList.remove('hidden');
+                    startPartnerSlideRotation();
+                }
+                if (queueItems.length > 1) {
+                    const durMs = Math.max(8, Number(item.durationSec) || 20) * 1000;
+                    playlistTimerId = setTimeout(advanceNext, durMs);
+                }
+                warmNextQueueItem(queueItems, safeIdx, null);
+                return;
+            }
+
+            if (item.kind === 'clip' && item.clip) {
+                const clip = item.clip;
+                activePlayingClipId = clip.id;
+
+                if (clip.mp4Url || clip.mp4FastUrl) {
+                    hideClipIframeOnly();
+                    const standby = getStandbyVideoEl();
+                    const hasPreloadedStandby = Boolean(standby && standby.dataset.preloadedKey === `clip:${clip.id}` && standby.readyState >= 2 && standby.src);
+                    const clipSrc = hasPreloadedStandby
+                        ? standby.src
+                        : getCachedClipPlayableUrl(clip, { fastFallback: true });
+
+                    playVideoViaPingPong({
+                        targetKey: `clip:${clip.id}`,
+                        srcUrl: clipSrc,
+                        isMuted: state.clipsConfig?.muted !== false,
+                        shouldLoop: queueItems.length === 1,
+                        onEndFn: queueItems.length > 1 ? advanceNext : null,
+                        onErrFn: () => {
+                            if (token !== playbackToken) return;
+                            playClipViaIframe(clip, queueItems.length, advanceNext);
+                        },
+                        clipObj: clip,
+                        queueItems,
+                        safeIdx,
+                        token
+                    });
+
+                    // Watchdog anti-congelamiento: si un stream tarda o no dispara 'ended', avanza al siguiente clip
+                    if (queueItems.length > 1) {
+                        const safetyMs = Math.round((Number(clip.duration) || 30) * 1000) + 5000;
+                        playlistTimerId = setTimeout(advanceNext, safetyMs);
+                    }
+                } else {
+                    playClipViaIframe(clip, queueItems.length, advanceNext);
+                }
+                return;
+            }
+
+            // Item tipo Ad / Sponsor (Asset de Biblioteca Compartida)
+            const asset = item.asset;
+            activePlayingClipId = null;
+            hideClipIframeOnly();
 
             let playableUrl = '';
             try {
                 playableUrl = await resolveAssetPlayableUrl(asset, db, playlistObjectUrls);
             } catch (err) {
-                console.warn('Error resolviendo asset en overlay:', asset.id, err);
+                console.warn('Error resolviendo asset en overlay:', asset?.id, err);
             }
 
             if (token !== playbackToken) return;
 
-            const advanceNext = () => {
-                if (token !== playbackToken) return;
-                playPlaylistItem(orderedAssets, (safeIdx + 1) % orderedAssets.length, token);
-            };
-
             if (!playableUrl) {
-                if (orderedAssets.length > 1) {
+                if (queueItems.length > 1) {
                     playlistTimerId = setTimeout(advanceNext, 2000);
                 } else {
                     showPartnersFallbackGallery();
@@ -1753,43 +2121,37 @@
                 return;
             }
 
-            if (galleryEl) galleryEl.classList.add('hidden');
-            if (partnerSlideInterval) clearInterval(partnerSlideInterval);
-
             if (asset.type === 'video') {
-                if (imgEl) imgEl.classList.add('hidden');
-                if (videoEl) {
-                    videoEl.classList.remove('hidden');
-                    videoEl.loop = orderedAssets.length === 1;
-                    videoEl.onended = orderedAssets.length > 1 ? advanceNext : null;
-                    videoEl.onerror = () => {
-                        if (orderedAssets.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
-                    };
-                    if (videoEl.getAttribute('src') !== playableUrl) {
-                        videoEl.src = playableUrl;
-                        videoEl.load();
-                    }
-                    bindOverlayVideoKeepAlive();
-                    const playPromise = videoEl.play();
-                    if (playPromise !== undefined) playPromise.catch(() => {});
-                }
+                playVideoViaPingPong({
+                    targetKey: `ad:${asset.id}`,
+                    srcUrl: playableUrl,
+                    isMuted: true,
+                    shouldLoop: queueItems.length === 1,
+                    onEndFn: queueItems.length > 1 ? advanceNext : null,
+                    onErrFn: () => {
+                        if (queueItems.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
+                    },
+                    clipObj: null,
+                    queueItems,
+                    safeIdx,
+                    token
+                });
             } else {
-                if (videoEl) {
-                    videoEl.onended = null;
-                    videoEl.pause();
-                    videoEl.classList.add('hidden');
-                }
+                resetAllVideoSlots();
+                if (galleryEl) galleryEl.classList.add('hidden');
+                if (partnerSlideInterval) clearInterval(partnerSlideInterval);
                 if (imgEl) {
                     imgEl.onerror = () => {
-                        if (orderedAssets.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
+                        if (queueItems.length > 1) playlistTimerId = setTimeout(advanceNext, 2000);
                     };
                     imgEl.src = playableUrl;
                     imgEl.classList.remove('hidden');
                 }
-                if (orderedAssets.length > 1) {
+                if (queueItems.length > 1) {
                     const durMs = Math.max(3, Number(asset.durationSec) || 8) * 1000;
                     playlistTimerId = setTimeout(advanceNext, durMs);
                 }
+                warmNextQueueItem(queueItems, safeIdx, null);
             }
         }
 
@@ -1799,33 +2161,125 @@
         }
 
         function updateOverlayMediaPlayback(forceRestart = false) {
-            const mode = state.mediaType || 'default';
-            const orderedAssets = mode === 'playlist' ? getOrderedActivePlaylistAssets() : [];
+            const sources = normalizeMediaSources(state);
+            const activeMode = sources.assets ? 'playlist' : (sources.clips ? 'clips' : 'default');
             const rawLegacyUrl = (state.mediaUrl || '').trim();
             const legacyUrl = isIgnoredLegacyMediaUrl(rawLegacyUrl) ? '' : rawLegacyUrl;
-            const isLegacyExplicit = (mode === 'video' || mode === 'image') && legacyUrl;
+            const isLegacyExplicit = (state.mediaType === 'video' || state.mediaType === 'image') && legacyUrl;
 
-            const signature = mode === 'playlist'
-                ? `playlist|${orderedAssets.map(a => `${a.id}:${a.durationSec || 8}`).join(',')}`
-                : (isLegacyExplicit ? `${mode}|${legacyUrl}` : 'default');
+            const clipsCfg = normalizeClipsConfig({ ...state.clipsConfig, enabled: activeMode === 'clips' });
+            const orderedAssets = activeMode === 'playlist' ? getOrderedActivePlaylistAssets() : [];
+            const activeClips = activeMode === 'clips' ? filterActiveRecentClips(rawRecentTwitchClips, clipsCfg) : [];
+
+            // Actualizar estado mute inmediato si hay un clip reproduciéndose
+            if (activePlayingClipId) {
+                const activeVid = getActiveVideoEl();
+                if (activeVid && !activeVid.classList.contains('hidden')) {
+                    activeVid.muted = clipsCfg.muted !== false;
+                }
+            }
+
+            let queueItems = [];
+            if (activeMode === 'playlist') {
+                queueItems = orderedAssets.map(asset => ({ kind: 'ad', asset }));
+            } else if (activeMode === 'clips') {
+                queueItems = activeClips.map(clip => ({ kind: 'clip', clip }));
+            }
+
+            const clipsSig = activeClips.map(c => c.id).join(',');
+            const adsSig = orderedAssets.map(a => `${a.id}:${a.durationSec || 8}`).join(',');
+            const signature = queueItems.length > 0
+                ? `${activeMode}|${adsSig}|clips:${clipsSig}`
+                : (isLegacyExplicit ? `${state.mediaType}|${legacyUrl}` : `default|${activeMode}`);
 
             if (!forceRestart && signature === lastPlaylistSignature) return;
+
+            const activeClipRemoved = Boolean(activePlayingClipId && !activeClips.some(c => c.id === activePlayingClipId));
+            const modeChanged = lastPlaylistSignature.split('|')[0] !== activeMode;
+            const wasSingleOrDefault = lastPlaylistSignature.startsWith('default') || !lastPlaylistSignature;
+            const activeVid = getActiveVideoEl();
+            if (!forceRestart && !modeChanged && !activeClipRemoved && !wasSingleOrDefault && lastPlaylistSignature !== '' && activeVid && !activeVid.classList.contains('hidden')) {
+                lastPlaylistSignature = signature;
+                pendingHybridQueueRefresh = true;
+                if (activeVid.loop && queueItems.length > 1) {
+                    activeVid.loop = false;
+                    activeVid.onended = () => {
+                        if (!pendingHybridQueueRefresh) return;
+                        pendingHybridQueueRefresh = false;
+                        updateOverlayMediaPlayback(true);
+                    };
+                    if (queueItems[1]?.kind === 'clip' && queueItems[1].clip) {
+                        warmClipInStandbySlot(queueItems[1].clip, activePlayingClipId).catch(() => {});
+                    }
+                }
+                return;
+            }
+
+            pendingHybridQueueRefresh = false;
             lastPlaylistSignature = signature;
             playbackToken += 1;
             const currentToken = playbackToken;
 
-            if (mode === 'playlist' && orderedAssets.length > 0) {
+            if (queueItems.length > 0) {
                 playlistIndex = 0;
-                playPlaylistItem(orderedAssets, 0, currentToken);
+                playPlaylistItem(queueItems, 0, currentToken);
                 return;
             }
 
             if (isLegacyExplicit) {
-                renderMedia(mode, legacyUrl);
+                renderMedia(state.mediaType, legacyUrl);
                 return;
             }
 
             showPartnersFallbackGallery();
+        }
+
+        async function refreshRecentTwitchClips(force = false, { backgroundWarmOnly = false } = {}) {
+            const sources = normalizeMediaSources(state);
+            const cfg = normalizeClipsConfig({ ...state.clipsConfig, enabled: sources.clips });
+            const twitchLogin = resolveTwitchLoginForOverlayChannel(channelId);
+            const fetchKey = `${twitchLogin}|${cfg.windowMinutes}|${cfg.testHistorical ? 1 : 0}`;
+
+            // Incluso en modo Código o Assets, pre-calentar silenciosamente los primeros clips para cambio instantáneo en 0 ms
+            if (!sources.clips) {
+                if (!backgroundWarmOnly && rawRecentTwitchClips.length > 0) {
+                    updateOverlayMediaPlayback(false);
+                }
+                const warmFromList = () => {
+                    const warmCandidates = filterActiveRecentClips(rawRecentTwitchClips, { ...cfg, enabled: true });
+                    const firstWarm = warmCandidates[0];
+                    const secondWarm = warmCandidates[1];
+                    if (!firstWarm) return;
+                    const warmSecond = () => {
+                        if (secondWarm) prefetchClipBlobUrl(secondWarm).catch(() => {});
+                    };
+                    if (sources.codeGallery) {
+                        warmClipInStandbySlot(firstWarm).catch(() => {}).finally(warmSecond);
+                    } else {
+                        prefetchClipBlobUrl(firstWarm).catch(() => {}).finally(warmSecond);
+                    }
+                };
+                if (!force && fetchKey === lastClipsFetchKey && rawRecentTwitchClips.length > 0) {
+                    warmFromList();
+                    return;
+                }
+                lastClipsFetchKey = fetchKey;
+                try {
+                    const res = await fetchRecentTwitchClips(twitchLogin, { ...cfg, enabled: true });
+                    rawRecentTwitchClips = Array.isArray(res?.clips) ? res.clips : [];
+                    warmFromList();
+                } catch (_) {}
+                return;
+            }
+
+            lastClipsFetchKey = fetchKey;
+            try {
+                const result = await fetchRecentTwitchClips(twitchLogin, cfg);
+                rawRecentTwitchClips = Array.isArray(result?.clips) ? result.clips : [];
+                updateOverlayMediaPlayback(false);
+            } catch (err) {
+                console.warn('[Clips OBS] Error consultando clips recientes:', err.message);
+            }
         }
 
         // Gestión Legacy Directa (URL externa explícita o Galería Fallback)
@@ -1836,6 +2290,9 @@
             const cleanUrl = (mediaUrl || '').trim();
 
             clearPlaylistTimers();
+            activePlayingClipId = null;
+            hideClipIframeOnly();
+            resetAllVideoSlots();
 
             const isExplicitVideo = mediaType === 'video';
             const isVideoExt = cleanUrl.endsWith('.mp4') || cleanUrl.endsWith('.webm') || cleanUrl.endsWith('.ogg');
@@ -1848,10 +2305,14 @@
                     if (partnerSlideInterval) clearInterval(partnerSlideInterval);
 
                     if (videoEl) {
+                        currentVideoSlotIdx = 0;
+                        videoEl.dataset.activeSlot = '1';
+                        videoEl.muted = true;
                         videoEl.loop = true;
                         videoEl.onended = null;
                         videoEl.onerror = () => showPartnersFallbackGallery();
-                        videoEl.classList.remove('hidden');
+                        videoEl.classList.remove('hidden', 'opacity-0', 'pointer-events-none', 'z-0');
+                        videoEl.classList.add('opacity-100', 'z-10');
                         if (videoEl.getAttribute('src') !== cleanUrl) {
                             videoEl.src = cleanUrl;
                             videoEl.load();
@@ -1863,11 +2324,6 @@
                         }
                     }
                 } else {
-                    if (videoEl) {
-                        videoEl.onended = null;
-                        videoEl.pause();
-                        videoEl.classList.add('hidden');
-                    }
                     if (galleryEl) galleryEl.classList.add('hidden');
                     if (partnerSlideInterval) clearInterval(partnerSlideInterval);
 
@@ -1884,8 +2340,8 @@
 
         let overlayVideoKeepAliveBound = false;
         function ensureOverlayVideoPlaying() {
-            const videoEl = document.getElementById('sponsor-video');
-            if (!videoEl || videoEl.classList.contains('hidden') || !videoEl.getAttribute('src')) return;
+            const videoEl = getActiveVideoEl();
+            if (!videoEl || videoEl.dataset.activeSlot !== '1' || videoEl.classList.contains('hidden') || !videoEl.getAttribute('src')) return;
             if (videoEl.ended && typeof videoEl.onended === 'function') {
                 videoEl.onended();
                 return;
@@ -1898,17 +2354,24 @@
 
         function bindOverlayVideoKeepAlive() {
             if (overlayVideoKeepAliveBound) return;
-            const videoEl = document.getElementById('sponsor-video');
-            if (!videoEl) return;
+            const slots = getVideoSlots().filter(Boolean);
+            if (!slots.length) return;
             overlayVideoKeepAliveBound = true;
 
-            videoEl.addEventListener('pause', () => {
-                if (!videoEl.classList.contains('hidden') && !document.hidden) {
-                    setTimeout(ensureOverlayVideoPlaying, 120);
-                }
+            slots.forEach((slotEl) => {
+                slotEl.addEventListener('pause', () => {
+                    if (slotEl.dataset.activeSlot === '1' && !slotEl.classList.contains('hidden') && !document.hidden) {
+                        setTimeout(ensureOverlayVideoPlaying, 120);
+                    }
+                });
+                slotEl.addEventListener('stalled', () => {
+                    if (slotEl.dataset.activeSlot === '1') setTimeout(ensureOverlayVideoPlaying, 350);
+                });
+                slotEl.addEventListener('canplay', () => {
+                    if (slotEl.dataset.activeSlot === '1') ensureOverlayVideoPlaying();
+                });
             });
-            videoEl.addEventListener('stalled', () => setTimeout(ensureOverlayVideoPlaying, 350));
-            videoEl.addEventListener('canplay', ensureOverlayVideoPlaying);
+
             setInterval(() => {
                 if (!document.hidden) ensureOverlayVideoPlaying();
             }, 1500);
@@ -2158,6 +2621,13 @@
             const incomingOrder = Array.isArray(data.assetOrderIds) ? data.assetOrderIds : state.assetOrderIds;
             const incomingMediaType = data.mediaType || state.mediaType || 'default';
 
+            const prevSources = normalizeMediaSources(state);
+            const nextSources = normalizeMediaSources(data);
+            const prevClipsCfg = normalizeClipsConfig({ ...state.clipsConfig, enabled: prevSources.clips });
+            const nextClipsCfg = normalizeClipsConfig({ ...data.clipsConfig, enabled: nextSources.clips });
+            state.mediaSources = nextSources;
+            state.clipsConfig = nextClipsCfg;
+
             state.mediaUrl = incomingMediaUrl;
             state.disabledAssetIds = Array.isArray(incomingDisabled) ? incomingDisabled : [];
             state.assetOrderIds = Array.isArray(incomingOrder) ? incomingOrder : [];
@@ -2165,6 +2635,13 @@
             lastMediaUrl = incomingMediaUrl;
             lastMediaType = incomingMediaType;
             updateOverlayMediaPlayback(false);
+
+            if (prevClipsCfg.enabled !== nextClipsCfg.enabled ||
+                prevClipsCfg.windowMinutes !== nextClipsCfg.windowMinutes ||
+                prevClipsCfg.testHistorical !== nextClipsCfg.testHistorical ||
+                prevClipsCfg.maxClips !== nextClipsCfg.maxClips) {
+                refreshRecentTwitchClips(true);
+            }
 
             if (data.footerMode && data.footerMode !== lastFooterMode) {
                 lastFooterMode = data.footerMode;
@@ -2304,6 +2781,8 @@
         startHeaderSponsorRotation();
         startSpotlightRotation();
         fetchScouting3RegisteredTeams();
+        setTimeout(() => refreshRecentTwitchClips(true, { backgroundWarmOnly: true }), 1200);
+        setInterval(() => refreshRecentTwitchClips(false), 45000);
 
         if (urlParams.get('bg') === '1' || urlParams.get('testbg') === '1') {
             document.body.classList.add('test-bg-active');
