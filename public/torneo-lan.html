@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TERHMJ40W1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TERHMJ40W1');
+    </script>
+    <title>SMOK vs AQUI ME QUEDO | Torneo Presencial LAN • LBL Esports</title>
+    <meta name="description" content="Selecciona tu sede: Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba). Portal oficial de inscripción y equipos confirmados (Tope Esmeralda I).">
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#020202">
+
+    <link rel="stylesheet" href="/dist/output.css?v=292">
+    <script type="module" src="/app-version.js?v=292"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===================================================================== */
+        /* BASE NEGRA INMERSIVA (#020202 / #08080a) + ACENTOS (AZUL LBL / ROJO / VERDE) */
+        /* ===================================================================== */
+        :root,
+        body[data-lan-theme="neutral"] {
+            --theme-bg: #020202;
+            --theme-card-border: rgba(59, 130, 246, 0.32);
+            --theme-primary: #3b82f6;
+            --theme-primary-light: #38bdf8;
+            --theme-primary-rgb: 59, 130, 246;
+            --theme-btn-grad: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --theme-btn-text: #ffffff;
+        }
+
+        body[data-lan-theme="amq"] {
+            --theme-bg: #020202;
+            --theme-card-border: rgba(225, 29, 72, 0.42);
+            --theme-primary: #e11d48;
+            --theme-primary-light: #fb7185;
+            --theme-primary-rgb: 225, 29, 72;
+            --theme-btn-grad: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            --theme-btn-text: #ffffff;
+        }
+
+        body[data-lan-theme="smok"] {
+            --theme-bg: #020202;
+            --theme-card-border: rgba(16, 185, 129, 0.42);
+            --theme-primary: #10b981;
+            --theme-primary-light: #34d399;
+            --theme-primary-rgb: 16, 185, 129;
+            --theme-btn-grad: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --theme-btn-text: #020a05;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #020202;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .font-poster {
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        /* FONDO ESCENOGRÁFICO PERSISTENTE CON DESENFOQUE DINÁMICO */
+        #lan-stage-bg-img {
+            transition: filter 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+            filter: blur(0px) brightness(0.92);
+            transform: scale(1);
+        }
+        #lan-stage-dim {
+            transition: background-color 0.55s ease;
+            background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.12) 0%, rgba(2, 2, 2, 0.68) 100%);
+        }
+        body[data-stage-blur="on"] #lan-stage-bg-img {
+            filter: blur(16px) brightness(0.42);
+            transform: scale(1.06);
+        }
+        body[data-stage-blur="on"] #lan-stage-dim {
+            background: rgba(2, 2, 2, 0.65);
+        }
+
+        /* ICONOS GIGANTES DE SELECCIÓN EN EL ESCENARIO INICIAL */
+        .hero-sede-choice {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+        }
+        .hero-sede-choice-amq:hover {
+            transform: scale(1.07) translateY(-6px);
+            filter: drop-shadow(0 0 38px rgba(225, 29, 72, 0.72));
+        }
+        .hero-sede-choice-smok:hover {
+            transform: scale(1.07) translateY(-6px);
+            filter: drop-shadow(0 0 38px rgba(16, 185, 129, 0.72));
+        }
+
+        /* VENTANA FLOTANTE PRINCIPAL SOBRE FONDO DIFUMINADO */
+        .floating-window-card {
+            background: rgba(8, 8, 10, 0.92);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--theme-card-border);
+            border-top: 3px solid var(--theme-primary);
+            box-shadow: 0 28px 65px -12px rgba(0, 0, 0, 0.95), 0 0 32px rgba(var(--theme-primary-rgb), 0.14);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .floating-overlay-wrap {
+            animation: floatPanelIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes floatPanelIn {
+            0% { opacity: 0; transform: translateY(18px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .theme-text-accent {
+            color: var(--theme-primary-light);
+            transition: color 0.3s ease;
+        }
+        .theme-badge {
+            background: rgba(var(--theme-primary-rgb), 0.14);
+            border: 1px solid rgba(var(--theme-primary-rgb), 0.4);
+            color: var(--theme-primary-light);
+            transition: all 0.3s ease;
+        }
+        .theme-btn-primary {
+            background: var(--theme-btn-grad);
+            color: var(--theme-btn-text);
+            box-shadow: 0 8px 24px -4px rgba(var(--theme-primary-rgb), 0.42);
+            transition: all 0.25s ease;
+        }
+        .theme-btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .input-lan {
+            background-color: #050507;
+            border: 1px solid #27272a;
+            padding: 0.72rem 0.95rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.25s ease;
+            width: 100%;
+            font-size: 14px;
+            color: #ffffff;
+        }
+        .input-lan:focus {
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 2px rgba(var(--theme-primary-rgb), 0.22);
+            background-color: #000000;
+        }
+        select.input-lan option {
+            background-color: #08080a;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .input-lan.error-field {
+            border-color: #ef4444 !important;
+            background-color: rgba(127, 29, 29, 0.25) !important;
+        }
+        .label-lan {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--theme-primary-light);
+            margin-bottom: 5px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        /* PÁGINAS DEL WIZARD FLOTANTE */
+        .lan-step-window {
+            display: none;
+        }
+        .lan-step-window.active {
+            display: block;
+            animation: windowFloatIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes windowFloatIn {
+            0% { opacity: 0; transform: translateX(22px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .step-dot-btn {
+            transition: all 0.22s ease;
+        }
+        .step-dot-btn.active {
+            background: var(--theme-primary);
+            color: var(--theme-btn-text);
+            border-color: var(--theme-primary-light);
+            box-shadow: 0 0 14px rgba(var(--theme-primary-rgb), 0.45);
+        }
+        .step-dot-btn.completed {
+            background: rgba(var(--theme-primary-rgb), 0.16);
+            color: var(--theme-primary-light);
+            border-color: rgba(var(--theme-primary-rgb), 0.42);
+        }
+    </style>
+</head>
+<body data-lan-theme="neutral" data-stage-blur="off" class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white relative">
+
+    <!-- ===================================================================== -->
+    <!-- CAPA DE FONDO CINEMATOGRÁFICO FIJA (CON DESENFOQUE DINÁMICO)         -->
+    <!-- ===================================================================== -->
+    <div id="lan-stage-backdrop" class="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none bg-[#020202]">
+        <img id="lan-stage-bg-img"
+             src="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.png"
+             alt="Escenario La Paz vs Cochabamba"
+             class="w-full h-full object-cover object-center">
+        <div id="lan-stage-dim" class="absolute inset-0"></div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- NAVBAR FIJO SUPERIOR: SMOK vs AQUI ME QUEDO                           -->
+    <!-- ===================================================================== -->
+    <header class="sticky top-0 z-40 bg-black/75 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <img src="/assets/logo.webp" alt="LBL Logo" class="h-9 sm:h-10 w-auto object-contain transition-transform group-hover:scale-105">
+                <div>
+                    <span class="text-base sm:text-lg font-black tracking-wider uppercase italic text-white block leading-none">
+                        SMOK <span id="navbar-theme-title" class="theme-text-accent">vs</span> AQUI ME QUEDO
+                    </span>
+                    <span class="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
+                        Cochabamba vs La Paz • LBL Torneo LAN
+                    </span>
+                </div>
+            </a>
+
+            <!-- Acciones Reubicadas en el Header (Con Azul LBL como acento neutro) -->
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="abrirVentanaConfirmados()" class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-black/80 hover:bg-blue-950/50 border border-blue-500/35 hover:border-blue-400 text-xs font-black uppercase tracking-wider text-blue-300 cursor-pointer transition-all flex items-center gap-1.5">
+                    <i class="fas fa-shield-halved text-blue-400"></i>
+                    <span class="hidden sm:inline">Confirmados</span>
+                    <span class="px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-200 font-mono text-[10px]" id="badge-total-confirmados">0</span>
+                </button>
+                <button type="button" onclick="abrirVentanaEstado()" class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-black/80 hover:bg-blue-950/50 border border-white/15 hover:border-blue-400 text-xs font-bold uppercase tracking-wider text-zinc-200 cursor-pointer transition-all flex items-center gap-1.5">
+                    <i class="fas fa-magnifying-glass text-blue-400"></i>
+                    <span class="hidden sm:inline">Mi Estado</span>
+                </button>
+                <a href="/" class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl bg-black/80 hover:bg-zinc-900 border border-white/15 text-xs font-bold text-white transition-all">
+                    <i class="fas fa-home text-zinc-400"></i>
+                    <span class="hidden md:inline">Inicio</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- ESCENARIO 1 (PORTADA INTERACTIVA): SELECCIONA TU SEDE                 -->
+    <!-- ===================================================================== -->
+    <main id="stage-sede-selector" class="relative z-10 flex-1 flex flex-col items-center justify-between px-4 sm:px-8 py-6 sm:py-10 min-h-[calc(100vh-65px)]">
+
+        <!-- Título Superior: SELECCIONA TU SEDE -->
+        <div class="text-center space-y-2 mt-1 sm:mt-3">
+            <h1 class="font-poster text-4xl sm:text-6xl md:text-7xl font-black italic uppercase tracking-wider text-white drop-shadow-[0_6px_25px_rgba(0,0,0,0.95)]">
+                SELECCIONA TU SEDE
+            </h1>
+            <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-zinc-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+                Haz clic en el logo de tu departamento para abrir la inscripción • <span class="text-blue-400">Elo Máximo: Esmeralda I</span>
+            </p>
+        </div>
+
+        <!-- Composición Central VS: AQUÍ ME QUEDO (Izquierda) VS SMOK (Derecha) -->
+        <div class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-11 items-center gap-6 sm:gap-4 my-auto py-4">
+
+            <!-- IZQUIERDA: AQUÍ ME QUEDO (LA PAZ - ROJO) -->
+            <div class="md:col-span-5 flex flex-col items-center">
+                <button type="button"
+                        id="btn-hero-sede-lapaz"
+                        onclick="seleccionarSedeYAbrirModal('La Paz')"
+                        class="hero-sede-choice hero-sede-choice-amq group flex flex-col items-center cursor-pointer focus:outline-none bg-transparent border-0 p-2">
+                    <div class="h-52 sm:h-64 md:h-72 lg:h-80 flex items-center justify-center">
+                        <img src="/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png"
+                             alt="Aquí Me Quedo E-Sports Center — La Paz"
+                             class="max-h-full w-56 sm:w-64 md:w-72 lg:w-80 object-contain drop-shadow-[0_14px_35px_rgba(0,0,0,0.9)]">
+                    </div>
+                    <div class="mt-4 flex flex-col items-center gap-1.5">
+                        <span class="px-4 py-1.5 rounded-full bg-black/80 border border-rose-500/60 text-rose-300 group-hover:bg-rose-600 group-hover:text-white text-xs font-black uppercase tracking-widest shadow-xl transition-all">
+                            <i class="fas fa-location-dot mr-1.5"></i> La Paz • Inscribirse aquí
+                        </span>
+                        <span class="text-[11px] font-bold text-zinc-300 bg-black/65 px-3 py-0.5 rounded-full border border-white/10">
+                            Confirmados: <strong id="count-aceptados-lapaz" class="text-rose-400">0</strong>/16
+                            <span class="mx-1 text-zinc-600">•</span>
+                            <span id="count-pendientes-lapaz" class="text-zinc-400">0 en revisión</span>
+                        </span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- CENTRO: VS -->
+            <div class="md:col-span-1 flex items-center justify-center">
+                <span class="font-poster text-6xl sm:text-7xl md:text-8xl font-black italic text-white tracking-tighter drop-shadow-[0_8px_30px_rgba(0,0,0,0.95)] select-none">
+                    VS
+                </span>
+            </div>
+
+            <!-- DERECHA: SMOK LAN CENTER (COCHABAMBA - VERDE) -->
+            <div class="md:col-span-5 flex flex-col items-center">
+                <button type="button"
+                        id="btn-hero-sede-cocha"
+                        onclick="seleccionarSedeYAbrirModal('Cochabamba')"
+                        class="hero-sede-choice hero-sede-choice-smok group flex flex-col items-center cursor-pointer focus:outline-none bg-transparent border-0 p-2">
+                    <div class="h-52 sm:h-64 md:h-72 lg:h-80 flex items-center justify-center">
+                        <img src="/assets/Logos%20Sponsor/SMOK_GAME_ZONE%20-%20copia.png"
+                             alt="SMOK E-Sport Center — Cochabamba"
+                             class="max-h-full w-56 sm:w-64 md:w-72 lg:w-80 object-contain drop-shadow-[0_14px_35px_rgba(0,0,0,0.9)]">
+                    </div>
+                    <div class="mt-4 flex flex-col items-center gap-1.5">
+                        <span class="px-4 py-1.5 rounded-full bg-black/80 border border-emerald-500/60 text-emerald-300 group-hover:bg-emerald-500 group-hover:text-black text-xs font-black uppercase tracking-widest shadow-xl transition-all">
+                            <i class="fas fa-location-dot mr-1.5"></i> Cochabamba • Inscribirse aquí
+                        </span>
+                        <span class="text-[11px] font-bold text-zinc-300 bg-black/65 px-3 py-0.5 rounded-full border border-white/10">
+                            Confirmados: <strong id="count-aceptados-cocha" class="text-emerald-400">0</strong>/16
+                            <span class="mx-1 text-zinc-600">•</span>
+                            <span id="count-pendientes-cocha" class="text-zinc-400">0 en revisión</span>
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pie sutil con accesos secundarios (Azul LBL sobre base negra) -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pb-2">
+            <button type="button" onclick="abrirVentanaConfirmados()" class="px-4 py-2 rounded-xl bg-black/75 hover:bg-blue-950/60 border border-blue-500/40 text-blue-300 text-xs font-black uppercase tracking-wider cursor-pointer transition-all backdrop-blur-md">
+                <i class="fas fa-users-viewfinder mr-1.5"></i> Ver Equipos Confirmados (<span id="stage-total-confirmados">0</span>)
+            </button>
+            <button type="button" onclick="abrirVentanaEstado()" class="px-4 py-2 rounded-xl bg-black/75 hover:bg-zinc-900 border border-white/15 text-zinc-300 text-xs font-bold uppercase tracking-wider cursor-pointer transition-all backdrop-blur-md">
+                <i class="fas fa-magnifying-glass mr-1.5 text-blue-400"></i> Consultar Código de Inscripción
+            </button>
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- VENTANA FLOTANTE 1: WIZARD DE INSCRIPCIÓN (SOBRE FONDO DIFUMINADO)    -->
+    <!-- ===================================================================== -->
+    <div id="floating-wizard-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10">
+        <div class="min-h-full flex items-center justify-center">
+            <div class="floating-overlay-wrap w-full max-w-4xl space-y-3">
+
+                <!-- Barra superior de la Ventana Flotante -->
+                <div class="floating-window-card rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img id="wizard-sede-logo" src="/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png" alt="Logo Sede" class="h-10 w-10 object-contain shrink-0">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span id="wizard-sede-pill" class="px-2.5 py-0.5 rounded-full theme-badge text-[10px] font-black uppercase tracking-wider">
+                                    LA PAZ • AQUÍ ME QUEDO
+                                </span>
+                                <span id="header-step-text" class="text-[11px] font-bold text-zinc-400 uppercase">
+                                    Ventana 1 de 8
+                                </span>
+                            </div>
+                            <h2 class="text-sm sm:text-base font-black text-white uppercase truncate mt-0.5">
+                                Inscripción Oficial • Elo Máximo Esmeralda I
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" onclick="volverASeleccionarSede()" class="px-3 py-1.5 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-xs font-bold text-zinc-300 hover:text-white cursor-pointer transition-all">
+                            <i class="fas fa-repeat mr-1 theme-text-accent"></i> Cambiar Sede
+                        </button>
+                        <button type="button" onclick="volverASeleccionarSede()" class="w-8 h-8 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer" title="Cerrar ventana">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navegador de Ventanas (1 a 8) -->
+                <div class="floating-window-card !border-t-0 rounded-2xl p-2.5 flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
+                    <button type="button" onclick="irAVentanaPaso(1)" id="step-pill-1" class="step-dot-btn active px-2.5 py-1.5 rounded-xl border border-white/10 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                        1. Equipo
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(2)" id="step-pill-2" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                        2. Representante
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(3)" id="step-pill-3" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                        <img src="/assets/roles/position-top.svg" class="w-3.5 h-3.5" alt=""> 3. TOP
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(4)" id="step-pill-4" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                        <img src="/assets/roles/position-jungle.svg" class="w-3.5 h-3.5" alt=""> 4. JG
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(5)" id="step-pill-5" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                        <img src="/assets/roles/position-middle.svg" class="w-3.5 h-3.5" alt=""> 5. MID
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(6)" id="step-pill-6" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                        <img src="/assets/roles/position-bottom.svg" class="w-3.5 h-3.5" alt=""> 6. ADC
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(7)" id="step-pill-7" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                        <img src="/assets/roles/position-utility.svg" class="w-3.5 h-3.5" alt=""> 7. SUPP
+                    </button>
+                    <button type="button" onclick="irAVentanaPaso(8)" id="step-pill-8" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                        8. Suplente
+                    </button>
+                </div>
+
+                <!-- FORMULARIO DENTRO DE LA VENTANA FLOTANTE -->
+                <form id="form-torneo-lan" novalidate onkeydown="return event.key !== 'Enter';">
+                    <input type="hidden" id="sedeDepartamento" value="">
+
+                    <!-- VENTANA 1: IDENTIDAD DEL EQUIPO (La Sede ya fue seleccionada al entrar) -->
+                    <div id="lan-window-1" class="lan-step-window active floating-window-card rounded-3xl p-6 sm:p-8">
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-white/10">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                                    Paso 1 de 8 • Identidad del Equipo
+                                </span>
+                                <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1.5">
+                                    Datos del Equipo
+                                </h3>
+                            </div>
+                            <span id="lan-sede-confirmada-tag" class="px-3 py-1 rounded-xl theme-badge text-xs font-black uppercase">
+                                Sede Confirmada
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="label-lan !mb-0">1. Nombre del Equipo *</label>
+                                    <span id="lan-teamName-count" class="text-[10px] font-mono text-zinc-400">0/35</span>
+                                </div>
+                                <input type="text" id="lanTeamName" maxlength="35" required class="input-lan" placeholder="Ej: Illimani Gaming">
+                            </div>
+
+                            <div>
+                                <label class="label-lan">2. TAG / Acrónimo (2 a 5 letras) *</label>
+                                <input type="text" id="lanTeamTag" maxlength="5" required class="input-lan uppercase font-black tracking-wider" placeholder="Ej: ILG">
+                            </div>
+
+                            <div>
+                                <label class="label-lan">3. Logo del Equipo (Archivo o Link) *</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="url" id="lanTeamLogoUrl" class="input-lan" placeholder="https://imgur.com/... o sube">
+                                    <label class="px-3.5 py-2.5 rounded-xl theme-badge text-xs font-black uppercase cursor-pointer shrink-0 flex items-center gap-1.5" title="Subir imagen desde tu dispositivo">
+                                        <i class="fas fa-upload"></i> Subir
+                                        <input type="file" id="lanTeamLogoFile" accept="image/*" class="hidden">
+                                    </label>
+                                </div>
+                                <p id="lan-logo-status" class="text-[10px] text-zinc-400 mt-1">Pega un link o sube PNG/JPG/WebP.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-5 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+                            <button type="button" onclick="volverASeleccionarSede()" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-300 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                                <i class="fas fa-arrow-left mr-1.5"></i> Cambiar Sede
+                            </button>
+                            <button type="button" onclick="irAVentanaPaso(2)" class="w-full sm:w-auto px-8 py-4 rounded-2xl theme-btn-primary font-black text-sm uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2">
+                                Siguiente: Datos del Representante <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VENTANA 2: DATOS DEL REPRESENTANTE DEL EQUIPO -->
+                    <div id="lan-window-2" class="lan-step-window floating-window-card rounded-3xl p-6 sm:p-8">
+                        <div class="pb-4 mb-6 border-b border-white/10">
+                            <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                                Paso 2 de 8 • Representante Oficial
+                            </span>
+                            <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1.5">
+                                Datos del Representante del Equipo
+                            </h3>
+                            <p class="text-xs text-zinc-400 mt-0.5">
+                                Encargado de confirmar asistencia presencial en sede y recibir comunicaciones del Staff LBL.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label-lan">1. Nombre Completo del Representante *</label>
+                                <input type="text" id="rep_nombre" required class="input-lan" placeholder="Nombres y Apellidos reales">
+                            </div>
+                            <div>
+                                <label class="label-lan">2. CI / Documento de identidad *</label>
+                                <input type="text" id="rep_ci" required class="input-lan" placeholder="Ej: 12345678" oninput="this.value = this.value.replace(/[^0-9a-zA-Z-]/g, '')">
+                            </div>
+                            <div>
+                                <label class="label-lan">3. Whapp (Celular de Contacto) *</label>
+                                <input type="tel" id="rep_whapp" required class="input-lan" placeholder="Ej: 77712345" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                            </div>
+                            <div>
+                                <label class="label-lan">4. Discord del Representante *</label>
+                                <input type="text" id="rep_discord" required class="input-lan" placeholder="Ej: capitan_lol">
+                            </div>
+                        </div>
+
+                        <div class="mt-5 p-4 rounded-2xl bg-black/80 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div class="text-xs text-zinc-300">
+                                <i class="fas fa-bolt theme-text-accent mr-1.5"></i>
+                                <strong>¿El representante también juega de titular?</strong> Copia sus datos en 1 clic:
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="copiarRepATitular('TOP', 3)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A TOP</button>
+                                <button type="button" onclick="copiarRepATitular('JG', 4)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A JG</button>
+                                <button type="button" onclick="copiarRepATitular('MID', 5)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A MID</button>
+                                <button type="button" onclick="copiarRepATitular('ADC', 6)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A ADC</button>
+                                <button type="button" onclick="copiarRepATitular('SUPP', 7)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A SUPP</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-5 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+                            <button type="button" onclick="irAVentanaPaso(1)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-300 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                                <i class="fas fa-arrow-left mr-1.5"></i> Atrás
+                            </button>
+                            <button type="button" onclick="irAVentanaPaso(3)" class="w-full sm:w-auto px-8 py-4 rounded-2xl theme-btn-primary font-black text-sm uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2">
+                                Siguiente: Titular #1 (TOP) <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VENTANAS 3 A 7: LOS 5 TITULARES INDIVIDUALES -->
+                    <div id="lan-titulares-windows-container"></div>
+
+                    <!-- VENTANA 8: SUPLENTE ÚNICO OPCIONAL + ENVÍO -->
+                    <div id="lan-suplente-window-container"></div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VENTANA FLOTANTE 2: EQUIPOS CONFIRMADOS (LA PAZ VS COCHABAMBA)        -->
+    <!-- ===================================================================== -->
+    <div id="floating-equipos-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(event.target===this) cerrarVentanasSecundarias()">
+        <div class="min-h-full flex items-center justify-center">
+            <div class="floating-overlay-wrap floating-window-card w-full max-w-5xl rounded-3xl p-5 sm:p-7 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-[10px] font-black uppercase tracking-wider">
+                            Equipos Validados Anti-Smurf
+                        </span>
+                        <h3 class="text-xl sm:text-2xl font-black text-white uppercase mt-1">
+                            Equipos Confirmados (<span class="text-rose-400">La Paz</span> vs <span class="text-emerald-400">Cochabamba</span>)
+                        </h3>
+                    </div>
+                    <button type="button" onclick="cerrarVentanasSecundarias()" class="w-9 h-9 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="filtrarEquiposConfirmados('todos')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-blue-600 text-white cursor-pointer">
+                            Todos (<span id="count-filter-todos">0</span>)
+                        </button>
+                        <button type="button" onclick="filtrarEquiposConfirmados('La Paz')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-black text-rose-300 border border-rose-500/45 hover:bg-rose-950/40 cursor-pointer flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> La Paz (<span id="count-filter-lapaz">0</span>/16)
+                        </button>
+                        <button type="button" onclick="filtrarEquiposConfirmados('Cochabamba')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-black text-emerald-300 border border-emerald-500/45 hover:bg-emerald-950/40 cursor-pointer flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Cochabamba (<span id="count-filter-cocha">0</span>/16)
+                        </button>
+                    </div>
+                    <div class="relative w-full md:w-72">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+                        <input type="text" id="input-buscar-confirmados" placeholder="Buscar equipo, TAG o Riot ID..." class="input-lan !pl-9 !py-2 text-xs">
+                    </div>
+                </div>
+
+                <div id="grid-equipos-confirmados" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VENTANA FLOTANTE 3: CONSULTAR ESTADO DE INSCRIPCIÓN                   -->
+    <!-- ===================================================================== -->
+    <div id="floating-estado-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(event.target===this) cerrarVentanasSecundarias()">
+        <div class="min-h-full flex items-center justify-center">
+            <div class="floating-overlay-wrap floating-window-card w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-5">
+                <div class="flex items-start justify-between gap-3 pb-4 border-b border-white/10">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-[10px] font-black uppercase tracking-wider">
+                            Seguimiento en Vivo
+                        </span>
+                        <h3 class="text-xl font-black uppercase text-white mt-1">
+                            Consultar Estado de mi Inscripción
+                        </h3>
+                        <p class="text-xs text-zinc-400 mt-1">
+                            Ingresa tu <strong class="text-white">Código de Seguimiento</strong> (<code class="text-rose-300">AMQ-XXXX</code> / <code class="text-emerald-300">SMOK-XXXX</code>) o el <strong class="text-white">TAG / Nombre del equipo</strong>.
+                        </p>
+                    </div>
+                    <button type="button" onclick="cerrarVentanasSecundarias()" class="w-9 h-9 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer shrink-0">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="input-codigo-seguimiento" placeholder="Ej: AMQ-1234 o nombre del equipo" class="input-lan uppercase font-bold">
+                    <button type="button" onclick="consultarEstadoInscripcion()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shrink-0 cursor-pointer transition-all">
+                        <i class="fas fa-search mr-1.5"></i> Consultar
+                    </button>
+                </div>
+
+                <div id="resultado-estado-inscripcion"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN DE INSCRIPCIÓN EXITOSA -->
+    <div id="modal-exito-lan" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="floating-window-card max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl theme-badge flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-double text-3xl"></i>
+            </div>
+            <span id="modal-exito-sede-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider theme-badge">
+                SEDE OFICIAL
+            </span>
+            <h3 class="text-2xl font-black text-white uppercase mt-3" id="modal-exito-equipo">¡EQUIPO REGISTRADO!</h3>
+            <p class="text-xs text-zinc-300 mt-1">
+                Tu inscripción fue enviada a la bandeja de auditoría del Staff LBL. Guarda tu código y envía la confirmación por WhatsApp:
+            </p>
+
+            <div class="my-5 p-4 rounded-2xl bg-black border border-white/10">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">CÓDIGO DE SEGUIMIENTO</span>
+                <div class="text-2xl font-black font-mono text-amber-400 tracking-wider mt-1" id="modal-exito-codigo">AMQ-0000</div>
+            </div>
+
+            <div class="space-y-3">
+                <a id="btn-whatsapp-confirmacion-lan" href="#" target="_blank" rel="noopener" class="w-full py-4 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all">
+                    <i class="fab fa-whatsapp text-lg"></i> Enviar Confirmación por WhatsApp
+                </a>
+                <button type="button" onclick="cerrarModalExitoYVerEstado()" class="w-full py-3 px-4 rounded-xl bg-black hover:bg-zinc-900 text-zinc-300 border border-white/15 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                    Ver Estado de mi Inscripción
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ROSTER PÚBLICO DE EQUIPO CONFIRMADO -->
+    <div id="modal-roster-publico" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md" onclick="if(event.target===this) cerrarModalRosterPublico()">
+        <div class="floating-window-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button type="button" onclick="cerrarModalRosterPublico()" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modal-roster-publico-body"></div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICACIÓN -->
+    <div id="lan-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[10000] hidden px-6 py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-2xl backdrop-blur-md border text-center items-center gap-2.5 max-w-[92vw]"></div>
+
+    <script type="module">
+        import { db } from "/firebase-config.js";
+        import {
+            collection,
+            addDoc,
+            doc,
+            getDoc,
+            setDoc,
+            query,
+            where,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
+        import {
+            TORNEO_LAN_ID,
+            TORNEO_LAN_COLLECTION,
+            TORNEO_LAN_PUBLIC_DOC,
+            TORNEO_LAN_MAX_CUPOS_SEDE,
+            RANGOS_SOLOQ_TORNEO_LAN,
+            construirUrlOpgg,
+            evaluarRangoSoloQ,
+            extraerCiLimpio,
+            normalizarCelular,
+            normalizarRiotId,
+            sanitizarEquipoTorneoLanPublico
+        } from "/anti-smurf-core.js?v=293";
+
+        const ROLES_PRINCIPALES = [
+            { id: 'TOP', stepNum: 3, nombreLargo: 'Carril Superior (TOP)', icon: '/assets/roles/position-top.svg' },
+            { id: 'JG', stepNum: 4, nombreLargo: 'Jungla (JG)', icon: '/assets/roles/position-jungle.svg' },
+            { id: 'MID', stepNum: 5, nombreLargo: 'Carril Central (MID)', icon: '/assets/roles/position-middle.svg' },
+            { id: 'ADC', stepNum: 6, nombreLargo: 'Tirador (ADC)', icon: '/assets/roles/position-bottom.svg' },
+            { id: 'SUPP', stepNum: 7, nombreLargo: 'Soporte (SUPP)', icon: '/assets/roles/position-utility.svg' }
+        ];
+
+        const ROLES_SECUNDARIOS = [
+            { value: 'Polivalente / Comodín', label: 'Polivalente / Comodín (Fill)' },
+            { value: 'TOP', label: 'TOP (Carril Superior)' },
+            { value: 'JG', label: 'JG (Jungla)' },
+            { value: 'MID', label: 'MID (Carril Central)' },
+            { value: 'ADC', label: 'ADC (Tirador)' },
+            { value: 'SUPP', label: 'SUPP (Soporte)' }
+        ];
+
+        let currentWindowStep = 1;
+        let equiposConfirmadosPublicos = [];
+        let resumenEstadosPublicos = [];
+        let filtroSedeConfirmados = 'todos';
+        let logoBase64Subido = '';
+
+        function mostrarToastLan(msg, tipo = 'error') {
+            const toast = document.getElementById('lan-toast');
+            if (!toast) return;
+            const estilos = tipo === 'error'
+                ? 'bg-black/95 border-rose-500 text-rose-200'
+                : 'bg-black/95 border-emerald-500 text-emerald-200';
+            const icono = tipo === 'error'
+                ? '<i class="fas fa-triangle-exclamation text-rose-400 text-base shrink-0"></i>'
+                : '<i class="fas fa-circle-check text-emerald-400 text-base shrink-0"></i>';
+            toast.className = `fixed top-5 left-1/2 -translate-x-1/2 z-[10000] pointer-events-none flex px-5 py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-2xl backdrop-blur-md border items-center gap-2.5 max-w-[92vw] ${estilos}`;
+            toast.innerHTML = `${icono}<span>${msg}</span>`;
+            clearTimeout(window._lanToastTimer);
+            window._lanToastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 4500);
+        }
+
+        // =========================================================================
+        // CONTROL DEL FONDO DIFUMINADO Y VENTANAS FLOTANTES
+        // =========================================================================
+        function actualizarEstadoBlurFondo(activo) {
+            document.body.setAttribute('data-stage-blur', activo ? 'on' : 'off');
+            const stage = document.getElementById('stage-sede-selector');
+            if (stage) {
+                stage.style.opacity = activo ? '0.18' : '1';
+                stage.style.pointerEvents = activo ? 'none' : 'auto';
+                stage.style.transition = 'opacity 0.4s ease';
+            }
+        }
+
+        window.seleccionarSedeYAbrirModal = function(sede) {
+            const input = document.getElementById('sedeDepartamento');
+            const logoEl = document.getElementById('wizard-sede-logo');
+            const pillEl = document.getElementById('wizard-sede-pill');
+            const confirmTagEl = document.getElementById('lan-sede-confirmada-tag');
+
+            if (input) input.value = sede;
+
+            if (sede === 'La Paz') {
+                document.body.setAttribute('data-lan-theme', 'amq');
+                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png';
+                if (pillEl) pillEl.textContent = 'LA PAZ • AQUÍ ME QUEDO';
+                if (confirmTagEl) confirmTagEl.textContent = '🔴 LA PAZ • AQUÍ ME QUEDO';
+            } else {
+                document.body.setAttribute('data-lan-theme', 'smok');
+                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/SMOK_GAME_ZONE%20-%20copia.png';
+                if (pillEl) pillEl.textContent = 'COCHABAMBA • SMOK LAN CENTER';
+                if (confirmTagEl) confirmTagEl.textContent = '🟢 COCHABAMBA • SMOK LAN CENTER';
+            }
+
+            document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
+            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
+            document.getElementById('floating-wizard-overlay')?.classList.remove('hidden');
+
+            actualizarEstadoBlurFondo(true);
+            activarVentanaDOM(1);
+        };
+
+        window.volverASeleccionarSede = function() {
+            document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
+            document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
+            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
+            document.body.setAttribute('data-lan-theme', 'neutral');
+            actualizarEstadoBlurFondo(false);
+        };
+
+        window.abrirVentanaConfirmados = function() {
+            document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
+            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
+            document.getElementById('floating-equipos-overlay')?.classList.remove('hidden');
+            document.body.setAttribute('data-lan-theme', 'neutral');
+            actualizarEstadoBlurFondo(true);
+            renderizarEquiposConfirmados();
+        };
+
+        window.abrirVentanaEstado = function() {
+            document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
+            document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
+            document.getElementById('floating-estado-overlay')?.classList.remove('hidden');
+            document.body.setAttribute('data-lan-theme', 'neutral');
+            actualizarEstadoBlurFondo(true);
+            document.getElementById('input-codigo-seguimiento')?.focus();
+        };
+
+        window.cerrarVentanasSecundarias = function() {
+            document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
+            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
+            const sedeActual = document.getElementById('sedeDepartamento')?.value;
+            const wizardOpen = !document.getElementById('floating-wizard-overlay')?.classList.contains('hidden');
+            if (!wizardOpen) {
+                document.body.setAttribute('data-lan-theme', 'neutral');
+                actualizarEstadoBlurFondo(false);
+            } else if (sedeActual) {
+                document.body.setAttribute('data-lan-theme', sedeActual === 'Cochabamba' ? 'smok' : 'amq');
+            }
+        };
+
+        // =========================================================================
+        // CONSTRUCCIÓN DE VENTANAS INDIVIDUALES (PASOS 3 A 7 + PASO 8 SUPLENTE)
+        // =========================================================================
+        function construirCamposJugadorHTML(prefix, rolFijoObj, esTitular = true) {
+            const reqAttr = esTitular ? 'required' : '';
+            const starMark = esTitular ? '*' : '';
+
+            const opcionesSecundario = [
+                `<option value="" hidden selected>Seleccionar</option>`,
+                ...ROLES_SECUNDARIOS
+                    .filter(r => !rolFijoObj || r.value !== rolFijoObj.id)
+                    .map(r => `<option value="${r.value}">${r.label}</option>`)
+            ].join('');
+
+            const opcionesRango = [
+                `<option value="" hidden selected>Seleccionar</option>`,
+                ...RANGOS_SOLOQ_TORNEO_LAN.map(r => `<option value="${r.value}">${r.label}</option>`)
+            ].join('');
+
+            const bloqueRolPrimario = esTitular
+                ? `<input type="hidden" id="${prefix}_rolPrincipal" value="${rolFijoObj.id}">`
+                : `
+                    <div>
+                        <label class="label-lan">7. Rol Principal del Suplente</label>
+                        <select id="${prefix}_rolPrincipal" class="input-lan">
+                            <option value="" hidden selected>Seleccionar</option>
+                            ${ROLES_PRINCIPALES.map(r => `<option value="${r.id}">${r.nombreLargo}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+
+            const gridRolesClass = esTitular ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3';
+
+            return `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label-lan">1. Nombre Completo ${starMark}</label>
+                            <input type="text" id="${prefix}_nombre" ${reqAttr} class="input-lan" placeholder="Nombres y Apellidos reales">
+                        </div>
+                        <div>
+                            <label class="label-lan">2. CI / Documento de identidad ${starMark}</label>
+                            <input type="text" id="${prefix}_ci" ${reqAttr} class="input-lan" placeholder="Ej: 12345678" oninput="this.value = this.value.replace(/[^0-9a-zA-Z-]/g, '')">
+                        </div>
+                        <div>
+                            <label class="label-lan">3. Whapp (Celular) ${starMark}</label>
+                            <input type="tel" id="${prefix}_whapp" ${reqAttr} class="input-lan" placeholder="Ej: 77712345" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                        </div>
+                        <div>
+                            <label class="label-lan">4. Discord ${starMark}</label>
+                            <input type="text" id="${prefix}_discord" ${reqAttr} class="input-lan" placeholder="Ej: usuario_lol">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-3.5 rounded-2xl bg-black/70 border border-white/10">
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="label-lan !mb-0">5. Riot ID de Torneo (LAS) ${starMark}</label>
+                                <a id="${prefix}_opgg_torneo_link" href="#" target="_blank" rel="noopener" class="hidden text-[10px] font-black theme-text-accent hover:underline">
+                                    Ver OP.GG <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>
+                                </a>
+                            </div>
+                            <input type="text" id="${prefix}_riotTorneo" ${reqAttr} data-opgg-preview="${prefix}_opgg_torneo_link" class="input-lan riot-id-live" placeholder="Ej: Jugador#LAS">
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl bg-black/70 border border-white/10">
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="label-lan !mb-0">6. Riot ID de cuenta main (ajena a la del torneo)</label>
+                                <a id="${prefix}_opgg_main_link" href="#" target="_blank" rel="noopener" class="hidden text-[10px] font-black theme-text-accent hover:underline">
+                                    Ver OP.GG Main <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>
+                                </a>
+                            </div>
+                            <input type="text" id="${prefix}_riotMain" data-opgg-preview="${prefix}_opgg_main_link" class="input-lan riot-id-live" placeholder="Main#TAG (o deja vacío si es única)">
+                        </div>
+                    </div>
+
+                    <div class="grid ${gridRolesClass} gap-4">
+                        ${bloqueRolPrimario}
+                        <div>
+                            <label class="label-lan">${esTitular ? '7.' : '8.'} Rol Secundario (1 solo comodín/polivalente) ${starMark}</label>
+                            <select id="${prefix}_rolSecundario" ${reqAttr} class="input-lan">
+                                ${opcionesSecundario}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="label-lan">${esTitular ? '8.' : '9.'} Rango máximo (SoloQ) ${starMark}</label>
+                            <select id="${prefix}_rangoMax" ${reqAttr} class="input-lan rango-max-select">
+                                ${opcionesRango}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function inicializarVentanasJugadores() {
+            const titWindowsContainer = document.getElementById('lan-titulares-windows-container');
+            const supWindowContainer = document.getElementById('lan-suplente-window-container');
+
+            if (titWindowsContainer) {
+                titWindowsContainer.innerHTML = ROLES_PRINCIPALES.map((rol, idx) => {
+                    const stepNum = rol.stepNum;
+                    const nextLabel = idx < ROLES_PRINCIPALES.length - 1
+                        ? `Siguiente: Titular #${idx + 2} (${ROLES_PRINCIPALES[idx + 1].id})`
+                        : `Siguiente: Suplente y Envío`;
+                    const prefix = `TIT_${rol.id}`;
+
+                    return `
+                        <div id="lan-window-${stepNum}" class="lan-step-window floating-window-card rounded-3xl p-6 sm:p-8">
+                            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/10">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center shrink-0">
+                                        <img src="${rol.icon}" alt="${rol.id}" class="w-7 h-7 object-contain">
+                                    </div>
+                                    <div>
+                                        <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                                            Paso ${stepNum} de 8 • Rol Fijo: ${rol.id}
+                                        </span>
+                                        <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1">
+                                            Titular #${idx + 1} — ${rol.nombreLargo}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                <label class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black border border-white/15 hover:border-amber-400 cursor-pointer text-xs font-black text-amber-300 transition-all">
+                                    <input type="radio" name="lanCapitanRadio" value="${prefix}" ${idx === 0 ? 'checked' : ''} class="accent-amber-400 w-4 h-4">
+                                    <i class="fas fa-crown text-amber-400"></i> Capitán en Partida
+                                </label>
+                            </div>
+
+                            ${construirCamposJugadorHTML(prefix, rol, true)}
+
+                            <div class="mt-8 pt-5 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+                                <button type="button" onclick="irAVentanaPaso(${stepNum - 1})" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-300 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                                    <i class="fas fa-arrow-left mr-1.5"></i> Atrás
+                                </button>
+                                <button type="button" onclick="irAVentanaPaso(${stepNum + 1})" class="w-full sm:w-auto px-8 py-4 rounded-2xl theme-btn-primary font-black text-sm uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2">
+                                    ${nextLabel} <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (supWindowContainer) {
+                supWindowContainer.innerHTML = `
+                    <div id="lan-window-8" class="lan-step-window floating-window-card rounded-3xl p-6 sm:p-8">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/10">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center shrink-0">
+                                    <i class="fas fa-user-plus text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                                        Paso 8 de 8 • Suplente Único (Opcional)
+                                    </span>
+                                    <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1">
+                                        Suplente #1 (Máximo 1 Suplente)
+                                    </h3>
+                                    <p class="text-xs text-zinc-400">Si no registras suplente, deja estos campos vacíos y envía la inscripción.</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="limpiarCamposSuplenteUnico()" class="px-3 py-1.5 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-xs font-bold text-zinc-300 cursor-pointer">
+                                <i class="fas fa-eraser mr-1"></i> Limpiar
+                            </button>
+                        </div>
+
+                        ${construirCamposJugadorHTML('SUP_1', null, false)}
+
+                        <div class="mt-8 p-5 rounded-2xl bg-black border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-left">
+                                <h4 class="text-sm font-black uppercase text-white flex items-center gap-2">
+                                    <i class="fas fa-shield-check theme-text-accent"></i> Verificación Anti-Smurf Lista
+                                </h4>
+                                <p class="text-xs text-zinc-400 mt-0.5">
+                                    Tu roster se validará contra Scouting 1, 2, 3 y Liga LBL (Tope Esmeralda I) y recibirás tu código por WhatsApp.
+                                </p>
+                            </div>
+                            <button type="submit" id="btn-submit-torneo-lan" class="w-full sm:w-auto min-w-[260px] px-8 py-4 rounded-2xl theme-btn-primary font-black text-base uppercase tracking-wider cursor-pointer shrink-0">
+                                <i class="fas fa-paper-plane mr-2"></i> Enviar Inscripción
+                            </button>
+                        </div>
+
+                        <div class="mt-5 flex justify-start">
+                            <button type="button" onclick="irAVentanaPaso(7)" class="px-6 py-3 rounded-2xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-300 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                                <i class="fas fa-arrow-left mr-1.5"></i> Volver a SUPP
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.querySelectorAll('.riot-id-live').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    inp.classList.remove('error-field');
+                    const linkId = inp.getAttribute('data-opgg-preview');
+                    const linkEl = linkId ? document.getElementById(linkId) : null;
+                    const url = construirUrlOpgg(inp.value);
+                    if (linkEl) {
+                        if (url) {
+                            linkEl.href = url;
+                            linkEl.classList.remove('hidden');
+                        } else {
+                            linkEl.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.input-lan').forEach(el => {
+                el.addEventListener('input', () => el.classList.remove('error-field'));
+                el.addEventListener('change', () => el.classList.remove('error-field'));
+            });
+        }
+
+        window.limpiarCamposSuplenteUnico = function() {
+            ['nombre', 'ci', 'whapp', 'discord', 'riotTorneo', 'riotMain', 'rolPrincipal', 'rolSecundario', 'rangoMax'].forEach(k => {
+                const el = document.getElementById(`SUP_1_${k}`);
+                if (el) {
+                    el.value = '';
+                    el.classList.remove('error-field');
+                }
+            });
+            document.getElementById('SUP_1_opgg_torneo_link')?.classList.add('hidden');
+            document.getElementById('SUP_1_opgg_main_link')?.classList.add('hidden');
+        };
+
+        window.copiarRepATitular = function(rolId, targetStep) {
+            const nom = (document.getElementById('rep_nombre')?.value || '').trim();
+            const ci = (document.getElementById('rep_ci')?.value || '').trim();
+            const whapp = (document.getElementById('rep_whapp')?.value || '').trim();
+            const disc = (document.getElementById('rep_discord')?.value || '').trim();
+
+            if (!nom && !ci && !whapp) {
+                mostrarToastLan('⚠️ Completa primero los datos del Representante antes de copiarlos.');
+                return;
+            }
+            const prefix = `TIT_${rolId}`;
+            if (nom) document.getElementById(`${prefix}_nombre`).value = nom;
+            if (ci) document.getElementById(`${prefix}_ci`).value = ci;
+            if (whapp) document.getElementById(`${prefix}_whapp`).value = whapp;
+            if (disc) document.getElementById(`${prefix}_discord`).value = disc;
+
+            const radio = document.querySelector(`input[name="lanCapitanRadio"][value="${prefix}"]`);
+            if (radio) radio.checked = true;
+
+            mostrarToastLan(`✓ Datos del representante copiados a Titular ${rolId}.`, 'ok');
+            if (targetStep) window.irAVentanaPaso(targetStep);
+        };
+
+        function validarVentanaActual(step) {
+            if (step === 1) {
+                const sede = (document.getElementById('sedeDepartamento')?.value || '').trim();
+                if (!sede) {
+                    mostrarToastLan('⚠️ Selecciona primero una sede en el escenario.');
+                    return false;
+                }
+                const teamNameEl = document.getElementById('lanTeamName');
+                const teamTagEl = document.getElementById('lanTeamTag');
+                const teamLogoUrlEl = document.getElementById('lanTeamLogoUrl');
+
+                const name = (teamNameEl?.value || '').trim();
+                const tag = (teamTagEl?.value || '').trim();
+                const rawLogo = (teamLogoUrlEl?.value || '').trim();
+                const finalLogo = logoBase64Subido || (rawLogo.startsWith('http') ? rawLogo : '');
+
+                if (!name || name.length < 2) {
+                    teamNameEl?.classList.add('error-field');
+                    teamNameEl?.focus();
+                    mostrarToastLan('⚠️ Ingresa el Nombre del Equipo.');
+                    return false;
+                }
+                if (!tag || tag.length < 2) {
+                    teamTagEl?.classList.add('error-field');
+                    teamTagEl?.focus();
+                    mostrarToastLan('⚠️ Ingresa el TAG del Equipo (2 a 5 caracteres).');
+                    return false;
+                }
+                if (!finalLogo) {
+                    teamLogoUrlEl?.classList.add('error-field');
+                    teamLogoUrlEl?.focus();
+                    mostrarToastLan('⚠️ Pega un enlace válido del logo o sube un archivo.');
+                    return false;
+                }
+                return true;
+            }
+
+            if (step === 2) {
+                const reqRep = [
+                    { id: 'rep_nombre', label: 'Nombre del Representante' },
+                    { id: 'rep_ci', label: 'CI / Documento del Representante' },
+                    { id: 'rep_whapp', label: 'Whapp del Representante' },
+                    { id: 'rep_discord', label: 'Discord del Representante' }
+                ];
+                for (const r of reqRep) {
+                    const el = document.getElementById(r.id);
+                    if (!el || !el.value.trim()) {
+                        el?.classList.add('error-field');
+                        el?.focus();
+                        mostrarToastLan(`⚠️ Completa el campo "${r.label}".`);
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            if (step >= 3 && step <= 7) {
+                const rolObj = ROLES_PRINCIPALES[step - 3];
+                return validarCamposJugadorEnVentana(`TIT_${rolObj.id}`, `Titular #${step - 2} (${rolObj.id})`, true);
+            }
+
+            if (step === 8) {
+                return validarCamposJugadorEnVentana('SUP_1', 'Suplente #1', false);
+            }
+
+            return true;
+        }
+
+        function validarCamposJugadorEnVentana(prefix, labelSlot, esTitular) {
+            const nombre = (document.getElementById(`${prefix}_nombre`)?.value || '').trim();
+            const ci = (document.getElementById(`${prefix}_ci`)?.value || '').trim();
+            const whapp = (document.getElementById(`${prefix}_whapp`)?.value || '').trim();
+            const discord = (document.getElementById(`${prefix}_discord`)?.value || '').trim();
+            const riotTorneo = (document.getElementById(`${prefix}_riotTorneo`)?.value || '').trim();
+            const riotMain = (document.getElementById(`${prefix}_riotMain`)?.value || '').trim();
+            const rolPrincipal = (document.getElementById(`${prefix}_rolPrincipal`)?.value || '').trim();
+            const rolSecundario = (document.getElementById(`${prefix}_rolSecundario`)?.value || '').trim();
+            const rangoMax = (document.getElementById(`${prefix}_rangoMax`)?.value || '').trim();
+
+            const llenoAlgo = Boolean(nombre || ci || whapp || discord || riotTorneo || riotMain || (!esTitular && (rolPrincipal || rolSecundario || rangoMax)));
+            if (!esTitular && !llenoAlgo) return true;
+
+            const campos = [
+                { id: `${prefix}_nombre`, val: nombre, label: 'Nombre Completo' },
+                { id: `${prefix}_ci`, val: ci, label: 'CI / Documento de identidad' },
+                { id: `${prefix}_whapp`, val: whapp, label: 'Whapp (Celular)' },
+                { id: `${prefix}_discord`, val: discord, label: 'Discord' },
+                { id: `${prefix}_riotTorneo`, val: riotTorneo, label: 'Riot ID de Torneo' },
+                ...(!esTitular ? [{ id: `${prefix}_rolPrincipal`, val: rolPrincipal, label: 'Rol Principal del Suplente' }] : []),
+                { id: `${prefix}_rolSecundario`, val: rolSecundario, label: 'Rol Secundario' },
+                { id: `${prefix}_rangoMax`, val: rangoMax, label: 'Rango máximo (SoloQ)' }
+            ];
+
+            for (const c of campos) {
+                if (!c.val) {
+                    const el = document.getElementById(c.id);
+                    el?.classList.add('error-field');
+                    el?.focus();
+                    mostrarToastLan(`⚠️ En ${labelSlot}: debes completar o seleccionar "${c.label}".`);
+                    return false;
+                }
+            }
+
+            if (!riotTorneo.includes('#')) {
+                const el = document.getElementById(`${prefix}_riotTorneo`);
+                el?.classList.add('error-field');
+                el?.focus();
+                mostrarToastLan(`⚠️ En ${labelSlot}: el Riot ID de Torneo debe incluir su #TAG (ej: Jugador#LAS).`);
+                return false;
+            }
+
+            if (riotMain && !riotMain.includes('#')) {
+                const el = document.getElementById(`${prefix}_riotMain`);
+                el?.classList.add('error-field');
+                el?.focus();
+                mostrarToastLan(`⚠️ En ${labelSlot}: el Riot ID main debe incluir #TAG (o dejarse vacío).`);
+                return false;
+            }
+
+            if (evaluarRangoSoloQ(rangoMax).excedeEsmeralda1) {
+                mostrarToastLan(`⛔ ${labelSlot} supera el tope de Esmeralda 1.`);
+                return false;
+            }
+
+            return true;
+        }
+
+        window.irAVentanaPaso = function(targetStep) {
+            if (targetStep < 1 || targetStep > 8) return;
+            if (targetStep > currentWindowStep) {
+                for (let s = currentWindowStep; s < targetStep; s++) {
+                    if (!validarVentanaActual(s)) {
+                        activarVentanaDOM(s);
+                        return;
+                    }
+                }
+            }
+            activarVentanaDOM(targetStep);
+        };
+
+        function activarVentanaDOM(step) {
+            currentWindowStep = step;
+            document.querySelectorAll('.lan-step-window').forEach(w => w.classList.remove('active'));
+            document.getElementById(`lan-window-${step}`)?.classList.add('active');
+
+            const headerStepText = document.getElementById('header-step-text');
+            if (headerStepText) headerStepText.textContent = `Ventana ${step} de 8`;
+
+            for (let i = 1; i <= 8; i++) {
+                const pill = document.getElementById(`step-pill-${i}`);
+                if (!pill) continue;
+                pill.classList.remove('active', 'completed');
+                if (i === step) pill.classList.add('active');
+                else if (i < step) pill.classList.add('completed');
+            }
+            document.getElementById('floating-wizard-overlay')?.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Subida y compresión de logo
+        document.getElementById('lanTeamLogoFile')?.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const statusEl = document.getElementById('lan-logo-status');
+            try {
+                if (statusEl) statusEl.textContent = 'Optimizando logo a WebP...';
+                logoBase64Subido = await convertirImagenAWebpBase64(file, 220, 0.86);
+                const urlInp = document.getElementById('lanTeamLogoUrl');
+                if (urlInp) {
+                    urlInp.value = 'Logo cargado desde dispositivo (WebP optimizado)';
+                    urlInp.classList.remove('error-field');
+                }
+                if (statusEl) {
+                    statusEl.textContent = `✓ Logo "${file.name}" optimizado.`;
+                    statusEl.className = 'text-[10px] theme-text-accent font-bold mt-1';
+                }
+            } catch (_) {
+                mostrarToastLan('No se pudo procesar la imagen seleccionada.');
+            }
+        });
+
+        document.getElementById('lanTeamName')?.addEventListener('input', (e) => {
+            const cnt = document.getElementById('lan-teamName-count');
+            if (cnt) cnt.textContent = `${e.target.value.length}/35`;
+        });
+
+        function recolectarJugadorDeSlot(prefix, esTitular, capitanPrefix) {
+            const nombre = (document.getElementById(`${prefix}_nombre`)?.value || '').trim();
+            const ci = (document.getElementById(`${prefix}_ci`)?.value || '').trim();
+            const whapp = (document.getElementById(`${prefix}_whapp`)?.value || '').trim();
+            const discord = (document.getElementById(`${prefix}_discord`)?.value || '').trim();
+            const riotIdTorneo = (document.getElementById(`${prefix}_riotTorneo`)?.value || '').trim();
+            const riotIdMain = (document.getElementById(`${prefix}_riotMain`)?.value || '').trim();
+            const rolPrincipal = (document.getElementById(`${prefix}_rolPrincipal`)?.value || '').trim();
+            const rolSecundario = (document.getElementById(`${prefix}_rolSecundario`)?.value || '').trim();
+            const rangoMax = (document.getElementById(`${prefix}_rangoMax`)?.value || '').trim();
+
+            const llenoAlgunCampo = Boolean(nombre || ci || whapp || discord || riotIdTorneo || riotIdMain);
+            if (!esTitular && !llenoAlgunCampo) {
+                return { vacioOpcional: true, data: null };
+            }
+
+            return {
+                vacioOpcional: false,
+                prefix,
+                data: {
+                    nombre,
+                    ci,
+                    whapp,
+                    discord,
+                    riotIdTorneo,
+                    opggTorneo: construirUrlOpgg(riotIdTorneo),
+                    riotIdMain,
+                    opggMain: construirUrlOpgg(riotIdMain),
+                    rolPrincipal,
+                    rolSecundario,
+                    rangoMax,
+                    esCapitan: prefix === capitanPrefix
+                }
+            };
+        }
+
+        document.getElementById('form-torneo-lan').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            for (let s = 1; s <= 8; s++) {
+                if (!validarVentanaActual(s)) {
+                    activarVentanaDOM(s);
+                    return;
+                }
+            }
+
+            const sede = (document.getElementById('sedeDepartamento')?.value || '').trim();
+            const teamName = (document.getElementById('lanTeamName')?.value || '').trim();
+            const teamTag = (document.getElementById('lanTeamTag')?.value || '').trim().toUpperCase();
+            const rawLogoInput = (document.getElementById('lanTeamLogoUrl')?.value || '').trim();
+            const finalLogo = logoBase64Subido || (rawLogoInput.startsWith('http') ? rawLogoInput : '');
+
+            const capitanPrefix = document.querySelector('input[name="lanCapitanRadio"]:checked')?.value || 'TIT_TOP';
+            const titulares = [];
+            const suplentes = [];
+            const cisVistos = new Set();
+            const celularesVistos = new Set();
+            const riotsVistos = new Set();
+
+            const verificarDuplicadosInternos = (data, stepNum, labelSlot) => {
+                const ciNorm = extraerCiLimpio(data.ci);
+                const celNorm = normalizarCelular(data.whapp);
+                const riotNorm = normalizarRiotId(data.riotIdTorneo);
+
+                if (ciNorm && cisVistos.has(ciNorm)) {
+                    activarVentanaDOM(stepNum);
+                    mostrarToastLan(`⚠️ El C.I. "${data.ci}" está duplicado en ${labelSlot}.`);
+                    return false;
+                }
+                if (celNorm && celularesVistos.has(celNorm)) {
+                    activarVentanaDOM(stepNum);
+                    mostrarToastLan(`⚠️ El Whapp "${data.whapp}" está duplicado en ${labelSlot}.`);
+                    return false;
+                }
+                if (riotNorm && riotsVistos.has(riotNorm)) {
+                    activarVentanaDOM(stepNum);
+                    mostrarToastLan(`⚠️ El Riot ID "${data.riotIdTorneo}" está duplicado en ${labelSlot}.`);
+                    return false;
+                }
+                if (ciNorm) cisVistos.add(ciNorm);
+                if (celNorm) celularesVistos.add(celNorm);
+                if (riotNorm) riotsVistos.add(riotNorm);
+                return true;
+            };
+
+            for (let i = 0; i < ROLES_PRINCIPALES.length; i++) {
+                const rol = ROLES_PRINCIPALES[i];
+                const res = recolectarJugadorDeSlot(`TIT_${rol.id}`, true, capitanPrefix);
+                if (!verificarDuplicadosInternos(res.data, rol.stepNum, `Titular ${rol.id}`)) return;
+                titulares.push(res.data);
+            }
+
+            const supRes = recolectarJugadorDeSlot('SUP_1', false, capitanPrefix);
+            if (!supRes.vacioOpcional) {
+                if (!verificarDuplicadosInternos(supRes.data, 8, 'Suplente #1')) return;
+                suplentes.push(supRes.data);
+            }
+
+            const repData = {
+                nombre: (document.getElementById('rep_nombre')?.value || '').trim(),
+                ci: (document.getElementById('rep_ci')?.value || '').trim(),
+                whapp: (document.getElementById('rep_whapp')?.value || '').trim(),
+                discord: (document.getElementById('rep_discord')?.value || '').trim(),
+                riotIdTorneo: (titulares.find(t => t.esCapitan) || titulares[0])?.riotIdTorneo || ''
+            };
+
+            const btnSubmit = document.getElementById('btn-submit-torneo-lan');
+            const prevHtml = btnSubmit.innerHTML;
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
+
+            const prefixCodigo = sede === 'Cochabamba' ? 'SMOK' : 'AMQ';
+            const codigoSeguimiento = `${prefixCodigo}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const nowIso = new Date().toISOString();
+            const sedeSponsor = sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo';
+
+            const payloadInscripcion = {
+                torneoId: TORNEO_LAN_ID,
+                torneoNombre: 'Torneo Presencial: Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)',
+                codigoSeguimiento,
+                sedeDepartamento: sede,
+                sedeSponsor,
+                estado: 'Pendiente',
+                timestamp: nowIso,
+                updatedAt: nowIso,
+                equipo: { nombre: teamName, tag: teamTag, logo: finalLogo, sedeDepartamento: sede },
+                capitanContacto: repData,
+                titulares,
+                suplentes
+            };
+
+            try {
+                await addDoc(collection(db, TORNEO_LAN_COLLECTION), payloadInscripcion);
+
+                try {
+                    const pubRef = doc(db, 'torneos_activos', TORNEO_LAN_PUBLIC_DOC);
+                    const pubSnap = await getDoc(pubRef);
+                    const prevData = pubSnap.exists() ? pubSnap.data() : {};
+                    const prevResumen = Array.isArray(prevData.estadosResumen) ? prevData.estadosResumen : [];
+                    const nuevoResumen = [
+                        {
+                            codigoSeguimiento,
+                            nombreEquipo: teamName,
+                            tag: teamTag,
+                            sedeDepartamento: sede,
+                            estado: 'Pendiente',
+                            notaObservacion: '',
+                            timestamp: nowIso
+                        },
+                        ...prevResumen
+                    ].slice(0, 200);
+                    await setDoc(pubRef, { ...prevData, estadosResumen: nuevoResumen, updatedAt: nowIso }, { merge: true });
+                } catch (_) {}
+
+                try { localStorage.setItem('lbl_torneo_lan_ultimo_codigo', codigoSeguimiento); } catch (_) {}
+
+                const badgeSedeEl = document.getElementById('modal-exito-sede-badge');
+                if (badgeSedeEl) {
+                    badgeSedeEl.textContent = sede === 'Cochabamba' ? 'SEDE COCHABAMBA • SMOK LAN CENTER' : 'SEDE LA PAZ • AQUÍ ME QUEDO';
+                }
+                document.getElementById('modal-exito-equipo').textContent = `${teamName} [${teamTag}]`;
+                document.getElementById('modal-exito-codigo').textContent = codigoSeguimiento;
+
+                const adminPhone = '59163842110';
+                const textoWa =
+                    `Hola Staff LBL, confirmo la inscripción al *Torneo Presencial Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)*:\n\n` +
+                    `• *Código:* ${codigoSeguimiento}\n` +
+                    `• *Departamento / Sede:* ${sede} (${sedeSponsor})\n` +
+                    `• *Equipo:* ${teamName} [${teamTag}]\n` +
+                    `• *Representante:* ${repData.nombre} (Whapp: ${repData.whapp})\n` +
+                    `• *Tope verificado:* <= Esmeralda 1`;
+                document.getElementById('btn-whatsapp-confirmacion-lan').href =
+                    `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(textoWa)}`;
+
+                document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
+                const modalExito = document.getElementById('modal-exito-lan');
+                modalExito.classList.remove('hidden');
+                modalExito.classList.add('flex');
+
+                document.getElementById('form-torneo-lan').reset();
+                logoBase64Subido = '';
+                inicializarVentanasJugadores();
+                activarVentanaDOM(1);
+            } catch (err) {
+                console.error('Error guardando inscripción LAN:', err);
+                mostrarToastLan('Error al enviar la inscripción. Verifica tu conexión e inténtalo de nuevo.');
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = prevHtml;
+            }
+        });
+
+        window.cerrarModalExitoYVerEstado = function() {
+            const modalExito = document.getElementById('modal-exito-lan');
+            modalExito.classList.add('hidden');
+            modalExito.classList.remove('flex');
+            const ultimoCod = localStorage.getItem('lbl_torneo_lan_ultimo_codigo') || '';
+            const inp = document.getElementById('input-codigo-seguimiento');
+            if (inp && ultimoCod) inp.value = ultimoCod;
+            window.abrirVentanaEstado();
+            if (ultimoCod) window.consultarEstadoInscripcion();
+        };
+
+        // =========================================================================
+        // VITRINA PÚBLICA Y CONSULTA DE ESTADO EN VENTANAS FLOTANTES
+        // =========================================================================
+        function actualizarMarcadorCupos() {
+            const aceptadosLp = equiposConfirmadosPublicos.filter(e => e.sedeDepartamento === 'La Paz').length;
+            const aceptadosCb = equiposConfirmadosPublicos.filter(e => e.sedeDepartamento === 'Cochabamba').length;
+
+            const pendientesLp = resumenEstadosPublicos.filter(
+                r => r.sedeDepartamento === 'La Paz' && String(r.estado || '').toLowerCase() === 'pendiente'
+            ).length;
+            const pendientesCb = resumenEstadosPublicos.filter(
+                r => r.sedeDepartamento === 'Cochabamba' && String(r.estado || '').toLowerCase() === 'pendiente'
+            ).length;
+
+            const setTxt = (id, v) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = v;
+            };
+            setTxt('count-aceptados-lapaz', aceptadosLp);
+            setTxt('count-aceptados-cocha', aceptadosCb);
+            setTxt('count-pendientes-lapaz', `${pendientesLp} en revisión`);
+            setTxt('count-pendientes-cocha', `${pendientesCb} en revisión`);
+            setTxt('badge-total-confirmados', equiposConfirmadosPublicos.length);
+            setTxt('stage-total-confirmados', equiposConfirmadosPublicos.length);
+            setTxt('count-filter-todos', equiposConfirmadosPublicos.length);
+            setTxt('count-filter-lapaz', aceptadosLp);
+            setTxt('count-filter-cocha', aceptadosCb);
+        }
+
+        window.filtrarEquiposConfirmados = function(sede) {
+            filtroSedeConfirmados = sede;
+            renderizarEquiposConfirmados();
+        };
+
+        document.getElementById('input-buscar-confirmados')?.addEventListener('input', renderizarEquiposConfirmados);
+
+        function renderizarEquiposConfirmados() {
+            const grid = document.getElementById('grid-equipos-confirmados');
+            if (!grid) return;
+
+            const q = (document.getElementById('input-buscar-confirmados')?.value || '').trim().toLowerCase();
+            const filtrados = equiposConfirmadosPublicos.filter(eq => {
+                if (filtroSedeConfirmados !== 'todos' && eq.sedeDepartamento !== filtroSedeConfirmados) return false;
+                if (!q) return true;
+                const jugs = [...(eq.titulares || []), ...(eq.suplentes || [])]
+                    .map(j => `${j.riotIdTorneo} ${j.riotIdMain} ${j.rolPrincipal}`)
+                    .join(' ')
+                    .toLowerCase();
+                return eq.equipo?.nombre?.toLowerCase().includes(q) || eq.equipo?.tag?.toLowerCase().includes(q) || jugs.includes(q);
+            });
+
+            if (filtrados.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full rounded-2xl p-10 text-center bg-black/70 border border-white/10">
+                        <i class="fas fa-shield-halved text-3xl text-blue-500/50 mb-2 block"></i>
+                        <h4 class="text-sm font-black text-white uppercase">Aún no hay equipos confirmados en este filtro</h4>
+                        <p class="text-xs text-zinc-400 mt-1">Los equipos aparecerán aquí cuando el Staff valide su historial Anti-Smurf.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtrados.map((eq, idx) => {
+                const esCocha = eq.sedeDepartamento === 'Cochabamba';
+                const borderCol = esCocha ? 'border-emerald-500/45 hover:border-emerald-400' : 'border-rose-500/45 hover:border-rose-400';
+                const badgeClass = esCocha ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+                const sedeLabel = esCocha ? '🟢 Cochabamba • SMOK' : '🔴 La Paz • AMQ';
+
+                const titularesHtml = (eq.titulares || []).slice(0, 5).map(t => `
+                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-zinc-950 border border-white/10 text-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-black text-white shrink-0">${t.rolPrincipal}</span>
+                            <span class="font-bold text-white truncate">${t.riotIdTorneo}</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-blue-300 shrink-0 ml-2">${t.rangoMax}</span>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="rounded-2xl p-4 bg-black/80 border ${borderCol} transition-all flex flex-col justify-between shadow-xl">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${badgeClass}">${sedeLabel}</span>
+                                <span class="text-emerald-400 text-[10px] font-black uppercase"><i class="fas fa-check-circle mr-1"></i>Verificado</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <img src="${eq.equipo?.logo || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" class="w-12 h-12 rounded-xl object-contain bg-zinc-950 border border-white/10 p-1 shrink-0">
+                                <div class="min-w-0">
+                                    <span class="text-[11px] font-black text-blue-400 uppercase">[${eq.equipo?.tag || 'LBL'}]</span>
+                                    <h4 class="text-base font-black text-white uppercase truncate">${eq.equipo?.nombre || 'Equipo'}</h4>
+                                </div>
+                            </div>
+                            <div class="space-y-1 mb-3">${titularesHtml}</div>
+                        </div>
+                        <button type="button" onclick="abrirModalRosterPublico(${idx})" class="w-full py-2 px-3 rounded-xl bg-zinc-900 hover:bg-blue-950/60 border border-white/10 text-xs font-black uppercase text-blue-300 cursor-pointer transition-all">
+                            Ver Roster & OP.GG
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.abrirModalRosterPublico = function(idx) {
+            const eq = equiposConfirmadosPublicos[idx];
+            if (!eq) return;
+            const body = document.getElementById('modal-roster-publico-body');
+            const esCocha = eq.sedeDepartamento === 'Cochabamba';
+            const badgeClass = esCocha ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+
+            const renderFilaJug = (j) => `
+                <div class="p-3.5 rounded-2xl bg-black border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase">${j.rolPrincipal}</span>
+                            <span class="px-2 py-0.5 rounded bg-zinc-900 text-zinc-300 text-[10px] font-bold">2do Rol: ${j.rolSecundario || 'Polivalente'}</span>
+                            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 text-[10px] font-black">${j.rangoMax}</span>
+                            ${j.esCapitan ? '<span class="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-300 text-[10px] font-black"><i class="fas fa-crown mr-1"></i>Capitán</span>' : ''}
+                        </div>
+                        <div class="text-base font-black text-white mt-1.5 flex items-center gap-2 flex-wrap">
+                            <span>${j.riotIdTorneo}</span>
+                            ${j.riotIdMain ? `<span class="text-xs font-bold text-purple-300">(Main: ${j.riotIdMain})</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        ${j.opggTorneo ? `<a href="${j.opggTorneo}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-blue-600/20 border border-blue-500/40 text-blue-300 text-xs font-black uppercase">OP.GG Torneo</a>` : ''}
+                        ${j.opggMain ? `<a href="${j.opggMain}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300 text-xs font-black uppercase">OP.GG Main</a>` : ''}
+                    </div>
+                </div>
+            `;
+
+            body.innerHTML = `
+                <div class="flex items-center gap-4 pb-4 border-b border-white/10">
+                    <img src="${eq.equipo?.logo || '/assets/logo.webp'}" onerror="this.src='/assets/logo.webp'" class="w-14 h-14 rounded-2xl object-contain bg-black border border-white/10 p-1">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${badgeClass}">
+                            ${esCocha ? 'Sede Cochabamba • SMOK LAN CENTER' : 'Sede La Paz • Aquí Me Quedo'}
+                        </span>
+                        <h3 class="text-xl font-black text-white uppercase mt-1">[${eq.equipo?.tag}] ${eq.equipo?.nombre}</h3>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-2.5">
+                    <h4 class="text-xs font-black uppercase tracking-wider text-blue-400">Roster Titular Verificado</h4>
+                    ${(eq.titulares || []).map(t => renderFilaJug(t)).join('')}
+                    ${(eq.suplentes && eq.suplentes.length > 0) ? `
+                        <h4 class="text-xs font-black uppercase tracking-wider text-teal-400 pt-3">Suplente</h4>
+                        ${eq.suplentes.map(s => renderFilaJug(s)).join('')}
+                    ` : ''}
+                </div>
+            `;
+            const modal = document.getElementById('modal-roster-publico');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.cerrarModalRosterPublico = function() {
+            const modal = document.getElementById('modal-roster-publico');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.consultarEstadoInscripcion = function() {
+            const q = (document.getElementById('input-codigo-seguimiento')?.value || '').trim().toLowerCase();
+            const cont = document.getElementById('resultado-estado-inscripcion');
+            if (!q) {
+                mostrarToastLan('Ingresa tu código de seguimiento o el nombre/TAG de tu equipo.');
+                return;
+            }
+
+            const encontradoConfirmado = equiposConfirmadosPublicos.find(
+                e =>
+                    (e.codigoSeguimiento && e.codigoSeguimiento.toLowerCase() === q) ||
+                    e.equipo?.nombre?.toLowerCase() === q ||
+                    e.equipo?.tag?.toLowerCase() === q
+            );
+            const encontradoResumen = resumenEstadosPublicos.find(
+                r =>
+                    (r.codigoSeguimiento && r.codigoSeguimiento.toLowerCase() === q) ||
+                    r.nombreEquipo?.toLowerCase() === q ||
+                    r.tag?.toLowerCase() === q
+            );
+
+            if (encontradoConfirmado) {
+                cont.innerHTML = `
+                    <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-1.5">
+                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase">✅ ACEPTADO Y PUBLICADO</span>
+                        <h4 class="text-lg font-black text-white uppercase">[${encontradoConfirmado.equipo?.tag}] ${encontradoConfirmado.equipo?.nombre}</h4>
+                        <p class="text-xs text-zinc-300">Sede: <strong>${encontradoConfirmado.sedeDepartamento} (${encontradoConfirmado.sedeSponsor})</strong></p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (encontradoResumen) {
+                const est = String(encontradoResumen.estado || 'Pendiente');
+                const esObs = est.toLowerCase() === 'observado';
+                const esRech = est.toLowerCase() === 'rechazado';
+                const boxClass = esRech ? 'bg-rose-950/30 border-rose-500/40' : (esObs ? 'bg-amber-950/30 border-amber-500/40' : 'bg-blue-950/30 border-blue-500/40');
+                const badgeText = esRech ? '❌ RECHAZADO' : (esObs ? '⚠️ OBSERVADO POR STAFF' : '⏳ EN REVISIÓN ANTI-SMURF');
+
+                cont.innerHTML = `
+                    <div class="p-4 rounded-2xl border ${boxClass} space-y-2">
+                        <span class="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-black uppercase">${badgeText}</span>
+                        <h4 class="text-lg font-black text-white uppercase">[${encontradoResumen.tag}] ${encontradoResumen.nombreEquipo}</h4>
+                        <p class="text-xs text-zinc-300">Código: <strong class="font-mono text-amber-300">${encontradoResumen.codigoSeguimiento}</strong> • Sede: <strong>${encontradoResumen.sedeDepartamento}</strong></p>
+                        ${encontradoResumen.notaObservacion ? `<p class="text-xs text-amber-300 bg-black p-3 rounded-xl border border-amber-500/30"><strong>Nota:</strong> ${encontradoResumen.notaObservacion}</p>` : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            cont.innerHTML = `
+                <div class="p-4 rounded-2xl bg-black border border-white/10 text-center text-xs text-zinc-300 font-bold">
+                    No se encontró ninguna inscripción con "${q.toUpperCase()}".
+                </div>
+            `;
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modalRoster = document.getElementById('modal-roster-publico');
+                if (modalRoster && !modalRoster.classList.contains('hidden')) {
+                    window.cerrarModalRosterPublico();
+                    return;
+                }
+                if (document.body.getAttribute('data-stage-blur') === 'on') {
+                    window.volverASeleccionarSede();
+                }
+            }
+        });
+
+        function iniciarSincronizacionPublica() {
+            try {
+                onSnapshot(doc(db, 'torneos_activos', TORNEO_LAN_PUBLIC_DOC), (snap) => {
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        if (Array.isArray(data.equiposAceptados)) equiposConfirmadosPublicos = data.equiposAceptados;
+                        if (Array.isArray(data.estadosResumen)) resumenEstadosPublicos = data.estadosResumen;
+                        actualizarMarcadorCupos();
+                        renderizarEquiposConfirmados();
+                    }
+                }, () => {});
+            } catch (_) {}
+
+            try {
+                const qAceptados = query(collection(db, TORNEO_LAN_COLLECTION), where('estado', '==', 'Aceptado'));
+                onSnapshot(qAceptados, (snap) => {
+                    const lista = [];
+                    snap.forEach(d => {
+                        const raw = { id: d.id, ...d.data() };
+                        if (!raw.torneoId || raw.torneoId === TORNEO_LAN_ID) {
+                            const clean = sanitizarEquipoTorneoLanPublico(raw);
+                            if (clean) lista.push(clean);
+                        }
+                    });
+                    if (lista.length > 0 || equiposConfirmadosPublicos.length === 0) {
+                        equiposConfirmadosPublicos = lista;
+                        actualizarMarcadorCupos();
+                        renderizarEquiposConfirmados();
+                    }
+                }, () => {});
+            } catch (_) {}
+        }
+
+        inicializarVentanasJugadores();
+        iniciarSincronizacionPublica();
+    </script>
+</body>
+</html>
