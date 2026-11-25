@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#e11d48">
 
-    <link rel="stylesheet" href="/dist/output.css?v=293">
+    <link rel="stylesheet" href="/dist/output.css?v=294">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -148,6 +148,10 @@
                 </a>
 
                 <div class="flex sm:hidden items-center gap-1.5 shrink-0">
+                    <button onclick="abrirModalAlertasPresencial()" id="btn-header-alertas-mobile" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 font-black text-[11px] uppercase flex items-center gap-1 cursor-pointer">
+                        <i class="fas fa-shield-virus"></i>
+                        <span id="badge-header-alertas-mobile" class="font-mono text-[10px]">0</span>
+                    </button>
                     <button onclick="abrirModalRastreator()" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] uppercase flex items-center gap-1 cursor-pointer">
                         <i class="fas fa-user-secret"></i>
                     </button>
@@ -161,6 +165,11 @@
             </div>
 
             <div class="flex gap-1.5 sm:gap-2 items-center flex-wrap min-w-0">
+                <button onclick="abrirModalAlertasPresencial()" id="btn-header-alertas-presencial" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0" title="Alertas automáticas Anti-Smurf, Elo > Esmeralda 1, Liga LBL y Multiequipo">
+                    <i class="fas fa-shield-virus text-rose-400"></i> <span>Alertas Anti-Smurf</span>
+                    <span id="badge-header-alertas-count" class="px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black font-mono ml-0.5">0</span>
+                </button>
+
                 <button onclick="abrirModalRastreator()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0">
                     <i class="fas fa-user-secret text-amber-400"></i> <span>Rastreator Forense</span>
                     <span id="badge-header-indexados" class="px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black font-mono">0</span>
@@ -257,11 +266,15 @@
                     <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Observados</p>
                     <p class="text-xl sm:text-2xl font-black text-orange-400" id="stat-observados">0</p>
                 </div>
-                <div onclick="filtrarRapidoPresencial('todos','todos','critica')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:bg-red-950/20 transition-all select-none">
-                    <p class="text-[10px] text-red-300 font-bold uppercase mb-1">Alerta Smurf</p>
+                <div onclick="abrirModalAlertasPresencial()" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:bg-red-950/20 transition-all select-none">
+                    <p class="text-[10px] text-red-300 font-bold uppercase mb-1">Alertas / Historial</p>
                     <p class="text-xl sm:text-2xl font-black text-red-400" id="stat-criticas">0</p>
+                    <p class="text-[10px] text-gray-400" id="stat-historial-sub">0 con historial</p>
                 </div>
             </div>
+
+            <!-- BANNER AUTOMÁTICO DE ALERTAS DIRECTAS ANTI-SMURF (EN VIVO) -->
+            <div id="banner-alertas-directas-presencial" class="mb-4 sm:mb-5"></div>
 
             <!-- PANEL PRINCIPAL CON TARJETAS Y FILTROS -->
             <div class="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
@@ -286,14 +299,15 @@
                             <option value="todos">Todos los Diagnósticos</option>
                             <option value="critica">Alerta Roja (Smurf/Elo)</option>
                             <option value="observacion">Con Observación</option>
-                            <option value="limpio">Limpios</option>
+                            <option value="historial">Con Historial Prev. (Bases LBL)</option>
+                            <option value="limpio">Sin Historial / Limpios</option>
                         </select>
                     </div>
 
                     <div class="flex items-center gap-2 sm:gap-3 w-full xl:w-auto">
                         <div class="relative w-full xl:w-72">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                            <input type="search" id="searchInput" name="presencial_filtro_q" autocomplete="off" readonly onpointerdown="this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')" autocorrect="off" spellcheck="false" data-lpignore="true" oninput="aplicarFiltros()" placeholder="Buscar equipo, código, CI, Whapp, Riot ID..." class="cursor-text bg-[#0b121e] hover:bg-[#0f1726] focus:bg-[#111c2e] border border-gray-800 text-white pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:border-rose-500 transition-all text-xs placeholder-gray-500 w-full">
+                            <input type="search" id="searchInput" name="presencial_filtro_q" autocomplete="off" readonly onpointerdown="this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')" autocorrect="off" spellcheck="false" data-lpignore="true" oninput="aplicarFiltros()" placeholder="Buscar equipo, TAG, CI, Whapp, Riot ID..." class="cursor-text bg-[#0b121e] hover:bg-[#0f1726] focus:bg-[#111c2e] border border-gray-800 text-white pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:border-rose-500 transition-all text-xs placeholder-gray-500 w-full">
                             <button id="btnClearSearch" onclick="limpiarBusqueda()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs cursor-pointer p-0.5">
                                 <i class="fas fa-times-circle"></i>
                             </button>
@@ -344,7 +358,7 @@
                             <span id="m-sede-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0">SEDE</span>
                             <span id="m-estado-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0">Pendiente</span>
                         </div>
-                        <p class="text-[10px] sm:text-xs text-gray-400 mt-0.5 font-mono truncate" id="m-subtitulo">Código: --</p>
+                        <p class="text-[10px] sm:text-xs text-gray-400 mt-0.5 font-mono truncate" id="m-subtitulo">Torneo Presencial • Región LAS</p>
                     </div>
                 </div>
 
@@ -388,7 +402,7 @@
                                 <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest flex items-center gap-2">
                                     <i class="fas fa-id-card"></i> Identidad del Equipo
                                 </h3>
-                                <span id="m-d-codigo" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-xs font-black">AMQ-0000</span>
+                                <span class="px-2.5 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30 font-mono text-[10px] font-black uppercase">Región LAS</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
@@ -471,9 +485,29 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: ROSTER & AUDITORÍA FORENSE ANTI-SMURF -->
-                <div id="mtab-roster" class="hidden space-y-4">
-                    <div id="m-roster-forense-body" class="space-y-4"></div>
+                <!-- TAB 3: ROSTER OFICIAL (ESTILO SCOUTING 2 COLUMNAS + AUDITORÍA AUTOMÁTICA) -->
+                <div id="mtab-roster" class="hidden space-y-6">
+                    <!-- ALINEACIÓN TITULAR (5 TITULARES) -->
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-4 sm:p-5 rounded-2xl">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-4">
+                            <h3 class="text-xs sm:text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-users text-blue-500"></i> Alineación Titular Oficial (5 Jugadores)
+                            </h3>
+                            <span id="badge-titulares-count" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">5 Titulares</span>
+                        </div>
+                        <div id="m-lista-titulares" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <!-- SUPLENTES REGISTRADOS -->
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-4 sm:p-5 rounded-2xl">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-4">
+                            <h3 class="text-xs sm:text-sm font-black text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-user-plus text-purple-400"></i> Jugadores Suplentes Registrados
+                            </h3>
+                            <span id="badge-suplentes-count" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">Banca</span>
+                        </div>
+                        <div id="m-lista-suplentes" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
                 </div>
 
                 <!-- TAB 4: DICTAMEN & ELIMINAR (D de CRUD) -->
@@ -485,6 +519,9 @@
                                 <p class="text-[11px] text-gray-400">Los equipos aceptados se publican automáticamente en /torneopresencial (16 cupos globales).</p>
                             </div>
                         </div>
+
+                        <!-- MOTOR DE AUDITORÍA AUTOMÁTICA ANTI-SMURF & DATOS -->
+                        <div id="m-v-auditoria-box" class="space-y-2"></div>
 
                         <div>
                             <label class="block text-xs font-black uppercase text-gray-400 mb-2">Estado Oficial:</label>
@@ -510,7 +547,7 @@
 
                         <div class="space-y-2">
                             <div class="flex items-center justify-between flex-wrap gap-2">
-                                <label class="block text-xs font-black uppercase text-gray-400">Nota / Motivo visible al consultar:</label>
+                                <label class="block text-xs font-black uppercase text-gray-400">Nota / Observación de Auditoría Staff:</label>
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <button type="button" onclick="insertarNotaDictamen('🚨 Cuenta supera tope Esmeralda I en bases LBL')" class="px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-rose-300 text-[10px] font-bold border border-gray-700 cursor-pointer">+ Tope Elo</button>
                                     <button type="button" onclick="insertarNotaDictamen('⚠️ Jugador vinculado a otra cuenta / Revisar Main')" class="px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-amber-300 text-[10px] font-bold border border-gray-700 cursor-pointer">+ Revisar Main</button>
@@ -610,6 +647,104 @@
                         <div id="e-jugadores-container" class="space-y-3"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL AUTOMÁTICO DE ALERTAS ANTI-SMURF & IRREGULARIDADES       -->
+    <!-- ============================================================== -->
+    <div id="modal-alertas-presencial" onmousedown="this._mdTarget=event.target" onclick="if(event.target===this&&this._mdTarget===this) cerrarModalAlertasPresencial()" class="fixed inset-0 z-[65] hidden bg-black/85 backdrop-blur-md p-2 sm:p-6 flex items-center justify-center">
+        <div class="bg-[#050505] border border-gray-800 rounded-2xl sm:rounded-3xl w-full max-w-5xl max-h-[95dvh] sm:max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] shrink-0 gap-3">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400 text-xl shrink-0">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-sm sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2 flex-wrap">
+                            <span>Control de Integridad & Alertas Anti-Smurf</span>
+                            <span id="badge-modal-alertas-total" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold shrink-0">0</span>
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Detección automática en vivo contra Scouting 1, 2, 3, Open Qualifier, Liga LBL (T1/T2) y multiequipo Presencial</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalAlertasPresencial()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer shrink-0">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#070b12] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 shrink-0 text-xs">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] uppercase font-black text-gray-500 mr-1">Filtrar:</span>
+                    <button type="button" onclick="cambiarFiltroAlertasPresencial('todos')" id="btn-alerta-filtro-todos" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-rose-500/20 text-rose-300 border border-rose-500/40 cursor-pointer whitespace-nowrap">
+                        Todas (<span id="count-alerta-todos">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroAlertasPresencial('critica')" id="btn-alerta-filtro-critica" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer whitespace-nowrap">
+                        🔴 Críticas / Elo / Liga T1 (<span id="count-alerta-critica">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroAlertasPresencial('observacion')" id="btn-alerta-filtro-obs" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer whitespace-nowrap">
+                        ⚠️ Smurf / Multicuenta / T2 (<span id="count-alerta-obs">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroAlertasPresencial('historial')" id="btn-alerta-filtro-hist" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer whitespace-nowrap">
+                        📋 Con Historial Prev. (<span id="count-alerta-hist">0</span>)
+                    </button>
+                    <button type="button" onclick="cambiarFiltroAlertasPresencial('multiequipo')" id="btn-alerta-filtro-multi" class="px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer whitespace-nowrap">
+                        🔁 Multiequipo (<span id="count-alerta-multi">0</span>)
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 w-full lg:w-auto justify-end shrink-0">
+                    <button type="button" onclick="recargarDatosPresencialYForense(true)" class="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-300 hover:text-white font-bold text-xs uppercase flex items-center gap-1.5 transition-all border border-gray-700/60 cursor-pointer whitespace-nowrap shrink-0">
+                        <i class="fas fa-sync-alt"></i> Re-auditar
+                    </button>
+                    <button type="button" onclick="copiarReporteCompletoAlertasPresencial()" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                        <i class="fas fa-copy"></i> Copiar Reporte Staff
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#050505]">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-rose-900/40 bg-gradient-to-b from-rose-950/20 to-transparent">
+                        <span class="text-[9px] sm:text-[10px] text-rose-400 font-bold uppercase tracking-widest block mb-1">Alertas Totales</span>
+                        <p id="kpi-alerta-total" class="text-xl sm:text-2xl font-black text-rose-400">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Motor Automático</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-red-400 font-bold uppercase tracking-widest block mb-1">🔴 Críticas / Bloqueo</span>
+                        <p id="kpi-alerta-criticas" class="text-xl sm:text-2xl font-black text-red-400">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Elo &gt; E1 / Liga T1 / Ban</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-amber-400 font-bold uppercase tracking-widest block mb-1">⚠️ Smurf / Revisión</span>
+                        <p id="kpi-alerta-obs" class="text-xl sm:text-2xl font-black text-amber-300">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">Multicuentas / Liga T2</span>
+                    </div>
+                    <div class="bg-[#0a0a0a] p-3.5 sm:p-4 rounded-2xl border border-gray-800">
+                        <span class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest block mb-1">Equipos Afectados</span>
+                        <p id="kpi-alerta-equipos" class="text-xl sm:text-2xl font-black text-white">0</p>
+                        <span class="text-[10px] text-gray-500 mt-0.5 block">En Torneo Presencial</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-400 tracking-wider flex items-center gap-1.5">
+                            <i class="fas fa-list-ul text-rose-400"></i> Desglose de Alertas Detectadas
+                        </h4>
+                        <span id="alerta-filtro-info" class="text-[10px] text-gray-500 font-mono">Mostrando todas</span>
+                    </div>
+                    <div id="alertas-presencial-lista" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0a0a0a] flex flex-col sm:flex-row justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-500 text-center sm:text-left">
+                    <i class="fas fa-info-circle text-rose-400 mr-1"></i> Equipos con alertas críticas deben revisarse antes de pasar a <strong class="text-emerald-400">"Aceptado"</strong>.
+                </span>
+                <button type="button" onclick="cerrarModalAlertasPresencial()" class="px-5 py-2 rounded-xl border border-gray-800 text-gray-400 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -742,7 +877,7 @@
 
     <script type="module">
         import { db, auth } from "/firebase-config.js";
-        import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getStaffNick } from "/staff-config.js";
         import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
@@ -755,8 +890,10 @@
             cargarIndiceHistoricoGlobal,
             auditarEquipoTorneoLan,
             buscarEnPadronForenseGlobal,
-            sanitizarEquipoTorneoLanPublico
-        } from "/anti-smurf-core.js?v=293";
+            sanitizarEquipoTorneoLanPublico,
+            extraerCiLimpio,
+            normalizarRiotId
+        } from "/anti-smurf-core.js?v=295";
 
         const ROLES_POSICIONES = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
         const ROLE_ICONS = {
@@ -774,6 +911,16 @@
         let inscripcionesPresencial = [];
         let indiceForenseGlobal = null;
         let auditoriasPorEquipoId = new Map();
+        let alertasGlobalesPresencial = {
+            alertas: [],
+            total: 0,
+            criticas: 0,
+            observaciones: 0,
+            historiales: 0,
+            multiequipo: 0,
+            equiposAfectados: new Set()
+        };
+        let filtroAlertasPresencial = 'todos';
         let equipoSeleccionadoId = null;
         let unsubscribePresencial = null;
         let logoCreateTemp = '';
@@ -787,9 +934,21 @@
                 .replace(/'/g, '&#39;');
         }
 
-        window.copiarTexto = (txt, label) => {
+        window.copiarTexto = (txt, label = 'Texto') => {
             if (!txt || txt === '--') return;
-            navigator.clipboard?.writeText(txt).catch(() => {});
+            navigator.clipboard?.writeText(txt).then(() => {
+                let toast = document.getElementById('presencial-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'presencial-toast';
+                    toast.className = 'fixed bottom-5 right-5 z-[100] px-4 py-2.5 rounded-xl bg-black/95 border border-emerald-500/50 text-emerald-300 text-xs font-black shadow-2xl pointer-events-none transition-opacity';
+                    document.body.appendChild(toast);
+                }
+                toast.innerHTML = `<i class="fas fa-check-circle mr-1.5"></i> ${escapeHTML(label)} copiado`;
+                toast.classList.remove('hidden', 'opacity-0');
+                clearTimeout(window._presencialToastTimer);
+                window._presencialToastTimer = setTimeout(() => toast.classList.add('hidden'), 1800);
+            }).catch(() => {});
         };
 
         // Autenticación Staff idéntica a staff-scouting.html
@@ -835,9 +994,13 @@
         try {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
+                    const recargarConAuth = moduloYaIniciado && !hasFirebaseAuth;
                     hasFirebaseAuth = true;
                     document.getElementById('banner-auth-warning')?.classList.add('hidden');
                     window.desbloquearPanelPresencial(getStaffNick(user.email || user.displayName));
+                    if (recargarConAuth) {
+                        window.recargarDatosPresencialYForense(true);
+                    }
                 } else if (!moduloYaIniciado) {
                     document.getElementById('presencial-spinner-block')?.classList.add('hidden');
                     document.getElementById('presencial-login-fallback')?.classList.remove('hidden');
@@ -855,7 +1018,7 @@
         // Carga Forense y Realtime Firestore
         async function asegurarIndiceForenseCargado(force = false) {
             if (!force && indiceForenseGlobal) return indiceForenseGlobal;
-            indiceForenseGlobal = await cargarIndiceHistoricoGlobal({ db, collection, getDocs, forceRefresh: force });
+            indiceForenseGlobal = await cargarIndiceHistoricoGlobal({ db, collection, getDocs, query, where, forceRefresh: force });
             const totalIdx = indiceForenseGlobal?.registros?.length || 0;
             const bIdx = document.getElementById('badge-header-indexados');
             if (bIdx) bIdx.textContent = totalIdx;
@@ -875,12 +1038,166 @@
             return indiceForenseGlobal;
         }
 
+        function actualizarResumenYAlertasDirectas() {
+            const listaAlertas = [];
+            const equiposAfectados = new Set();
+
+            inscripcionesPresencial.forEach(eq => {
+                const aud = auditoriasPorEquipoId.get(eq.id);
+                if (!aud || !Array.isArray(aud.alertasEquipo)) return;
+                aud.alertasEquipo.forEach(a => {
+                    equiposAfectados.add(eq.id);
+                    listaAlertas.push({
+                        ...a,
+                        equipoId: eq.id,
+                        equipoNombre: eq.equipo?.nombre || 'Equipo',
+                        equipoTag: eq.equipo?.tag || 'LBL',
+                        equipoSede: eq.sedeDepartamento || 'La Paz',
+                        equipoEstado: eq.estado || 'Pendiente',
+                        capitanNombre: eq.capitanContacto?.nombre || 'Capitán',
+                        capitanWhapp: eq.capitanContacto?.whapp || ''
+                    });
+                });
+            });
+
+            const prioSev = { critica: 0, observacion: 1, historial: 2 };
+            listaAlertas.sort((a, b) => (prioSev[a.severidad] ?? 3) - (prioSev[b.severidad] ?? 3));
+            const criticas = listaAlertas.filter(a => a.severidad === 'critica').length;
+            const observaciones = listaAlertas.filter(a => a.severidad === 'observacion').length;
+            const historiales = listaAlertas.filter(a => a.severidad === 'historial').length;
+            const multiequipo = listaAlertas.filter(a => a.codigo === 'MULTIEQUIPO_TORNEO_LAN').length;
+
+            alertasGlobalesPresencial = {
+                alertas: listaAlertas,
+                total: listaAlertas.length,
+                criticas,
+                observaciones,
+                historiales,
+                multiequipo,
+                equiposAfectados
+            };
+
+            const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            setTxt('badge-header-alertas-count', listaAlertas.length);
+            setTxt('badge-header-alertas-mobile', listaAlertas.length);
+            setTxt('badge-modal-alertas-total', listaAlertas.length);
+            setTxt('count-alerta-todos', listaAlertas.length);
+            setTxt('count-alerta-critica', criticas);
+            setTxt('count-alerta-obs', observaciones);
+            setTxt('count-alerta-hist', historiales);
+            setTxt('count-alerta-multi', multiequipo);
+            setTxt('kpi-alerta-total', listaAlertas.length);
+            setTxt('kpi-alerta-criticas', criticas);
+            setTxt('kpi-alerta-obs', observaciones + historiales);
+            setTxt('kpi-alerta-equipos', equiposAfectados.size);
+
+            const btnHeader = document.getElementById('btn-header-alertas-presencial');
+            const badgeHeader = document.getElementById('badge-header-alertas-count');
+            if (btnHeader && badgeHeader) {
+                if (criticas > 0) {
+                    btnHeader.className = 'px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-red-600/20 hover:bg-red-600/35 border border-red-500/60 text-red-200 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)] active:scale-95 cursor-pointer shrink-0';
+                    badgeHeader.className = 'px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black font-mono ml-0.5 animate-pulse';
+                } else if (observaciones > 0) {
+                    btnHeader.className = 'px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/45 text-amber-200 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0';
+                    badgeHeader.className = 'px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black font-mono ml-0.5';
+                } else if (historiales > 0) {
+                    btnHeader.className = 'px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/30 border border-cyan-500/45 text-cyan-200 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0';
+                    badgeHeader.className = 'px-1.5 py-0.2 rounded-full bg-cyan-500 text-black text-[9px] font-black font-mono ml-0.5';
+                } else {
+                    btnHeader.className = 'px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0';
+                    badgeHeader.className = 'px-1.5 py-0.2 rounded-full bg-emerald-500 text-black text-[9px] font-black font-mono ml-0.5';
+                }
+            }
+
+            actualizarBannerAlertasDirectas();
+
+            const modalAl = document.getElementById('modal-alertas-presencial');
+            if (modalAl && !modalAl.classList.contains('hidden')) {
+                window.renderizarListaAlertasPresencial(filtroAlertasPresencial);
+            }
+        }
+
+        function actualizarBannerAlertasDirectas() {
+            const box = document.getElementById('banner-alertas-directas-presencial');
+            if (!box) return;
+            const totalIdx = indiceForenseGlobal?.registros?.length || 0;
+            const { alertas, criticas, observaciones, historiales, equiposAfectados } = alertasGlobalesPresencial;
+
+            if (alertas.length === 0) {
+                box.innerHTML = `
+                    <div class="px-4 py-2.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex items-center gap-2 text-emerald-300 font-bold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                            <span>Motor Anti-Smurf Automático en vivo:</span>
+                            <span class="text-gray-300 font-normal"><strong class="text-white">${totalIdx}</strong> registros históricos cruzados (SC1, SC2, OQ, SC3, Liga T1/T2) &bull; <strong class="text-emerald-400">0 jugadores con historial o alertas detectadas</strong>.</span>
+                        </div>
+                        <button type="button" onclick="abrirModalAlertasPresencial()" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-[10px] font-black uppercase cursor-pointer">
+                            Ver Monitor
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const chips = alertas.slice(0, 8).map(a => {
+                const esCrit = a.severidad === 'critica';
+                const esObs = a.severidad === 'observacion';
+                const slotTxt = a.jugador?.slotLabel || a.jugador?.rolPrincipal || 'Roster';
+                const riotTxt = a.jugador?.riotIdTorneo || a.jugador?.nombre || '--';
+                const chipCls = esCrit
+                    ? 'bg-red-950/60 hover:bg-red-900/60 border-red-500/50 text-red-200'
+                    : (esObs ? 'bg-amber-950/50 hover:bg-amber-900/50 border-amber-500/40 text-amber-200' : 'bg-cyan-950/50 hover:bg-cyan-900/50 border-cyan-500/40 text-cyan-200');
+                const icono = esCrit ? '🚨' : (esObs ? '⚠️' : '📋');
+                return `
+                    <button type="button" onclick="abrirModalDetallePresencial('${a.equipoId}', 'roster')" class="text-left px-3 py-1.5 rounded-xl border ${chipCls} text-[11px] flex items-center gap-2 transition-all cursor-pointer max-w-full">
+                        <span>${icono}</span>
+                        <span class="font-mono font-black text-amber-300 shrink-0">[${escapeHTML(a.equipoTag)}]</span>
+                        <span class="font-black text-white shrink-0">${escapeHTML(slotTxt)}</span>
+                        <span class="truncate font-bold">${escapeHTML(riotTxt)}</span>
+                        <span class="text-gray-400 hidden sm:inline">&rarr;</span>
+                        <span class="truncate text-[10px] opacity-90 hidden sm:inline">${escapeHTML(a.titulo.replace(/^[🚨⚠️⛔📋]+\s*/, ''))}</span>
+                    </button>
+                `;
+            }).join('');
+
+            const partesResumen = [];
+            if (criticas > 0) partesResumen.push(`${criticas} crítica(s)`);
+            if (observaciones > 0) partesResumen.push(`${observaciones} revisión`);
+            if (historiales > 0) partesResumen.push(`${historiales} historial(es) previo(s)`);
+
+            const bannerTone = criticas > 0
+                ? 'border-red-500/55 bg-gradient-to-r from-red-950/35 via-[#090d16] to-amber-950/20'
+                : (observaciones > 0 ? 'border-amber-500/45 bg-amber-950/20' : 'border-cyan-500/45 bg-cyan-950/20');
+            const badgeTone = criticas > 0 ? 'bg-red-600 text-white' : (observaciones > 0 ? 'bg-amber-500 text-black' : 'bg-cyan-500 text-black');
+
+            box.innerHTML = `
+                <div class="p-3.5 sm:p-4 rounded-2xl border ${bannerTone} shadow-lg space-y-2.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2.5 py-0.5 rounded-full ${badgeTone} text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-bell animate-pulse"></i> DETECCIÓN AUTOMÁTICA DE HISTORIAL &amp; SMURFS
+                            </span>
+                            <span class="text-xs sm:text-sm font-black text-white">
+                                ${partesResumen.join(' • ')} en ${equiposAfectados.size} equipo(s) (${totalIdx} registros indexados)
+                            </span>
+                        </div>
+                        <button type="button" onclick="abrirModalAlertasPresencial()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-wider cursor-pointer shadow-md shrink-0">
+                            <i class="fas fa-shield-virus mr-1"></i> Abrir Centro de Alertas (${alertas.length})
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-2">${chips}${alertas.length > 8 ? `<button type="button" onclick="abrirModalAlertasPresencial()" class="px-3 py-1.5 rounded-xl bg-black/70 border border-white/15 text-gray-300 hover:text-white text-[11px] font-black cursor-pointer">+${alertas.length - 8} alerta(s) más...</button>` : ''}</div>
+                </div>
+            `;
+        }
+
         function reauditarTodos() {
             auditoriasPorEquipoId.clear();
-            if (!indiceForenseGlobal) return;
-            inscripcionesPresencial.forEach(eq => {
-                auditoriasPorEquipoId.set(eq.id, auditarEquipoTorneoLan(eq, indiceForenseGlobal, inscripcionesPresencial));
-            });
+            if (indiceForenseGlobal) {
+                inscripcionesPresencial.forEach(eq => {
+                    auditoriasPorEquipoId.set(eq.id, auditarEquipoTorneoLan(eq, indiceForenseGlobal, inscripcionesPresencial));
+                });
+            }
+            actualizarResumenYAlertasDirectas();
         }
 
         async function sincronizarVitrinaPublica() {
@@ -891,7 +1208,6 @@
                     .filter(Boolean);
 
                 const estadosResumen = inscripcionesPresencial.map(e => ({
-                    codigoSeguimiento: e.codigoSeguimiento || '',
                     nombreEquipo: e.equipo?.nombre || 'Equipo',
                     tag: e.equipo?.tag || 'LBL',
                     sedeDepartamento: e.sedeDepartamento || 'La Paz',
@@ -916,8 +1232,12 @@
             const lp = inscripcionesPresencial.filter(e => e.sedeDepartamento === 'La Paz');
             const cb = inscripcionesPresencial.filter(e => e.sedeDepartamento === 'Cochabamba');
             let criticas = 0;
+            let conHistorial = 0;
             inscripcionesPresencial.forEach(e => {
-                if (auditoriasPorEquipoId.get(e.id)?.estadoGlobal === 'critica') criticas++;
+                const aud = auditoriasPorEquipoId.get(e.id);
+                if (!aud) return;
+                if (aud.estadoGlobal === 'critica') criticas++;
+                if ((aud.alertasEquipo || []).length > 0) conHistorial++;
             });
 
             setTxt('stat-total', inscripcionesPresencial.length);
@@ -929,6 +1249,7 @@
             setTxt('stat-aceptados', inscripcionesPresencial.filter(e => e.estado === 'Aceptado').length);
             setTxt('stat-observados', inscripcionesPresencial.filter(e => e.estado === 'Observado').length);
             setTxt('stat-criticas', criticas);
+            setTxt('stat-historial-sub', `${conHistorial} con historial`);
         }
 
         window.recargarDatosPresencialYForense = async function(force = true) {
@@ -1053,7 +1374,7 @@
                 const jugs = [...(eq.titulares || []), ...(eq.suplentes || [])]
                     .map(j => `${j.nombre} ${j.ci} ${j.whapp} ${j.riotIdTorneo} ${j.riotIdMain} ${j.discord}`)
                     .join(' ');
-                return `${eq.equipo?.nombre || ''} ${eq.equipo?.tag || ''} ${eq.codigoSeguimiento || ''} ${rep.nombre || ''} ${rep.ci || ''} ${rep.whapp || ''} ${jugs}`.toLowerCase().includes(q);
+                return `${eq.equipo?.nombre || ''} ${eq.equipo?.tag || ''} ${rep.nombre || ''} ${rep.ci || ''} ${rep.whapp || ''} ${jugs}`.toLowerCase().includes(q);
             });
         }
 
@@ -1075,7 +1396,7 @@
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="uppercase tracking-wider text-[10px] text-gray-400 bg-[#0b0f17] border-b border-gray-800">
                             <tr>
-                                <th class="p-3.5 font-black">Equipo / Código</th>
+                                <th class="p-3.5 font-black">Equipo</th>
                                 <th class="p-3.5 font-black">Sede</th>
                                 <th class="p-3.5 font-black">Representante</th>
                                 <th class="p-3.5 font-black">Diagnóstico Anti-Smurf</th>
@@ -1085,18 +1406,21 @@
                         </thead>
                         <tbody class="divide-y divide-gray-800/60">
                             ${lista.map(eq => {
-                                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0 };
+                                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0, totalHistoriales: 0, alertasEquipo: [] };
                                 const esCocha = eq.sedeDepartamento === 'Cochabamba';
                                 const cap = eq.capitanContacto || (eq.titulares && eq.titulares[0]) || {};
                                 const badgeEst = `badge-${(eq.estado || 'Pendiente').toLowerCase()}`;
+                                const primeraAlerta = aud.alertasEquipo?.[0]?.titulo ? aud.alertasEquipo[0].titulo.replace(/^[🚨⚠️⛔📋]+\s*/, '') : '';
                                 const diag = aud.estadoGlobal === 'critica'
-                                    ? `<span class="text-red-400 font-black">🚨 ${aud.totalCriticas} Alerta(s)</span>`
+                                    ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="text-left text-red-400 hover:text-red-300 font-black cursor-pointer"><span>🚨 ${aud.totalCriticas} Alerta(s)</span>${primeraAlerta ? `<span class="block text-[10px] font-normal text-red-300/80 truncate max-w-[230px]">${escapeHTML(primeraAlerta)}</span>` : ''}</button>`
                                     : (aud.estadoGlobal === 'observacion'
-                                        ? `<span class="text-amber-300 font-black">⚠️ ${aud.totalObservaciones} Obs.</span>`
-                                        : `<span class="text-emerald-400 font-black">🟢 Limpio</span>`);
+                                        ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="text-left text-amber-300 hover:text-amber-200 font-black cursor-pointer"><span>⚠️ ${aud.totalObservaciones} Obs.</span>${primeraAlerta ? `<span class="block text-[10px] font-normal text-amber-200/80 truncate max-w-[230px]">${escapeHTML(primeraAlerta)}</span>` : ''}</button>`
+                                        : (aud.estadoGlobal === 'historial'
+                                            ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="text-left text-cyan-300 hover:text-cyan-200 font-black cursor-pointer"><span>📋 ${aud.totalHistoriales || aud.alertasEquipo.length} Historial(es)</span>${primeraAlerta ? `<span class="block text-[10px] font-normal text-cyan-200/80 truncate max-w-[230px]">${escapeHTML(primeraAlerta)}</span>` : ''}</button>`
+                                            : `<span class="text-emerald-400 font-black">🟢 Limpio</span>`));
                                 return `
                                     <tr onclick="abrirModalDetallePresencial('${eq.id}')" class="hover:bg-white/[0.03] cursor-pointer">
-                                        <td class="p-3.5 font-black text-white">[${escapeHTML(eq.equipo?.tag)}] ${escapeHTML(eq.equipo?.nombre)} <span class="block text-[10px] font-mono text-amber-400">${escapeHTML(eq.codigoSeguimiento || '--')}</span></td>
+                                        <td class="p-3.5 font-black text-white">[${escapeHTML(eq.equipo?.tag)}] ${escapeHTML(eq.equipo?.nombre)}</td>
                                         <td class="p-3.5">${esCocha ? '<span class="text-emerald-400 font-black">Cocha • SMOK</span>' : '<span class="text-rose-400 font-black">La Paz • AMQ</span>'}</td>
                                         <td class="p-3.5 text-gray-300">${escapeHTML(cap.nombre || '--')} <span class="block text-[10px] font-mono text-gray-500">Whapp: ${escapeHTML(cap.whapp || '--')}</span></td>
                                         <td class="p-3.5">${diag}</td>
@@ -1115,28 +1439,54 @@
                 const est = eq.estado || 'Pendiente';
                 const badgeCls = `badge-${est.toLowerCase()}`;
                 const esCocha = eq.sedeDepartamento === 'Cochabamba';
-                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0 };
+                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0, totalHistoriales: 0, alertasEquipo: [], jugadores: [] };
                 const cap = eq.capitanContacto || (eq.titulares && eq.titulares[0]) || {};
                 const waDigits = String(cap.whapp || '').replace(/[^0-9]/g, '');
                 const logoSrc = eq.equipo?.logo || '/assets/logo.webp';
+                const tieneAlertas = (aud.alertasEquipo || []).length > 0;
 
                 const diagBadge = aud.estadoGlobal === 'critica'
-                    ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-red-600/25 text-red-300 border border-red-500/50"><i class="fas fa-skull-crossbones mr-1"></i>${aud.totalCriticas} Alerta(s)</span>`
+                    ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-red-600/25 hover:bg-red-600/40 text-red-300 border border-red-500/50 cursor-pointer flex items-center gap-1" title="Ver alertas críticas de este equipo"><i class="fas fa-skull-crossbones animate-pulse"></i>${aud.totalCriticas} Alerta(s)</button>`
                     : (aud.estadoGlobal === 'observacion'
-                        ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40"><i class="fas fa-triangle-exclamation mr-1"></i>${aud.totalObservaciones} Obs.</span>`
-                        : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/35"><i class="fas fa-shield-check mr-1"></i>Limpio</span>`);
+                        ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 cursor-pointer flex items-center gap-1" title="Ver observaciones de este equipo"><i class="fas fa-triangle-exclamation"></i>${aud.totalObservaciones} Obs.</button>`
+                        : (aud.estadoGlobal === 'historial'
+                            ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-cyan-500/20 hover:bg-cyan-500/35 text-cyan-300 border border-cyan-500/40 cursor-pointer flex items-center gap-1" title="Jugadores con historial previo en bases LBL"><i class="fas fa-history"></i>${aud.totalHistoriales || aud.alertasEquipo.length} Historial</button>`
+                            : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/35"><i class="fas fa-shield-check mr-1"></i>Limpio</span>`));
+
+                const buscarAuditSlot = (t) => {
+                    const rNorm = normalizarRiotId(t.riotIdTorneo || '');
+                    const ciNorm = extraerCiLimpio(t.ci || '');
+                    return (aud.jugadores || []).find(rj => {
+                        const j = rj.jugador || {};
+                        return (rNorm && normalizarRiotId(j.riotIdTorneo || '') === rNorm) || (ciNorm && extraerCiLimpio(j.ci || '') === ciNorm) || (j.nombre && t.nombre && j.nombre === t.nombre);
+                    });
+                };
 
                 const rosterHTML = (eq.titulares || []).map(t => {
                     const rol = (t.rolPrincipal || '').toUpperCase();
                     const icon = ROLE_ICONS[rol] || '/assets/roles/position-fill.svg';
                     const opgg = t.opggTorneo || construirUrlOpgg(t.riotIdTorneo);
+                    const jugAudit = buscarAuditSlot(t);
+                    const jugEstado = jugAudit?.estadoForense || 'limpio';
+                    const jugMotivo = jugAudit?.alertas?.[0]?.titulo || '';
+                    const jugBadge = jugEstado === 'critica'
+                        ? `<span class="text-[10px] shrink-0" title="${escapeHTML(jugMotivo)}">🚨</span>`
+                        : (jugEstado === 'observacion'
+                            ? `<span class="text-[10px] shrink-0" title="${escapeHTML(jugMotivo)}">⚠️</span>`
+                            : (jugEstado === 'historial' ? `<span class="text-[10px] shrink-0" title="${escapeHTML(jugMotivo)}">📋</span>` : ''));
+                    const rowBg = jugEstado === 'critica'
+                        ? 'bg-red-950/25 px-1.5 -mx-1 rounded'
+                        : (jugEstado === 'observacion'
+                            ? 'bg-amber-950/20 px-1.5 -mx-1 rounded'
+                            : (jugEstado === 'historial' ? 'bg-cyan-950/20 px-1.5 -mx-1 rounded' : ''));
                     return `
-                        <div class="flex items-center justify-between gap-2 py-1 text-[11px]">
+                        <div class="flex items-center justify-between gap-2 py-1 text-[11px] ${rowBg}">
                             <div class="flex items-center gap-1.5 min-w-0">
                                 <img src="${icon}" alt="" class="w-3.5 h-3.5 shrink-0">
                                 <span class="font-bold text-gray-400 w-9 shrink-0">${escapeHTML(rol)}</span>
+                                ${jugBadge}
                                 ${opgg
-                                    ? `<a href="${escapeHTML(opgg)}" target="_blank" onclick="event.stopPropagation()" class="text-sky-300 hover:underline font-bold truncate">${escapeHTML(t.riotIdTorneo || '--')}</a>`
+                                    ? `<a href="${escapeHTML(opgg)}" target="_blank" onclick="event.stopPropagation()" class="${jugEstado === 'critica' ? 'text-red-300' : (jugEstado === 'historial' ? 'text-cyan-300' : 'text-sky-300')} hover:underline font-bold truncate">${escapeHTML(t.riotIdTorneo || '--')}</a>`
                                     : `<span class="text-gray-300 truncate">${escapeHTML(t.riotIdTorneo || '--')}</span>`}
                             </div>
                             <span class="text-[10px] font-mono text-amber-300 shrink-0">${escapeHTML(t.rangoMax || '--')}</span>
@@ -1144,8 +1494,32 @@
                     `;
                 }).join('');
 
+                const alertasBoxTone = aud.estadoGlobal === 'critica'
+                    ? 'bg-red-950/35 border-red-500/45 text-red-200'
+                    : (aud.estadoGlobal === 'observacion'
+                        ? 'bg-amber-950/30 border-amber-500/40 text-amber-200'
+                        : 'bg-cyan-950/30 border-cyan-500/40 text-cyan-200');
+
+                const alertasDirectasHTML = tieneAlertas ? `
+                    <div onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="mt-2 p-2.5 rounded-xl border ${alertasBoxTone} space-y-1 text-[10px] cursor-pointer hover:brightness-110 transition-all">
+                        ${(aud.alertasEquipo || []).slice(0, 2).map(a => `
+                            <div class="flex items-start gap-1.5 leading-snug">
+                                <span class="shrink-0">${a.severidad === 'critica' ? '🚨' : (a.severidad === 'observacion' ? '⚠️' : '📋')}</span>
+                                <span class="truncate"><strong class="text-white">${escapeHTML(a.jugador?.slotLabel || a.jugador?.rolPrincipal || 'Roster')}:</strong> ${escapeHTML(a.titulo.replace(/^[🚨⚠️⛔📋]+\s*/, ''))}</span>
+                            </div>
+                        `).join('')}
+                        ${(aud.alertasEquipo || []).length > 2 ? `<div class="text-[9px] font-black uppercase tracking-wider opacity-80">+${aud.alertasEquipo.length - 2} detección(es) más &rarr; Click para ver</div>` : ''}
+                    </div>
+                ` : '';
+
+                const cardBorder = aud.estadoGlobal === 'critica'
+                    ? 'border-red-500/45 hover:border-red-400'
+                    : (aud.estadoGlobal === 'observacion'
+                        ? 'border-amber-500/40 hover:border-amber-400'
+                        : (aud.estadoGlobal === 'historial' ? 'border-cyan-500/40 hover:border-cyan-400' : 'border-gray-800/80 hover:border-rose-500/50'));
+
                 return `
-                    <div onclick="abrirModalDetallePresencial('${eq.id}')" class="staff-card p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-rose-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg group cursor-pointer hover:-translate-y-0.5">
+                    <div onclick="abrirModalDetallePresencial('${eq.id}')" class="staff-card p-4 sm:p-5 rounded-2xl border ${cardBorder} transition-all duration-200 flex flex-col justify-between shadow-lg group cursor-pointer hover:-translate-y-0.5">
                         <div>
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
                                 <div class="flex items-center gap-3 min-w-0">
@@ -1167,7 +1541,7 @@
 
                             <div class="py-2.5 flex items-center justify-between gap-2 border-b border-gray-800/40 text-xs">
                                 <div class="min-w-0 flex-1">
-                                    <span class="text-[9px] uppercase font-bold text-gray-500 block">Representante • <span class="text-amber-300 font-mono">${escapeHTML(eq.codigoSeguimiento || '--')}</span></span>
+                                    <span class="text-[9px] uppercase font-bold text-gray-500 block">Representante</span>
                                     <span class="text-gray-200 font-semibold truncate block">${escapeHTML(cap.nombre || '--')} <span class="text-gray-500 font-mono text-[10px]">(${escapeHTML(cap.ci || '--')})</span></span>
                                 </div>
                                 ${waDigits ? `<a href="https://wa.me/${waDigits}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-green-500/10 hover:bg-green-600 text-green-400 hover:text-white text-[10px] font-bold border border-green-500/30 shrink-0"><i class="fab fa-whatsapp"></i> Chat</a>` : ''}
@@ -1181,6 +1555,7 @@
                                 <div class="bg-black/40 p-2.5 rounded-xl border border-gray-800/60 divide-y divide-gray-800/30">
                                     ${rosterHTML || '<p class="text-[11px] text-gray-500 italic">Sin titulares cargados</p>'}
                                 </div>
+                                ${alertasDirectasHTML}
                             </div>
                         </div>
 
@@ -1206,7 +1581,7 @@
             });
         };
 
-        window.abrirModalDetallePresencial = async (id) => {
+        window.abrirModalDetallePresencial = async (id, initialTab = 'general') => {
             await asegurarIndiceForenseCargado(false);
             const eq = inscripcionesPresencial.find(e => e.id === id);
             if (!eq) return;
@@ -1225,8 +1600,7 @@
             document.getElementById('m-d-nombre').textContent = eq.equipo?.nombre || 'Equipo';
             document.getElementById('m-tag').textContent = `[${eq.equipo?.tag || 'LBL'}]`;
             document.getElementById('m-d-tag').textContent = `[${eq.equipo?.tag || 'LBL'}]`;
-            document.getElementById('m-subtitulo').textContent = `Código: ${eq.codigoSeguimiento || id}`;
-            document.getElementById('m-d-codigo').textContent = eq.codigoSeguimiento || id;
+            document.getElementById('m-subtitulo').textContent = esCocha ? 'Cochabamba • SMOK LAN CENTER (Región LAS)' : 'La Paz • Aquí Me Quedo (Región LAS)';
             document.getElementById('m-d-sede').textContent = esCocha ? 'Cochabamba • SMOK LAN CENTER' : 'La Paz • Aquí Me Quedo';
             document.getElementById('m-d-fecha').textContent = eq.updatedAt ? new Date(eq.updatedAt).toLocaleString('es-BO') : '--';
 
@@ -1244,7 +1618,9 @@
                 ? `<span class="text-red-400 font-black">🚨 ${aud.totalCriticas} alerta(s) crítica(s) de rango o smurf</span>`
                 : (aud.estadoGlobal === 'observacion'
                     ? `<span class="text-amber-300 font-black">⚠️ ${aud.totalObservaciones} observación(es) para revisar</span>`
-                    : `<span class="text-emerald-400 font-black">✅ Sin alertas críticas (${aud.totalCoincidencias} cruces históricos)</span>`);
+                    : (aud.estadoGlobal === 'historial'
+                        ? `<span class="text-cyan-300 font-black">📋 ${aud.totalHistoriales || aud.totalCoincidencias} coincidencia(s) con historial previo en LBL</span>`
+                        : `<span class="text-emerald-400 font-black">✅ Sin historial previo ni alertas en las 6 bases</span>`));
 
             // Representante
             const rep = eq.capitanContacto || {};
@@ -1255,60 +1631,279 @@
             const repWa = String(rep.whapp || '').replace(/[^0-9]/g, '');
             document.getElementById('m-rep-wa-link').href = repWa ? `https://wa.me/${repWa}` : '#';
 
-            // Roster + Forense
-            document.getElementById('tab-badge-roster-count').textContent = (eq.titulares || []).length + (eq.suplentes || []).length;
-            document.getElementById('m-roster-forense-body').innerHTML = aud.jugadores.map(({ jugador, estadoForense, alertas, historial }) => {
-                const borderCol = estadoForense === 'critica' ? 'border-red-500 bg-red-950/15' : (estadoForense === 'observacion' ? 'border-amber-500 bg-amber-950/15' : 'border-emerald-500/40 bg-black/60');
-                const stBadge = estadoForense === 'critica'
-                    ? '<span class="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-black uppercase">🚨 BLOQUEO / SMURF</span>'
-                    : (estadoForense === 'observacion'
-                        ? '<span class="px-2 py-0.5 rounded bg-amber-500 text-black text-[10px] font-black uppercase">⚠️ OBSERVACIÓN</span>'
-                        : '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black uppercase">✅ ELEGIBLE</span>');
-                const opT = jugador.opggTorneo || construirUrlOpgg(jugador.riotIdTorneo);
-                const opM = jugador.opggMain || construirUrlOpgg(jugador.riotIdMain);
+            // Roster estilo tarjetas de Scouting + Auditoría Automática integrada
+            const titularesAudit = (aud.jugadores || []).filter(r => r.jugador?.esTitular);
+            const suplentesAudit = (aud.jugadores || []).filter(r => !r.jugador?.esTitular);
+            document.getElementById('tab-badge-roster-count').textContent = titularesAudit.length + suplentesAudit.length;
+            const bTitCount = document.getElementById('badge-titulares-count');
+            if (bTitCount) bTitCount.textContent = `${titularesAudit.length} Titulares`;
+            const bSupCount = document.getElementById('badge-suplentes-count');
+            if (bSupCount) bSupCount.textContent = `${suplentesAudit.length} Suplente${suplentesAudit.length === 1 ? '' : 's'}`;
 
-                return `
-                    <div class="p-4 rounded-2xl border-l-4 border ${borderCol}">
-                        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-gray-800">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-black text-xs">${escapeHTML(jugador.slotLabel || jugador.rolPrincipal)}</span>
-                                <strong class="text-white text-sm">${escapeHTML(jugador.nombre || '--')}</strong>
-                            </div>
-                            ${stBadge}
-                        </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3 text-xs">
-                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">C.I.</span><span class="font-mono font-bold text-amber-300">${escapeHTML(jugador.ci || '--')}</span></div>
-                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Whapp</span><span class="font-mono font-bold text-emerald-300">${escapeHTML(jugador.whapp || '--')}</span></div>
-                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Discord</span><span class="font-bold text-indigo-300">${escapeHTML(jugador.discord || '--')}</span></div>
-                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Roles</span><span class="font-bold text-white">${escapeHTML(jugador.rolPrincipal || '--')} / ${escapeHTML(jugador.rolSecundario || '--')}</span></div>
-                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Rango</span><span class="font-bold text-amber-300">${escapeHTML(jugador.rangoMax || '--')}</span></div>
-                        </div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 mt-2.5 p-2.5 rounded-xl bg-black/70 border border-gray-800">
-                            <div class="flex flex-wrap gap-4">
-                                <span>Torneo: <strong class="text-sky-300">${escapeHTML(jugador.riotIdTorneo || '--')}</strong> ${opT ? `<a href="${escapeHTML(opT)}" target="_blank" class="ml-1 text-sky-400 underline">OP.GG</a>` : ''}</span>
-                                <span>Main: <strong class="text-purple-300">${escapeHTML(jugador.riotIdMain || 'Misma')}</strong> ${opM ? `<a href="${escapeHTML(opM)}" target="_blank" class="ml-1 text-purple-400 underline">OP.GG</a>` : ''}</span>
-                            </div>
-                            <button type="button" onclick="rastrearDesdeModal('${escapeHTML(jugador.ci || jugador.whapp || jugador.nombre || '')}')" class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase cursor-pointer">
-                                <i class="fas fa-fingerprint mr-1"></i> Rastreator
-                            </button>
-                        </div>
-                        ${alertas.length ? `<div class="mt-2.5 space-y-1.5">${alertas.map(a => `<div class="p-2.5 rounded-xl border ${a.severidad === 'critica' ? 'bg-red-950/60 border-red-500/60 text-red-200' : 'bg-amber-950/50 border-amber-500/50 text-amber-200'}"><strong>${escapeHTML(a.titulo)}:</strong> ${escapeHTML(a.detalle)}</div>`).join('')}</div>` : ''}
-                        ${historial.length ? `<div class="mt-2.5 grid grid-cols-1 md:grid-cols-2 gap-2">${historial.map(({ record, razones }) => `<div class="p-2 rounded-xl bg-[#060911] border border-gray-800 text-[11px]"><strong class="text-amber-300">${escapeHTML(record.fuenteNombre)}</strong> • ${escapeHTML(record.equipoNombre)} (${escapeHTML(record.rango)})<div class="text-cyan-300">${escapeHTML(razones.join(' | '))}</div></div>`).join('')}</div>` : ''}
-                    </div>
-                `;
-            }).join('');
+            const contTit = document.getElementById('m-lista-titulares');
+            if (contTit) {
+                contTit.innerHTML = titularesAudit.map((rj, idx) => renderFichaJugadorPresencial(rj, true, idx + 1)).join('') || '<p class="text-gray-500 italic col-span-full">No hay titulares registrados.</p>';
+            }
+            const contSup = document.getElementById('m-lista-suplentes');
+            if (contSup) {
+                contSup.innerHTML = suplentesAudit.length > 0
+                    ? suplentesAudit.map((rj, idx) => renderFichaJugadorPresencial(rj, false, idx + 1)).join('')
+                    : `<div class="col-span-full p-6 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold text-xs"><i class="fas fa-info-circle mr-1"></i> Este equipo no tiene suplentes registrados.</div>`;
+            }
 
-            // Dictamen
+            // Dictamen & Auditoría automática dentro de la pestaña Dictamen
+            renderizarAuditoriaDictamenModal(eq, aud);
             document.querySelectorAll('input[name="m-v-estado"]').forEach(r => { r.checked = (r.value === est); });
             document.getElementById('m-v-notas').value = eq.notaObservacion || '';
 
             // Poblar pestaña Editar Datos (U de CRUD)
             poblarEditorCompleto(eq);
 
-            window.switchModalTab('general');
+            window.switchModalTab(initialTab || 'general');
             const modal = document.getElementById('modal-detalle-presencial');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+        };
+
+        let _alertasDictamenActuales = [];
+        function renderFichaJugadorPresencial({ jugador, estadoForense, alertas = [], historial = [] }, esTitular, numSlot = 1) {
+            const j = jugador || {};
+            const rolKey = String(j.rolPrincipal || '').toUpperCase();
+            const posColorMap = {
+                TOP: { badge: 'text-blue-400 border-blue-500/30 bg-blue-950/40', icon: 'fas fa-shield-alt text-blue-400' },
+                JG: { badge: 'text-purple-400 border-purple-500/30 bg-purple-950/40', icon: 'fas fa-tree text-purple-400' },
+                MID: { badge: 'text-amber-400 border-amber-500/30 bg-amber-950/40', icon: 'fas fa-fire text-amber-400' },
+                ADC: { badge: 'text-rose-400 border-rose-500/30 bg-rose-950/40', icon: 'fas fa-crosshairs text-rose-400' },
+                SUPP: { badge: 'text-teal-400 border-teal-500/30 bg-teal-950/40', icon: 'fas fa-hand-holding-heart text-teal-400' }
+            };
+            const posTheme = posColorMap[rolKey] || { badge: 'text-gray-400 border-gray-700 bg-gray-900', icon: 'fas fa-user text-gray-400' };
+            const rolEtiqueta = esTitular ? `[${rolKey || 'ROL'}] TITULAR ${numSlot}` : `[${rolKey || 'SUB'}] SUPLENTE ${numSlot}`;
+
+            const cardBorder = estadoForense === 'critica'
+                ? 'border-red-500/70'
+                : (estadoForense === 'observacion'
+                    ? 'border-amber-500/60'
+                    : (estadoForense === 'historial' ? 'border-cyan-500/50' : 'border-gray-800 hover:border-gray-700'));
+
+            const stBadge = estadoForense === 'critica'
+                ? '<span class="px-2 py-0.5 rounded bg-red-600 text-white text-[9px] font-black uppercase">🚨 ALERTA CRÍTICA</span>'
+                : (estadoForense === 'observacion'
+                    ? '<span class="px-2 py-0.5 rounded bg-amber-500 text-black text-[9px] font-black uppercase">⚠️ REVISAR</span>'
+                    : (estadoForense === 'historial'
+                        ? `<span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[9px] font-black uppercase">📋 ${historial.length} HISTORIAL</span>`
+                        : '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-black uppercase">✅ ELEGIBLE</span>'));
+
+            const riotTorneo = (j.riotIdTorneo || '').trim();
+            const riotMain = (j.riotIdMain || '').trim();
+            const tieneMain = Boolean(riotMain && riotMain.toLowerCase() !== riotTorneo.toLowerCase() && riotMain.toLowerCase() !== 'misma');
+            const opT = j.opggTorneo || construirUrlOpgg(riotTorneo);
+            const opM = j.opggMain || construirUrlOpgg(riotMain);
+            const waDigits = String(j.whapp || '').replace(/[^0-9]/g, '');
+            const waHref = waDigits ? `https://wa.me/${waDigits.startsWith('591') ? waDigits : (waDigits.length === 8 ? `591${waDigits}` : waDigits)}` : '';
+
+            return `
+                <div class="bg-[#111] p-3.5 sm:p-4 rounded-2xl border ${cardBorder} transition-colors flex flex-col justify-between">
+                    <div>
+                        <!-- Cabecera estilo Scouting -->
+                        <div class="flex justify-between items-center gap-2 border-b border-gray-800 pb-2.5 mb-3 flex-wrap">
+                            <span class="font-black text-[11px] sm:text-xs uppercase tracking-widest px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${posTheme.badge}">
+                                <i class="${posTheme.icon}"></i> ${escapeHTML(rolEtiqueta)}
+                            </span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                ${stBadge}
+                                ${opT ? `<a href="${escapeHTML(opT)}" target="_blank" rel="noopener noreferrer" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors flex items-center gap-1.5 cursor-pointer border border-blue-500/30"><i class="fas fa-chart-line"></i> OP.GG LAS</a>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Identidad Riot ID LAS -->
+                        <div class="mb-2.5 p-2.5 rounded-xl bg-[#0a0a0a] border border-gray-800/90">
+                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Riot ID LAS (Oficial de Juego)</p>
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-sm sm:text-base font-black text-white font-mono leading-tight break-all">${escapeHTML(riotTorneo || '--')}</p>
+                                ${riotTorneo ? `<button type="button" onclick="copiarTexto('${escapeHTML(riotTorneo).replace(/'/g, "\\'")}', 'Riot ID LAS')" class="text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-800/70 hover:bg-gray-700 text-[10px] transition-colors cursor-pointer shrink-0" title="Copiar Riot ID LAS"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+                        </div>
+
+                        ${tieneMain ? `
+                        <div class="p-2.5 rounded-xl bg-amber-950/30 border border-amber-500/40 mb-2.5">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[9px] uppercase font-black text-amber-400 tracking-wider flex items-center gap-1.5">
+                                    <i class="fas fa-globe-americas"></i> Cuenta Main / Secundaria
+                                </span>
+                                ${opM ? `<a href="${escapeHTML(opM)}" target="_blank" rel="noopener noreferrer" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : ''}
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-xs sm:text-sm font-black font-mono leading-tight break-all text-amber-200">${escapeHTML(riotMain)}</p>
+                                <button type="button" onclick="copiarTexto('${escapeHTML(riotMain).replace(/'/g, "\\'")}', 'Riot ID Main')" class="text-gray-400 hover:text-white p-1 text-xs cursor-pointer shrink-0"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>` : ''}
+
+                        <!-- Cajas de Datos 2 Columnas (Idéntico a Scouting) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="block text-[9px] uppercase text-gray-500 font-bold mb-0.5"><i class="fas fa-user text-gray-400 mr-1"></i>Nombre Completo</span>
+                                    <span class="text-white font-bold text-xs break-words block">${escapeHTML(j.nombre || '--')}</span>
+                                </div>
+                                ${j.nombre ? `<button type="button" onclick="copiarTexto('${escapeHTML(j.nombre).replace(/'/g, "\\'")}', 'Nombre')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer shrink-0"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="block text-[9px] uppercase text-amber-400/90 font-bold mb-0.5"><i class="fas fa-id-card mr-1"></i>C.I. / DNI</span>
+                                    <span class="${j.ci ? 'text-amber-300 font-mono font-black' : 'text-gray-500 font-mono'} text-xs block truncate">${escapeHTML(j.ci || 'No especificado')}</span>
+                                </div>
+                                ${j.ci ? `<button type="button" onclick="copiarTexto('${escapeHTML(j.ci).replace(/'/g, "\\'")}', 'C.I.')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer shrink-0"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="block text-[9px] uppercase text-gray-500 font-bold mb-0.5"><i class="fab fa-whatsapp text-emerald-400 mr-1"></i>WhatsApp / Celular</span>
+                                    ${waHref
+                                        ? `<a href="${waHref}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 font-bold font-mono text-xs inline-flex items-center gap-1 hover:underline"><span>${escapeHTML(j.whapp)}</span><i class="fas fa-external-link-alt text-[9px]"></i></a>`
+                                        : `<span class="text-gray-400 font-mono text-xs">--</span>`}
+                                </div>
+                                ${j.whapp ? `<button type="button" onclick="copiarTexto('${escapeHTML(j.whapp).replace(/'/g, "\\'")}', 'WhatsApp')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer shrink-0"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="block text-[9px] uppercase text-gray-500 font-bold mb-0.5"><i class="fab fa-discord text-indigo-400 mr-1"></i>Discord</span>
+                                    <span class="text-indigo-300 font-mono font-bold text-xs break-all block">${escapeHTML(j.discord || '--')}</span>
+                                </div>
+                                ${j.discord ? `<button type="button" onclick="copiarTexto('${escapeHTML(j.discord).replace(/'/g, "\\'")}', 'Discord')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer shrink-0"><i class="fas fa-copy"></i></button>` : ''}
+                            </div>
+
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90">
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold mb-0.5">Rango Máximo</span>
+                                <span class="${estadoForense === 'critica' ? 'text-red-400' : 'text-yellow-400'} font-bold text-xs">${escapeHTML(j.rangoMax || 'Unranked')}</span>
+                            </div>
+
+                            <div class="bg-[#0a0a0a] p-2.5 rounded-xl border border-gray-800/90">
+                                <span class="block text-[9px] uppercase text-gray-500 font-bold mb-0.5">Rol Secundario</span>
+                                <span class="text-purple-400 font-bold text-xs">${escapeHTML(j.rolSecundario || 'Polivalente')}</span>
+                            </div>
+                        </div>
+
+                        <!-- DETECCIÓN AUTOMÁTICA DE HISTORIAL Y ALERTAS (SIN BUSCAR MANUAL) -->
+                        ${alertas.length ? `
+                        <div class="mt-3 space-y-1.5">
+                            ${alertas.map(a => {
+                                const boxCls = a.severidad === 'critica'
+                                    ? 'bg-red-950/60 border-red-500/60 text-red-200'
+                                    : (a.severidad === 'observacion'
+                                        ? 'bg-amber-950/50 border-amber-500/50 text-amber-200'
+                                        : 'bg-cyan-950/45 border-cyan-500/45 text-cyan-200');
+                                return `<div class="p-2.5 rounded-xl border text-[11px] leading-snug ${boxCls}"><strong class="block text-white">${escapeHTML(a.titulo)}</strong><span>${escapeHTML(a.detalle)}</span></div>`;
+                            }).join('')}
+                        </div>` : ''}
+
+                        ${historial.length ? `
+                        <div class="mt-2.5 pt-2.5 border-t border-gray-800/80 space-y-1.5">
+                            <span class="text-[9px] uppercase font-black text-cyan-400 tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-database"></i> Coincidencias Automáticas en Bases LBL (${historial.length})
+                            </span>
+                            <div class="space-y-1.5">
+                                ${historial.map(({ record, razones }) => {
+                                    const opRec = record.opgg || construirUrlOpgg(record.riotId);
+                                    return `
+                                        <div class="p-2 rounded-xl bg-[#060911] border border-gray-800 text-[10px] space-y-0.5">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <strong class="text-amber-300">${escapeHTML(record.fuenteNombre)}</strong>
+                                                <span class="px-1.5 py-0.2 rounded bg-white/10 text-gray-200 font-mono">${escapeHTML(record.rango || 'Unranked')}</span>
+                                            </div>
+                                            <div class="text-gray-300">Equipo: <strong class="text-white">${escapeHTML(record.equipoNombre)}</strong> (${escapeHTML(record.rol || '--')})</div>
+                                            <div class="text-sky-300 font-mono flex items-center justify-between gap-2">
+                                                <span>Riot: ${escapeHTML(record.riotId || '--')}</span>
+                                                ${opRec ? `<a href="${escapeHTML(opRec)}" target="_blank" class="text-sky-400 underline font-sans font-bold">OP.GG</a>` : ''}
+                                            </div>
+                                            <div class="text-cyan-400 font-bold">${escapeHTML(razones.join(' • '))}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarAuditoriaDictamenModal(eq, aud) {
+            const box = document.getElementById('m-v-auditoria-box');
+            if (!box || !eq) return;
+
+            const lineas = [];
+            (aud?.alertasEquipo || []).forEach(a => {
+                const slot = a.jugador?.slotLabel || a.jugador?.rolPrincipal || 'ROSTER';
+                const nick = a.jugador?.riotIdTorneo || a.jugador?.nombre || '';
+                lineas.push({
+                    severidad: a.severidad,
+                    texto: `[${slot}${nick ? ` • ${nick}` : ''}] ${a.titulo.replace(/^[🚨⚠️⛔]+\s*/, '')}: ${a.detalle}`
+                });
+            });
+
+            [...(eq.titulares || []), ...(eq.suplentes || [])].forEach((j, idx) => {
+                if (!j) return;
+                const rol = j.rolPrincipal || `Slot ${idx + 1}`;
+                const ci = extraerCiLimpio(j.ci || '');
+                const rTorneo = (j.riotIdTorneo || '').trim();
+                if (!ci || ci.length < 5) {
+                    lineas.push({ severidad: 'observacion', texto: `[${rol}] ${j.nombre || rTorneo || 'Jugador'}: Falta C.I. válido.` });
+                }
+                if (rTorneo && !rTorneo.includes('#')) {
+                    lineas.push({ severidad: 'observacion', texto: `[${rol}] Riot ID sin #TAG ("${rTorneo}").` });
+                }
+            });
+
+            _alertasDictamenActuales = lineas.map(l => l.texto);
+
+            if (lineas.length === 0) {
+                box.innerHTML = `
+                    <div class="bg-emerald-950/20 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 text-xs flex items-center justify-between flex-wrap gap-2">
+                        <span class="flex items-center gap-2 font-bold">
+                            <i class="fas fa-check-circle text-emerald-500"></i> Auditoría Automática Limpia: Cero alertas Anti-Smurf, Elo <= Esmeralda 1 y datos completos.
+                        </span>
+                        <span class="text-[10px] font-mono bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">0 Alertas</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const tieneCrit = lineas.some(l => l.severidad === 'critica');
+            box.innerHTML = `
+                <div class="${tieneCrit ? 'border-rose-500/50 bg-rose-950/20' : 'border-amber-500/40 bg-amber-950/20'} border p-3.5 rounded-xl space-y-2.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <span class="text-xs font-black uppercase ${tieneCrit ? 'text-rose-400' : 'text-amber-400'} flex items-center gap-1.5">
+                            <i class="fas ${tieneCrit ? 'fa-shield-virus text-rose-500' : 'fa-exclamation-triangle text-amber-500'}"></i>
+                            ${lineas.length} Alerta(s) Detectada(s) Automáticamente
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="cerrarModalDetallePresencial(); abrirModalAlertasPresencial();" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold text-[10px] uppercase border border-rose-500/40 cursor-pointer">
+                                <i class="fas fa-shield-virus mr-1"></i> Centro de Alertas
+                            </button>
+                            <button type="button" onclick="insertarAlertasEnNotas()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase border border-amber-500/40 cursor-pointer">
+                                <i class="fas fa-plus mr-1"></i> Cargar en Notas
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5 text-[11px] font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
+                        ${lineas.map(l => `
+                            <div class="flex items-start gap-1.5 ${l.severidad === 'critica' ? 'text-rose-300 font-bold' : 'text-amber-200/90'}">
+                                <i class="fas ${l.severidad === 'critica' ? 'fa-ban text-rose-400' : 'fa-angle-right text-amber-400'} mt-0.5 shrink-0 text-[10px]"></i>
+                                <span>${escapeHTML(l.texto)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.insertarAlertasEnNotas = () => {
+            const ta = document.getElementById('m-v-notas');
+            if (!ta || !_alertasDictamenActuales.length) return;
+            const txt = _alertasDictamenActuales.map(x => `- ${x}`).join('\n');
+            ta.value = ta.value.trim() ? `${ta.value.trim()}\n${txt}` : txt;
+            ta.focus();
         };
 
         window.cerrarModalDetallePresencial = () => {
@@ -1514,7 +2109,7 @@
             const tel = String(eq.capitanContacto?.whapp || '').replace(/[^0-9]/g, '');
             const nota = document.getElementById('m-v-notas')?.value.trim() || '';
             const est = document.querySelector('input[name="m-v-estado"]:checked')?.value || eq.estado || 'Pendiente';
-            const msg = `Hola ${eq.capitanContacto?.nombre || 'Capitán'}, te escribimos del Staff LBL sobre el equipo *${eq.equipo?.nombre}* (${eq.codigoSeguimiento}):\nEstado: *${est}*${nota ? `\nDetalle: ${nota}` : ''}`;
+            const msg = `Hola ${eq.capitanContacto?.nombre || 'Capitán'}, te escribimos del Staff LBL sobre el equipo *${eq.equipo?.nombre}* [${eq.equipo?.tag || 'LBL'}]:\nEstado: *${est}*${nota ? `\nDetalle: ${nota}` : ''}`;
             if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
@@ -1559,7 +2154,6 @@
             const logo = logoCreateTemp || (urlLogo.startsWith('http') ? urlLogo : '/assets/logo.webp');
             const estado = document.getElementById('c-estado').value;
             const nowIso = new Date().toISOString();
-            const codigo = `${sede === 'Cochabamba' ? 'SMOK' : 'AMQ'}-${Math.floor(1000 + Math.random() * 9000)}`;
 
             const titulares = ROLES_POSICIONES.map(rol => {
                 const riotT = document.getElementById(`c-t-${rol}-riot`).value.trim();
@@ -1581,7 +2175,6 @@
             const payload = {
                 torneoId: TORNEO_LAN_ID,
                 torneoNombre: 'Torneo Presencial: Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)',
-                codigoSeguimiento: codigo,
                 sedeDepartamento: sede,
                 sedeSponsor: sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo',
                 estado,
@@ -1670,10 +2263,167 @@
             document.getElementById('modal-visor-logo')?.classList.add('hidden');
         };
 
+        // Centro Automático de Alertas Anti-Smurf & Irregularidades
+        window.renderizarListaAlertasPresencial = (filtro = 'todos') => {
+            const cont = document.getElementById('alertas-presencial-lista');
+            const infoFiltro = document.getElementById('alerta-filtro-info');
+            if (!cont) return;
+
+            let lista = alertasGlobalesPresencial.alertas || [];
+            if (filtro === 'critica') {
+                lista = lista.filter(a => a.severidad === 'critica');
+            } else if (filtro === 'observacion') {
+                lista = lista.filter(a => a.severidad === 'observacion');
+            } else if (filtro === 'historial') {
+                lista = lista.filter(a => a.severidad === 'historial');
+            } else if (filtro === 'multiequipo') {
+                lista = lista.filter(a => a.codigo === 'MULTIEQUIPO_TORNEO_LAN');
+            }
+
+            if (infoFiltro) {
+                const labels = {
+                    todos: 'Todas',
+                    critica: '🔴 Críticas / Elo / Liga T1',
+                    observacion: '⚠️ Smurf / Multicuenta / T2',
+                    historial: '📋 Historial Previo en Bases LBL',
+                    multiequipo: '🔁 Multiequipo Presencial'
+                };
+                infoFiltro.textContent = `Mostrando ${lista.length} alerta(s) (${labels[filtro] || 'General'})`;
+            }
+
+            if (lista.length === 0) {
+                cont.innerHTML = `
+                    <div class="p-8 text-center bg-[#0a0a0a] rounded-2xl border border-gray-800 text-gray-500 font-bold space-y-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-3xl mb-1 block"></i>
+                        <p class="text-white text-sm">Cero alertas detectadas en esta categoría</p>
+                        <p class="text-xs text-gray-500">Todos los rosters verificados cumplen con el tope Esmeralda 1 y elegibilidad LBL.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cont.innerHTML = lista.map((al) => {
+                const esCrit = al.severidad === 'critica';
+                const esObs = al.severidad === 'observacion';
+                const cardTone = esCrit
+                    ? 'border-red-500/40 bg-red-950/10'
+                    : (esObs ? 'border-amber-500/35 bg-amber-950/10' : 'border-cyan-500/35 bg-cyan-950/10');
+                const pillTone = esCrit
+                    ? 'bg-red-600/25 text-red-300 border-red-500/50'
+                    : (esObs ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40');
+                const pillLabel = esCrit ? '🔴 CRÍTICA' : (esObs ? '⚠️ OBSERVACIÓN' : '📋 HISTORIAL');
+                const footerTone = esCrit
+                    ? 'text-red-200 bg-red-950/30 border-red-900/40'
+                    : (esObs ? 'text-amber-200 bg-amber-950/25 border-amber-900/40' : 'text-cyan-200 bg-cyan-950/25 border-cyan-900/40');
+                const jug = al.jugador || {};
+                const rec = al.record || null;
+                const opT = jug.riotIdTorneo ? construirUrlOpgg(jug.riotIdTorneo) : '';
+                const opRec = rec?.opgg || (rec?.riotId ? construirUrlOpgg(rec.riotId) : '');
+
+                return `
+                    <div class="bg-[#0a0a0a] p-3.5 rounded-2xl border ${cardTone} space-y-2.5 shadow-md">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border ${pillTone}">
+                                    ${pillLabel}
+                                </span>
+                                <span class="text-xs sm:text-sm font-black text-white">${escapeHTML(jug.nombre || al.equipoNombre)}</span>
+                                ${jug.ci ? `<span class="text-[10px] font-mono text-gray-400 bg-black/60 px-1.5 py-0.5 rounded border border-gray-800">CI: ${escapeHTML(jug.ci)}</span>` : ''}
+                                ${jug.riotIdTorneo ? `<span class="text-[10px] font-mono text-sky-300 bg-sky-950/40 px-2 py-0.5 rounded border border-sky-500/30">${escapeHTML(jug.riotIdTorneo)}${opT ? ` <a href="${escapeHTML(opT)}" target="_blank" class="underline ml-1">OP.GG</a>` : ''}</span>` : ''}
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="copiarAvisoAlertaWhatsApp('${escapeHTML(al.id)}')" class="px-2.5 py-1 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-200 text-[11px] font-bold border border-gray-700 cursor-pointer flex items-center gap-1">
+                                    <i class="fab fa-whatsapp text-green-400"></i> Aviso Rep
+                                </button>
+                                <button type="button" onclick="cerrarModalAlertasPresencial(); abrirModalDetallePresencial('${al.equipoId}', 'roster');" class="px-2.5 py-1 rounded-xl bg-rose-600/25 hover:bg-rose-600 text-rose-200 hover:text-white text-[11px] font-black uppercase border border-rose-500/40 cursor-pointer">
+                                    <i class="fas fa-eye mr-1"></i> Ver Ficha
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 ${rec ? 'sm:grid-cols-2' : ''} gap-2 text-xs">
+                            <div class="bg-[#070b13] p-2.5 rounded-xl border border-gray-800">
+                                <span class="text-[8px] uppercase font-bold text-rose-400 tracking-wider block">Torneo Presencial (${escapeHTML(al.equipoSede)})</span>
+                                <p class="text-xs font-black text-white">[${escapeHTML(al.equipoTag)}] ${escapeHTML(al.equipoNombre)}</p>
+                                <p class="text-[10px] text-gray-400">Slot: <strong class="text-gray-200">${escapeHTML(jug.slotLabel || jug.rolPrincipal || 'Equipo')}</strong> &bull; Rango decl.: <strong class="text-amber-300">${escapeHTML(jug.rangoMax || '--')}</strong></p>
+                            </div>
+                            ${rec ? `
+                            <div class="bg-[#0d0917] p-2.5 rounded-xl border border-purple-500/30">
+                                <span class="text-[8px] uppercase font-bold text-amber-400 tracking-wider block">Cruce Histórico (${escapeHTML(rec.fuenteNombre)})</span>
+                                <p class="text-xs font-black text-purple-200">${escapeHTML(rec.equipoNombre)} (${escapeHTML(rec.rango || 'Unranked')})</p>
+                                <p class="text-[10px] text-gray-400">Riot: <span class="font-mono text-sky-300">${escapeHTML(rec.riotId || '--')}</span> ${opRec ? `<a href="${escapeHTML(opRec)}" target="_blank" class="text-sky-400 underline ml-1">OP.GG</a>` : ''}</p>
+                            </div>` : ''}
+                        </div>
+
+                        <div class="text-[11px] ${footerTone} px-2.5 py-1.5 rounded-lg border">
+                            <strong>${escapeHTML(al.titulo)}:</strong> ${escapeHTML(al.detalle)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.abrirModalAlertasPresencial = () => {
+            reauditarTodos();
+            window.renderizarListaAlertasPresencial(filtroAlertasPresencial);
+            document.getElementById('modal-alertas-presencial')?.classList.remove('hidden');
+        };
+
+        window.cerrarModalAlertasPresencial = () => {
+            document.getElementById('modal-alertas-presencial')?.classList.add('hidden');
+        };
+
+        window.cambiarFiltroAlertasPresencial = (filtro) => {
+            filtroAlertasPresencial = filtro;
+            const ids = {
+                todos: 'btn-alerta-filtro-todos',
+                critica: 'btn-alerta-filtro-critica',
+                observacion: 'btn-alerta-filtro-obs',
+                historial: 'btn-alerta-filtro-hist',
+                multiequipo: 'btn-alerta-filtro-multi'
+            };
+            Object.entries(ids).forEach(([k, id]) => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                btn.className = k === filtro
+                    ? 'px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all bg-rose-500/20 text-rose-300 border border-rose-500/40 cursor-pointer'
+                    : 'px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all text-gray-400 hover:text-white border border-transparent hover:bg-gray-800 cursor-pointer';
+            });
+            window.renderizarListaAlertasPresencial(filtro);
+        };
+
+        window.copiarAvisoAlertaWhatsApp = (alertaId) => {
+            const al = (alertasGlobalesPresencial.alertas || []).find(a => a.id === alertaId);
+            if (!al) return;
+            const msg =
+                `Hola ${al.capitanNombre}, te escribimos del Staff LBL Esports sobre la inscripción de *[${al.equipoTag}] ${al.equipoNombre}* al Torneo Presencial:\n\n` +
+                `⚠️ *Alerta detectada (${al.jugador?.slotLabel || al.jugador?.rolPrincipal || 'Roster'}):* ${al.jugador?.nombre || ''} ${al.jugador?.riotIdTorneo ? `(${al.jugador.riotIdTorneo})` : ''}\n` +
+                `• *Motivo:* ${al.detalle}\n\n` +
+                `Por favor aclara o regulariza esta situación para continuar con la validación del cupo (Tope Esmeralda 1).`;
+            navigator.clipboard?.writeText(msg).then(() => alert('✅ Aviso copiado para WhatsApp.')).catch(() => {});
+        };
+
+        window.copiarReporteCompletoAlertasPresencial = () => {
+            const list = alertasGlobalesPresencial.alertas || [];
+            if (!list.length) {
+                alert('No hay alertas activas para copiar.');
+                return;
+            }
+            const texto = [
+                '=== REPORTE AUTOMÁTICO ANTI-SMURF • TORNEO PRESENCIAL LBL ===',
+                `Total Alertas: ${alertasGlobalesPresencial.total} (Críticas: ${alertasGlobalesPresencial.criticas} | Observaciones: ${alertasGlobalesPresencial.observaciones})`,
+                `Equipos afectados: ${alertasGlobalesPresencial.equiposAfectados.size}`,
+                '',
+                ...list.map((a, i) => `${i + 1}. [${a.equipoTag}] ${a.equipoNombre} (${a.equipoSede}) | ${a.jugador?.slotLabel || 'Roster'}: ${a.jugador?.riotIdTorneo || a.jugador?.nombre || '--'} -> ${a.titulo} | ${a.detalle}`)
+            ].join('\n');
+            navigator.clipboard?.writeText(texto).then(() => alert('✅ Reporte completo copiado al portapapeles.')).catch(() => {});
+        };
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 window.cerrarVisorLogoPresencial();
                 window.cerrarModalRastreator();
+                window.cerrarModalAlertasPresencial();
                 window.cerrarModalCrearPresencial();
                 window.cerrarModalDetallePresencial();
             }

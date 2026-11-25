@@ -500,7 +500,7 @@ function indexarEquiposScouting3(idx, equiposSc3) {
         };
 
         if (Array.isArray(eq.titulares)) {
-            eq.titulares.forEach((t, i) => procesarJugSc3(t, t?.posicion || `TIT_${i + 1}`));
+            eq.titulares.forEach((t, i) => procesarJugSc3(t, `${t?.posicion || 'TIT'}_${i + 1}`));
         } else {
             ['top', 'jg', 'mid', 'adc', 'supp'].forEach(k => {
                 if (eq[k]) procesarJugSc3(eq[k], k.toUpperCase());
@@ -565,6 +565,9 @@ function indexarEquiposLigaLBL(idx, docsLiga) {
         if (Array.isArray(data.suplentes)) {
             data.suplentes.forEach((s, i) => registrarMiembroLiga(s, s?.rol_seleccionado || `Suplente #${i + 1}`, false));
         }
+        if (Array.isArray(data.jugadores)) {
+            data.jugadores.forEach((jug, i) => registrarMiembroLiga(jug, jug?.posicion || `Jugador #${i + 1}`, false));
+        }
         if (Array.isArray(data.ex_jugadores)) {
             data.ex_jugadores.forEach((ex, i) => registrarMiembroLiga(ex, `Ex-${ex?.rol || i + 1}`, true));
         }
@@ -574,7 +577,7 @@ function indexarEquiposLigaLBL(idx, docsLiga) {
 /**
  * Carga y construye el índice histórico unificado desde las 6 bases de datos.
  */
-export async function cargarIndiceHistoricoGlobal({ db = null, collection = null, getDocs = null, forceRefresh = false } = {}) {
+export async function cargarIndiceHistoricoGlobal({ db = null, collection = null, getDocs = null, query = null, where = null, forceRefresh = false } = {}) {
     if (!forceRefresh && cachedHistoricalIndex && Date.now() - cachedHistoricalTimestamp < 5 * 60 * 1000) {
         return cachedHistoricalIndex;
     }
@@ -623,7 +626,17 @@ export async function cargarIndiceHistoricoGlobal({ db = null, collection = null
                 const list = [];
                 snap.forEach(d => list.push({ id: d.id, ...d.data() }));
                 if (list.length > 0) return list;
-            } catch (_) {}
+            } catch (_) {
+                if (query && where) {
+                    try {
+                        const qAceptados = query(collection(db, 'inscripciones_pendientes'), where('estado', '==', 'Aceptado'));
+                        const snap = await getDocs(qAceptados);
+                        const list = [];
+                        snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+                        if (list.length > 0) return list;
+                    } catch (_) {}
+                }
+            }
         }
         try {
             const cachedLiga = localStorage.getItem('lbl_equipos_aceptados_cache');
@@ -798,9 +811,11 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
 
     coincidencias.forEach(({ record, razones }) => {
         const razonesStr = razones.join(' + ');
+        let generoAlertaEspecifica = false;
 
         // 3a. ¿Participó en Liga LBL Tier 1? -> ALERTA ROJA
         if (record.esLigaTier1) {
+            generoAlertaEspecifica = true;
             alertas.push({
                 severidad: 'critica',
                 codigo: 'HISTORIAL_LIGA_TIER1',
@@ -812,6 +827,7 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
 
         // 3b. ¿Participó en Liga LBL Tier 2? -> ALERTA AMARILLA (Verificar Elo <= Esmeralda 1)
         if (record.esLigaTier2) {
+            generoAlertaEspecifica = true;
             alertas.push({
                 severidad: 'observacion',
                 codigo: 'HISTORIAL_LIGA_TIER2',
@@ -823,6 +839,7 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
 
         // 3c. ¿Su rango histórico en Scouting 1, 2, 3 u Open Qualifier supera Esmeralda 1? -> ALERTA ROJA
         if (record.evalRango && record.evalRango.excedeEsmeralda1) {
+            generoAlertaEspecifica = true;
             alertas.push({
                 severidad: 'critica',
                 codigo: 'ELO_HISTORICO_EXCEDIDO',
@@ -845,6 +862,7 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
             (recRiot2 && (recRiot2 === riotTorneoNorm || recRiot2 === riotMainNorm));
 
         if (coincidePorIdentidadFisica && !cuentaHistoricaReconocida && record.riotId) {
+            generoAlertaEspecifica = true;
             const severidadSmurf = record.evalRango?.excedeEsmeralda1 || record.esLigaTier1 ? 'critica' : 'observacion';
             alertas.push({
                 severidad: severidadSmurf,
@@ -862,6 +880,7 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
             const cmpNom = compararNombresPersona(nombre, record.nombre);
             const nombreDistinto = Boolean(nombre && record.nombre && !cmpNom.coincide);
             if (ciDistinto || nombreDistinto) {
+                generoAlertaEspecifica = true;
                 alertas.push({
                     severidad: 'observacion',
                     codigo: 'POSIBLE_SUPLANTACION_CUENTA',
@@ -870,6 +889,17 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
                     record
                 });
             }
+        }
+
+        // 3f. Historial previo detectado en cualquier torneo LBL (SC1, SC2, OQ, SC3, Liga) aunque el rango actual declarado sea <= E1
+        if (!generoAlertaEspecifica) {
+            alertas.push({
+                severidad: 'historial',
+                codigo: 'HISTORIAL_PREVIO_DETECTADO',
+                titulo: `📋 HISTORIAL EN ${record.fuenteNombre.toUpperCase()} (${record.equipoNombre})`,
+                detalle: `Coincide por ${razonesStr} con "${record.nombre || record.riotId || 'S/N'}" del equipo "${record.equipoNombre}" [${record.rol || 'Roster'}] • Cuenta: "${record.riotId || 'S/N'}" • Rango histórico: ${record.rango || 'Unranked'}.`,
+                record
+            });
         }
     });
 
@@ -900,7 +930,8 @@ export function auditarJugadorTorneoLan(jugador, idx, todosEquiposTorneo = [], e
 
     const tieneCritica = alertas.some(a => a.severidad === 'critica');
     const tieneObservacion = alertas.some(a => a.severidad === 'observacion');
-    const estadoForense = tieneCritica ? 'critica' : (tieneObservacion ? 'observacion' : 'limpio');
+    const tieneHistorial = alertas.length > 0;
+    const estadoForense = tieneCritica ? 'critica' : (tieneObservacion ? 'observacion' : (tieneHistorial ? 'historial' : 'limpio'));
 
     return {
         estadoForense,
@@ -943,26 +974,116 @@ export function auditarEquipoTorneoLan(equipoDoc, idx, todosEquiposTorneo = []) 
     const jugadores = obtenerJugadoresPlanosTorneoLan(equipoDoc);
     let totalCriticas = 0;
     let totalObservaciones = 0;
+    let totalHistoriales = 0;
     let totalCoincidencias = 0;
+    const alertasEquipo = [];
 
-    const resultadosJugadores = jugadores.map(j => {
+    // 0. Verificar si el nombre o TAG del equipo está en Lista Negra
+    const nombreEqNorm = quitarAcentos((equipoDoc?.equipo?.nombre || '').toLowerCase().trim());
+    const tagEqNorm = quitarAcentos((equipoDoc?.equipo?.tag || '').toLowerCase().trim());
+    const equipoBaneadoMatch = BANNED_TEAMS.find(bt => {
+        const b = quitarAcentos(bt.toLowerCase().trim());
+        return nombreEqNorm.includes(b) || (tagEqNorm && tagEqNorm === b);
+    });
+    if (equipoBaneadoMatch) {
+        totalCriticas++;
+        alertasEquipo.push({
+            id: `${equipoDoc?.id || 'eq'}_BANNED_TEAM`,
+            severidad: 'critica',
+            codigo: 'EQUIPO_SANCIONADO',
+            titulo: `⛔ EQUIPO EN LISTA DE SANCIONADOS LBL ("${equipoBaneadoMatch}")`,
+            detalle: `El nombre o TAG del equipo coincide con una organización sancionada en LBL.`,
+            jugador: {
+                slotLabel: 'EQUIPO',
+                nombre: equipoDoc?.equipo?.nombre || 'Equipo',
+                riotIdTorneo: `[${equipoDoc?.equipo?.tag || 'LBL'}]`
+            }
+        });
+    }
+
+    // 0b. Verificar si el Representante tiene sanciones o historial (cuando no es uno de los jugadores del roster)
+    const rep = equipoDoc?.capitanContacto;
+    if (rep && (rep.nombre || rep.ci || rep.whapp || rep.discord)) {
+        const repSancion = esPersonaBaneada({ nombre: rep.nombre, discord: rep.discord });
+        if (repSancion) {
+            totalCriticas++;
+            alertasEquipo.push({
+                id: `${equipoDoc?.id || 'eq'}_BANNED_REP`,
+                severidad: 'critica',
+                codigo: 'REPRESENTANTE_SANCIONADO',
+                titulo: `⛔ REPRESENTANTE EN LISTA DE SANCIONADOS LBL ("${repSancion}")`,
+                detalle: `El representante "${rep.nombre || rep.discord}" coincide con un registro de sanciones LBL.`,
+                jugador: {
+                    slotLabel: 'REPRESENTANTE',
+                    nombre: rep.nombre || 'Representante',
+                    ci: rep.ci || '',
+                    whapp: rep.whapp || '',
+                    discord: rep.discord || ''
+                }
+            });
+        }
+        const repCi = extraerCiLimpio(rep.ci || '');
+        const repCel = normalizarCelular(rep.whapp || '');
+        const repYaEsJugador = jugadores.some(j =>
+            (repCi && extraerCiLimpio(j.ci || '') === repCi) ||
+            (repCel && normalizarCelular(j.whapp || '') === repCel)
+        );
+        if (!repYaEsJugador) {
+            const auditRep = auditarJugadorTorneoLan({
+                nombre: rep.nombre || '',
+                ci: rep.ci || '',
+                whapp: rep.whapp || '',
+                discord: rep.discord || '',
+                riotIdTorneo: rep.riotIdTorneo || ''
+            }, idx, [], equipoDoc?.id);
+            auditRep.alertas.forEach((a, aIdx) => {
+                if (a.severidad === 'critica') totalCriticas++;
+                else if (a.severidad === 'observacion') totalObservaciones++;
+                else totalHistoriales++;
+                alertasEquipo.push({
+                    id: `${equipoDoc?.id || 'eq'}_REP_${aIdx}_${a.codigo || 'ALERTA'}`,
+                    ...a,
+                    jugador: {
+                        slotLabel: 'REPRESENTANTE',
+                        nombre: rep.nombre || 'Representante',
+                        ci: rep.ci || '',
+                        whapp: rep.whapp || '',
+                        discord: rep.discord || '',
+                        riotIdTorneo: rep.riotIdTorneo || ''
+                    }
+                });
+            });
+        }
+    }
+
+    const resultadosJugadores = jugadores.map((j, jIdx) => {
         const audit = auditarJugadorTorneoLan(j, idx, todosEquiposTorneo, equipoDoc?.id);
         totalCriticas += audit.alertas.filter(a => a.severidad === 'critica').length;
         totalObservaciones += audit.alertas.filter(a => a.severidad === 'observacion').length;
+        totalHistoriales += audit.alertas.filter(a => a.severidad === 'historial').length;
         totalCoincidencias += audit.historial.length;
+        audit.alertas.forEach((a, aIdx) => {
+            alertasEquipo.push({
+                id: `${equipoDoc?.id || 'eq'}_${jIdx}_${aIdx}_${a.codigo || 'ALERTA'}`,
+                ...a,
+                jugador: j
+            });
+        });
         return {
             jugador: j,
             ...audit
         };
     });
 
-    const estadoGlobal = totalCriticas > 0 ? 'critica' : (totalObservaciones > 0 ? 'observacion' : 'limpio');
+    const estadoGlobal = totalCriticas > 0 ? 'critica' : (totalObservaciones > 0 ? 'observacion' : (totalHistoriales > 0 ? 'historial' : 'limpio'));
 
     return {
         estadoGlobal,
         totalCriticas,
         totalObservaciones,
+        totalHistoriales,
         totalCoincidencias,
+        alertasEquipo,
         jugadores: resultadosJugadores
     };
 }
@@ -1114,7 +1235,6 @@ export function sanitizarEquipoTorneoLanPublico(rawDoc) {
 
     return {
         id: rawDoc.id || '',
-        codigoSeguimiento: rawDoc.codigoSeguimiento || '',
         torneoId: rawDoc.torneoId || TORNEO_LAN_ID,
         sedeDepartamento: rawDoc.sedeDepartamento || 'La Paz',
         sedeSponsor: rawDoc.sedeDepartamento === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo',

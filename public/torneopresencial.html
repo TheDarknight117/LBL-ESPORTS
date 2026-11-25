@@ -17,7 +17,7 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020202">
 
-    <link rel="stylesheet" href="/dist/output.css?v=293">
+    <link rel="stylesheet" href="/dist/output.css?v=294">
     <script type="module" src="/app-version.js?v=292"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -243,10 +243,6 @@
                     <i class="fas fa-shield-halved text-blue-400"></i>
                     <span class="hidden sm:inline">Confirmados</span>
                     <span class="px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-200 font-mono text-[10px]" id="badge-total-confirmados">0</span>
-                </button>
-                <button type="button" onclick="abrirVentanaEstado()" class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-black/80 hover:bg-blue-950/50 border border-white/15 hover:border-blue-400 text-xs font-bold uppercase tracking-wider text-zinc-200 cursor-pointer transition-all flex items-center gap-1.5">
-                    <i class="fas fa-magnifying-glass text-blue-400"></i>
-                    <span class="hidden sm:inline">Mi Estado</span>
                 </button>
                 <a href="/" class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl bg-black/80 hover:bg-zinc-900 border border-white/15 text-xs font-bold text-white transition-all">
                     <i class="fas fa-home text-zinc-400"></i>
@@ -600,41 +596,6 @@
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- VENTANA FLOTANTE 3: CONSULTAR ESTADO DE INSCRIPCIÓN                   -->
-    <!-- ===================================================================== -->
-    <div id="floating-estado-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(!event.target.closest('.floating-overlay-wrap')) cerrarVentanasSecundarias()">
-        <div class="min-h-full flex items-center justify-center">
-            <div class="floating-overlay-wrap floating-window-card w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-5">
-                <div class="flex items-start justify-between gap-3 pb-4 border-b border-white/10">
-                    <div>
-                        <span class="px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-[10px] font-black uppercase tracking-wider">
-                            Seguimiento en Vivo
-                        </span>
-                        <h3 class="text-xl font-black uppercase text-white mt-1">
-                            Consultar Estado de mi Inscripción
-                        </h3>
-                        <p class="text-xs text-zinc-400 mt-1">
-                            Ingresa tu <strong class="text-white">Código de Seguimiento</strong> (<code class="text-rose-300">AMQ-XXXX</code> / <code class="text-emerald-300">SMOK-XXXX</code>) o el <strong class="text-white">TAG / Nombre del equipo</strong>.
-                        </p>
-                    </div>
-                    <button type="button" onclick="cerrarVentanasSecundarias()" class="w-9 h-9 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer shrink-0">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="text" id="input-codigo-seguimiento" placeholder="Ej: AMQ-1234 o nombre del equipo" class="input-lan uppercase font-bold">
-                    <button type="button" onclick="consultarEstadoInscripcion()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shrink-0 cursor-pointer transition-all">
-                        <i class="fas fa-search mr-1.5"></i> Consultar
-                    </button>
-                </div>
-
-                <div id="resultado-estado-inscripcion"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL DE CONFIRMACIÓN DE INSCRIPCIÓN EXITOSA -->
     <div id="modal-exito-lan" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
         <div class="floating-window-card max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden shadow-2xl">
@@ -645,21 +606,16 @@
                 SEDE OFICIAL
             </span>
             <h3 class="text-2xl font-black text-white uppercase mt-3" id="modal-exito-equipo">¡EQUIPO REGISTRADO!</h3>
-            <p class="text-xs text-zinc-300 mt-1">
-                Tu inscripción fue enviada a la bandeja de auditoría del Staff LBL. Guarda tu código y envía la confirmación por WhatsApp:
+            <p class="text-xs text-zinc-300 mt-2 leading-relaxed">
+                Tu inscripción fue enviada correctamente al centro de verificación del Staff LBL. Envía la confirmación directa por WhatsApp:
             </p>
 
-            <div class="my-5 p-4 rounded-2xl bg-black border border-white/10">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">CÓDIGO DE SEGUIMIENTO</span>
-                <div class="text-2xl font-black font-mono text-amber-400 tracking-wider mt-1" id="modal-exito-codigo">AMQ-0000</div>
-            </div>
-
-            <div class="space-y-3">
+            <div class="space-y-3 mt-6">
                 <a id="btn-whatsapp-confirmacion-lan" href="#" target="_blank" rel="noopener" class="w-full py-4 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all">
                     <i class="fab fa-whatsapp text-lg"></i> Enviar Confirmación por WhatsApp
                 </a>
-                <button type="button" onclick="cerrarModalExitoYVerEstado()" class="w-full py-3 px-4 rounded-xl bg-black hover:bg-zinc-900 text-zinc-300 border border-white/15 font-bold text-xs uppercase tracking-wider cursor-pointer">
-                    Ver Estado de mi Inscripción
+                <button type="button" onclick="cerrarModalExitoYVerConfirmados()" class="w-full py-3 px-4 rounded-xl bg-black hover:bg-zinc-900 text-zinc-300 border border-white/15 font-bold text-xs uppercase tracking-wider cursor-pointer">
+                    Ver Equipos Confirmados
                 </button>
             </div>
         </div>
@@ -703,7 +659,7 @@
             normalizarCelular,
             normalizarRiotId,
             sanitizarEquipoTorneoLanPublico
-        } from "/anti-smurf-core.js?v=293";
+        } from "/anti-smurf-core.js?v=295";
 
         const ROLES_PRINCIPALES = [
             { id: 'TOP', stepNum: 3, nombreLargo: 'Carril Superior (TOP)', icon: '/assets/roles/position-top.svg' },
@@ -902,7 +858,6 @@
 
                 if (draft.modalAbierto && draft.sede) {
                     document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
-                    document.getElementById('floating-estado-overlay')?.classList.add('hidden');
                     document.getElementById('floating-wizard-overlay')?.classList.remove('hidden');
                     actualizarEstadoBlurFondo(true);
                     const targetStep = Math.min(8, Math.max(1, Number(draft.step) || 1));
@@ -951,7 +906,6 @@
             aplicarTemaYSedeDOM(sede);
 
             document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
-            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
             document.getElementById('floating-wizard-overlay')?.classList.remove('hidden');
 
             actualizarEstadoBlurFondo(true);
@@ -962,7 +916,6 @@
         window.volverASeleccionarSede = function() {
             document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
             document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
-            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
             document.body.setAttribute('data-lan-theme', 'neutral');
             actualizarEstadoBlurFondo(false);
             guardarBorradorCacheLan({ modalAbierto: false });
@@ -970,25 +923,14 @@
 
         window.abrirVentanaConfirmados = function() {
             document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
-            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
             document.getElementById('floating-equipos-overlay')?.classList.remove('hidden');
             document.body.setAttribute('data-lan-theme', 'neutral');
             actualizarEstadoBlurFondo(true);
             renderizarEquiposConfirmados();
         };
 
-        window.abrirVentanaEstado = function() {
-            document.getElementById('floating-wizard-overlay')?.classList.add('hidden');
-            document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
-            document.getElementById('floating-estado-overlay')?.classList.remove('hidden');
-            document.body.setAttribute('data-lan-theme', 'neutral');
-            actualizarEstadoBlurFondo(true);
-            document.getElementById('input-codigo-seguimiento')?.focus();
-        };
-
         window.cerrarVentanasSecundarias = function() {
             document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
-            document.getElementById('floating-estado-overlay')?.classList.add('hidden');
             const sedeActual = document.getElementById('sedeDepartamento')?.value;
             const wizardOpen = !document.getElementById('floating-wizard-overlay')?.classList.contains('hidden');
             if (!wizardOpen) {
@@ -1658,15 +1600,12 @@
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
 
-            const prefixCodigo = sede === 'Cochabamba' ? 'SMOK' : 'AMQ';
-            const codigoSeguimiento = `${prefixCodigo}-${Math.floor(1000 + Math.random() * 9000)}`;
             const nowIso = new Date().toISOString();
             const sedeSponsor = sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo';
 
             const payloadInscripcion = {
                 torneoId: TORNEO_LAN_ID,
                 torneoNombre: 'Torneo Presencial: Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)',
-                codigoSeguimiento,
                 sedeDepartamento: sede,
                 sedeSponsor,
                 estado: 'Pendiente',
@@ -1688,7 +1627,6 @@
                     const prevResumen = Array.isArray(prevData.estadosResumen) ? prevData.estadosResumen : [];
                     const nuevoResumen = [
                         {
-                            codigoSeguimiento,
                             nombreEquipo: teamName,
                             tag: teamTag,
                             sedeDepartamento: sede,
@@ -1701,19 +1639,15 @@
                     await setDoc(pubRef, { ...prevData, estadosResumen: nuevoResumen, updatedAt: nowIso }, { merge: true });
                 } catch (_) {}
 
-                try { localStorage.setItem('lbl_torneo_lan_ultimo_codigo', codigoSeguimiento); } catch (_) {}
-
                 const badgeSedeEl = document.getElementById('modal-exito-sede-badge');
                 if (badgeSedeEl) {
                     badgeSedeEl.textContent = sede === 'Cochabamba' ? 'SEDE COCHABAMBA • SMOK LAN CENTER' : 'SEDE LA PAZ • AQUÍ ME QUEDO';
                 }
                 document.getElementById('modal-exito-equipo').textContent = `${teamName} [${teamTag}]`;
-                document.getElementById('modal-exito-codigo').textContent = codigoSeguimiento;
 
                 const adminPhone = '59163842110';
                 const textoWa =
                     `Hola Staff LBL, confirmo la inscripción al *Torneo Presencial Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)*:\n\n` +
-                    `• *Código:* ${codigoSeguimiento}\n` +
                     `• *Departamento / Sede:* ${sede} (${sedeSponsor})\n` +
                     `• *Equipo:* ${teamName} [${teamTag}]\n` +
                     `• *Representante:* ${repData.nombre} (Whapp: ${repData.whapp})\n` +
@@ -1740,15 +1674,11 @@
             }
         });
 
-        window.cerrarModalExitoYVerEstado = function() {
+        window.cerrarModalExitoYVerConfirmados = function() {
             const modalExito = document.getElementById('modal-exito-lan');
             modalExito.classList.add('hidden');
             modalExito.classList.remove('flex');
-            const ultimoCod = localStorage.getItem('lbl_torneo_lan_ultimo_codigo') || '';
-            const inp = document.getElementById('input-codigo-seguimiento');
-            if (inp && ultimoCod) inp.value = ultimoCod;
-            window.abrirVentanaEstado();
-            if (ultimoCod) window.consultarEstadoInscripcion();
+            window.abrirVentanaConfirmados();
         };
 
         // =========================================================================
@@ -1904,63 +1834,6 @@
             const modal = document.getElementById('modal-roster-publico');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-        };
-
-        window.consultarEstadoInscripcion = function() {
-            const q = (document.getElementById('input-codigo-seguimiento')?.value || '').trim().toLowerCase();
-            const cont = document.getElementById('resultado-estado-inscripcion');
-            if (!q) {
-                mostrarToastLan('Ingresa tu código de seguimiento o el nombre/TAG de tu equipo.');
-                return;
-            }
-
-            const encontradoConfirmado = equiposConfirmadosPublicos.find(
-                e =>
-                    (e.codigoSeguimiento && e.codigoSeguimiento.toLowerCase() === q) ||
-                    e.equipo?.nombre?.toLowerCase() === q ||
-                    e.equipo?.tag?.toLowerCase() === q
-            );
-            const encontradoResumen = resumenEstadosPublicos.find(
-                r =>
-                    (r.codigoSeguimiento && r.codigoSeguimiento.toLowerCase() === q) ||
-                    r.nombreEquipo?.toLowerCase() === q ||
-                    r.tag?.toLowerCase() === q
-            );
-
-            if (encontradoConfirmado) {
-                cont.innerHTML = `
-                    <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-1.5">
-                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase">✅ ACEPTADO Y PUBLICADO</span>
-                        <h4 class="text-lg font-black text-white uppercase">[${encontradoConfirmado.equipo?.tag}] ${encontradoConfirmado.equipo?.nombre}</h4>
-                        <p class="text-xs text-zinc-300">Sede: <strong>${encontradoConfirmado.sedeDepartamento} (${encontradoConfirmado.sedeSponsor})</strong></p>
-                    </div>
-                `;
-                return;
-            }
-
-            if (encontradoResumen) {
-                const est = String(encontradoResumen.estado || 'Pendiente');
-                const esObs = est.toLowerCase() === 'observado';
-                const esRech = est.toLowerCase() === 'rechazado';
-                const boxClass = esRech ? 'bg-rose-950/30 border-rose-500/40' : (esObs ? 'bg-amber-950/30 border-amber-500/40' : 'bg-blue-950/30 border-blue-500/40');
-                const badgeText = esRech ? '❌ RECHAZADO' : (esObs ? '⚠️ OBSERVADO POR STAFF' : '⏳ EN REVISIÓN ANTI-SMURF');
-
-                cont.innerHTML = `
-                    <div class="p-4 rounded-2xl border ${boxClass} space-y-2">
-                        <span class="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-black uppercase">${badgeText}</span>
-                        <h4 class="text-lg font-black text-white uppercase">[${encontradoResumen.tag}] ${encontradoResumen.nombreEquipo}</h4>
-                        <p class="text-xs text-zinc-300">Código: <strong class="font-mono text-amber-300">${encontradoResumen.codigoSeguimiento}</strong> • Sede: <strong>${encontradoResumen.sedeDepartamento}</strong></p>
-                        ${encontradoResumen.notaObservacion ? `<p class="text-xs text-amber-300 bg-black p-3 rounded-xl border border-amber-500/30"><strong>Nota:</strong> ${encontradoResumen.notaObservacion}</p>` : ''}
-                    </div>
-                `;
-                return;
-            }
-
-            cont.innerHTML = `
-                <div class="p-4 rounded-2xl bg-black border border-white/10 text-center text-xs text-zinc-300 font-bold">
-                    No se encontró ninguna inscripción con "${q.toUpperCase()}".
-                </div>
-            `;
         };
 
         document.addEventListener('keydown', (e) => {
