@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#e11d48">
 
-    <link rel="stylesheet" href="/dist/output.css?v=294">
+    <link rel="stylesheet" href="/dist/output.css?v=297">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -383,6 +383,9 @@
                 <button onclick="switchModalTab('roster')" id="mtab-btn-roster" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
                     <i class="fas fa-users text-blue-400"></i> <span>Roster & Anti-Smurf</span> <span id="tab-badge-roster-count" class="px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 text-[10px] font-mono">5</span>
                 </button>
+                <button onclick="switchModalTab('pago')" id="mtab-btn-pago" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-emerald-300 shrink-0">
+                    <i class="fas fa-receipt text-emerald-400"></i> <span>Pago &amp; Comprobante</span>
+                </button>
                 <button onclick="switchModalTab('dictamen')" id="mtab-btn-dictamen" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-emerald-400 shrink-0">
                     <i class="fas fa-clipboard-check"></i> <span>Dictamen</span>
                 </button>
@@ -510,7 +513,51 @@
                     </div>
                 </div>
 
-                <!-- TAB 4: DICTAMEN & ELIMINAR (D de CRUD) -->
+                <!-- TAB 4: PAGO & COMPROBANTE -->
+                <div id="mtab-pago" class="hidden space-y-5">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-credit-card"></i> Detalles del Pago QR
+                                </h3>
+                                <span id="m-pago-monto-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">-- Bs</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="p-3 bg-[#111] rounded-xl border border-gray-800">
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Etapa / Tarifa</span>
+                                    <strong id="m-pago-etapa" class="text-white text-xs font-black">--</strong>
+                                </div>
+                                <div class="p-3 bg-[#111] rounded-xl border border-gray-800 flex items-center justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Titular / Nº de Referencia</span>
+                                        <strong id="m-pago-referencia" class="text-emerald-300 font-mono text-xs break-all">--</strong>
+                                    </div>
+                                    <button type="button" onclick="copiarTexto(document.getElementById('m-pago-referencia').textContent, 'Referencia')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-[10px] font-bold cursor-pointer shrink-0">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="p-3 bg-[#111] rounded-xl border border-gray-800">
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Archivo / Tipo de Comprobante</span>
+                                    <strong id="m-pago-tipo" class="text-cyan-300 font-mono text-xs break-all">--</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-file-invoice-dollar"></i> Comprobante Adjunto
+                                </h3>
+                                <span id="m-pago-badge-estado" class="text-[10px] text-gray-400 font-mono">Revisión Staff</span>
+                            </div>
+                            <div id="m-pago-comprobante-box" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: DICTAMEN & ELIMINAR (D de CRUD) -->
                 <div id="mtab-dictamen" class="hidden space-y-4">
                     <div class="bg-[#0a0a0a] border border-emerald-500/30 p-5 rounded-2xl space-y-4">
                         <div class="flex items-center justify-between border-b border-gray-800 pb-3">
@@ -615,6 +662,33 @@
                                     <label class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-black uppercase text-center text-white border border-gray-600 cursor-pointer block">
                                         <i class="fas fa-upload mr-1"></i> Subir Logo
                                         <input type="file" id="e-logo-file" accept="image/*" class="hidden">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pago & Comprobante -->
+                        <div class="p-4 rounded-2xl bg-black/60 border border-emerald-500/25 space-y-3">
+                            <h4 class="text-xs font-black uppercase text-emerald-400">Pago &amp; Comprobante QR</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Monto (Bs)</label>
+                                    <input type="number" id="e-pago-monto" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-emerald-300 font-mono font-bold" placeholder="80">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Referencia / Titular</label>
+                                    <input type="text" id="e-pago-referencia" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white" placeholder="Titular o Nº de comprobante">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-9">
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Comprobante (URL, Imagen Base64 o PDF Base64)</label>
+                                    <input type="text" id="e-pago-comprobante" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="w-full py-2 px-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/70 text-xs font-black uppercase text-center text-emerald-300 border border-emerald-500/40 cursor-pointer block">
+                                        <i class="fas fa-file-arrow-up mr-1"></i> Subir Img/PDF
+                                        <input type="file" id="e-pago-file" accept="image/*,.pdf,application/pdf" class="hidden">
                                     </label>
                                 </div>
                             </div>
@@ -872,6 +946,30 @@
                 </a>
                 <button type="button" onclick="cerrarVisorLogoPresencial()" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-bold uppercase cursor-pointer">Cerrar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- VISOR HD DE COMPROBANTE DE PAGO (IMAGEN & PDF) -->
+    <div id="modal-visor-comprobante" onmousedown="this._mdTarget=event.target" onclick="if(event.target===this&&this._mdTarget===this) cerrarVisorComprobantePresencial()" class="fixed inset-0 z-[95] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-6">
+        <div class="w-full max-w-4xl max-h-[94dvh] bg-[#070b12] border border-emerald-500/40 rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+            <div class="p-3.5 sm:p-4 border-b border-gray-800 bg-[#0b101b] flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <div class="min-w-0">
+                    <h4 id="visor-comp-titulo" class="text-xs sm:text-sm font-black text-white uppercase truncate">Comprobante de Pago</h4>
+                    <p id="visor-comp-subtitulo" class="text-[10px] text-emerald-300 font-mono truncate">--</p>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap shrink-0">
+                    <button type="button" id="btn-comp-zoom-out" onclick="ajustarZoomVisorComp(-0.2)" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-xs cursor-pointer" title="Alejar"><i class="fas fa-search-minus"></i></button>
+                    <button type="button" id="btn-comp-zoom-in" onclick="ajustarZoomVisorComp(0.2)" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-xs cursor-pointer" title="Acercar"><i class="fas fa-search-plus"></i></button>
+                    <button type="button" id="btn-comp-rotar" onclick="rotarVisorComp()" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-xs cursor-pointer" title="Rotar 90 grados"><i class="fas fa-rotate-right"></i></button>
+                    <a id="visor-comp-download" href="#" download="comprobante-pago" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black uppercase">
+                        <i class="fas fa-download mr-1"></i> Descargar
+                    </a>
+                    <button type="button" onclick="cerrarVisorComprobantePresencial()" class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="visor-comp-stage" class="flex-1 overflow-auto bg-black/95 flex items-center justify-center p-4 min-h-[55vh]"></div>
         </div>
     </div>
 
@@ -1411,6 +1509,11 @@
                                 const cap = eq.capitanContacto || (eq.titulares && eq.titulares[0]) || {};
                                 const badgeEst = `badge-${(eq.estado || 'Pendiente').toLowerCase()}`;
                                 const primeraAlerta = aud.alertasEquipo?.[0]?.titulo ? aud.alertasEquipo[0].titulo.replace(/^[🚨⚠️⛔📋]+\s*/, '') : '';
+                                const pagoObj = eq.pago || {};
+                                const tieneComp = Boolean(pagoObj.comprobante && pagoObj.comprobante !== '#');
+                                const pagoCell = tieneComp
+                                    ? `<button type="button" onclick="event.stopPropagation(); abrirVisorComprobantePresencial('${eq.id}')" class="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black border border-emerald-500/35 text-[10px] font-black cursor-pointer"><i class="fas fa-receipt mr-1"></i>${escapeHTML(pagoObj.montoBs ? `${pagoObj.montoBs} Bs` : 'Ver')}</button>`
+                                    : `<span class="text-[10px] text-gray-500 font-mono">Sin pago</span>`;
                                 const diag = aud.estadoGlobal === 'critica'
                                     ? `<button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}', 'roster')" class="text-left text-red-400 hover:text-red-300 font-black cursor-pointer"><span>🚨 ${aud.totalCriticas} Alerta(s)</span>${primeraAlerta ? `<span class="block text-[10px] font-normal text-red-300/80 truncate max-w-[230px]">${escapeHTML(primeraAlerta)}</span>` : ''}</button>`
                                     : (aud.estadoGlobal === 'observacion'
@@ -1424,7 +1527,7 @@
                                         <td class="p-3.5">${esCocha ? '<span class="text-emerald-400 font-black">Cocha • SMOK</span>' : '<span class="text-rose-400 font-black">La Paz • AMQ</span>'}</td>
                                         <td class="p-3.5 text-gray-300">${escapeHTML(cap.nombre || '--')} <span class="block text-[10px] font-mono text-gray-500">Whapp: ${escapeHTML(cap.whapp || '--')}</span></td>
                                         <td class="p-3.5">${diag}</td>
-                                        <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${badgeEst}">${escapeHTML(eq.estado || 'Pendiente')}</span></td>
+                                        <td class="p-3.5"><div class="flex items-center gap-1.5"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${badgeEst}">${escapeHTML(eq.estado || 'Pendiente')}</span>${pagoCell}</div></td>
                                         <td class="p-3.5 text-right"><button type="button" class="px-3 py-1.5 rounded-xl bg-rose-600/20 text-rose-300 font-black text-xs uppercase">Revisar</button></td>
                                     </tr>
                                 `;
@@ -1518,6 +1621,12 @@
                         ? 'border-amber-500/40 hover:border-amber-400'
                         : (aud.estadoGlobal === 'historial' ? 'border-cyan-500/40 hover:border-cyan-400' : 'border-gray-800/80 hover:border-rose-500/50'));
 
+                const pagoObjCard = eq.pago || {};
+                const tieneCompCard = Boolean(pagoObjCard.comprobante && pagoObjCard.comprobante !== '#');
+                const pagoBtnCard = tieneCompCard
+                    ? `<button type="button" onclick="event.stopPropagation(); abrirVisorComprobantePresencial('${eq.id}')" class="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black border border-emerald-500/35 flex items-center gap-1 cursor-pointer transition-all" title="Revisar comprobante de pago (${pagoObjCard.montoBs || '--'} Bs)"><i class="fas fa-receipt text-[8px]"></i> ${pagoObjCard.montoBs ? `${pagoObjCard.montoBs} Bs` : 'Pago'}</button>`
+                    : '';
+
                 return `
                     <div onclick="abrirModalDetallePresencial('${eq.id}')" class="staff-card p-4 sm:p-5 rounded-2xl border ${cardBorder} transition-all duration-200 flex flex-col justify-between shadow-lg group cursor-pointer hover:-translate-y-0.5">
                         <div>
@@ -1559,8 +1668,11 @@
                             </div>
                         </div>
 
-                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2 mt-auto">
-                            <span class="text-[10px] text-gray-500 font-mono">${eq.notaObservacion ? '📝 Con nota' : (eq.timestamp ? new Date(eq.timestamp).toLocaleDateString('es-BO') : '')}</span>
+                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2 mt-auto flex-wrap">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[10px] text-gray-500 font-mono">${eq.notaObservacion ? '📝 Nota' : (eq.timestamp ? new Date(eq.timestamp).toLocaleDateString('es-BO') : '')}</span>
+                                ${pagoBtnCard}
+                            </div>
                             <button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}')" class="px-3.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-black text-xs uppercase transition-all cursor-pointer">
                                 <i class="fas fa-id-card mr-1"></i> Auditar / Editar
                             </button>
@@ -1572,7 +1684,7 @@
 
         // Modal Detalle, Auditoría y Edición CRUD
         window.switchModalTab = (tab) => {
-            ['general', 'representante', 'roster', 'dictamen', 'editar'].forEach(t => {
+            ['general', 'representante', 'roster', 'pago', 'dictamen', 'editar'].forEach(t => {
                 document.getElementById(`mtab-${t}`)?.classList.toggle('hidden', t !== tab);
                 const btn = document.getElementById(`mtab-btn-${t}`);
                 if (!btn) return;
@@ -1650,6 +1762,9 @@
                     ? suplentesAudit.map((rj, idx) => renderFichaJugadorPresencial(rj, false, idx + 1)).join('')
                     : `<div class="col-span-full p-6 text-center bg-black/30 rounded-2xl border border-gray-800 text-gray-500 font-bold text-xs"><i class="fas fa-info-circle mr-1"></i> Este equipo no tiene suplentes registrados.</div>`;
             }
+
+            // Pago & Comprobante
+            renderizarTabPagoPresencial(eq);
 
             // Dictamen & Auditoría automática dentro de la pestaña Dictamen
             renderizarAuditoriaDictamenModal(eq, aud);
@@ -1828,6 +1943,59 @@
             `;
         }
 
+        function renderizarTabPagoPresencial(eq) {
+            const p = eq.pago || {};
+            const monto = p.montoBs ? `${p.montoBs} ${p.moneda || 'Bs'}` : 'No especificado';
+            document.getElementById('m-pago-monto-badge').textContent = monto;
+            document.getElementById('m-pago-etapa').textContent = p.etapa || 'Pago Torneo Presencial';
+            document.getElementById('m-pago-referencia').textContent = p.referencia || 'Sin referencia ingresada';
+            document.getElementById('m-pago-tipo').textContent = p.comprobanteNombre || p.comprobanteTipo || 'Sin archivo';
+
+            const comp = (p.comprobante || '').trim();
+            const box = document.getElementById('m-pago-comprobante-box');
+            const badgeEst = document.getElementById('m-pago-badge-estado');
+            if (!box) return;
+
+            if (!comp || comp === '#') {
+                if (badgeEst) badgeEst.textContent = 'Sin adjunto';
+                const rep = eq.capitanContacto || {};
+                const tel = String(rep.whapp || '').replace(/[^0-9]/g, '');
+                const waTxt = encodeURIComponent(`Hola ${rep.nombre || 'Capitán'}, del Staff LBL te pedimos enviar o adjuntar el comprobante de pago QR para validar al equipo *${eq.equipo?.nombre || ''}*.`);
+                box.innerHTML = `
+                    <div class="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/35 text-center space-y-3">
+                        <p class="text-xs text-amber-300 font-bold"><i class="fas fa-triangle-exclamation mr-1"></i> No hay comprobante adjunto en este equipo.</p>
+                        ${tel ? `<a href="https://wa.me/${tel}?text=${waTxt}" target="_blank" class="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 text-green-300 font-bold text-xs uppercase"><i class="fab fa-whatsapp"></i> Pedir Comprobante por WhatsApp</a>` : ''}
+                        <button type="button" onclick="switchModalTab('editar')" class="w-full py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs uppercase cursor-pointer"><i class="fas fa-plus mr-1"></i> Adjuntar en Editar Datos</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const esPdf = p.comprobanteTipo === 'pdf' || comp.startsWith('data:application/pdf') || /\.pdf(\?|$)/i.test(comp);
+            const esImg = p.comprobanteTipo === 'imagen' || comp.startsWith('data:image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(comp);
+            if (badgeEst) badgeEst.textContent = esPdf ? 'PDF adjunto' : (esImg ? 'Imagen adjunta' : 'Enlace externo');
+
+            const previewStage = esPdf
+                ? `<div onclick="abrirVisorComprobantePresencial('${eq.id}')" class="rounded-xl bg-rose-950/25 border border-rose-500/35 p-6 text-center cursor-pointer hover:border-rose-400 transition-all space-y-2"><i class="fas fa-file-pdf text-4xl text-rose-400"></i><p class="text-xs font-black text-white uppercase">Documento PDF adjunto</p><span class="inline-block text-[10px] text-rose-300 font-bold">Clic para abrir en Visor HD</span></div>`
+                : (esImg
+                    ? `<div onclick="abrirVisorComprobantePresencial('${eq.id}')" class="relative group/thumb rounded-xl overflow-hidden bg-black border border-gray-800 hover:border-emerald-500/60 cursor-pointer aspect-video flex items-center justify-center"><img src="${escapeHTML(comp)}" alt="Comprobante" class="w-full h-full object-contain group-hover/thumb:scale-105 transition-transform duration-300"><div class="absolute inset-0 bg-black/60 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center text-emerald-300 text-xs font-black uppercase"><i class="fas fa-search-plus mr-1.5"></i> Ampliar en Visor HD</div></div>`
+                    : `<div class="p-4 rounded-xl bg-black/70 border border-blue-500/30 text-center space-y-2"><i class="fas fa-link text-2xl text-blue-400"></i><p class="text-[11px] text-blue-300 font-mono break-all">${escapeHTML(comp)}</p></div>`);
+
+            box.innerHTML = `
+                <div class="p-3.5 bg-black/40 rounded-2xl border border-gray-800 space-y-3">
+                    ${previewStage}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button type="button" onclick="abrirVisorComprobantePresencial('${eq.id}')" class="py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="fas fa-expand"></i> Visor HD
+                        </button>
+                        <a href="${escapeHTML(comp)}" target="_blank" rel="noopener noreferrer" download="${escapeHTML(p.comprobanteNombre || 'comprobante')}" class="py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs uppercase border border-gray-700 flex items-center justify-center gap-1.5">
+                            <i class="fas fa-external-link-alt text-[10px]"></i> Abrir / Descargar
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderizarAuditoriaDictamenModal(eq, aud) {
             const box = document.getElementById('m-v-auditoria-box');
             if (!box || !eq) return;
@@ -1923,6 +2091,11 @@
             document.getElementById('e-sede').value = eq.sedeDepartamento || 'La Paz';
             document.getElementById('e-logo').value = eq.equipo?.logo || '';
 
+            const p = eq.pago || {};
+            document.getElementById('e-pago-monto').value = p.montoBs || '';
+            document.getElementById('e-pago-referencia').value = p.referencia || '';
+            document.getElementById('e-pago-comprobante').value = p.comprobante || '';
+
             const rep = eq.capitanContacto || {};
             document.getElementById('e-rep-nombre').value = rep.nombre || '';
             document.getElementById('e-rep-ci').value = rep.ci || '';
@@ -1972,6 +2145,27 @@
             } catch (_) { alert('No se pudo procesar la imagen.'); }
         });
 
+        document.getElementById('e-pago-file')?.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            try {
+                if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                    if (file.size > 650 * 1024) return alert('El PDF supera 650 KB.');
+                    const pdfUrl = await new Promise((res, rej) => {
+                        const r = new FileReader();
+                        r.onload = () => res(r.result);
+                        r.onerror = rej;
+                        r.readAsDataURL(file);
+                    });
+                    document.getElementById('e-pago-comprobante').value = String(pdfUrl || '');
+                } else {
+                    let b64 = await convertirImagenAWebpBase64(file, 1080, 0.85);
+                    if (b64.length > 680000) b64 = await convertirImagenAWebpBase64(file, 800, 0.75);
+                    document.getElementById('e-pago-comprobante').value = b64;
+                }
+            } catch (_) { alert('No se pudo cargar el comprobante.'); }
+        });
+
         window.guardarEdicionPresencial = async () => {
             if (!equipoSeleccionadoId) return;
             const eq = inscripcionesPresencial.find(e => e.id === equipoSeleccionadoId);
@@ -2018,6 +2212,11 @@
                 rangoMax: document.getElementById('E_SUP_1_rango').value
             }] : [];
 
+            const compEdit = document.getElementById('e-pago-comprobante').value.trim();
+            const montoEdit = Number(document.getElementById('e-pago-monto').value || 0) || (eq.pago?.montoBs || 80);
+            const refEdit = document.getElementById('e-pago-referencia').value.trim();
+            const tipoEdit = compEdit.startsWith('data:application/pdf') ? 'pdf' : (compEdit.startsWith('data:image/') ? 'imagen' : (compEdit ? 'enlace' : (eq.pago?.comprobanteTipo || '')));
+
             const updatePayload = {
                 sedeDepartamento: sede,
                 sedeSponsor: sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo',
@@ -2031,6 +2230,15 @@
                 },
                 titulares,
                 suplentes,
+                pago: {
+                    ...(eq.pago || {}),
+                    montoBs: montoEdit,
+                    moneda: 'BOB',
+                    referencia: refEdit,
+                    comprobante: compEdit,
+                    comprobanteTipo: tipoEdit,
+                    comprobanteNombre: eq.pago?.comprobanteNombre || (tipoEdit === 'pdf' ? 'comprobante.pdf' : 'Comprobante')
+                },
                 updatedAt: new Date().toISOString()
             };
 
@@ -2263,6 +2471,64 @@
             document.getElementById('modal-visor-logo')?.classList.add('hidden');
         };
 
+        // Visor HD de Comprobante (Imagen con Zoom/Rotación o PDF embebido)
+        let _visorCompScale = 1;
+        let _visorCompRot = 0;
+        function aplicarTransformVisorComp() {
+            const img = document.getElementById('visor-comp-img-el');
+            if (img) {
+                img.style.transform = `scale(${_visorCompScale}) rotate(${_visorCompRot}deg)`;
+                img.style.transition = 'transform 0.2s ease';
+            }
+        }
+        window.ajustarZoomVisorComp = (delta) => {
+            _visorCompScale = Math.min(3, Math.max(0.5, _visorCompScale + delta));
+            aplicarTransformVisorComp();
+        };
+        window.rotarVisorComp = () => {
+            _visorCompRot = (_visorCompRot + 90) % 360;
+            aplicarTransformVisorComp();
+        };
+        window.abrirVisorComprobantePresencial = (equipoId) => {
+            const eq = inscripcionesPresencial.find(e => e.id === equipoId);
+            if (!eq || !eq.pago?.comprobante) return;
+            const p = eq.pago;
+            const comp = String(p.comprobante).trim();
+            const esPdf = p.comprobanteTipo === 'pdf' || comp.startsWith('data:application/pdf') || /\.pdf(\?|$)/i.test(comp);
+
+            _visorCompScale = 1;
+            _visorCompRot = 0;
+
+            document.getElementById('visor-comp-titulo').textContent = `Comprobante: [${eq.equipo?.tag || 'LBL'}] ${eq.equipo?.nombre || 'Equipo'}`;
+            document.getElementById('visor-comp-subtitulo').textContent = `${p.montoBs ? `${p.montoBs} Bs` : 'Pago QR'} • ${p.referencia || 'Sin referencia'}`;
+            const dl = document.getElementById('visor-comp-download');
+            if (dl) {
+                dl.href = comp;
+                dl.setAttribute('download', p.comprobanteNombre || (esPdf ? 'comprobante.pdf' : 'comprobante.webp'));
+            }
+
+            const showImgTools = !esPdf;
+            ['btn-comp-zoom-out', 'btn-comp-zoom-in', 'btn-comp-rotar'].forEach(id => {
+                document.getElementById(id)?.classList.toggle('hidden', !showImgTools);
+            });
+
+            const stage = document.getElementById('visor-comp-stage');
+            if (stage) {
+                if (esPdf) {
+                    stage.innerHTML = `<iframe src="${escapeHTML(comp)}" class="w-full h-[74vh] rounded-xl border border-gray-800 bg-white"></iframe>`;
+                } else {
+                    stage.innerHTML = `<img id="visor-comp-img-el" src="${escapeHTML(comp)}" alt="Comprobante HD" class="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl">`;
+                }
+            }
+            document.getElementById('modal-visor-comprobante')?.classList.remove('hidden');
+        };
+        window.cerrarVisorComprobantePresencial = () => {
+            const modal = document.getElementById('modal-visor-comprobante');
+            if (modal) modal.classList.add('hidden');
+            const stage = document.getElementById('visor-comp-stage');
+            if (stage) stage.innerHTML = '';
+        };
+
         // Centro Automático de Alertas Anti-Smurf & Irregularidades
         window.renderizarListaAlertasPresencial = (filtro = 'todos') => {
             const cont = document.getElementById('alertas-presencial-lista');
@@ -2421,6 +2687,7 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                window.cerrarVisorComprobantePresencial();
                 window.cerrarVisorLogoPresencial();
                 window.cerrarModalRastreator();
                 window.cerrarModalAlertasPresencial();
