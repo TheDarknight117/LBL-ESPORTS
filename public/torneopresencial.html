@@ -17,8 +17,9 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020202">
 
-    <link rel="stylesheet" href="/dist/output.css?v=297">
-    <script type="module" src="/app-version.js?v=297"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=298">
+    <script type="module" src="/app-version.js?v=298"></script>
+    <link rel="preload" as="image" type="image/webp" href="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.webp" fetchpriority="high">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -214,8 +215,10 @@
     <!-- ===================================================================== -->
     <div id="lan-stage-backdrop" class="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none bg-[#020202]">
         <img id="lan-stage-bg-img"
-             src="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.png"
+             src="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.webp"
              alt="Escenario La Paz vs Cochabamba"
+             fetchpriority="high"
+             decoding="async"
              class="w-full h-full object-cover object-center">
         <div id="lan-stage-dim" class="absolute inset-0"></div>
     </div>
