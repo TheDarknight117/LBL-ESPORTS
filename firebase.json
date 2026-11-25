@@ -216,7 +216,16 @@
         ]
       },
       {
-        "source": "/torneo-lan",
+        "source": "/torneopresencial",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/staff-presencial",
         "headers": [
           {
             "key": "Cache-Control",
@@ -283,6 +292,11 @@
       {
         "source": "/aqm",
         "destination": "/amq",
+        "type": 301
+      },
+      {
+        "source": "/torneo-lan",
+        "destination": "/torneopresencial",
         "type": 301
       }
     ],

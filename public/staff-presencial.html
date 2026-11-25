@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TERHMJ40W1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TERHMJ40W1');
+    </script>
+    <title>Torneo Presencial LAN | Panel de Staff LBL</title>
+    <meta name="description" content="Gestor CRUD, tarjetas de equipos y rastreador forense Anti-Smurf para el Torneo Presencial AMQ (La Paz) vs SMOK (Cochabamba) de LBL Esports.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://lbl-esports.web.app/staff-presencial">
+
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/png" href="/assets/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
+    <meta name="theme-color" content="#e11d48">
+
+    <link rel="stylesheet" href="/dist/output.css?v=293">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #030712; color: #e5e7eb; }
+        .glass-panel { background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .staff-card {
+            background: #090e17;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            content-visibility: auto;
+            contain-intrinsic-size: 360px;
+        }
+        .badge-pendiente { background-color: #ca8a0420; color: #facc15; border: 1px solid #ca8a04; }
+        .badge-aceptado { background-color: #16a34a20; color: #4ade80; border: 1px solid #16a34a; }
+        .badge-observado { background-color: #ea580c20; color: #fb923c; border: 1px solid #ea580c; }
+        .badge-rechazado { background-color: #dc262620; color: #f87171; border: 1px solid #dc2626; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #060b13; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        .tab-btn.active {
+            background: rgba(244, 63, 94, 0.16);
+            color: #fda4af;
+            border-color: rgba(244, 63, 94, 0.45);
+            box-shadow: 0 0 14px rgba(244, 63, 94, 0.22);
+        }
+        .tab-btn:not(.active) {
+            background: #090e17;
+            color: #94a3b8;
+            border-color: #1e293b;
+        }
+        .tab-btn:not(.active):hover {
+            color: #ffffff;
+            border-color: #334155;
+        }
+
+        .modal-tab-btn {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            color: #9ca3af;
+            background: transparent;
+        }
+        .modal-tab-btn:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .modal-tab-active {
+            color: #fda4af !important;
+            border-bottom: 2px solid #f43f5e !important;
+            background-color: rgba(244, 63, 94, 0.1) !important;
+        }
+        .modal-tab-active-amber {
+            color: #fbbf24 !important;
+            border-bottom: 2px solid #f59e0b !important;
+            background-color: rgba(245, 158, 11, 0.1) !important;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- PANTALLA DE CARGA / VERIFICACIÓN DE SESIÓN STAFF -->
+    <div id="presencial-auth-loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505] text-white p-4">
+        <div id="presencial-spinner-block" class="flex flex-col items-center gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-rose-950/60 border border-rose-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(244,63,94,0.35)]">
+                <i class="fas fa-user-secret text-rose-400 text-2xl animate-pulse"></i>
+            </div>
+            <p class="text-xs text-gray-400 font-mono tracking-widest uppercase flex items-center gap-2">
+                <i class="fas fa-spinner fa-spin text-rose-400"></i> Verificando Sesión Staff...
+            </p>
+        </div>
+
+        <div id="presencial-login-fallback" class="hidden max-w-sm w-full bg-[#0a0f16] border border-rose-500/40 rounded-3xl p-6 sm:p-7 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-950/80 border border-rose-500/50 flex items-center justify-center text-rose-400 text-xl shadow-lg">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-black uppercase text-white tracking-tight">Acceso Staff Presencial</h3>
+                <p class="text-xs text-gray-400 mt-1">Inicia sesión con Firebase para habilitar escrituras en Firestore o desbloquea vista local.</p>
+            </div>
+
+            <div class="space-y-3 pt-1">
+                <input type="text" id="input-pin-staff-presencial" autocomplete="off" style="-webkit-text-security: disc;" placeholder="PIN de Staff (ej: lbl2026)"
+                    onkeydown="if(event.key==='Enter') verificarPinStaffPresencial();"
+                    class="w-full bg-black/80 border border-gray-800 focus:border-rose-500 rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 font-mono text-center outline-none">
+                <div id="pin-error-presencial" class="hidden text-[11px] text-rose-400 font-bold">
+                    <i class="fas fa-exclamation-circle mr-1"></i> Clave incorrecta.
+                </div>
+                <button type="button" onclick="verificarPinStaffPresencial()"
+                    class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer">
+                    <i class="fas fa-key mr-1"></i> Desbloquear Panel
+                </button>
+                <div class="flex items-center gap-2 pt-2 border-t border-gray-800">
+                    <button type="button" onclick="window.location.href='/dashboard?redirect=/staff-presencial'"
+                        class="flex-1 py-2 px-3 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 font-bold text-[11px] uppercase transition-all cursor-pointer">
+                        <i class="fas fa-arrow-right-to-bracket mr-1"></i> Login Firebase
+                    </button>
+                    <button type="button" id="btn-presencial-dev-login" onclick="desbloquearPanelPresencial('Staff Local (Dev)')"
+                        class="flex-1 py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 font-bold text-[11px] uppercase transition-all cursor-pointer">
+                        <i class="fas fa-bolt text-yellow-400 mr-1"></i> Entrar (Dev)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="dashboard-content" class="flex flex-col min-h-screen hidden">
+
+        <!-- HEADER ESPECIALIZADO TORNEO PRESENCIAL -->
+        <header class="w-full glass-panel sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3.5 flex flex-col lg:flex-row lg:justify-between lg:items-center border-b border-rose-900/30 gap-2.5">
+            <div class="flex items-center justify-between gap-2 min-w-0">
+                <a href="/dashboard" class="flex items-center gap-2.5 group shrink-0">
+                    <img src="/assets/logo.webp" decoding="async" onerror="this.src='/assets/logo.png'" alt="LBL Logo" class="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <div class="flex flex-col text-left min-w-0">
+                        <span class="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase italic leading-none text-white">
+                            LBL <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-white to-emerald-400">TORNEO PRESENCIAL</span>
+                        </span>
+                        <p class="text-[9px] sm:text-[10px] font-bold tracking-widest text-rose-400 uppercase truncate mt-0.5" id="user-display">
+                            Sesión: Staff
+                        </p>
+                    </div>
+                </a>
+
+                <div class="flex sm:hidden items-center gap-1.5 shrink-0">
+                    <button onclick="abrirModalRastreator()" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] uppercase flex items-center gap-1 cursor-pointer">
+                        <i class="fas fa-user-secret"></i>
+                    </button>
+                    <button onclick="recargarDatosPresencialYForense(true)" class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-[11px] uppercase flex items-center gap-1 cursor-pointer">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <a href="/dashboard" class="px-2.5 py-1.5 rounded-xl bg-gray-900/80 border border-gray-700/60 text-gray-300 font-bold text-[11px] uppercase flex items-center">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex gap-1.5 sm:gap-2 items-center flex-wrap min-w-0">
+                <button onclick="abrirModalRastreator()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0">
+                    <i class="fas fa-user-secret text-amber-400"></i> <span>Rastreator Forense</span>
+                    <span id="badge-header-indexados" class="px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black font-mono">0</span>
+                </button>
+
+                <button onclick="abrirModalCrearPresencial()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md cursor-pointer shrink-0">
+                    <i class="fas fa-plus"></i> <span>Nuevo Equipo</span>
+                </button>
+
+                <a href="/torneopresencial" target="_blank" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gray-900/90 hover:bg-gray-800 border border-cyan-500/35 text-cyan-300 font-bold text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shrink-0">
+                    <i class="fas fa-up-right-from-square"></i> <span class="hidden md:inline">Portal Público</span>
+                </a>
+
+                <a href="/dashboard" class="hidden sm:flex px-3.5 py-2 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-700/60 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wider items-center gap-1.5 transition-all shrink-0">
+                    <i class="fas fa-arrow-left"></i> <span class="hidden lg:inline">Liga Principal</span>
+                </a>
+
+                <button onclick="recargarDatosPresencialYForense(true)" id="btn-sync-presencial" class="hidden sm:flex px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-wider items-center gap-1.5 transition-all shadow-md cursor-pointer shrink-0">
+                    <i id="icon-sync-presencial" class="fas fa-sync-alt"></i> <span class="hidden md:inline">Sincronizar</span>
+                </button>
+
+                <button onclick="cerrarSesionStaff()" class="hidden sm:flex border border-red-900/50 text-red-400 hover:bg-red-600 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shrink-0 cursor-pointer" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="flex-grow w-full max-w-[1440px] mx-auto p-3 sm:p-5 md:p-6 mt-1 sm:mt-3">
+
+            <!-- BANNER DE ESTADO Y SINCRONIZACIÓN -->
+            <div class="glass-panel p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 border-l-4 border-rose-500 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-gradient-to-r from-rose-950/25 via-transparent to-emerald-950/20">
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                            La Paz (AMQ) vs Cochabamba (SMOK)
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                            Región LAS • Tope Esmeralda 1
+                        </span>
+                    </div>
+                    <h2 class="text-sm sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-rose-400"></i> Centro de Verificación & CRUD: Torneo Presencial
+                    </h2>
+                    <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">
+                        Gestiona tarjetas de equipos en vivo, audita cuentas contra las 6 bases históricas de LBL, edita cualquier ficha y sincroniza cupos confirmados.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2.5 text-xs text-gray-400 shrink-0 self-end md:self-center">
+                    <div class="text-right">
+                        <p class="text-[9px] sm:text-[10px] uppercase font-bold text-gray-500">Sincronización Firestore</p>
+                        <p id="label-ultima-sync" class="text-emerald-400 font-mono font-bold text-[11px] sm:text-xs">Conectando...</p>
+                    </div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
+                </div>
+            </div>
+
+            <!-- AVISO SI FIRESTORE AUTH NO ESTÁ ACTIVO -->
+            <div id="banner-auth-warning" class="hidden mb-4 p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <span class="text-amber-200 font-bold">
+                    <i class="fas fa-triangle-exclamation text-amber-400 mr-1.5"></i>
+                    Estás usando desbloqueo local sin sesión de Google Auth. Para crear, aprobar o eliminar en Firestore se requiere iniciar sesión oficial.
+                </span>
+                <a href="/dashboard?redirect=/staff-presencial" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase text-[11px]">
+                    Iniciar Sesión Firebase
+                </a>
+            </div>
+
+            <!-- TARJETAS DE MÉTRICAS KPI -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3.5 mb-5 sm:mb-6">
+                <div onclick="filtrarRapidoPresencial('todos','todos','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-blue-500 cursor-pointer hover:bg-blue-950/20 transition-all select-none">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Total Equipos</p>
+                    <p class="text-xl sm:text-2xl font-black text-white" id="stat-total">0</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('La Paz','todos','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-rose-500 cursor-pointer hover:bg-rose-950/20 transition-all select-none">
+                    <p class="text-[10px] text-rose-300 font-bold uppercase mb-1">La Paz (AMQ)</p>
+                    <p class="text-xl sm:text-2xl font-black text-rose-400" id="stat-lp-aceptados">0</p>
+                    <p class="text-[10px] text-gray-400" id="stat-lp-total">0 inscritos</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('Cochabamba','todos','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-emerald-500 cursor-pointer hover:bg-emerald-950/20 transition-all select-none">
+                    <p class="text-[10px] text-emerald-300 font-bold uppercase mb-1">Cocha (SMOK)</p>
+                    <p class="text-xl sm:text-2xl font-black text-emerald-400" id="stat-cb-aceptados">0</p>
+                    <p class="text-[10px] text-gray-400" id="stat-cb-total">0 inscritos</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('todos','Pendiente','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-yellow-500 cursor-pointer hover:bg-yellow-950/20 transition-all select-none">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Pendientes</p>
+                    <p class="text-xl sm:text-2xl font-black text-yellow-400" id="stat-pendientes">0</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('todos','Aceptado','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-green-500 cursor-pointer hover:bg-green-950/20 transition-all select-none">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Cupos Globales</p>
+                    <p class="text-xl sm:text-2xl font-black text-green-400"><span id="stat-aceptados">0</span>/16</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('todos','Observado','todos')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-orange-500 cursor-pointer hover:bg-orange-950/20 transition-all select-none">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Observados</p>
+                    <p class="text-xl sm:text-2xl font-black text-orange-400" id="stat-observados">0</p>
+                </div>
+                <div onclick="filtrarRapidoPresencial('todos','todos','critica')" class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 cursor-pointer hover:bg-red-950/20 transition-all select-none">
+                    <p class="text-[10px] text-red-300 font-bold uppercase mb-1">Alerta Smurf</p>
+                    <p class="text-xl sm:text-2xl font-black text-red-400" id="stat-criticas">0</p>
+                </div>
+            </div>
+
+            <!-- PANEL PRINCIPAL CON TARJETAS Y FILTROS -->
+            <div class="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+                <!-- BARRA DE HERRAMIENTAS -->
+                <div class="p-3.5 sm:p-5 border-b border-gray-800 flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-[#070b12] gap-3">
+                    <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0 flex-wrap">
+                        <button onclick="filtrarPorEstado('todos')" id="tab-filtro-todos" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all active shrink-0 cursor-pointer">Todos</button>
+                        <button onclick="filtrarPorEstado('Pendiente')" id="tab-filtro-pendiente" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all shrink-0 cursor-pointer">Pendientes</button>
+                        <button onclick="filtrarPorEstado('Aceptado')" id="tab-filtro-aceptado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all shrink-0 cursor-pointer">Aceptados</button>
+                        <button onclick="filtrarPorEstado('Observado')" id="tab-filtro-observado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all shrink-0 cursor-pointer">Observados</button>
+                        <button onclick="filtrarPorEstado('Rechazado')" id="tab-filtro-rechazado" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all shrink-0 cursor-pointer">Rechazados</button>
+
+                        <div class="h-4 w-px bg-gray-800 mx-1 hidden sm:block"></div>
+
+                        <select id="filter-sede" onchange="aplicarFiltros()" class="bg-[#0b121e] border border-gray-800 text-white text-xs font-bold rounded-xl px-2.5 py-1.5 outline-none cursor-pointer">
+                            <option value="todos">Todas las Sedes</option>
+                            <option value="La Paz">La Paz (AMQ)</option>
+                            <option value="Cochabamba">Cochabamba (SMOK)</option>
+                        </select>
+
+                        <select id="filter-riesgo" onchange="aplicarFiltros()" class="bg-[#0b121e] border border-gray-800 text-white text-xs font-bold rounded-xl px-2.5 py-1.5 outline-none cursor-pointer">
+                            <option value="todos">Todos los Diagnósticos</option>
+                            <option value="critica">Alerta Roja (Smurf/Elo)</option>
+                            <option value="observacion">Con Observación</option>
+                            <option value="limpio">Limpios</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2 sm:gap-3 w-full xl:w-auto">
+                        <div class="relative w-full xl:w-72">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                            <input type="search" id="searchInput" name="presencial_filtro_q" autocomplete="off" readonly onpointerdown="this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')" autocorrect="off" spellcheck="false" data-lpignore="true" oninput="aplicarFiltros()" placeholder="Buscar equipo, código, CI, Whapp, Riot ID..." class="cursor-text bg-[#0b121e] hover:bg-[#0f1726] focus:bg-[#111c2e] border border-gray-800 text-white pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:border-rose-500 transition-all text-xs placeholder-gray-500 w-full">
+                            <button id="btnClearSearch" onclick="limpiarBusqueda()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs cursor-pointer p-0.5">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center bg-[#0b121e] border border-gray-800 p-1 rounded-xl shrink-0">
+                            <button id="btn-vista-grid" type="button" onclick="cambiarVistaEquipos('grid')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-500/20 text-rose-300 border border-rose-500/30 shadow-sm">
+                                <i class="fas fa-th-large"></i> <span class="hidden sm:inline">Tarjetas</span>
+                            </button>
+                            <button id="btn-vista-tabla" type="button" onclick="cambiarVistaEquipos('tabla')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-white border border-transparent">
+                                <i class="fas fa-list"></i> <span class="hidden sm:inline">Tabla</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR DINÁMICO DE TARJETAS / TABLA -->
+                <div id="contenedor-equipos" class="p-3.5 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4"></div>
+
+                <!-- ESTADO VACÍO -->
+                <div id="estado-vacio" class="p-12 text-center text-gray-500 font-bold hidden">
+                    <i class="fas fa-search text-3xl mb-3 text-gray-600 block"></i>
+                    <p class="text-sm">No se encontraron equipos inscritos que coincidan con los filtros actuales.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL DETALLADO DE FICHA, AUDITORÍA FORENSE & EDICIÓN (R/U/D)  -->
+    <!-- ============================================================== -->
+    <div id="modal-detalle-presencial" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalDetallePresencial()" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-md p-0 sm:p-4 md:p-6 hidden">
+        <div class="bg-[#050505] border-t sm:border border-gray-800 rounded-t-3xl sm:rounded-3xl w-full max-w-5xl h-[96dvh] sm:h-auto sm:max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
+
+            <!-- HEADER DEL MODAL -->
+            <div class="p-3 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0a0a0a] gap-2 shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+                    <div class="relative group cursor-pointer shrink-0" onclick="abrirVisorLogoPresencial()" title="Ampliar logo">
+                        <img id="m-logo" src="/assets/logo.webp" alt="Logo" onerror="this.src='/assets/logo.webp'" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain bg-black border border-gray-800 p-1 group-hover:border-rose-500 transition-all shadow-md">
+                        <span class="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">
+                            <i class="fas fa-search-plus"></i>
+                        </span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <h3 id="m-nombre" class="text-sm sm:text-lg font-black text-white uppercase tracking-wider truncate max-w-[200px] sm:max-w-md">Nombre Equipo</h3>
+                            <span id="m-tag" class="text-rose-300 font-mono font-bold text-[10px] sm:text-xs bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-500/40 shrink-0">[TAG]</span>
+                            <span id="m-sede-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0">SEDE</span>
+                            <span id="m-estado-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0">Pendiente</span>
+                        </div>
+                        <p class="text-[10px] sm:text-xs text-gray-400 mt-0.5 font-mono truncate" id="m-subtitulo">Código: --</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button onclick="switchModalTab('editar')" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-edit"></i> <span class="hidden sm:inline">Editar Ficha</span>
+                    </button>
+                    <button onclick="cerrarModalDetallePresencial()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-base cursor-pointer" title="Cerrar ventana">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PESTAÑAS DEL MODAL -->
+            <div class="px-2 sm:px-6 border-b border-gray-800 bg-[#0a0a0a] flex items-center gap-0.5 sm:gap-2 overflow-x-auto no-scrollbar select-none shrink-0">
+                <button onclick="switchModalTab('general')" id="mtab-btn-general" class="modal-tab-btn modal-tab-active px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
+                    <i class="fas fa-info-circle text-rose-400"></i> <span>General</span>
+                </button>
+                <button onclick="switchModalTab('representante')" id="mtab-btn-representante" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
+                    <i class="fas fa-crown text-yellow-500"></i> <span>Representante</span>
+                </button>
+                <button onclick="switchModalTab('roster')" id="mtab-btn-roster" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
+                    <i class="fas fa-users text-blue-400"></i> <span>Roster & Anti-Smurf</span> <span id="tab-badge-roster-count" class="px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 text-[10px] font-mono">5</span>
+                </button>
+                <button onclick="switchModalTab('dictamen')" id="mtab-btn-dictamen" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-emerald-400 shrink-0">
+                    <i class="fas fa-clipboard-check"></i> <span>Dictamen</span>
+                </button>
+                <button onclick="switchModalTab('editar')" id="mtab-btn-editar" class="modal-tab-btn px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer whitespace-nowrap text-amber-400 shrink-0">
+                    <i class="fas fa-user-edit"></i> <span>Editar Datos</span>
+                </button>
+            </div>
+
+            <!-- CUERPO SCROLLABLE DEL MODAL -->
+            <div class="p-3.5 sm:p-5 md:p-6 overflow-y-auto flex-grow bg-[#050505] space-y-5 text-xs">
+
+                <!-- TAB 1: GENERAL -->
+                <div id="mtab-general" class="space-y-5">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-id-card"></i> Identidad del Equipo
+                                </h3>
+                                <span id="m-d-codigo" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-xs font-black">AMQ-0000</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">Nombre Oficial</span>
+                                    <p id="m-d-nombre" class="text-white text-base font-black uppercase mt-0.5">--</p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">TAG</span>
+                                    <p id="m-d-tag" class="text-emerald-400 font-mono text-base font-black mt-0.5">[TAG]</p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">Sede Presencial</span>
+                                    <p id="m-d-sede" class="text-gray-200 font-bold text-xs mt-0.5">--</p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">Registro / Actualización</span>
+                                    <p id="m-d-fecha" class="text-gray-300 font-mono text-xs mt-0.5">--</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <h3 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-image"></i> Logo del Equipo
+                                </h3>
+                                <button type="button" onclick="abrirVisorLogoPresencial()" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-[11px] font-bold cursor-pointer">
+                                    <i class="fas fa-expand mr-1"></i> Ver Grande
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-4 bg-[#111] p-3 rounded-xl border border-gray-800">
+                                <img id="m-d-logo-preview" src="/assets/logo.webp" alt="Logo" class="w-16 h-16 rounded-xl object-contain bg-black border border-gray-800 p-1 shrink-0 cursor-pointer" onclick="abrirVisorLogoPresencial()">
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[10px] text-gray-500 uppercase font-bold block">Diagnóstico Anti-Smurf Global</span>
+                                    <div id="m-d-diag-summary" class="mt-1">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: REPRESENTANTE -->
+                <div id="mtab-representante" class="hidden">
+                    <div class="bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl space-y-4 max-w-2xl">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                            <h3 class="text-sm font-black text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-crown"></i> Representante Oficial del Equipo
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#111] rounded-xl border border-gray-800">
+                                <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Nombre Completo</span>
+                                <strong id="m-rep-nombre" class="text-white text-sm font-black block">--</strong>
+                            </div>
+                            <div class="p-3 bg-[#111] rounded-xl border border-gray-800 flex items-center justify-between gap-2">
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">C.I. / Documento</span>
+                                    <strong id="m-rep-ci" class="text-amber-300 font-mono text-sm font-black">--</strong>
+                                </div>
+                                <button type="button" onclick="copiarTexto(document.getElementById('m-rep-ci').textContent, 'C.I.')" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-200 text-[10px] cursor-pointer"><i class="fas fa-copy"></i></button>
+                            </div>
+                            <div class="p-3 bg-[#111] rounded-xl border border-gray-800 flex items-center justify-between gap-2">
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Whapp (Celular)</span>
+                                    <strong id="m-rep-whapp" class="text-emerald-400 font-mono text-sm font-bold">--</strong>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" onclick="copiarTexto(document.getElementById('m-rep-whapp').textContent, 'Whapp')" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-200 text-[10px] cursor-pointer"><i class="fas fa-copy"></i></button>
+                                    <a id="m-rep-wa-link" href="#" target="_blank" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase"><i class="fab fa-whatsapp"></i> Chat</a>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-[#111] rounded-xl border border-gray-800 flex items-center justify-between gap-2">
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase block mb-0.5">Discord</span>
+                                    <strong id="m-rep-discord" class="text-indigo-300 font-mono text-sm font-bold">--</strong>
+                                </div>
+                                <button type="button" onclick="copiarTexto(document.getElementById('m-rep-discord').textContent, 'Discord')" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-200 text-[10px] cursor-pointer"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: ROSTER & AUDITORÍA FORENSE ANTI-SMURF -->
+                <div id="mtab-roster" class="hidden space-y-4">
+                    <div id="m-roster-forense-body" class="space-y-4"></div>
+                </div>
+
+                <!-- TAB 4: DICTAMEN & ELIMINAR (D de CRUD) -->
+                <div id="mtab-dictamen" class="hidden space-y-4">
+                    <div class="bg-[#0a0a0a] border border-emerald-500/30 p-5 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                            <div>
+                                <h3 class="text-sm font-black uppercase text-emerald-400">Dictamen Oficial & Publicación en Vitrina</h3>
+                                <p class="text-[11px] text-gray-400">Los equipos aceptados se publican automáticamente en /torneopresencial (16 cupos globales).</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-2">Estado Oficial:</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-green-500/30 bg-green-950/20 cursor-pointer">
+                                    <input type="radio" name="m-v-estado" value="Aceptado" class="accent-green-500 w-4 h-4">
+                                    <span class="font-black text-green-400 uppercase text-xs">Aceptado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-orange-500/30 bg-orange-950/20 cursor-pointer">
+                                    <input type="radio" name="m-v-estado" value="Observado" class="accent-orange-500 w-4 h-4">
+                                    <span class="font-black text-orange-400 uppercase text-xs">Observado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-red-500/30 bg-red-950/20 cursor-pointer">
+                                    <input type="radio" name="m-v-estado" value="Rechazado" class="accent-red-500 w-4 h-4">
+                                    <span class="font-black text-red-400 uppercase text-xs">Rechazado</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-3 rounded-xl border border-yellow-500/30 bg-yellow-950/20 cursor-pointer">
+                                    <input type="radio" name="m-v-estado" value="Pendiente" class="accent-yellow-500 w-4 h-4">
+                                    <span class="font-black text-yellow-400 uppercase text-xs">Pendiente</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <label class="block text-xs font-black uppercase text-gray-400">Nota / Motivo visible al consultar:</label>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <button type="button" onclick="insertarNotaDictamen('🚨 Cuenta supera tope Esmeralda I en bases LBL')" class="px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-rose-300 text-[10px] font-bold border border-gray-700 cursor-pointer">+ Tope Elo</button>
+                                    <button type="button" onclick="insertarNotaDictamen('⚠️ Jugador vinculado a otra cuenta / Revisar Main')" class="px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-amber-300 text-[10px] font-bold border border-gray-700 cursor-pointer">+ Revisar Main</button>
+                                    <button type="button" onclick="insertarNotaDictamen('✅ Verificación Anti-Smurf aprobada')" class="px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-emerald-300 text-[10px] font-bold border border-gray-700 cursor-pointer">+ Aprobado OK</button>
+                                </div>
+                            </div>
+                            <textarea id="m-v-notas" rows="3" class="w-full bg-[#111] border border-gray-800 rounded-xl p-3 text-white text-xs outline-none focus:border-emerald-500" placeholder="Observación visible al consultar estado..."></textarea>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-gray-800">
+                            <button type="button" onclick="eliminarEquipoPresencialActual()" id="btn-eliminar-presencial" class="px-4 py-2.5 rounded-xl bg-red-950/40 hover:bg-red-700 text-red-300 hover:text-white border border-red-500/40 font-black text-xs uppercase cursor-pointer">
+                                <i class="fas fa-trash-alt mr-1"></i> Eliminar Equipo
+                            </button>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button type="button" onclick="notificarRepresentanteWhatsApp()" class="px-4 py-2.5 rounded-xl bg-green-700/30 hover:bg-green-600 border border-green-500/40 text-green-300 hover:text-white font-black text-xs uppercase cursor-pointer">
+                                    <i class="fab fa-whatsapp mr-1"></i> WhatsApp Rep
+                                </button>
+                                <button type="button" onclick="guardarDictamenPresencial()" id="btn-guardar-dictamen" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase cursor-pointer shadow-lg">
+                                    <i class="fas fa-save mr-1"></i> Guardar Dictamen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: EDITAR DATOS COMPLETOS (U de CRUD) -->
+                <div id="mtab-editar" class="hidden space-y-4">
+                    <div class="bg-[#0a0a0a] p-4 sm:p-5 rounded-2xl border border-amber-500/30 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-800 pb-3">
+                            <div>
+                                <h3 class="text-sm font-black uppercase text-amber-400"><i class="fas fa-edit mr-1.5"></i> Edición Completa de Ficha (Firestore)</h3>
+                                <p class="text-[11px] text-gray-400">Edita equipo, representante, 5 titulares y suplente; al guardar se re-audita y actualiza la vitrina pública.</p>
+                            </div>
+                            <button type="button" onclick="guardarEdicionPresencial()" id="btn-guardar-edicion" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs uppercase cursor-pointer shadow-md">
+                                <i class="fas fa-save mr-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+
+                        <!-- Datos del Equipo -->
+                        <div class="p-4 rounded-2xl bg-black/60 border border-gray-800 space-y-3">
+                            <h4 class="text-xs font-black uppercase text-rose-400">Datos del Equipo</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Nombre del Equipo</label>
+                                    <input type="text" id="e-nombre" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-bold">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">TAG</label>
+                                    <input type="text" id="e-tag" maxlength="5" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-black uppercase">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Sede</label>
+                                    <select id="e-sede" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-bold">
+                                        <option value="La Paz">La Paz (Aquí Me Quedo)</option>
+                                        <option value="Cochabamba">Cochabamba (SMOK LAN CENTER)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-9">
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Logo (URL o WebP Base64)</label>
+                                    <input type="text" id="e-logo" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-black uppercase text-center text-white border border-gray-600 cursor-pointer block">
+                                        <i class="fas fa-upload mr-1"></i> Subir Logo
+                                        <input type="file" id="e-logo-file" accept="image/*" class="hidden">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Representante -->
+                        <div class="p-4 rounded-2xl bg-black/60 border border-gray-800 space-y-3">
+                            <h4 class="text-xs font-black uppercase text-yellow-400">Representante</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Nombre</label>
+                                    <input type="text" id="e-rep-nombre" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">C.I.</label>
+                                    <input type="text" id="e-rep-ci" oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Whapp</label>
+                                    <input type="text" id="e-rep-whapp" oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Discord</label>
+                                    <input type="text" id="e-rep-discord" class="w-full bg-[#0c111b] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editores Dinámicos de Jugadores (5 Titulares + Suplente) -->
+                        <div id="e-jugadores-container" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL RASTREATOR FORENSE MULTI-BASE                            -->
+    <!-- ============================================================== -->
+    <div id="modal-rastreator-presencial" onmousedown="this._mdTarget=event.target" onclick="if(event.target===this&&this._mdTarget===this) cerrarModalRastreator()" class="fixed inset-0 z-[70] hidden bg-black/85 backdrop-blur-md p-2 sm:p-6 flex items-center justify-center">
+        <div class="bg-[#090d16] border border-amber-500/40 w-full max-w-5xl rounded-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-gray-800 bg-[#0d121f] flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-black text-white uppercase flex items-center gap-2">
+                        <i class="fas fa-user-secret text-amber-400"></i> Rastreator Forense Global Anti-Smurf
+                    </h3>
+                    <div id="rastreator-bases-pills" class="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-bold"></div>
+                </div>
+                <button type="button" onclick="cerrarModalRastreator()" class="w-9 h-9 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-4 border-b border-gray-800 bg-black/50">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-amber-400 text-sm"></i>
+                    <input type="search" id="input-rastreator-global" name="presencial_rastreator_q" autocomplete="off" readonly onpointerdown="this.removeAttribute('readonly')" onfocus="this.removeAttribute('readonly')" autocorrect="off" spellcheck="false" data-lpignore="true" oninput="ejecutarBusquedaRastreatorGlobal()" placeholder="Buscar por Celular (Whapp), C.I., Nombre, Riot ID o Discord..." class="cursor-text w-full bg-[#060911] border-2 border-amber-500/50 focus:border-amber-400 rounded-2xl pl-11 pr-24 py-3 text-sm text-white font-bold outline-none">
+                    <button type="button" onclick="document.getElementById('input-rastreator-global').value=''; ejecutarBusquedaRastreatorGlobal();" class="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold cursor-pointer">
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultados-rastreator-global" class="p-4 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL CREAR EQUIPO MANUAL (C de CRUD)                          -->
+    <!-- ============================================================== -->
+    <div id="modal-crear-presencial" onmousedown="this._mdTarget=event.target" onclick="if(event.target===this&&this._mdTarget===this) cerrarModalCrearPresencial()" class="fixed inset-0 z-[70] hidden bg-black/85 backdrop-blur-md p-2 sm:p-6 flex items-center justify-center">
+        <div class="glass-panel w-full max-w-3xl rounded-2xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden border border-blue-500/40 shadow-2xl">
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#070b13] shrink-0">
+                <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-plus-circle text-blue-400"></i> Inscribir Equipo Manualmente (Presencial)
+                </h3>
+                <button onclick="cerrarModalCrearPresencial()" class="text-gray-400 hover:text-white p-1 cursor-pointer"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-crear-presencial" onsubmit="crearEquipoPresencialSubmit(event)" class="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Nombre del Equipo *</label>
+                        <input type="text" id="c-nombre" required class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-bold" placeholder="Ej: Illimani Gaming">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">TAG *</label>
+                        <input type="text" id="c-tag" required maxlength="5" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-black uppercase" placeholder="ILG">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Sede Presencial *</label>
+                        <select id="c-sede" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-bold">
+                            <option value="La Paz">La Paz (Aquí Me Quedo)</option>
+                            <option value="Cochabamba">Cochabamba (SMOK)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Representante *</label>
+                        <input type="text" id="c-rep-nombre" required class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">C.I. *</label>
+                        <input type="text" id="c-rep-ci" required oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Whapp *</label>
+                        <input type="text" id="c-rep-whapp" required oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Discord</label>
+                        <input type="text" id="c-rep-discord" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                    <div class="sm:col-span-6">
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Logo URL (Opcional)</label>
+                        <input type="text" id="c-logo" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white" placeholder="https://...">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-black uppercase text-center text-white border border-gray-600 cursor-pointer block">
+                            <i class="fas fa-upload mr-1"></i> Subir WebP
+                            <input type="file" id="c-logo-file" accept="image/*" class="hidden">
+                        </label>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Estado Inicial</label>
+                        <select id="c-estado" class="w-full bg-[#0b121e] border border-gray-700 rounded-xl px-3 py-2 text-white font-bold">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Aceptado">Aceptado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2 border-t border-gray-800">
+                    <h4 class="text-xs font-black uppercase text-blue-400">Titulares (TOP, JG, MID, ADC, SUPP)</h4>
+                    <div id="c-titulares-container" class="space-y-2"></div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-gray-800">
+                    <button type="button" onclick="cerrarModalCrearPresencial()" class="px-4 py-2.5 rounded-xl bg-gray-800 text-gray-300 font-bold uppercase cursor-pointer">Cancelar</button>
+                    <button type="submit" id="btn-submit-crear" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase cursor-pointer">Crear Equipo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VISOR DE LOGO EN PANTALLA COMPLETA -->
+    <div id="modal-visor-logo" onclick="if(event.target===this) cerrarVisorLogoPresencial()" class="fixed inset-0 z-[90] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-[#0a0f16] border border-gray-800 rounded-3xl p-5 text-center space-y-4">
+            <img id="visor-logo-img" src="" alt="Logo Equipo" class="max-h-72 mx-auto object-contain rounded-2xl bg-black p-2 border border-gray-800">
+            <div class="flex justify-center gap-2">
+                <a id="visor-logo-download" href="#" download="logo-equipo.webp" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase">
+                    <i class="fas fa-download mr-1"></i> Descargar
+                </a>
+                <button type="button" onclick="cerrarVisorLogoPresencial()" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-bold uppercase cursor-pointer">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth } from "/firebase-config.js";
+        import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getStaffNick } from "/staff-config.js";
+        import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
+        import {
+            TORNEO_LAN_ID,
+            TORNEO_LAN_COLLECTION,
+            TORNEO_LAN_PUBLIC_DOC,
+            RANGOS_SOLOQ_TORNEO_LAN,
+            construirUrlOpgg,
+            cargarIndiceHistoricoGlobal,
+            auditarEquipoTorneoLan,
+            buscarEnPadronForenseGlobal,
+            sanitizarEquipoTorneoLanPublico
+        } from "/anti-smurf-core.js?v=293";
+
+        const ROLES_POSICIONES = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
+        const ROLE_ICONS = {
+            TOP: '/assets/roles/position-top.svg',
+            JG: '/assets/roles/position-jungle.svg',
+            MID: '/assets/roles/position-middle.svg',
+            ADC: '/assets/roles/position-bottom.svg',
+            SUPP: '/assets/roles/position-utility.svg'
+        };
+
+        let moduloYaIniciado = false;
+        let hasFirebaseAuth = false;
+        let vistaActual = localStorage.getItem('lbl_presencial_vista') || 'grid';
+        let filtroEstadoActual = 'todos';
+        let inscripcionesPresencial = [];
+        let indiceForenseGlobal = null;
+        let auditoriasPorEquipoId = new Map();
+        let equipoSeleccionadoId = null;
+        let unsubscribePresencial = null;
+        let logoCreateTemp = '';
+
+        function escapeHTML(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        window.copiarTexto = (txt, label) => {
+            if (!txt || txt === '--') return;
+            navigator.clipboard?.writeText(txt).catch(() => {});
+        };
+
+        // Autenticación Staff idéntica a staff-scouting.html
+        window.desbloquearPanelPresencial = function(nick) {
+            if (moduloYaIniciado) return;
+            moduloYaIniciado = true;
+            document.getElementById('presencial-auth-loading')?.remove();
+            document.getElementById('dashboard-content')?.classList.remove('hidden');
+            const sInp = document.getElementById('searchInput');
+            if (sInp && sInp.value.includes('@')) sInp.value = '';
+            const ud = document.getElementById('user-display');
+            if (ud) ud.textContent = `Sesión: ${nick || 'Staff LBL'}`;
+            localStorage.setItem('lbl_staff_logged_in', 'true');
+            localStorage.setItem('lbl_staff_nick', nick || 'Staff LBL');
+            if (!hasFirebaseAuth) {
+                document.getElementById('banner-auth-warning')?.classList.remove('hidden');
+            }
+            inicializarModulo();
+        };
+
+        window.verificarPinStaffPresencial = function() {
+            const pin = (document.getElementById('input-pin-staff-presencial')?.value || '').trim().toLowerCase();
+            const err = document.getElementById('pin-error-presencial');
+            if (['lbl2026', 'darkcito2026', 'staff2026', 'darkcito', 'scouting3'].includes(pin)) {
+                err?.classList.add('hidden');
+                window.desbloquearPanelPresencial('Staff LBL');
+            } else {
+                err?.classList.remove('hidden');
+            }
+        };
+
+        if (localStorage.getItem('lbl_staff_logged_in') === 'true') {
+            setTimeout(() => window.desbloquearPanelPresencial(localStorage.getItem('lbl_staff_nick') || 'Staff LBL'), 0);
+        }
+
+        setTimeout(() => {
+            if (!moduloYaIniciado) {
+                document.getElementById('presencial-spinner-block')?.classList.add('hidden');
+                document.getElementById('presencial-login-fallback')?.classList.remove('hidden');
+            }
+        }, 1800);
+
+        try {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    hasFirebaseAuth = true;
+                    document.getElementById('banner-auth-warning')?.classList.add('hidden');
+                    window.desbloquearPanelPresencial(getStaffNick(user.email || user.displayName));
+                } else if (!moduloYaIniciado) {
+                    document.getElementById('presencial-spinner-block')?.classList.add('hidden');
+                    document.getElementById('presencial-login-fallback')?.classList.remove('hidden');
+                }
+            });
+        } catch (_) {}
+
+        window.cerrarSesionStaff = async () => {
+            localStorage.removeItem('lbl_staff_logged_in');
+            localStorage.removeItem('lbl_staff_nick');
+            try { await signOut(auth); } catch (_) {}
+            window.location.replace('/dashboard');
+        };
+
+        // Carga Forense y Realtime Firestore
+        async function asegurarIndiceForenseCargado(force = false) {
+            if (!force && indiceForenseGlobal) return indiceForenseGlobal;
+            indiceForenseGlobal = await cargarIndiceHistoricoGlobal({ db, collection, getDocs, forceRefresh: force });
+            const totalIdx = indiceForenseGlobal?.registros?.length || 0;
+            const bIdx = document.getElementById('badge-header-indexados');
+            if (bIdx) bIdx.textContent = totalIdx;
+
+            const pillsEl = document.getElementById('rastreator-bases-pills');
+            if (pillsEl && indiceForenseGlobal?.resumenFuentes) {
+                const r = indiceForenseGlobal.resumenFuentes;
+                pillsEl.innerHTML = `
+                    <span class="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/30 text-cyan-300">SC1: ${r.scouting1}</span>
+                    <span class="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/30 text-cyan-300">SC2: ${r.scouting2}</span>
+                    <span class="px-2 py-0.5 rounded bg-rose-950/80 border border-rose-500/30 text-rose-300">OQ: ${r.qualifier}</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/30 text-emerald-300">SC3: ${r.scouting3}</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/30 text-amber-300">Liga T1: ${r.ligaTier1}</span>
+                    <span class="px-2 py-0.5 rounded bg-purple-950/80 border border-purple-500/30 text-purple-300">Liga T2: ${r.ligaTier2}</span>
+                `;
+            }
+            return indiceForenseGlobal;
+        }
+
+        function reauditarTodos() {
+            auditoriasPorEquipoId.clear();
+            if (!indiceForenseGlobal) return;
+            inscripcionesPresencial.forEach(eq => {
+                auditoriasPorEquipoId.set(eq.id, auditarEquipoTorneoLan(eq, indiceForenseGlobal, inscripcionesPresencial));
+            });
+        }
+
+        async function sincronizarVitrinaPublica() {
+            try {
+                const equiposAceptados = inscripcionesPresencial
+                    .filter(e => String(e.estado || '').toLowerCase() === 'aceptado')
+                    .map(e => sanitizarEquipoTorneoLanPublico(e))
+                    .filter(Boolean);
+
+                const estadosResumen = inscripcionesPresencial.map(e => ({
+                    codigoSeguimiento: e.codigoSeguimiento || '',
+                    nombreEquipo: e.equipo?.nombre || 'Equipo',
+                    tag: e.equipo?.tag || 'LBL',
+                    sedeDepartamento: e.sedeDepartamento || 'La Paz',
+                    estado: e.estado || 'Pendiente',
+                    notaObservacion: e.notaObservacion || '',
+                    timestamp: e.updatedAt || e.timestamp || new Date().toISOString()
+                }));
+
+                await setDoc(doc(db, 'torneos_activos', TORNEO_LAN_PUBLIC_DOC), {
+                    torneoId: TORNEO_LAN_ID,
+                    equiposAceptados,
+                    estadosResumen,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (err) {
+                console.warn('Error sincronizando vitrina pública:', err);
+            }
+        }
+
+        function actualizarMetricasUI() {
+            const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            const lp = inscripcionesPresencial.filter(e => e.sedeDepartamento === 'La Paz');
+            const cb = inscripcionesPresencial.filter(e => e.sedeDepartamento === 'Cochabamba');
+            let criticas = 0;
+            inscripcionesPresencial.forEach(e => {
+                if (auditoriasPorEquipoId.get(e.id)?.estadoGlobal === 'critica') criticas++;
+            });
+
+            setTxt('stat-total', inscripcionesPresencial.length);
+            setTxt('stat-lp-aceptados', lp.filter(e => e.estado === 'Aceptado').length);
+            setTxt('stat-lp-total', `${lp.length} inscritos`);
+            setTxt('stat-cb-aceptados', cb.filter(e => e.estado === 'Aceptado').length);
+            setTxt('stat-cb-total', `${cb.length} inscritos`);
+            setTxt('stat-pendientes', inscripcionesPresencial.filter(e => (e.estado || 'Pendiente') === 'Pendiente').length);
+            setTxt('stat-aceptados', inscripcionesPresencial.filter(e => e.estado === 'Aceptado').length);
+            setTxt('stat-observados', inscripcionesPresencial.filter(e => e.estado === 'Observado').length);
+            setTxt('stat-criticas', criticas);
+        }
+
+        window.recargarDatosPresencialYForense = async function(force = true) {
+            const icon = document.getElementById('icon-sync-presencial');
+            if (icon) icon.classList.add('fa-spin');
+            try {
+                await asegurarIndiceForenseCargado(force);
+                const snap = await getDocs(collection(db, TORNEO_LAN_COLLECTION));
+                const lista = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    if (!data.torneoId || data.torneoId === TORNEO_LAN_ID) lista.push({ id: d.id, ...data });
+                });
+                lista.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+                inscripcionesPresencial = lista;
+                reauditarTodos();
+                actualizarMetricasUI();
+                renderizarEquiposPresencial();
+                const syncEl = document.getElementById('label-ultima-sync');
+                if (syncEl) syncEl.textContent = `Actualizado ${new Date().toLocaleTimeString('es-BO')}`;
+            } catch (e) {
+                console.warn('Error sincronizando presencial:', e);
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+            }
+        };
+
+        async function inicializarModulo() {
+            actualizarBotonesVista();
+            poblarFormularioCrear();
+            try {
+                unsubscribePresencial = onSnapshot(collection(db, TORNEO_LAN_COLLECTION), async (snap) => {
+                    const lista = [];
+                    snap.forEach(d => {
+                        const data = d.data();
+                        if (!data.torneoId || data.torneoId === TORNEO_LAN_ID) lista.push({ id: d.id, ...data });
+                    });
+                    lista.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+                    inscripcionesPresencial = lista;
+                    await asegurarIndiceForenseCargado(false);
+                    reauditarTodos();
+                    actualizarMetricasUI();
+                    renderizarEquiposPresencial();
+                    const syncEl = document.getElementById('label-ultima-sync');
+                    if (syncEl) syncEl.textContent = `En vivo ${new Date().toLocaleTimeString('es-BO')}`;
+                }, () => {});
+            } catch (_) {}
+            await window.recargarDatosPresencialYForense(false);
+        }
+
+        // Filtros y Cambio Tarjetas vs Tabla
+        window.filtrarPorEstado = (est) => {
+            filtroEstadoActual = est;
+            ['todos', 'pendiente', 'aceptado', 'observado', 'rechazado'].forEach(k => {
+                const btn = document.getElementById(`tab-filtro-${k}`);
+                if (!btn) return;
+                const match = (k === 'todos' && est === 'todos') || k.toLowerCase() === est.toLowerCase();
+                btn.classList.toggle('active', match);
+            });
+            renderizarEquiposPresencial();
+        };
+
+        window.filtrarRapidoPresencial = (sede, est, riesgo) => {
+            const sEl = document.getElementById('filter-sede');
+            const rEl = document.getElementById('filter-riesgo');
+            if (sEl) sEl.value = sede;
+            if (rEl) rEl.value = riesgo;
+            window.filtrarPorEstado(est);
+        };
+
+        window.aplicarFiltros = () => {
+            const q = document.getElementById('searchInput')?.value || '';
+            document.getElementById('btnClearSearch')?.classList.toggle('hidden', !q);
+            renderizarEquiposPresencial();
+        };
+
+        window.limpiarBusqueda = () => {
+            const inp = document.getElementById('searchInput');
+            if (inp) inp.value = '';
+            window.aplicarFiltros();
+        };
+
+        function actualizarBotonesVista() {
+            const bGrid = document.getElementById('btn-vista-grid');
+            const bTab = document.getElementById('btn-vista-tabla');
+            const cont = document.getElementById('contenedor-equipos');
+            if (vistaActual === 'tabla') {
+                bGrid?.classList.remove('bg-rose-500/20', 'text-rose-300', 'border-rose-500/30');
+                bGrid?.classList.add('text-gray-400', 'border-transparent');
+                bTab?.classList.add('bg-rose-500/20', 'text-rose-300', 'border-rose-500/30');
+                bTab?.classList.remove('text-gray-400', 'border-transparent');
+                if (cont) cont.className = 'p-3.5 sm:p-5 overflow-x-auto';
+            } else {
+                bTab?.classList.remove('bg-rose-500/20', 'text-rose-300', 'border-rose-500/30');
+                bTab?.classList.add('text-gray-400', 'border-transparent');
+                bGrid?.classList.add('bg-rose-500/20', 'text-rose-300', 'border-rose-500/30');
+                bGrid?.classList.remove('text-gray-400', 'border-transparent');
+                if (cont) cont.className = 'p-3.5 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4';
+            }
+        }
+
+        window.cambiarVistaEquipos = (v) => {
+            vistaActual = v;
+            localStorage.setItem('lbl_presencial_vista', v);
+            actualizarBotonesVista();
+            renderizarEquiposPresencial();
+        };
+
+        function obtenerFiltrados() {
+            const fSede = document.getElementById('filter-sede')?.value || 'todos';
+            const fRiesgo = document.getElementById('filter-riesgo')?.value || 'todos';
+            const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+            return inscripcionesPresencial.filter(eq => {
+                if (fSede !== 'todos' && eq.sedeDepartamento !== fSede) return false;
+                if (filtroEstadoActual !== 'todos' && (eq.estado || 'Pendiente') !== filtroEstadoActual) return false;
+                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio' };
+                if (fRiesgo !== 'todos' && aud.estadoGlobal !== fRiesgo) return false;
+
+                if (!q) return true;
+                const rep = eq.capitanContacto || {};
+                const jugs = [...(eq.titulares || []), ...(eq.suplentes || [])]
+                    .map(j => `${j.nombre} ${j.ci} ${j.whapp} ${j.riotIdTorneo} ${j.riotIdMain} ${j.discord}`)
+                    .join(' ');
+                return `${eq.equipo?.nombre || ''} ${eq.equipo?.tag || ''} ${eq.codigoSeguimiento || ''} ${rep.nombre || ''} ${rep.ci || ''} ${rep.whapp || ''} ${jugs}`.toLowerCase().includes(q);
+            });
+        }
+
+        function renderizarEquiposPresencial() {
+            const cont = document.getElementById('contenedor-equipos');
+            const emptyEl = document.getElementById('estado-vacio');
+            if (!cont) return;
+
+            const lista = obtenerFiltrados();
+            if (lista.length === 0) {
+                cont.innerHTML = '';
+                emptyEl?.classList.remove('hidden');
+                return;
+            }
+            emptyEl?.classList.add('hidden');
+
+            if (vistaActual === 'tabla') {
+                cont.innerHTML = `
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="uppercase tracking-wider text-[10px] text-gray-400 bg-[#0b0f17] border-b border-gray-800">
+                            <tr>
+                                <th class="p-3.5 font-black">Equipo / Código</th>
+                                <th class="p-3.5 font-black">Sede</th>
+                                <th class="p-3.5 font-black">Representante</th>
+                                <th class="p-3.5 font-black">Diagnóstico Anti-Smurf</th>
+                                <th class="p-3.5 font-black">Estado</th>
+                                <th class="p-3.5 font-black text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800/60">
+                            ${lista.map(eq => {
+                                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0 };
+                                const esCocha = eq.sedeDepartamento === 'Cochabamba';
+                                const cap = eq.capitanContacto || (eq.titulares && eq.titulares[0]) || {};
+                                const badgeEst = `badge-${(eq.estado || 'Pendiente').toLowerCase()}`;
+                                const diag = aud.estadoGlobal === 'critica'
+                                    ? `<span class="text-red-400 font-black">🚨 ${aud.totalCriticas} Alerta(s)</span>`
+                                    : (aud.estadoGlobal === 'observacion'
+                                        ? `<span class="text-amber-300 font-black">⚠️ ${aud.totalObservaciones} Obs.</span>`
+                                        : `<span class="text-emerald-400 font-black">🟢 Limpio</span>`);
+                                return `
+                                    <tr onclick="abrirModalDetallePresencial('${eq.id}')" class="hover:bg-white/[0.03] cursor-pointer">
+                                        <td class="p-3.5 font-black text-white">[${escapeHTML(eq.equipo?.tag)}] ${escapeHTML(eq.equipo?.nombre)} <span class="block text-[10px] font-mono text-amber-400">${escapeHTML(eq.codigoSeguimiento || '--')}</span></td>
+                                        <td class="p-3.5">${esCocha ? '<span class="text-emerald-400 font-black">Cocha • SMOK</span>' : '<span class="text-rose-400 font-black">La Paz • AMQ</span>'}</td>
+                                        <td class="p-3.5 text-gray-300">${escapeHTML(cap.nombre || '--')} <span class="block text-[10px] font-mono text-gray-500">Whapp: ${escapeHTML(cap.whapp || '--')}</span></td>
+                                        <td class="p-3.5">${diag}</td>
+                                        <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${badgeEst}">${escapeHTML(eq.estado || 'Pendiente')}</span></td>
+                                        <td class="p-3.5 text-right"><button type="button" class="px-3 py-1.5 rounded-xl bg-rose-600/20 text-rose-300 font-black text-xs uppercase">Revisar</button></td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                return;
+            }
+
+            cont.innerHTML = lista.map(eq => {
+                const est = eq.estado || 'Pendiente';
+                const badgeCls = `badge-${est.toLowerCase()}`;
+                const esCocha = eq.sedeDepartamento === 'Cochabamba';
+                const aud = auditoriasPorEquipoId.get(eq.id) || { estadoGlobal: 'limpio', totalCriticas: 0, totalObservaciones: 0 };
+                const cap = eq.capitanContacto || (eq.titulares && eq.titulares[0]) || {};
+                const waDigits = String(cap.whapp || '').replace(/[^0-9]/g, '');
+                const logoSrc = eq.equipo?.logo || '/assets/logo.webp';
+
+                const diagBadge = aud.estadoGlobal === 'critica'
+                    ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-red-600/25 text-red-300 border border-red-500/50"><i class="fas fa-skull-crossbones mr-1"></i>${aud.totalCriticas} Alerta(s)</span>`
+                    : (aud.estadoGlobal === 'observacion'
+                        ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40"><i class="fas fa-triangle-exclamation mr-1"></i>${aud.totalObservaciones} Obs.</span>`
+                        : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/35"><i class="fas fa-shield-check mr-1"></i>Limpio</span>`);
+
+                const rosterHTML = (eq.titulares || []).map(t => {
+                    const rol = (t.rolPrincipal || '').toUpperCase();
+                    const icon = ROLE_ICONS[rol] || '/assets/roles/position-fill.svg';
+                    const opgg = t.opggTorneo || construirUrlOpgg(t.riotIdTorneo);
+                    return `
+                        <div class="flex items-center justify-between gap-2 py-1 text-[11px]">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <img src="${icon}" alt="" class="w-3.5 h-3.5 shrink-0">
+                                <span class="font-bold text-gray-400 w-9 shrink-0">${escapeHTML(rol)}</span>
+                                ${opgg
+                                    ? `<a href="${escapeHTML(opgg)}" target="_blank" onclick="event.stopPropagation()" class="text-sky-300 hover:underline font-bold truncate">${escapeHTML(t.riotIdTorneo || '--')}</a>`
+                                    : `<span class="text-gray-300 truncate">${escapeHTML(t.riotIdTorneo || '--')}</span>`}
+                            </div>
+                            <span class="text-[10px] font-mono text-amber-300 shrink-0">${escapeHTML(t.rangoMax || '--')}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div onclick="abrirModalDetallePresencial('${eq.id}')" class="staff-card p-4 sm:p-5 rounded-2xl border border-gray-800/80 hover:border-rose-500/50 transition-all duration-200 flex flex-col justify-between shadow-lg group cursor-pointer hover:-translate-y-0.5">
+                        <div>
+                            <div class="flex items-start justify-between gap-3 pb-3 border-b border-gray-800/60">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="${escapeHTML(logoSrc)}" loading="lazy" onerror="this.src='/assets/logo.webp'" class="w-11 h-11 rounded-xl bg-black/70 object-contain border border-gray-800 shrink-0 p-1">
+                                    <div class="min-w-0">
+                                        <h4 class="font-black text-white text-sm sm:text-base truncate uppercase group-hover:text-rose-300 transition-colors">${escapeHTML(eq.equipo?.nombre || 'Equipo')}</h4>
+                                        <p class="text-[10px] sm:text-[11px] flex items-center gap-1.5 font-mono mt-0.5 flex-wrap">
+                                            <span class="text-amber-300 font-bold">[${escapeHTML(eq.equipo?.tag || 'LBL')}]</span>
+                                            <span class="text-gray-600">&bull;</span>
+                                            <span class="${esCocha ? 'text-emerald-400' : 'text-rose-400'} font-sans font-bold">${esCocha ? 'Cochabamba (SMOK)' : 'La Paz (AMQ)'}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-1 shrink-0">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase ${badgeCls}">${escapeHTML(est)}</span>
+                                    ${diagBadge}
+                                </div>
+                            </div>
+
+                            <div class="py-2.5 flex items-center justify-between gap-2 border-b border-gray-800/40 text-xs">
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[9px] uppercase font-bold text-gray-500 block">Representante • <span class="text-amber-300 font-mono">${escapeHTML(eq.codigoSeguimiento || '--')}</span></span>
+                                    <span class="text-gray-200 font-semibold truncate block">${escapeHTML(cap.nombre || '--')} <span class="text-gray-500 font-mono text-[10px]">(${escapeHTML(cap.ci || '--')})</span></span>
+                                </div>
+                                ${waDigits ? `<a href="https://wa.me/${waDigits}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-green-500/10 hover:bg-green-600 text-green-400 hover:text-white text-[10px] font-bold border border-green-500/30 shrink-0"><i class="fab fa-whatsapp"></i> Chat</a>` : ''}
+                            </div>
+
+                            <div class="py-2.5">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-[9px] uppercase font-bold text-gray-400">Roster Titular</span>
+                                    ${(eq.suplentes && eq.suplentes.length > 0) ? `<span class="text-[9px] text-purple-300 font-mono bg-purple-950/50 border border-purple-500/30 px-1.5 py-0.5 rounded">+${eq.suplentes.length} suplente</span>` : ''}
+                                </div>
+                                <div class="bg-black/40 p-2.5 rounded-xl border border-gray-800/60 divide-y divide-gray-800/30">
+                                    ${rosterHTML || '<p class="text-[11px] text-gray-500 italic">Sin titulares cargados</p>'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between gap-2 mt-auto">
+                            <span class="text-[10px] text-gray-500 font-mono">${eq.notaObservacion ? '📝 Con nota' : (eq.timestamp ? new Date(eq.timestamp).toLocaleDateString('es-BO') : '')}</span>
+                            <button type="button" onclick="event.stopPropagation(); abrirModalDetallePresencial('${eq.id}')" class="px-3.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-black text-xs uppercase transition-all cursor-pointer">
+                                <i class="fas fa-id-card mr-1"></i> Auditar / Editar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Modal Detalle, Auditoría y Edición CRUD
+        window.switchModalTab = (tab) => {
+            ['general', 'representante', 'roster', 'dictamen', 'editar'].forEach(t => {
+                document.getElementById(`mtab-${t}`)?.classList.toggle('hidden', t !== tab);
+                const btn = document.getElementById(`mtab-btn-${t}`);
+                if (!btn) return;
+                btn.classList.remove('modal-tab-active', 'modal-tab-active-amber');
+                if (t === tab) btn.classList.add(t === 'editar' ? 'modal-tab-active-amber' : 'modal-tab-active');
+            });
+        };
+
+        window.abrirModalDetallePresencial = async (id) => {
+            await asegurarIndiceForenseCargado(false);
+            const eq = inscripcionesPresencial.find(e => e.id === id);
+            if (!eq) return;
+            equipoSeleccionadoId = id;
+
+            const aud = auditarEquipoTorneoLan(eq, indiceForenseGlobal, inscripcionesPresencial);
+            auditoriasPorEquipoId.set(id, aud);
+
+            const logo = eq.equipo?.logo || '/assets/logo.webp';
+            const esCocha = eq.sedeDepartamento === 'Cochabamba';
+            const est = eq.estado || 'Pendiente';
+
+            document.getElementById('m-logo').src = logo;
+            document.getElementById('m-d-logo-preview').src = logo;
+            document.getElementById('m-nombre').textContent = eq.equipo?.nombre || 'Equipo';
+            document.getElementById('m-d-nombre').textContent = eq.equipo?.nombre || 'Equipo';
+            document.getElementById('m-tag').textContent = `[${eq.equipo?.tag || 'LBL'}]`;
+            document.getElementById('m-d-tag').textContent = `[${eq.equipo?.tag || 'LBL'}]`;
+            document.getElementById('m-subtitulo').textContent = `Código: ${eq.codigoSeguimiento || id}`;
+            document.getElementById('m-d-codigo').textContent = eq.codigoSeguimiento || id;
+            document.getElementById('m-d-sede').textContent = esCocha ? 'Cochabamba • SMOK LAN CENTER' : 'La Paz • Aquí Me Quedo';
+            document.getElementById('m-d-fecha').textContent = eq.updatedAt ? new Date(eq.updatedAt).toLocaleString('es-BO') : '--';
+
+            const sedeBadge = document.getElementById('m-sede-badge');
+            sedeBadge.textContent = esCocha ? 'SMOK COCHA' : 'AMQ LA PAZ';
+            sedeBadge.className = esCocha
+                ? 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                : 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40';
+
+            const estBadge = document.getElementById('m-estado-badge');
+            estBadge.textContent = est;
+            estBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-black uppercase badge-${est.toLowerCase()}`;
+
+            document.getElementById('m-d-diag-summary').innerHTML = aud.estadoGlobal === 'critica'
+                ? `<span class="text-red-400 font-black">🚨 ${aud.totalCriticas} alerta(s) crítica(s) de rango o smurf</span>`
+                : (aud.estadoGlobal === 'observacion'
+                    ? `<span class="text-amber-300 font-black">⚠️ ${aud.totalObservaciones} observación(es) para revisar</span>`
+                    : `<span class="text-emerald-400 font-black">✅ Sin alertas críticas (${aud.totalCoincidencias} cruces históricos)</span>`);
+
+            // Representante
+            const rep = eq.capitanContacto || {};
+            document.getElementById('m-rep-nombre').textContent = rep.nombre || '--';
+            document.getElementById('m-rep-ci').textContent = rep.ci || '--';
+            document.getElementById('m-rep-whapp').textContent = rep.whapp || '--';
+            document.getElementById('m-rep-discord').textContent = rep.discord || '--';
+            const repWa = String(rep.whapp || '').replace(/[^0-9]/g, '');
+            document.getElementById('m-rep-wa-link').href = repWa ? `https://wa.me/${repWa}` : '#';
+
+            // Roster + Forense
+            document.getElementById('tab-badge-roster-count').textContent = (eq.titulares || []).length + (eq.suplentes || []).length;
+            document.getElementById('m-roster-forense-body').innerHTML = aud.jugadores.map(({ jugador, estadoForense, alertas, historial }) => {
+                const borderCol = estadoForense === 'critica' ? 'border-red-500 bg-red-950/15' : (estadoForense === 'observacion' ? 'border-amber-500 bg-amber-950/15' : 'border-emerald-500/40 bg-black/60');
+                const stBadge = estadoForense === 'critica'
+                    ? '<span class="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-black uppercase">🚨 BLOQUEO / SMURF</span>'
+                    : (estadoForense === 'observacion'
+                        ? '<span class="px-2 py-0.5 rounded bg-amber-500 text-black text-[10px] font-black uppercase">⚠️ OBSERVACIÓN</span>'
+                        : '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black uppercase">✅ ELEGIBLE</span>');
+                const opT = jugador.opggTorneo || construirUrlOpgg(jugador.riotIdTorneo);
+                const opM = jugador.opggMain || construirUrlOpgg(jugador.riotIdMain);
+
+                return `
+                    <div class="p-4 rounded-2xl border-l-4 border ${borderCol}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-gray-800">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-black text-xs">${escapeHTML(jugador.slotLabel || jugador.rolPrincipal)}</span>
+                                <strong class="text-white text-sm">${escapeHTML(jugador.nombre || '--')}</strong>
+                            </div>
+                            ${stBadge}
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3 text-xs">
+                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">C.I.</span><span class="font-mono font-bold text-amber-300">${escapeHTML(jugador.ci || '--')}</span></div>
+                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Whapp</span><span class="font-mono font-bold text-emerald-300">${escapeHTML(jugador.whapp || '--')}</span></div>
+                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Discord</span><span class="font-bold text-indigo-300">${escapeHTML(jugador.discord || '--')}</span></div>
+                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Roles</span><span class="font-bold text-white">${escapeHTML(jugador.rolPrincipal || '--')} / ${escapeHTML(jugador.rolSecundario || '--')}</span></div>
+                            <div class="p-2 rounded-xl bg-black/50 border border-gray-800"><span class="text-[9px] text-gray-500 uppercase block">Rango</span><span class="font-bold text-amber-300">${escapeHTML(jugador.rangoMax || '--')}</span></div>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mt-2.5 p-2.5 rounded-xl bg-black/70 border border-gray-800">
+                            <div class="flex flex-wrap gap-4">
+                                <span>Torneo: <strong class="text-sky-300">${escapeHTML(jugador.riotIdTorneo || '--')}</strong> ${opT ? `<a href="${escapeHTML(opT)}" target="_blank" class="ml-1 text-sky-400 underline">OP.GG</a>` : ''}</span>
+                                <span>Main: <strong class="text-purple-300">${escapeHTML(jugador.riotIdMain || 'Misma')}</strong> ${opM ? `<a href="${escapeHTML(opM)}" target="_blank" class="ml-1 text-purple-400 underline">OP.GG</a>` : ''}</span>
+                            </div>
+                            <button type="button" onclick="rastrearDesdeModal('${escapeHTML(jugador.ci || jugador.whapp || jugador.nombre || '')}')" class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase cursor-pointer">
+                                <i class="fas fa-fingerprint mr-1"></i> Rastreator
+                            </button>
+                        </div>
+                        ${alertas.length ? `<div class="mt-2.5 space-y-1.5">${alertas.map(a => `<div class="p-2.5 rounded-xl border ${a.severidad === 'critica' ? 'bg-red-950/60 border-red-500/60 text-red-200' : 'bg-amber-950/50 border-amber-500/50 text-amber-200'}"><strong>${escapeHTML(a.titulo)}:</strong> ${escapeHTML(a.detalle)}</div>`).join('')}</div>` : ''}
+                        ${historial.length ? `<div class="mt-2.5 grid grid-cols-1 md:grid-cols-2 gap-2">${historial.map(({ record, razones }) => `<div class="p-2 rounded-xl bg-[#060911] border border-gray-800 text-[11px]"><strong class="text-amber-300">${escapeHTML(record.fuenteNombre)}</strong> • ${escapeHTML(record.equipoNombre)} (${escapeHTML(record.rango)})<div class="text-cyan-300">${escapeHTML(razones.join(' | '))}</div></div>`).join('')}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Dictamen
+            document.querySelectorAll('input[name="m-v-estado"]').forEach(r => { r.checked = (r.value === est); });
+            document.getElementById('m-v-notas').value = eq.notaObservacion || '';
+
+            // Poblar pestaña Editar Datos (U de CRUD)
+            poblarEditorCompleto(eq);
+
+            window.switchModalTab('general');
+            const modal = document.getElementById('modal-detalle-presencial');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.cerrarModalDetallePresencial = () => {
+            const modal = document.getElementById('modal-detalle-presencial');
+            modal?.classList.add('hidden');
+            modal?.classList.remove('flex');
+            equipoSeleccionadoId = null;
+        };
+
+        function construirSelectRangoHTML(id, current) {
+            return `<select id="${id}" class="w-full bg-[#0c111b] border border-gray-700 rounded-lg px-2 py-1.5 text-xs text-white">${RANGOS_SOLOQ_TORNEO_LAN.map(r => `<option value="${escapeHTML(r.value)}" ${current === r.value ? 'selected' : ''}>${escapeHTML(r.label)}</option>`).join('')}</select>`;
+        }
+
+        function poblarEditorCompleto(eq) {
+            document.getElementById('e-nombre').value = eq.equipo?.nombre || '';
+            document.getElementById('e-tag').value = eq.equipo?.tag || '';
+            document.getElementById('e-sede').value = eq.sedeDepartamento || 'La Paz';
+            document.getElementById('e-logo').value = eq.equipo?.logo || '';
+
+            const rep = eq.capitanContacto || {};
+            document.getElementById('e-rep-nombre').value = rep.nombre || '';
+            document.getElementById('e-rep-ci').value = rep.ci || '';
+            document.getElementById('e-rep-whapp').value = rep.whapp || '';
+            document.getElementById('e-rep-discord').value = rep.discord || '';
+
+            const slots = ROLES_POSICIONES.map((rol, idx) => {
+                const found = (eq.titulares || []).find(t => (t.rolPrincipal || '').toUpperCase() === rol) || (eq.titulares || [])[idx] || {};
+                return { prefix: `E_TIT_${rol}`, titulo: `Titular ${rol}`, data: { ...found, rolPrincipal: rol } };
+            });
+            const sup = (eq.suplentes && eq.suplentes[0]) || {};
+            slots.push({ prefix: 'E_SUP_1', titulo: 'Suplente #1 (Opcional)', data: sup, esSuplente: true });
+
+            document.getElementById('e-jugadores-container').innerHTML = slots.map(s => `
+                <div class="p-3.5 rounded-2xl bg-black/60 border border-gray-800 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h5 class="text-xs font-black uppercase ${s.esSuplente ? 'text-purple-400' : 'text-cyan-400'}">${s.titulo}</h5>
+                        ${s.esSuplente ? `<button type="button" onclick="vaciarSuplenteEditor()" class="px-2.5 py-1 rounded-lg bg-red-950/60 text-red-300 text-[10px] font-bold cursor-pointer">Vaciar Suplente</button>` : ''}
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <input id="${s.prefix}_nombre" value="${escapeHTML(s.data.nombre || '')}" placeholder="Nombre Completo" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                        <input id="${s.prefix}_ci" value="${escapeHTML(s.data.ci || '')}" oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="C.I." class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+                        <input id="${s.prefix}_whapp" value="${escapeHTML(s.data.whapp || '')}" oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Whapp" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+                        <input id="${s.prefix}_discord" value="${escapeHTML(s.data.discord || '')}" placeholder="Discord" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                        <input id="${s.prefix}_riotTorneo" value="${escapeHTML(s.data.riotIdTorneo || '')}" placeholder="Riot ID Torneo" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-sky-300">
+                        <input id="${s.prefix}_riotMain" value="${escapeHTML(s.data.riotIdMain || '')}" placeholder="Riot ID Main" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-purple-300">
+                        <input id="${s.prefix}_rolSec" value="${escapeHTML(s.data.rolSecundario || '')}" placeholder="Rol Secundario" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                        ${construirSelectRangoHTML(`${s.prefix}_rango`, s.data.rangoMax || '')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.vaciarSuplenteEditor = () => {
+            ['nombre', 'ci', 'whapp', 'discord', 'riotTorneo', 'riotMain', 'rolSec', 'rango'].forEach(k => {
+                const el = document.getElementById(`E_SUP_1_${k}`);
+                if (el) el.value = '';
+            });
+        };
+
+        document.getElementById('e-logo-file')?.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            try {
+                const b64 = await convertirImagenAWebpBase64(file, 220, 0.86);
+                document.getElementById('e-logo').value = b64;
+            } catch (_) { alert('No se pudo procesar la imagen.'); }
+        });
+
+        window.guardarEdicionPresencial = async () => {
+            if (!equipoSeleccionadoId) return;
+            const eq = inscripcionesPresencial.find(e => e.id === equipoSeleccionadoId);
+            if (!eq) return;
+
+            const nombre = document.getElementById('e-nombre').value.trim();
+            const tag = document.getElementById('e-tag').value.trim().toUpperCase();
+            const sede = document.getElementById('e-sede').value;
+            const logo = document.getElementById('e-logo').value.trim() || '/assets/logo.webp';
+            if (!nombre || !tag) return alert('Nombre y TAG son obligatorios.');
+
+            const titulares = ROLES_POSICIONES.map(rol => {
+                const p = `E_TIT_${rol}`;
+                const riotT = document.getElementById(`${p}_riotTorneo`).value.trim();
+                const riotM = document.getElementById(`${p}_riotMain`).value.trim();
+                return {
+                    nombre: document.getElementById(`${p}_nombre`).value.trim(),
+                    ci: document.getElementById(`${p}_ci`).value.trim(),
+                    whapp: document.getElementById(`${p}_whapp`).value.trim(),
+                    discord: document.getElementById(`${p}_discord`).value.trim(),
+                    riotIdTorneo: riotT,
+                    opggTorneo: construirUrlOpgg(riotT),
+                    riotIdMain: riotM,
+                    opggMain: construirUrlOpgg(riotM),
+                    rolPrincipal: rol,
+                    rolSecundario: document.getElementById(`${p}_rolSec`).value.trim(),
+                    rangoMax: document.getElementById(`${p}_rango`).value
+                };
+            });
+
+            const supNom = document.getElementById('E_SUP_1_nombre').value.trim();
+            const supRiot = document.getElementById('E_SUP_1_riotTorneo').value.trim();
+            const suplentes = (supNom || supRiot) ? [{
+                nombre: supNom,
+                ci: document.getElementById('E_SUP_1_ci').value.trim(),
+                whapp: document.getElementById('E_SUP_1_whapp').value.trim(),
+                discord: document.getElementById('E_SUP_1_discord').value.trim(),
+                riotIdTorneo: supRiot,
+                opggTorneo: construirUrlOpgg(supRiot),
+                riotIdMain: document.getElementById('E_SUP_1_riotMain').value.trim(),
+                opggMain: construirUrlOpgg(document.getElementById('E_SUP_1_riotMain').value.trim()),
+                rolPrincipal: 'SUP',
+                rolSecundario: document.getElementById('E_SUP_1_rolSec').value.trim(),
+                rangoMax: document.getElementById('E_SUP_1_rango').value
+            }] : [];
+
+            const updatePayload = {
+                sedeDepartamento: sede,
+                sedeSponsor: sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo',
+                equipo: { nombre, tag, logo, sedeDepartamento: sede },
+                capitanContacto: {
+                    nombre: document.getElementById('e-rep-nombre').value.trim(),
+                    ci: document.getElementById('e-rep-ci').value.trim(),
+                    whapp: document.getElementById('e-rep-whapp').value.trim(),
+                    discord: document.getElementById('e-rep-discord').value.trim(),
+                    riotIdTorneo: titulares[0]?.riotIdTorneo || ''
+                },
+                titulares,
+                suplentes,
+                updatedAt: new Date().toISOString()
+            };
+
+            const btn = document.getElementById('btn-guardar-edicion');
+            btn.disabled = true;
+            try {
+                await updateDoc(doc(db, TORNEO_LAN_COLLECTION, equipoSeleccionadoId), updatePayload);
+                Object.assign(eq, updatePayload);
+                await sincronizarVitrinaPublica();
+                reauditarTodos();
+                actualizarMetricasUI();
+                renderizarEquiposPresencial();
+                window.abrirModalDetallePresencial(equipoSeleccionadoId);
+                alert('✅ Ficha actualizada correctamente en Firestore.');
+            } catch (err) {
+                console.error(err);
+                alert('Error al guardar en Firestore. Verifica haber iniciado sesión con Google Staff.');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        window.insertarNotaDictamen = (txt) => {
+            const ta = document.getElementById('m-v-notas');
+            if (ta) ta.value = ta.value.trim() ? `${ta.value.trim()}\n${txt}` : txt;
+        };
+
+        window.guardarDictamenPresencial = async () => {
+            if (!equipoSeleccionadoId) return;
+            const eq = inscripcionesPresencial.find(e => e.id === equipoSeleccionadoId);
+            if (!eq) return;
+            const nuevoEstado = document.querySelector('input[name="m-v-estado"]:checked')?.value || 'Pendiente';
+            const nota = document.getElementById('m-v-notas').value.trim();
+            const nowIso = new Date().toISOString();
+
+            try {
+                await updateDoc(doc(db, TORNEO_LAN_COLLECTION, equipoSeleccionadoId), {
+                    estado: nuevoEstado,
+                    notaObservacion: nota,
+                    updatedAt: nowIso,
+                    ...(nuevoEstado === 'Aceptado' ? { approvedAt: nowIso } : {})
+                });
+                eq.estado = nuevoEstado;
+                eq.notaObservacion = nota;
+                eq.updatedAt = nowIso;
+                await sincronizarVitrinaPublica();
+                actualizarMetricasUI();
+                renderizarEquiposPresencial();
+                window.cerrarModalDetallePresencial();
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo guardar en Firestore. Asegúrate de estar autenticado con Firebase Staff.');
+            }
+        };
+
+        window.eliminarEquipoPresencialActual = async () => {
+            if (!equipoSeleccionadoId) return;
+            const eq = inscripcionesPresencial.find(e => e.id === equipoSeleccionadoId);
+            if (!confirm(`¿Eliminar permanentemente a "${eq?.equipo?.nombre || ''}" de Firestore?`)) return;
+            try {
+                await deleteDoc(doc(db, TORNEO_LAN_COLLECTION, equipoSeleccionadoId));
+                inscripcionesPresencial = inscripcionesPresencial.filter(e => e.id !== equipoSeleccionadoId);
+                await sincronizarVitrinaPublica();
+                actualizarMetricasUI();
+                renderizarEquiposPresencial();
+                window.cerrarModalDetallePresencial();
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo eliminar el documento. Verifica tu sesión Staff.');
+            }
+        };
+
+        window.notificarRepresentanteWhatsApp = () => {
+            const eq = inscripcionesPresencial.find(e => e.id === equipoSeleccionadoId);
+            if (!eq) return;
+            const tel = String(eq.capitanContacto?.whapp || '').replace(/[^0-9]/g, '');
+            const nota = document.getElementById('m-v-notas')?.value.trim() || '';
+            const est = document.querySelector('input[name="m-v-estado"]:checked')?.value || eq.estado || 'Pendiente';
+            const msg = `Hola ${eq.capitanContacto?.nombre || 'Capitán'}, te escribimos del Staff LBL sobre el equipo *${eq.equipo?.nombre}* (${eq.codigoSeguimiento}):\nEstado: *${est}*${nota ? `\nDetalle: ${nota}` : ''}`;
+            if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // Crear Equipo Manual (C de CRUD)
+        function poblarFormularioCrear() {
+            const cont = document.getElementById('c-titulares-container');
+            if (!cont) return;
+            cont.innerHTML = ROLES_POSICIONES.map(rol => `
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2.5 rounded-xl bg-black/50 border border-gray-800">
+                    <input id="c-t-${rol}-nombre" placeholder="${rol}: Nombre" class="bg-[#0b121e] border border-gray-700 rounded-lg px-2.5 py-1.5 text-white">
+                    <input id="c-t-${rol}-riot" placeholder="${rol}: Riot ID (ej Player#LAS)" class="bg-[#0b121e] border border-gray-700 rounded-lg px-2.5 py-1.5 text-sky-300">
+                    ${construirSelectRangoHTML(`c-t-${rol}-rango`, 'Esmeralda IV')}
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('c-logo-file')?.addEventListener('change', async (e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            try {
+                logoCreateTemp = await convertirImagenAWebpBase64(f, 220, 0.86);
+                document.getElementById('c-logo').value = 'Logo WebP cargado';
+            } catch (_) {}
+        });
+
+        window.abrirModalCrearPresencial = () => {
+            logoCreateTemp = '';
+            document.getElementById('form-crear-presencial')?.reset();
+            document.getElementById('modal-crear-presencial')?.classList.remove('hidden');
+        };
+
+        window.cerrarModalCrearPresencial = () => {
+            document.getElementById('modal-crear-presencial')?.classList.add('hidden');
+        };
+
+        window.crearEquipoPresencialSubmit = async (e) => {
+            e.preventDefault();
+            const sede = document.getElementById('c-sede').value;
+            const nombre = document.getElementById('c-nombre').value.trim();
+            const tag = document.getElementById('c-tag').value.trim().toUpperCase();
+            const urlLogo = document.getElementById('c-logo').value.trim();
+            const logo = logoCreateTemp || (urlLogo.startsWith('http') ? urlLogo : '/assets/logo.webp');
+            const estado = document.getElementById('c-estado').value;
+            const nowIso = new Date().toISOString();
+            const codigo = `${sede === 'Cochabamba' ? 'SMOK' : 'AMQ'}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const titulares = ROLES_POSICIONES.map(rol => {
+                const riotT = document.getElementById(`c-t-${rol}-riot`).value.trim();
+                return {
+                    nombre: document.getElementById(`c-t-${rol}-nombre`).value.trim() || `Jugador ${rol}`,
+                    ci: '',
+                    whapp: '',
+                    discord: '',
+                    riotIdTorneo: riotT,
+                    opggTorneo: construirUrlOpgg(riotT),
+                    riotIdMain: '',
+                    opggMain: '',
+                    rolPrincipal: rol,
+                    rolSecundario: 'Polivalente',
+                    rangoMax: document.getElementById(`c-t-${rol}-rango`).value
+                };
+            });
+
+            const payload = {
+                torneoId: TORNEO_LAN_ID,
+                torneoNombre: 'Torneo Presencial: Aquí Me Quedo (La Paz) vs SMOK LAN CENTER (Cochabamba)',
+                codigoSeguimiento: codigo,
+                sedeDepartamento: sede,
+                sedeSponsor: sede === 'Cochabamba' ? 'SMOK LAN CENTER' : 'Aquí Me Quedo',
+                estado,
+                timestamp: nowIso,
+                updatedAt: nowIso,
+                equipo: { nombre, tag, logo, sedeDepartamento: sede },
+                capitanContacto: {
+                    nombre: document.getElementById('c-rep-nombre').value.trim(),
+                    ci: document.getElementById('c-rep-ci').value.trim(),
+                    whapp: document.getElementById('c-rep-whapp').value.trim(),
+                    discord: document.getElementById('c-rep-discord').value.trim(),
+                    riotIdTorneo: titulares[0]?.riotIdTorneo || ''
+                },
+                titulares,
+                suplentes: []
+            };
+
+            try {
+                await addDoc(collection(db, TORNEO_LAN_COLLECTION), payload);
+                await window.recargarDatosPresencialYForense(false);
+                if (estado === 'Aceptado') await sincronizarVitrinaPublica();
+                window.cerrarModalCrearPresencial();
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo crear el equipo en Firestore. Verifica tu sesión Staff.');
+            }
+        };
+
+        // Modal Rastreator Global
+        window.abrirModalRastreator = async () => {
+            await asegurarIndiceForenseCargado(false);
+            document.getElementById('modal-rastreator-presencial')?.classList.remove('hidden');
+            window.ejecutarBusquedaRastreatorGlobal();
+            setTimeout(() => document.getElementById('input-rastreator-global')?.focus(), 50);
+        };
+
+        window.cerrarModalRastreator = () => {
+            document.getElementById('modal-rastreator-presencial')?.classList.add('hidden');
+        };
+
+        window.rastrearDesdeModal = (termino) => {
+            window.cerrarModalDetallePresencial();
+            const inp = document.getElementById('input-rastreator-global');
+            if (inp) inp.value = termino;
+            window.abrirModalRastreator();
+        };
+
+        window.ejecutarBusquedaRastreatorGlobal = async () => {
+            const q = (document.getElementById('input-rastreator-global')?.value || '').trim();
+            const cont = document.getElementById('resultados-rastreator-global');
+            if (!cont) return;
+            if (q.length < 2) {
+                cont.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500">Ingresa al menos 2 caracteres (celular, C.I., nombre o Riot ID).</div>`;
+                return;
+            }
+            await asegurarIndiceForenseCargado(false);
+            const res = buscarEnPadronForenseGlobal(q, indiceForenseGlobal, inscripcionesPresencial);
+            if (res.length === 0) {
+                cont.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400">Sin coincidencias para "<strong>${escapeHTML(q)}</strong>".</div>`;
+                return;
+            }
+            cont.innerHTML = res.map(r => {
+                const excede = Boolean(r.evalRango?.excedeEsmeralda1 || r.esLigaTier1);
+                return `
+                    <div class="p-3.5 rounded-2xl border ${excede ? 'border-red-500/70 bg-red-950/20' : 'border-gray-800 bg-[#070b14]'} space-y-2 text-xs">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-2 py-0.5 rounded bg-white/10 text-amber-300 font-black text-[10px] uppercase">${escapeHTML(r.fuenteNombre)}</span>
+                            <span class="px-2 py-0.5 rounded ${excede ? 'bg-red-600 text-white' : 'bg-emerald-500/20 text-emerald-300'} font-black text-[10px]">${escapeHTML(r.rango || 'Unranked')}</span>
+                        </div>
+                        <div class="font-black text-white text-sm">${escapeHTML(r.nombre || '--')} <span class="text-cyan-400 text-[10px] font-bold">(${escapeHTML(r.rol || 'Titular')})</span></div>
+                        <div class="text-[11px] text-gray-300 font-mono">CI: ${escapeHTML(r.ci || '--')} • Whapp: ${escapeHTML(r.celular || '--')} • Discord: ${escapeHTML(r.discord || '--')}</div>
+                        <div class="text-[11px] text-gray-400">Equipo: <strong class="text-white">${escapeHTML(r.equipoNombre)}</strong> • Riot ID: <strong class="text-sky-300">${escapeHTML(r.riotId || '--')}</strong> ${r.opgg ? `<a href="${escapeHTML(r.opgg)}" target="_blank" class="ml-1 text-sky-400 underline">OP.GG</a>` : ''}</div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        // Visor de Logo HD
+        window.abrirVisorLogoPresencial = () => {
+            const src = document.getElementById('m-logo')?.src || '/assets/logo.webp';
+            document.getElementById('visor-logo-img').src = src;
+            document.getElementById('visor-logo-download').href = src;
+            document.getElementById('modal-visor-logo')?.classList.remove('hidden');
+        };
+        window.cerrarVisorLogoPresencial = () => {
+            document.getElementById('modal-visor-logo')?.classList.add('hidden');
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.cerrarVisorLogoPresencial();
+                window.cerrarModalRastreator();
+                window.cerrarModalCrearPresencial();
+                window.cerrarModalDetallePresencial();
+            }
+        });
+    </script>
+</body>
+</html>

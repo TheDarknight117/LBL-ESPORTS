@@ -17,7 +17,7 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020202">
 
-    <link rel="stylesheet" href="/dist/output.css?v=292">
+    <link rel="stylesheet" href="/dist/output.css?v=293">
     <script type="module" src="/app-version.js?v=292"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -155,6 +155,9 @@
             box-shadow: 0 0 0 2px rgba(var(--theme-primary-rgb), 0.22);
             background-color: #000000;
         }
+        select.input-lan {
+            cursor: pointer;
+        }
         select.input-lan option {
             background-color: #08080a;
             color: #ffffff;
@@ -258,14 +261,15 @@
     <!-- ===================================================================== -->
     <main id="stage-sede-selector" class="relative z-10 flex-1 flex flex-col items-center justify-between px-4 sm:px-8 py-6 sm:py-10 min-h-[calc(100vh-65px)]">
 
-        <!-- Título Superior: SELECCIONA TU SEDE -->
-        <div class="text-center space-y-2 mt-1 sm:mt-3">
+        <!-- Título Superior: SELECCIONA TU SEDE + Indicador Región LAS -->
+        <div class="text-center space-y-2.5 mt-1 sm:mt-3">
             <h1 class="font-poster text-4xl sm:text-6xl md:text-7xl font-black italic uppercase tracking-wider text-white drop-shadow-[0_6px_25px_rgba(0,0,0,0.95)]">
                 SELECCIONA TU SEDE
             </h1>
-            <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-zinc-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
-                Haz clic en el logo de tu departamento para abrir la inscripción • <span class="text-blue-400">Elo Máximo: Esmeralda I</span>
-            </p>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/80 border border-blue-500/45 text-[11px] sm:text-xs font-black uppercase tracking-widest text-blue-300 shadow-lg backdrop-blur-md">
+                <i class="fas fa-globe-americas text-blue-400"></i>
+                <span>Servidor Oficial: <strong class="text-white">Región LAS</strong></span>
+            </div>
         </div>
 
         <!-- Composición Central VS: AQUÍ ME QUEDO (Izquierda) VS SMOK (Derecha) -->
@@ -285,11 +289,6 @@
                     <div class="mt-4 flex flex-col items-center gap-1.5">
                         <span class="px-4 py-1.5 rounded-full bg-black/80 border border-rose-500/60 text-rose-300 group-hover:bg-rose-600 group-hover:text-white text-xs font-black uppercase tracking-widest shadow-xl transition-all">
                             <i class="fas fa-location-dot mr-1.5"></i> La Paz • Inscribirse aquí
-                        </span>
-                        <span class="text-[11px] font-bold text-zinc-300 bg-black/65 px-3 py-0.5 rounded-full border border-white/10">
-                            Confirmados: <strong id="count-aceptados-lapaz" class="text-rose-400">0</strong>/16
-                            <span class="mx-1 text-zinc-600">•</span>
-                            <span id="count-pendientes-lapaz" class="text-zinc-400">0 en revisión</span>
                         </span>
                     </div>
                 </button>
@@ -317,23 +316,21 @@
                         <span class="px-4 py-1.5 rounded-full bg-black/80 border border-emerald-500/60 text-emerald-300 group-hover:bg-emerald-500 group-hover:text-black text-xs font-black uppercase tracking-widest shadow-xl transition-all">
                             <i class="fas fa-location-dot mr-1.5"></i> Cochabamba • Inscribirse aquí
                         </span>
-                        <span class="text-[11px] font-bold text-zinc-300 bg-black/65 px-3 py-0.5 rounded-full border border-white/10">
-                            Confirmados: <strong id="count-aceptados-cocha" class="text-emerald-400">0</strong>/16
-                            <span class="mx-1 text-zinc-600">•</span>
-                            <span id="count-pendientes-cocha" class="text-zinc-400">0 en revisión</span>
-                        </span>
                     </div>
                 </button>
             </div>
         </div>
 
-        <!-- Pie sutil con accesos secundarios (Azul LBL sobre base negra) -->
-        <div class="flex flex-wrap items-center justify-center gap-3 pb-2">
+        <!-- Pie con Indicador Global de 16 Cupos + Botón Equipos Inscritos -->
+        <div class="flex flex-col items-center justify-center gap-2.5 pb-2">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/80 border border-white/15 text-xs font-black uppercase tracking-wider text-zinc-200 backdrop-blur-md shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Cupos Globales: <strong id="stage-global-cupos" class="text-white">0</strong><span class="text-zinc-400">/16</span></span>
+                <span class="text-zinc-600">•</span>
+                <span id="stage-global-pendientes" class="text-zinc-400 font-bold">0 en revisión</span>
+            </div>
             <button type="button" onclick="abrirVentanaConfirmados()" class="px-4 py-2 rounded-xl bg-black/75 hover:bg-blue-950/60 border border-blue-500/40 text-blue-300 text-xs font-black uppercase tracking-wider cursor-pointer transition-all backdrop-blur-md">
-                <i class="fas fa-users-viewfinder mr-1.5"></i> Ver Equipos Confirmados (<span id="stage-total-confirmados">0</span>)
-            </button>
-            <button type="button" onclick="abrirVentanaEstado()" class="px-4 py-2 rounded-xl bg-black/75 hover:bg-zinc-900 border border-white/15 text-zinc-300 text-xs font-bold uppercase tracking-wider cursor-pointer transition-all backdrop-blur-md">
-                <i class="fas fa-magnifying-glass mr-1.5 text-blue-400"></i> Consultar Código de Inscripción
+                <i class="fas fa-users-viewfinder mr-1.5"></i> VER EQUIPOS INSCRITOS
             </button>
         </div>
     </main>
@@ -341,34 +338,34 @@
     <!-- ===================================================================== -->
     <!-- VENTANA FLOTANTE 1: WIZARD DE INSCRIPCIÓN (SOBRE FONDO DIFUMINADO)    -->
     <!-- ===================================================================== -->
-    <div id="floating-wizard-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10">
+    <div id="floating-wizard-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(!event.target.closest('.floating-overlay-wrap')) volverASeleccionarSede()">
         <div class="min-h-full flex items-center justify-center">
-            <div class="floating-overlay-wrap w-full max-w-4xl space-y-3">
+            <div class="floating-overlay-wrap w-full max-w-4xl space-y-3.5">
 
                 <!-- Barra superior de la Ventana Flotante -->
-                <div class="floating-window-card rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <img id="wizard-sede-logo" src="/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png" alt="Logo Sede" class="h-10 w-10 object-contain shrink-0">
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span id="wizard-sede-pill" class="px-2.5 py-0.5 rounded-full theme-badge text-[10px] font-black uppercase tracking-wider">
+                <div class="floating-window-card rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <img id="wizard-sede-logo" src="/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png" alt="Logo Sede" class="h-11 w-11 object-contain shrink-0">
+                        <div class="min-w-0 space-y-1">
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <span id="wizard-sede-pill" class="px-2.5 py-0.5 rounded-full theme-badge text-[10px] font-black uppercase tracking-widest">
                                     LA PAZ • AQUÍ ME QUEDO
                                 </span>
-                                <span id="header-step-text" class="text-[11px] font-bold text-zinc-400 uppercase">
+                                <span id="header-step-text" class="text-[11px] font-extrabold text-zinc-400 uppercase tracking-wider">
                                     Ventana 1 de 8
                                 </span>
                             </div>
-                            <h2 class="text-sm sm:text-base font-black text-white uppercase truncate mt-0.5">
-                                Inscripción Oficial • Elo Máximo Esmeralda I
+                            <h2 class="text-sm sm:text-base font-black text-white uppercase tracking-wide leading-tight truncate">
+                                Inscripción Oficial <span class="text-zinc-500 mx-1">•</span> <span class="text-zinc-200">Elo Máximo Esmeralda I</span>
                             </h2>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 shrink-0">
-                        <button type="button" onclick="volverASeleccionarSede()" class="px-3 py-1.5 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-xs font-bold text-zinc-300 hover:text-white cursor-pointer transition-all">
-                            <i class="fas fa-repeat mr-1 theme-text-accent"></i> Cambiar Sede
+                        <button type="button" onclick="volverASeleccionarSede()" class="px-3.5 py-2 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-xs font-bold tracking-wide text-zinc-300 hover:text-white cursor-pointer transition-all">
+                            <i class="fas fa-repeat mr-1.5 theme-text-accent"></i> Cambiar Sede
                         </button>
-                        <button type="button" onclick="volverASeleccionarSede()" class="w-8 h-8 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer" title="Cerrar ventana">
+                        <button type="button" onclick="volverASeleccionarSede()" class="w-9 h-9 rounded-xl bg-black hover:bg-zinc-900 border border-white/15 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer transition-all" title="Cerrar ventana">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -376,28 +373,28 @@
 
                 <!-- Navegador de Ventanas (1 a 8) -->
                 <div class="floating-window-card !border-t-0 rounded-2xl p-2.5 flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
-                    <button type="button" onclick="irAVentanaPaso(1)" id="step-pill-1" class="step-dot-btn active px-2.5 py-1.5 rounded-xl border border-white/10 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                    <button type="button" onclick="irAVentanaPaso(1)" id="step-pill-1" class="step-dot-btn active px-3 py-1.5 rounded-xl border border-white/10 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer">
                         1. Equipo
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(2)" id="step-pill-2" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                    <button type="button" onclick="irAVentanaPaso(2)" id="step-pill-2" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer">
                         2. Representante
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(3)" id="step-pill-3" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                    <button type="button" onclick="irAVentanaPaso(3)" id="step-pill-3" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer inline-flex items-center gap-1.5">
                         <img src="/assets/roles/position-top.svg" class="w-3.5 h-3.5" alt=""> 3. TOP
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(4)" id="step-pill-4" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                    <button type="button" onclick="irAVentanaPaso(4)" id="step-pill-4" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer inline-flex items-center gap-1.5">
                         <img src="/assets/roles/position-jungle.svg" class="w-3.5 h-3.5" alt=""> 4. JG
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(5)" id="step-pill-5" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                    <button type="button" onclick="irAVentanaPaso(5)" id="step-pill-5" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer inline-flex items-center gap-1.5">
                         <img src="/assets/roles/position-middle.svg" class="w-3.5 h-3.5" alt=""> 5. MID
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(6)" id="step-pill-6" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                    <button type="button" onclick="irAVentanaPaso(6)" id="step-pill-6" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer inline-flex items-center gap-1.5">
                         <img src="/assets/roles/position-bottom.svg" class="w-3.5 h-3.5" alt=""> 6. ADC
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(7)" id="step-pill-7" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer inline-flex items-center gap-1">
+                    <button type="button" onclick="irAVentanaPaso(7)" id="step-pill-7" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer inline-flex items-center gap-1.5">
                         <img src="/assets/roles/position-utility.svg" class="w-3.5 h-3.5" alt=""> 7. SUPP
                     </button>
-                    <button type="button" onclick="irAVentanaPaso(8)" id="step-pill-8" class="step-dot-btn px-2.5 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase whitespace-nowrap cursor-pointer">
+                    <button type="button" onclick="irAVentanaPaso(8)" id="step-pill-8" class="step-dot-btn px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 text-[11px] font-black uppercase tracking-wide whitespace-nowrap cursor-pointer">
                         8. Suplente
                     </button>
                 </div>
@@ -408,44 +405,67 @@
 
                     <!-- VENTANA 1: IDENTIDAD DEL EQUIPO (La Sede ya fue seleccionada al entrar) -->
                     <div id="lan-window-1" class="lan-step-window active floating-window-card rounded-3xl p-6 sm:p-8">
-                        <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-white/10">
-                            <div>
-                                <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/10">
+                            <div class="space-y-1">
+                                <span class="inline-block px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-widest">
                                     Paso 1 de 8 • Identidad del Equipo
                                 </span>
-                                <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1.5">
+                                <h3 class="text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight">
                                     Datos del Equipo
                                 </h3>
                             </div>
-                            <span id="lan-sede-confirmada-tag" class="px-3 py-1 rounded-xl theme-badge text-xs font-black uppercase">
+                            <span id="lan-sede-confirmada-tag" class="px-3 py-1.5 rounded-xl theme-badge text-xs font-black uppercase tracking-wide">
                                 Sede Confirmada
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="label-lan !mb-0">1. Nombre del Equipo *</label>
-                                    <span id="lan-teamName-count" class="text-[10px] font-mono text-zinc-400">0/35</span>
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-5">
+                                <div class="sm:col-span-8">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <label class="label-lan !mb-0 tracking-wide">1. Nombre del Equipo *</label>
+                                        <span id="lan-teamName-count" class="text-[11px] font-mono font-bold text-zinc-400">0/35</span>
+                                    </div>
+                                    <input type="text" id="lanTeamName" maxlength="35" required class="input-lan" placeholder="Ej: Illimani Gaming">
                                 </div>
-                                <input type="text" id="lanTeamName" maxlength="35" required class="input-lan" placeholder="Ej: Illimani Gaming">
+
+                                <div class="sm:col-span-4">
+                                    <label class="label-lan tracking-wide !mb-1.5">2. TAG / Acrónimo (2 a 5 letras) *</label>
+                                    <input type="text" id="lanTeamTag" maxlength="5" required class="input-lan uppercase font-black tracking-wider" placeholder="Ej: ILG">
+                                </div>
                             </div>
 
                             <div>
-                                <label class="label-lan">2. TAG / Acrónimo (2 a 5 letras) *</label>
-                                <input type="text" id="lanTeamTag" maxlength="5" required class="input-lan uppercase font-black tracking-wider" placeholder="Ej: ILG">
-                            </div>
-
-                            <div>
-                                <label class="label-lan">3. Logo del Equipo (Archivo o Link) *</label>
-                                <div class="flex items-center gap-2">
-                                    <input type="url" id="lanTeamLogoUrl" class="input-lan" placeholder="https://imgur.com/... o sube">
-                                    <label class="px-3.5 py-2.5 rounded-xl theme-badge text-xs font-black uppercase cursor-pointer shrink-0 flex items-center gap-1.5" title="Subir imagen desde tu dispositivo">
-                                        <i class="fas fa-upload"></i> Subir
-                                        <input type="file" id="lanTeamLogoFile" accept="image/*" class="hidden">
-                                    </label>
+                                <label class="label-lan tracking-wide !mb-1.5">3. Logo del Equipo (Archivo o Link) *</label>
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                                    <input type="url" id="lanTeamLogoUrl" class="input-lan flex-1" placeholder="Pega un link (https://...) o sube una imagen">
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <label class="flex-1 sm:flex-initial justify-center px-4 py-2.5 rounded-xl theme-badge text-xs font-black uppercase tracking-wider cursor-pointer flex items-center gap-1.5 hover:brightness-110 transition-all" title="Subir imagen desde tu dispositivo">
+                                            <i class="fas fa-upload"></i> Subir
+                                            <input type="file" id="lanTeamLogoFile" accept="image/*" class="hidden">
+                                        </label>
+                                        <button type="button" id="btn-quitar-lan-logo-inline" onclick="quitarLogoEquipoLan()" class="hidden px-3 py-2.5 rounded-xl bg-black hover:bg-rose-950/70 border border-rose-500/40 text-rose-300 hover:text-white text-xs font-black uppercase cursor-pointer transition-all" title="Quitar logo o enlace">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <p id="lan-logo-status" class="text-[10px] text-zinc-400 mt-1">Pega un link o sube PNG/JPG/WebP.</p>
+                                <p id="lan-logo-status" class="text-[11px] text-zinc-400 mt-1.5">Pega un link directo o sube PNG/JPG/WebP.</p>
+
+                                <!-- Previsualización del Logo Cargado + Botón X para eliminar -->
+                                <div id="lan-logo-preview-box" class="hidden mt-3 p-3 rounded-2xl bg-black/80 border border-white/15 flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-14 h-14 rounded-xl bg-zinc-950 border border-white/15 flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
+                                            <img id="lan-logo-preview-img" src="" alt="Preview Logo" class="max-w-full max-h-full object-contain">
+                                        </div>
+                                        <div class="min-w-0">
+                                            <span class="block text-[10px] font-black uppercase tracking-widest theme-text-accent">Vista previa del logo</span>
+                                            <p id="lan-logo-preview-caption" class="text-xs font-bold text-zinc-200 truncate mt-0.5">Logo cargado correctamente</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btn-quitar-lan-logo" onclick="quitarLogoEquipoLan()" class="w-9 h-9 rounded-xl bg-rose-950/60 hover:bg-rose-600 border border-rose-500/50 text-rose-300 hover:text-white flex items-center justify-center shrink-0 cursor-pointer transition-all" title="Eliminar logo cargado">
+                                        <i class="fas fa-times text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -461,14 +481,14 @@
 
                     <!-- VENTANA 2: DATOS DEL REPRESENTANTE DEL EQUIPO -->
                     <div id="lan-window-2" class="lan-step-window floating-window-card rounded-3xl p-6 sm:p-8">
-                        <div class="pb-4 mb-6 border-b border-white/10">
-                            <span class="px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-wider">
+                        <div class="pb-4 mb-6 border-b border-white/10 space-y-1">
+                            <span class="inline-block px-2.5 py-0.5 rounded-lg theme-badge text-[10px] font-black uppercase tracking-widest">
                                 Paso 2 de 8 • Representante Oficial
                             </span>
-                            <h3 class="text-xl sm:text-2xl font-black uppercase text-white mt-1.5">
+                            <h3 class="text-xl sm:text-2xl font-black uppercase tracking-wide text-white leading-tight">
                                 Datos del Representante del Equipo
                             </h3>
-                            <p class="text-xs text-zinc-400 mt-0.5">
+                            <p class="text-xs text-zinc-400">
                                 Encargado de confirmar asistencia presencial en sede y recibir comunicaciones del Staff LBL.
                             </p>
                         </div>
@@ -480,11 +500,11 @@
                             </div>
                             <div>
                                 <label class="label-lan">2. CI / Documento de identidad *</label>
-                                <input type="text" id="rep_ci" required class="input-lan" placeholder="Ej: 12345678" oninput="this.value = this.value.replace(/[^0-9a-zA-Z-]/g, '')">
+                                <input type="text" id="rep_ci" required inputmode="numeric" data-numeric-field="ci" class="input-lan" placeholder="Ej: 12345678">
                             </div>
                             <div>
                                 <label class="label-lan">3. Whapp (Celular de Contacto) *</label>
-                                <input type="tel" id="rep_whapp" required class="input-lan" placeholder="Ej: 77712345" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                                <input type="tel" id="rep_whapp" required inputmode="numeric" data-numeric-field="celular" class="input-lan" placeholder="Ej: 77712345">
                             </div>
                             <div>
                                 <label class="label-lan">4. Discord del Representante *</label>
@@ -497,12 +517,22 @@
                                 <i class="fas fa-bolt theme-text-accent mr-1.5"></i>
                                 <strong>¿El representante también juega de titular?</strong> Copia sus datos en 1 clic:
                             </div>
-                            <div class="flex flex-wrap items-center gap-1.5 shrink-0">
-                                <button type="button" onclick="copiarRepATitular('TOP', 3)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A TOP</button>
-                                <button type="button" onclick="copiarRepATitular('JG', 4)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A JG</button>
-                                <button type="button" onclick="copiarRepATitular('MID', 5)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A MID</button>
-                                <button type="button" onclick="copiarRepATitular('ADC', 6)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A ADC</button>
-                                <button type="button" onclick="copiarRepATitular('SUPP', 7)" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-[11px] font-black text-white cursor-pointer">A SUPP</button>
+                            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                <button type="button" onclick="copiarRepATitular('TOP', 3)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 hover:border-white/30 text-xs font-black tracking-wide text-white cursor-pointer transition-all">
+                                    <img src="/assets/roles/position-top.svg" alt="" class="w-4 h-4"> TOP
+                                </button>
+                                <button type="button" onclick="copiarRepATitular('JG', 4)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 hover:border-white/30 text-xs font-black tracking-wide text-white cursor-pointer transition-all">
+                                    <img src="/assets/roles/position-jungle.svg" alt="" class="w-4 h-4"> JG
+                                </button>
+                                <button type="button" onclick="copiarRepATitular('MID', 5)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 hover:border-white/30 text-xs font-black tracking-wide text-white cursor-pointer transition-all">
+                                    <img src="/assets/roles/position-middle.svg" alt="" class="w-4 h-4"> MID
+                                </button>
+                                <button type="button" onclick="copiarRepATitular('ADC', 6)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 hover:border-white/30 text-xs font-black tracking-wide text-white cursor-pointer transition-all">
+                                    <img src="/assets/roles/position-bottom.svg" alt="" class="w-4 h-4"> ADC
+                                </button>
+                                <button type="button" onclick="copiarRepATitular('SUPP', 7)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 hover:border-white/30 text-xs font-black tracking-wide text-white cursor-pointer transition-all">
+                                    <img src="/assets/roles/position-utility.svg" alt="" class="w-4 h-4"> SUPP
+                                </button>
                             </div>
                         </div>
 
@@ -530,7 +560,7 @@
     <!-- ===================================================================== -->
     <!-- VENTANA FLOTANTE 2: EQUIPOS CONFIRMADOS (LA PAZ VS COCHABAMBA)        -->
     <!-- ===================================================================== -->
-    <div id="floating-equipos-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(event.target===this) cerrarVentanasSecundarias()">
+    <div id="floating-equipos-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(!event.target.closest('.floating-overlay-wrap')) cerrarVentanasSecundarias()">
         <div class="min-h-full flex items-center justify-center">
             <div class="floating-overlay-wrap floating-window-card w-full max-w-5xl rounded-3xl p-5 sm:p-7 space-y-5">
                 <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
@@ -550,13 +580,13 @@
                 <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
                     <div class="flex flex-wrap items-center gap-2">
                         <button type="button" onclick="filtrarEquiposConfirmados('todos')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-blue-600 text-white cursor-pointer">
-                            Todos (<span id="count-filter-todos">0</span>)
+                            Todos (<span id="count-filter-todos">0</span>/16)
                         </button>
                         <button type="button" onclick="filtrarEquiposConfirmados('La Paz')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-black text-rose-300 border border-rose-500/45 hover:bg-rose-950/40 cursor-pointer flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> La Paz (<span id="count-filter-lapaz">0</span>/16)
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> La Paz (<span id="count-filter-lapaz">0</span>)
                         </button>
                         <button type="button" onclick="filtrarEquiposConfirmados('Cochabamba')" class="px-3.5 py-2 rounded-xl text-xs font-black uppercase bg-black text-emerald-300 border border-emerald-500/45 hover:bg-emerald-950/40 cursor-pointer flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Cochabamba (<span id="count-filter-cocha">0</span>/16)
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Cochabamba (<span id="count-filter-cocha">0</span>)
                         </button>
                     </div>
                     <div class="relative w-full md:w-72">
@@ -573,7 +603,7 @@
     <!-- ===================================================================== -->
     <!-- VENTANA FLOTANTE 3: CONSULTAR ESTADO DE INSCRIPCIÓN                   -->
     <!-- ===================================================================== -->
-    <div id="floating-estado-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(event.target===this) cerrarVentanasSecundarias()">
+    <div id="floating-estado-overlay" class="fixed inset-0 z-50 hidden overflow-y-auto px-3 sm:px-6 py-6 sm:py-10" onclick="if(!event.target.closest('.floating-overlay-wrap')) cerrarVentanasSecundarias()">
         <div class="min-h-full flex items-center justify-center">
             <div class="floating-overlay-wrap floating-window-card w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-5">
                 <div class="flex items-start justify-between gap-3 pb-4 border-b border-white/10">
@@ -693,10 +723,198 @@
         ];
 
         let currentWindowStep = 1;
+        const TORNEO_LAN_DRAFT_CACHE_KEY = 'lbl_torneo_lan_borrador_v1';
         let equiposConfirmadosPublicos = [];
         let resumenEstadosPublicos = [];
         let filtroSedeConfirmados = 'todos';
         let logoBase64Subido = '';
+        let draftSaveTimer = null;
+        let lastNumericWarnAt = 0;
+
+        /**
+         * Sanitiza en tiempo real campos numéricos (CI y Celular) usando try/catch para impedir letras o símbolos.
+         */
+        function sanitizarCampoNumerico(el, tipo = 'ci') {
+            if (!el) return '';
+            const maxLen = tipo === 'celular' ? 15 : 12;
+            const labelHumano = tipo === 'celular' ? 'Celular (Whapp)' : 'C.I.';
+            try {
+                const raw = String(el.value ?? '');
+                const soloDigitos = raw.replace(/[^0-9]/g, '').slice(0, maxLen);
+                if (raw !== soloDigitos) {
+                    el.value = soloDigitos;
+                    const ahora = Date.now();
+                    if (/[^0-9]/.test(raw) && ahora - lastNumericWarnAt > 1800) {
+                        lastNumericWarnAt = ahora;
+                        mostrarToastLan(`⚠️ En ${labelHumano} solo se permiten números (0-9).`);
+                    }
+                }
+                return soloDigitos;
+            } catch (err) {
+                console.warn(`[Sanitizador ${labelHumano}] Error controlado:`, err);
+                try { el.value = ''; } catch (_) {}
+                return '';
+            }
+        }
+
+        /**
+         * Valida formato numérico estricto de CI o Celular dentro de try/catch antes de avanzar o enviar.
+         */
+        function validarCampoNumericoEstricto(el, { min = 5, max = 12, label = 'Campo numérico' } = {}) {
+            try {
+                if (!el) throw new Error(`Elemento ${label} no encontrado`);
+                const limpio = sanitizarCampoNumerico(el, min >= 7 ? 'celular' : 'ci');
+                if (!/^\d+$/.test(limpio) || limpio.length < min || limpio.length > max) {
+                    el.classList.add('error-field');
+                    el.focus();
+                    mostrarToastLan(`⚠️ "${label}" debe contener solo números válidos (${min} a ${max} dígitos).`);
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                console.warn(`[Validación ${label}] Error controlado:`, err);
+                el?.classList.add('error-field');
+                mostrarToastLan(`⚠️ Revisa el campo "${label}": solo se permiten dígitos numéricos.`);
+                return false;
+            }
+        }
+
+        /**
+         * Guarda automáticamente el progreso completo del formulario en caché local (localStorage).
+         */
+        function guardarBorradorCacheLan(override = {}) {
+            try {
+                const formEl = document.getElementById('form-torneo-lan');
+                if (!formEl) return;
+
+                const fields = {};
+                formEl.querySelectorAll('input.input-lan[id], select.input-lan[id], input[type="hidden"][id]').forEach((el) => {
+                    if (el.type === 'file' || el.type === 'radio') return;
+                    fields[el.id] = el.value;
+                });
+
+                const wizardEl = document.getElementById('floating-wizard-overlay');
+                const modalAbierto = typeof override.modalAbierto === 'boolean'
+                    ? override.modalAbierto
+                    : Boolean(wizardEl && !wizardEl.classList.contains('hidden'));
+
+                const capitanChecked = document.querySelector('input[name="lanCapitanRadio"]:checked')?.value || 'TIT_TOP';
+                const statusEl = document.getElementById('lan-logo-status');
+
+                const payload = {
+                    sede: (document.getElementById('sedeDepartamento')?.value || '').trim(),
+                    step: typeof override.step === 'number' ? override.step : currentWindowStep,
+                    modalAbierto,
+                    capitanPrefix: capitanChecked,
+                    logoBase64Subido: (logoBase64Subido && logoBase64Subido.length < 350000) ? logoBase64Subido : '',
+                    logoStatusText: statusEl ? statusEl.textContent : '',
+                    fields,
+                    savedAt: Date.now()
+                };
+                localStorage.setItem(TORNEO_LAN_DRAFT_CACHE_KEY, JSON.stringify(payload));
+            } catch (err) {
+                console.warn('[Cache Borrador LAN] No se pudo guardar en memoria local:', err);
+            }
+        }
+
+        function programarGuardadoBorradorLan() {
+            clearTimeout(draftSaveTimer);
+            draftSaveTimer = setTimeout(() => guardarBorradorCacheLan(), 120);
+        }
+
+        function limpiarBorradorCacheLan() {
+            clearTimeout(draftSaveTimer);
+            try { localStorage.removeItem(TORNEO_LAN_DRAFT_CACHE_KEY); } catch (_) {}
+        }
+
+        function aplicarTemaYSedeDOM(sede) {
+            const input = document.getElementById('sedeDepartamento');
+            const logoEl = document.getElementById('wizard-sede-logo');
+            const pillEl = document.getElementById('wizard-sede-pill');
+            const confirmTagEl = document.getElementById('lan-sede-confirmada-tag');
+            if (input) input.value = sede;
+            if (sede === 'Cochabamba') {
+                document.body.setAttribute('data-lan-theme', 'smok');
+                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/SMOK_GAME_ZONE%20-%20copia.png';
+                if (pillEl) pillEl.textContent = 'COCHABAMBA • SMOK LAN CENTER';
+                if (confirmTagEl) confirmTagEl.textContent = '🟢 COCHABAMBA • SMOK LAN CENTER';
+            } else {
+                document.body.setAttribute('data-lan-theme', 'amq');
+                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png';
+                if (pillEl) pillEl.textContent = 'LA PAZ • AQUÍ ME QUEDO';
+                if (confirmTagEl) confirmTagEl.textContent = '🔴 LA PAZ • AQUÍ ME QUEDO';
+            }
+        }
+
+        function restaurarBorradorCacheLan() {
+            try {
+                const raw = localStorage.getItem(TORNEO_LAN_DRAFT_CACHE_KEY);
+                if (!raw) return;
+                const draft = JSON.parse(raw);
+                if (!draft || typeof draft !== 'object') return;
+
+                if (draft.fields && typeof draft.fields === 'object') {
+                    Object.entries(draft.fields).forEach(([id, val]) => {
+                        const el = document.getElementById(id);
+                        if (!el || typeof val !== 'string') return;
+                        el.value = val;
+                        const numType = el.getAttribute('data-numeric-field');
+                        if (numType) sanitizarCampoNumerico(el, numType);
+                    });
+                }
+
+                if (draft.logoBase64Subido) {
+                    logoBase64Subido = draft.logoBase64Subido;
+                    const statusEl = document.getElementById('lan-logo-status');
+                    if (statusEl && draft.logoStatusText) {
+                        statusEl.textContent = draft.logoStatusText;
+                        statusEl.className = 'text-[11px] theme-text-accent font-bold mt-1.5';
+                    }
+                }
+                sincronizarPreviewLogoLan(draft.logoStatusText || '');
+
+                if (draft.capitanPrefix) {
+                    const radio = document.querySelector(`input[name="lanCapitanRadio"][value="${draft.capitanPrefix}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                const teamNameEl = document.getElementById('lanTeamName');
+                const cnt = document.getElementById('lan-teamName-count');
+                if (teamNameEl && cnt) cnt.textContent = `${teamNameEl.value.length}/35`;
+
+                document.querySelectorAll('.riot-id-live').forEach(inp => {
+                    const linkId = inp.getAttribute('data-opgg-preview');
+                    const linkEl = linkId ? document.getElementById(linkId) : null;
+                    const url = construirUrlOpgg(inp.value);
+                    if (linkEl) {
+                        if (url) { linkEl.href = url; linkEl.classList.remove('hidden'); }
+                        else { linkEl.classList.add('hidden'); }
+                    }
+                });
+
+                if (draft.sede) {
+                    aplicarTemaYSedeDOM(draft.sede);
+                }
+
+                const hayDatosRellenos = Object.entries(draft.fields || {}).some(
+                    ([k, v]) => v && !k.endsWith('_rolPrincipal') && k !== 'sedeDepartamento'
+                );
+
+                if (draft.modalAbierto && draft.sede) {
+                    document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
+                    document.getElementById('floating-estado-overlay')?.classList.add('hidden');
+                    document.getElementById('floating-wizard-overlay')?.classList.remove('hidden');
+                    actualizarEstadoBlurFondo(true);
+                    const targetStep = Math.min(8, Math.max(1, Number(draft.step) || 1));
+                    activarVentanaDOM(targetStep);
+                    if (hayDatosRellenos) {
+                        mostrarToastLan('✓ Datos recuperados de tu sesión anterior.', 'ok');
+                    }
+                }
+            } catch (err) {
+                console.warn('[Cache Borrador LAN] Error al restaurar borrador:', err);
+            }
+        }
 
         function mostrarToastLan(msg, tipo = 'error') {
             const toast = document.getElementById('lan-toast');
@@ -730,24 +948,7 @@
         }
 
         window.seleccionarSedeYAbrirModal = function(sede) {
-            const input = document.getElementById('sedeDepartamento');
-            const logoEl = document.getElementById('wizard-sede-logo');
-            const pillEl = document.getElementById('wizard-sede-pill');
-            const confirmTagEl = document.getElementById('lan-sede-confirmada-tag');
-
-            if (input) input.value = sede;
-
-            if (sede === 'La Paz') {
-                document.body.setAttribute('data-lan-theme', 'amq');
-                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/AQMlogo%20-%20copia.png';
-                if (pillEl) pillEl.textContent = 'LA PAZ • AQUÍ ME QUEDO';
-                if (confirmTagEl) confirmTagEl.textContent = '🔴 LA PAZ • AQUÍ ME QUEDO';
-            } else {
-                document.body.setAttribute('data-lan-theme', 'smok');
-                if (logoEl) logoEl.src = '/assets/Logos%20Sponsor/SMOK_GAME_ZONE%20-%20copia.png';
-                if (pillEl) pillEl.textContent = 'COCHABAMBA • SMOK LAN CENTER';
-                if (confirmTagEl) confirmTagEl.textContent = '🟢 COCHABAMBA • SMOK LAN CENTER';
-            }
+            aplicarTemaYSedeDOM(sede);
 
             document.getElementById('floating-equipos-overlay')?.classList.add('hidden');
             document.getElementById('floating-estado-overlay')?.classList.add('hidden');
@@ -755,6 +956,7 @@
 
             actualizarEstadoBlurFondo(true);
             activarVentanaDOM(1);
+            guardarBorradorCacheLan({ modalAbierto: true, step: 1 });
         };
 
         window.volverASeleccionarSede = function() {
@@ -763,6 +965,7 @@
             document.getElementById('floating-estado-overlay')?.classList.add('hidden');
             document.body.setAttribute('data-lan-theme', 'neutral');
             actualizarEstadoBlurFondo(false);
+            guardarBorradorCacheLan({ modalAbierto: false });
         };
 
         window.abrirVentanaConfirmados = function() {
@@ -838,11 +1041,11 @@
                         </div>
                         <div>
                             <label class="label-lan">2. CI / Documento de identidad ${starMark}</label>
-                            <input type="text" id="${prefix}_ci" ${reqAttr} class="input-lan" placeholder="Ej: 12345678" oninput="this.value = this.value.replace(/[^0-9a-zA-Z-]/g, '')">
+                            <input type="text" id="${prefix}_ci" ${reqAttr} inputmode="numeric" data-numeric-field="ci" class="input-lan" placeholder="Ej: 12345678">
                         </div>
                         <div>
                             <label class="label-lan">3. Whapp (Celular) ${starMark}</label>
-                            <input type="tel" id="${prefix}_whapp" ${reqAttr} class="input-lan" placeholder="Ej: 77712345" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                            <input type="tel" id="${prefix}_whapp" ${reqAttr} inputmode="numeric" data-numeric-field="celular" class="input-lan" placeholder="Ej: 77712345">
                         </div>
                         <div>
                             <label class="label-lan">4. Discord ${starMark}</label>
@@ -966,15 +1169,7 @@
 
                         ${construirCamposJugadorHTML('SUP_1', null, false)}
 
-                        <div class="mt-8 p-5 rounded-2xl bg-black border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div class="text-left">
-                                <h4 class="text-sm font-black uppercase text-white flex items-center gap-2">
-                                    <i class="fas fa-shield-check theme-text-accent"></i> Verificación Anti-Smurf Lista
-                                </h4>
-                                <p class="text-xs text-zinc-400 mt-0.5">
-                                    Tu roster se validará contra Scouting 1, 2, 3 y Liga LBL (Tope Esmeralda I) y recibirás tu código por WhatsApp.
-                                </p>
-                            </div>
+                        <div class="mt-8 flex justify-end">
                             <button type="submit" id="btn-submit-torneo-lan" class="w-full sm:w-auto min-w-[260px] px-8 py-4 rounded-2xl theme-btn-primary font-black text-base uppercase tracking-wider cursor-pointer shrink-0">
                                 <i class="fas fa-paper-plane mr-2"></i> Enviar Inscripción
                             </button>
@@ -1012,6 +1207,44 @@
             });
         }
 
+        // Listener global único para caché automática y sanitización numérica (CI / Celular) con try/catch
+        const formTorneoLanEl = document.getElementById('form-torneo-lan');
+        if (formTorneoLanEl) {
+            formTorneoLanEl.addEventListener('input', (e) => {
+                const target = e.target;
+                const numType = target?.getAttribute?.('data-numeric-field');
+                if (numType) sanitizarCampoNumerico(target, numType);
+                programarGuardadoBorradorLan();
+            });
+            formTorneoLanEl.addEventListener('paste', (e) => {
+                const target = e.target;
+                const numType = target?.getAttribute?.('data-numeric-field');
+                if (numType) {
+                    try {
+                        const clipText = e.clipboardData?.getData('text');
+                        if (typeof clipText === 'string') {
+                            e.preventDefault();
+                            const maxLen = numType === 'celular' ? 15 : 12;
+                            const start = target.selectionStart ?? target.value.length;
+                            const end = target.selectionEnd ?? target.value.length;
+                            const merged = target.value.slice(0, start) + clipText + target.value.slice(end);
+                            target.value = merged.slice(0, maxLen + 32);
+                            sanitizarCampoNumerico(target, numType);
+                            programarGuardadoBorradorLan();
+                            return;
+                        }
+                    } catch (_) {}
+                    setTimeout(() => {
+                        sanitizarCampoNumerico(target, numType);
+                        programarGuardadoBorradorLan();
+                    }, 0);
+                }
+            });
+            formTorneoLanEl.addEventListener('change', () => {
+                programarGuardadoBorradorLan();
+            });
+        }
+
         window.limpiarCamposSuplenteUnico = function() {
             ['nombre', 'ci', 'whapp', 'discord', 'riotTorneo', 'riotMain', 'rolPrincipal', 'rolSecundario', 'rangoMax'].forEach(k => {
                 const el = document.getElementById(`SUP_1_${k}`);
@@ -1022,12 +1255,13 @@
             });
             document.getElementById('SUP_1_opgg_torneo_link')?.classList.add('hidden');
             document.getElementById('SUP_1_opgg_main_link')?.classList.add('hidden');
+            guardarBorradorCacheLan();
         };
 
         window.copiarRepATitular = function(rolId, targetStep) {
             const nom = (document.getElementById('rep_nombre')?.value || '').trim();
-            const ci = (document.getElementById('rep_ci')?.value || '').trim();
-            const whapp = (document.getElementById('rep_whapp')?.value || '').trim();
+            const ci = sanitizarCampoNumerico(document.getElementById('rep_ci'), 'ci');
+            const whapp = sanitizarCampoNumerico(document.getElementById('rep_whapp'), 'celular');
             const disc = (document.getElementById('rep_discord')?.value || '').trim();
 
             if (!nom && !ci && !whapp) {
@@ -1043,6 +1277,7 @@
             const radio = document.querySelector(`input[name="lanCapitanRadio"][value="${prefix}"]`);
             if (radio) radio.checked = true;
 
+            guardarBorradorCacheLan();
             mostrarToastLan(`✓ Datos del representante copiados a Titular ${rolId}.`, 'ok');
             if (targetStep) window.irAVentanaPaso(targetStep);
         };
@@ -1100,6 +1335,8 @@
                         return false;
                     }
                 }
+                if (!validarCampoNumericoEstricto(document.getElementById('rep_ci'), { min: 5, max: 12, label: 'CI / Documento del Representante' })) return false;
+                if (!validarCampoNumericoEstricto(document.getElementById('rep_whapp'), { min: 7, max: 15, label: 'Whapp (Celular) del Representante' })) return false;
                 return true;
             }
 
@@ -1150,6 +1387,9 @@
                 }
             }
 
+            if (!validarCampoNumericoEstricto(document.getElementById(`${prefix}_ci`), { min: 5, max: 12, label: `${labelSlot} • CI` })) return false;
+            if (!validarCampoNumericoEstricto(document.getElementById(`${prefix}_whapp`), { min: 7, max: 15, label: `${labelSlot} • Whapp (Celular)` })) return false;
+
             if (!riotTorneo.includes('#')) {
                 const el = document.getElementById(`${prefix}_riotTorneo`);
                 el?.classList.add('error-field');
@@ -1185,6 +1425,7 @@
                 }
             }
             activarVentanaDOM(targetStep);
+            guardarBorradorCacheLan({ modalAbierto: true, step: targetStep });
         };
 
         function activarVentanaDOM(step) {
@@ -1205,26 +1446,100 @@
             document.getElementById('floating-wizard-overlay')?.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Previsualización en vivo y eliminación (botón X) del logo del equipo
+        function sincronizarPreviewLogoLan(captionOverride = '') {
+            const urlInp = document.getElementById('lanTeamLogoUrl');
+            const previewBox = document.getElementById('lan-logo-preview-box');
+            const previewImg = document.getElementById('lan-logo-preview-img');
+            const captionEl = document.getElementById('lan-logo-preview-caption');
+            const btnInline = document.getElementById('btn-quitar-lan-logo-inline');
+
+            const rawUrl = (urlInp?.value || '').trim();
+            const src = logoBase64Subido || (rawUrl.startsWith('http') ? rawUrl : '');
+
+            if (btnInline) {
+                btnInline.classList.toggle('hidden', !(logoBase64Subido || rawUrl));
+            }
+
+            if (!previewBox || !previewImg) return;
+            if (!src) {
+                previewImg.removeAttribute('src');
+                previewBox.classList.add('hidden');
+                return;
+            }
+
+            previewImg.onerror = () => {
+                previewBox.classList.add('hidden');
+                const statusEl = document.getElementById('lan-logo-status');
+                if (statusEl && !logoBase64Subido) {
+                    statusEl.textContent = '⚠️ El enlace ingresado no carga una imagen válida.';
+                    statusEl.className = 'text-[11px] text-amber-400 font-bold mt-1.5';
+                }
+            };
+            previewImg.onload = () => {
+                previewBox.classList.remove('hidden');
+                if (captionEl) {
+                    captionEl.textContent = captionOverride || (logoBase64Subido ? 'Imagen optimizada lista para enviar' : rawUrl);
+                }
+            };
+            previewImg.src = src;
+        }
+
+        window.quitarLogoEquipoLan = function(guardarEnCache = true) {
+            logoBase64Subido = '';
+            const fileInp = document.getElementById('lanTeamLogoFile');
+            const urlInp = document.getElementById('lanTeamLogoUrl');
+            const statusEl = document.getElementById('lan-logo-status');
+            if (fileInp) fileInp.value = '';
+            if (urlInp) {
+                urlInp.value = '';
+                urlInp.readOnly = false;
+                urlInp.classList.remove('error-field', 'text-emerald-300');
+            }
+            if (statusEl) {
+                statusEl.textContent = 'Pega un link directo o sube PNG/JPG/WebP.';
+                statusEl.className = 'text-[11px] text-zinc-400 mt-1.5';
+            }
+            sincronizarPreviewLogoLan();
+            if (guardarEnCache) guardarBorradorCacheLan();
+        };
+
         // Subida y compresión de logo
         document.getElementById('lanTeamLogoFile')?.addEventListener('change', async (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
             const statusEl = document.getElementById('lan-logo-status');
             try {
-                if (statusEl) statusEl.textContent = 'Optimizando logo a WebP...';
+                if (statusEl) {
+                    statusEl.textContent = 'Optimizando logo a WebP...';
+                    statusEl.className = 'text-[11px] text-zinc-300 mt-1.5';
+                }
                 logoBase64Subido = await convertirImagenAWebpBase64(file, 220, 0.86);
                 const urlInp = document.getElementById('lanTeamLogoUrl');
                 if (urlInp) {
-                    urlInp.value = 'Logo cargado desde dispositivo (WebP optimizado)';
+                    urlInp.value = `Archivo: ${file.name}`;
                     urlInp.classList.remove('error-field');
                 }
+                const labelOk = `✓ Logo "${file.name}" optimizado.`;
                 if (statusEl) {
-                    statusEl.textContent = `✓ Logo "${file.name}" optimizado.`;
-                    statusEl.className = 'text-[10px] theme-text-accent font-bold mt-1';
+                    statusEl.textContent = labelOk;
+                    statusEl.className = 'text-[11px] theme-text-accent font-bold mt-1.5';
                 }
+                sincronizarPreviewLogoLan(file.name);
+                guardarBorradorCacheLan();
             } catch (_) {
                 mostrarToastLan('No se pudo procesar la imagen seleccionada.');
             }
+        });
+
+        document.getElementById('lanTeamLogoUrl')?.addEventListener('input', (e) => {
+            if (logoBase64Subido) logoBase64Subido = '';
+            const statusEl = document.getElementById('lan-logo-status');
+            if (statusEl) {
+                statusEl.textContent = e.target.value.trim() ? 'Cargando vista previa desde enlace...' : 'Pega un link directo o sube PNG/JPG/WebP.';
+                statusEl.className = 'text-[11px] text-zinc-400 mt-1.5';
+            }
+            sincronizarPreviewLogoLan();
         });
 
         document.getElementById('lanTeamName')?.addEventListener('input', (e) => {
@@ -1411,8 +1726,9 @@
                 modalExito.classList.remove('hidden');
                 modalExito.classList.add('flex');
 
+                limpiarBorradorCacheLan();
                 document.getElementById('form-torneo-lan').reset();
-                logoBase64Subido = '';
+                window.quitarLogoEquipoLan(false);
                 inicializarVentanasJugadores();
                 activarVentanaDOM(1);
             } catch (err) {
@@ -1441,25 +1757,20 @@
         function actualizarMarcadorCupos() {
             const aceptadosLp = equiposConfirmadosPublicos.filter(e => e.sedeDepartamento === 'La Paz').length;
             const aceptadosCb = equiposConfirmadosPublicos.filter(e => e.sedeDepartamento === 'Cochabamba').length;
+            const totalAceptados = equiposConfirmadosPublicos.length;
 
-            const pendientesLp = resumenEstadosPublicos.filter(
-                r => r.sedeDepartamento === 'La Paz' && String(r.estado || '').toLowerCase() === 'pendiente'
-            ).length;
-            const pendientesCb = resumenEstadosPublicos.filter(
-                r => r.sedeDepartamento === 'Cochabamba' && String(r.estado || '').toLowerCase() === 'pendiente'
+            const totalPendientes = resumenEstadosPublicos.filter(
+                r => String(r.estado || '').toLowerCase() === 'pendiente'
             ).length;
 
             const setTxt = (id, v) => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = v;
             };
-            setTxt('count-aceptados-lapaz', aceptadosLp);
-            setTxt('count-aceptados-cocha', aceptadosCb);
-            setTxt('count-pendientes-lapaz', `${pendientesLp} en revisión`);
-            setTxt('count-pendientes-cocha', `${pendientesCb} en revisión`);
-            setTxt('badge-total-confirmados', equiposConfirmadosPublicos.length);
-            setTxt('stage-total-confirmados', equiposConfirmadosPublicos.length);
-            setTxt('count-filter-todos', equiposConfirmadosPublicos.length);
+            setTxt('stage-global-cupos', totalAceptados);
+            setTxt('stage-global-pendientes', `${totalPendientes} en revisión`);
+            setTxt('badge-total-confirmados', totalAceptados);
+            setTxt('count-filter-todos', totalAceptados);
             setTxt('count-filter-lapaz', aceptadosLp);
             setTxt('count-filter-cocha', aceptadosCb);
         }
@@ -1699,6 +2010,7 @@
         }
 
         inicializarVentanasJugadores();
+        restaurarBorradorCacheLan();
         iniciarSincronizacionPublica();
     </script>
 </body>
