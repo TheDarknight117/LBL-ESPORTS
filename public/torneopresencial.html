@@ -17,8 +17,8 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020202">
 
-    <link rel="stylesheet" href="/dist/output.css?v=299">
-    <script type="module" src="/app-version.js?v=299"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=300">
+    <script type="module" src="/app-version.js?v=300"></script>
     <link rel="preload" as="image" type="image/webp" href="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.webp" fetchpriority="high">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -761,6 +761,14 @@
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { convertirImagenAWebpBase64 } from "/image-optimizer.js";
         import {
+            MAX_ORIGINAL_LOGO_BYTES,
+            formatearBytesLogo,
+            guardarBorradorLogoOriginalIDB,
+            cargarBorradorLogoOriginalIDB,
+            limpiarBorradorLogoOriginalIDB,
+            subirLogoOriginalTorneoLan
+        } from "/presencial-logo-store.js?v=300";
+        import {
             TORNEO_LAN_ID,
             TORNEO_LAN_COLLECTION,
             TORNEO_LAN_PUBLIC_DOC,
@@ -804,6 +812,7 @@
         let resumenEstadosPublicos = [];
         let filtroSedeConfirmados = 'todos';
         let logoBase64Subido = '';
+        let logoOriginalFileSubido = null;
         let pagoComprobanteBase64 = '';
         let pagoComprobanteTipo = '';
         let pagoComprobanteNombre = '';
@@ -949,6 +958,11 @@
                         statusEl.textContent = draft.logoStatusText;
                         statusEl.className = 'text-[11px] theme-text-accent font-bold mt-1.5';
                     }
+                    cargarBorradorLogoOriginalIDB().then((origFile) => {
+                        if (origFile && logoBase64Subido) {
+                            logoOriginalFileSubido = origFile;
+                        }
+                    }).catch(() => {});
                 }
                 sincronizarPreviewLogoLan(draft.logoStatusText || '');
 
@@ -1619,6 +1633,8 @@
 
         window.quitarLogoEquipoLan = function(guardarEnCache = true) {
             logoBase64Subido = '';
+            logoOriginalFileSubido = null;
+            limpiarBorradorLogoOriginalIDB();
             const fileInp = document.getElementById('lanTeamLogoFile');
             const urlInp = document.getElementById('lanTeamLogoUrl');
             const statusEl = document.getElementById('lan-logo-status');
@@ -1629,35 +1645,42 @@
                 urlInp.classList.remove('error-field', 'text-emerald-300');
             }
             if (statusEl) {
-                statusEl.textContent = 'Pega un link directo o sube PNG/JPG/WebP.';
+                statusEl.textContent = 'Pega un link directo o sube PNG/JPG/WebP/SVG (se conserva el original para producción).';
                 statusEl.className = 'text-[11px] text-zinc-400 mt-1.5';
             }
             sincronizarPreviewLogoLan();
             if (guardarEnCache) guardarBorradorCacheLan();
         };
 
-        // Subida y compresión de logo
+        // Subida dual de logo: WebP ligero (vitrina web) + archivo original intacto (descarga Staff/producción)
         document.getElementById('lanTeamLogoFile')?.addEventListener('change', async (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
             const statusEl = document.getElementById('lan-logo-status');
+            if (file.size > MAX_ORIGINAL_LOGO_BYTES) {
+                mostrarToastLan(`⚠️ La imagen supera el límite de ${formatearBytesLogo(MAX_ORIGINAL_LOGO_BYTES)}.`);
+                e.target.value = '';
+                return;
+            }
             try {
                 if (statusEl) {
-                    statusEl.textContent = 'Optimizando logo a WebP...';
+                    statusEl.textContent = 'Preparando vista WebP y conservando archivo original...';
                     statusEl.className = 'text-[11px] text-zinc-300 mt-1.5';
                 }
                 logoBase64Subido = await convertirImagenAWebpBase64(file, 220, 0.86);
+                logoOriginalFileSubido = file;
+                await guardarBorradorLogoOriginalIDB(file);
                 const urlInp = document.getElementById('lanTeamLogoUrl');
                 if (urlInp) {
                     urlInp.value = `Archivo: ${file.name}`;
                     urlInp.classList.remove('error-field');
                 }
-                const labelOk = `✓ Logo "${file.name}" optimizado.`;
+                const labelOk = `✓ "${file.name}" (${formatearBytesLogo(file.size)}) — original intacto + WebP web.`;
                 if (statusEl) {
                     statusEl.textContent = labelOk;
                     statusEl.className = 'text-[11px] theme-text-accent font-bold mt-1.5';
                 }
-                sincronizarPreviewLogoLan(file.name);
+                sincronizarPreviewLogoLan(`${file.name} (${formatearBytesLogo(file.size)} • Original + WebP)`);
                 guardarBorradorCacheLan();
             } catch (_) {
                 mostrarToastLan('No se pudo procesar la imagen seleccionada.');
@@ -1666,9 +1689,13 @@
 
         document.getElementById('lanTeamLogoUrl')?.addEventListener('input', (e) => {
             if (logoBase64Subido) logoBase64Subido = '';
+            if (logoOriginalFileSubido) {
+                logoOriginalFileSubido = null;
+                limpiarBorradorLogoOriginalIDB();
+            }
             const statusEl = document.getElementById('lan-logo-status');
             if (statusEl) {
-                statusEl.textContent = e.target.value.trim() ? 'Cargando vista previa desde enlace...' : 'Pega un link directo o sube PNG/JPG/WebP.';
+                statusEl.textContent = e.target.value.trim() ? 'Cargando vista previa desde enlace...' : 'Pega un link directo o sube PNG/JPG/WebP/SVG.';
                 statusEl.className = 'text-[11px] text-zinc-400 mt-1.5';
             }
             sincronizarPreviewLogoLan();
@@ -2012,6 +2039,13 @@
             };
 
             try {
+                let logoOriginalMeta = null;
+                if (logoOriginalFileSubido && logoBase64Subido) {
+                    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando logo original...';
+                    logoOriginalMeta = await subirLogoOriginalTorneoLan(logoOriginalFileSubido, db);
+                    payloadInscripcion.equipo.logoOriginalMeta = logoOriginalMeta;
+                    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando inscripción...';
+                }
                 await addDoc(collection(db, TORNEO_LAN_COLLECTION), payloadInscripcion);
 
                 try {

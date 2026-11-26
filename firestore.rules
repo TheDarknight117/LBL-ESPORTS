@@ -81,5 +81,12 @@ service cloud.firestore {
                     || request.resource.data.estado == 'Pendiente';
       allow update, delete: if request.auth != null;
     }
+
+    // Chunks binarios de logos originales de alta resolución (Torneo Presencial)
+    // Creación pública durante el registro; descarga y gestión exclusiva para Staff autenticado.
+    match /inscripciones_torneos_logos/{document} {
+      allow read, update, delete: if request.auth != null;
+      allow create: if true;
+    }
   }
 }
