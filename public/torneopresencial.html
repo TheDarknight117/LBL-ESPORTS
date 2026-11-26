@@ -17,8 +17,8 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020202">
 
-    <link rel="stylesheet" href="/dist/output.css?v=298">
-    <script type="module" src="/app-version.js?v=298"></script>
+    <link rel="stylesheet" href="/dist/output.css?v=299">
+    <script type="module" src="/app-version.js?v=299"></script>
     <link rel="preload" as="image" type="image/webp" href="/assets/Logos%20Sponsor/a17cd5b5-e392-4803-9460-ec34dd9a5863.webp" fetchpriority="high">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -158,6 +158,8 @@
         }
         select.input-lan {
             cursor: pointer;
+            padding-right: 2.1rem;
+            white-space: nowrap;
         }
         select.input-lan option {
             background-color: #08080a;
@@ -764,13 +766,18 @@
             TORNEO_LAN_PUBLIC_DOC,
             TORNEO_LAN_MAX_CUPOS_SEDE,
             RANGOS_SOLOQ_TORNEO_LAN,
+            REGIONES_OPGG_TORNEO_LAN,
             construirUrlOpgg,
+            normalizarRegionOpgg,
+            inferirRegionOpggDeRiotId,
+            resolverRegionMainJugador,
+            resolverUrlOpggMainJugador,
             evaluarRangoSoloQ,
             extraerCiLimpio,
             normalizarCelular,
             normalizarRiotId,
             sanitizarEquipoTorneoLanPublico
-        } from "/anti-smurf-core.js?v=295";
+        } from "/anti-smurf-core.js?v=299";
 
         const ROLES_PRINCIPALES = [
             { id: 'TOP', stepNum: 3, nombreLargo: 'Carril Superior (TOP)', icon: '/assets/roles/position-top.svg' },
@@ -954,14 +961,10 @@
                 const cnt = document.getElementById('lan-teamName-count');
                 if (teamNameEl && cnt) cnt.textContent = `${teamNameEl.value.length}/35`;
 
-                document.querySelectorAll('.riot-id-live').forEach(inp => {
-                    const linkId = inp.getAttribute('data-opgg-preview');
-                    const linkEl = linkId ? document.getElementById(linkId) : null;
-                    const url = construirUrlOpgg(inp.value);
-                    if (linkEl) {
-                        if (url) { linkEl.href = url; linkEl.classList.remove('hidden'); }
-                        else { linkEl.classList.add('hidden'); }
-                    }
+                ['TIT_TOP', 'TIT_JG', 'TIT_MID', 'TIT_ADC', 'TIT_SUPP', 'SUP_1'].forEach(prefix => {
+                    const regEl = document.getElementById(`${prefix}_regionMain`);
+                    if (regEl && regEl.value) regEl.dataset.manualRegion = '1';
+                    sincronizarPreviewOpggSlot(prefix);
                 });
 
                 if (draft.sede) {
@@ -1076,6 +1079,11 @@
                 ...RANGOS_SOLOQ_TORNEO_LAN.map(r => `<option value="${r.value}">${r.label}</option>`)
             ].join('');
 
+            const opcionesRegionMain = [
+                `<option value="" selected>Región...</option>`,
+                ...REGIONES_OPGG_TORNEO_LAN.map(r => `<option value="${r.value}">${r.label}</option>`)
+            ].join('');
+
             const bloqueRolPrimario = esTitular
                 ? `<input type="hidden" id="${prefix}_rolPrincipal" value="${rolFijoObj.id}">`
                 : `
@@ -1119,17 +1127,22 @@
                                     Ver OP.GG <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>
                                 </a>
                             </div>
-                            <input type="text" id="${prefix}_riotTorneo" ${reqAttr} data-opgg-preview="${prefix}_opgg_torneo_link" class="input-lan riot-id-live" placeholder="Ej: Jugador#LAS">
+                            <input type="text" id="${prefix}_riotTorneo" ${reqAttr} data-slot-prefix="${prefix}" data-opgg-preview="${prefix}_opgg_torneo_link" class="input-lan riot-id-live" placeholder="Ej: Jugador#LAS">
                         </div>
 
                         <div class="p-3.5 rounded-2xl bg-black/70 border border-white/10">
-                            <div class="flex items-center justify-between mb-1">
-                                <label class="label-lan !mb-0">6. Riot ID de cuenta main (ajena a la del torneo)</label>
-                                <a id="${prefix}_opgg_main_link" href="#" target="_blank" rel="noopener" class="hidden text-[10px] font-black theme-text-accent hover:underline">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <label class="label-lan !mb-0">6. Cuenta main y región (ajena al torneo)</label>
+                                <a id="${prefix}_opgg_main_link" href="#" target="_blank" rel="noopener" class="hidden text-[10px] font-black theme-text-accent hover:underline shrink-0">
                                     Ver OP.GG Main <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>
                                 </a>
                             </div>
-                            <input type="text" id="${prefix}_riotMain" data-opgg-preview="${prefix}_opgg_main_link" class="input-lan riot-id-live" placeholder="Main#TAG (o deja vacío si es única)">
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-stretch">
+                                <select id="${prefix}_regionMain" data-slot-prefix="${prefix}" aria-label="Región de cuenta main" class="input-lan region-main-live sm:col-span-5 h-[46px] !text-xs">
+                                    ${opcionesRegionMain}
+                                </select>
+                                <input type="text" id="${prefix}_riotMain" data-slot-prefix="${prefix}" data-opgg-preview="${prefix}_opgg_main_link" class="input-lan riot-id-live sm:col-span-7 h-[46px]" placeholder="Main#TAG (o vacío)">
+                            </div>
                         </div>
                     </div>
 
@@ -1244,17 +1257,17 @@
             document.querySelectorAll('.riot-id-live').forEach(inp => {
                 inp.addEventListener('input', () => {
                     inp.classList.remove('error-field');
-                    const linkId = inp.getAttribute('data-opgg-preview');
-                    const linkEl = linkId ? document.getElementById(linkId) : null;
-                    const url = construirUrlOpgg(inp.value);
-                    if (linkEl) {
-                        if (url) {
-                            linkEl.href = url;
-                            linkEl.classList.remove('hidden');
-                        } else {
-                            linkEl.classList.add('hidden');
-                        }
-                    }
+                    const slotPrefix = inp.getAttribute('data-slot-prefix');
+                    if (slotPrefix) sincronizarPreviewOpggSlot(slotPrefix);
+                });
+            });
+
+            document.querySelectorAll('.region-main-live').forEach(sel => {
+                sel.addEventListener('change', () => {
+                    sel.dataset.manualRegion = sel.value ? '1' : '';
+                    sel.classList.remove('error-field');
+                    const slotPrefix = sel.getAttribute('data-slot-prefix');
+                    if (slotPrefix) sincronizarPreviewOpggSlot(slotPrefix);
                 });
             });
 
@@ -1262,6 +1275,46 @@
                 el.addEventListener('input', () => el.classList.remove('error-field'));
                 el.addEventListener('change', () => el.classList.remove('error-field'));
             });
+        }
+
+        function sincronizarPreviewOpggSlot(prefix) {
+            if (!prefix) return;
+
+            const torneoInp = document.getElementById(`${prefix}_riotTorneo`);
+            const torneoLink = document.getElementById(`${prefix}_opgg_torneo_link`);
+            if (torneoInp && torneoLink) {
+                const urlTorneo = construirUrlOpgg(torneoInp.value, 'las');
+                if (urlTorneo) {
+                    torneoLink.href = urlTorneo;
+                    torneoLink.innerHTML = 'Ver OP.GG (LAS) <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>';
+                    torneoLink.classList.remove('hidden');
+                } else {
+                    torneoLink.classList.add('hidden');
+                }
+            }
+
+            const mainInp = document.getElementById(`${prefix}_riotMain`);
+            const regEl = document.getElementById(`${prefix}_regionMain`);
+            const mainLink = document.getElementById(`${prefix}_opgg_main_link`);
+            if (mainInp && regEl && mainLink) {
+                const valMain = mainInp.value || '';
+                if (regEl.dataset.manualRegion !== '1') {
+                    const regInferida = inferirRegionOpggDeRiotId(valMain);
+                    if (regInferida) {
+                        regEl.value = regInferida;
+                        regEl.classList.remove('error-field');
+                    }
+                }
+                const regActual = normalizarRegionOpgg(regEl.value);
+                const urlMain = (valMain.trim() && regActual) ? construirUrlOpgg(valMain, regActual) : '';
+                if (urlMain) {
+                    mainLink.href = urlMain;
+                    mainLink.innerHTML = `Ver OP.GG (${regActual.toUpperCase()}) <i class="fas fa-arrow-up-right-from-square ml-0.5"></i>`;
+                    mainLink.classList.remove('hidden');
+                } else {
+                    mainLink.classList.add('hidden');
+                }
+            }
         }
 
         // Listener global único para caché automática y sanitización numérica (CI / Celular) con try/catch
@@ -1303,11 +1356,12 @@
         }
 
         window.limpiarCamposSuplenteUnico = function() {
-            ['nombre', 'ci', 'whapp', 'discord', 'riotTorneo', 'riotMain', 'rolPrincipal', 'rolSecundario', 'rangoMax'].forEach(k => {
+            ['nombre', 'ci', 'whapp', 'discord', 'riotTorneo', 'regionMain', 'riotMain', 'rolPrincipal', 'rolSecundario', 'rangoMax'].forEach(k => {
                 const el = document.getElementById(`SUP_1_${k}`);
                 if (el) {
                     el.value = '';
                     el.classList.remove('error-field');
+                    if (el.dataset) delete el.dataset.manualRegion;
                 }
             });
             document.getElementById('SUP_1_opgg_torneo_link')?.classList.add('hidden');
@@ -1426,6 +1480,7 @@
             const whapp = (document.getElementById(`${prefix}_whapp`)?.value || '').trim();
             const discord = (document.getElementById(`${prefix}_discord`)?.value || '').trim();
             const riotTorneo = (document.getElementById(`${prefix}_riotTorneo`)?.value || '').trim();
+            const regionMain = (document.getElementById(`${prefix}_regionMain`)?.value || '').trim();
             const riotMain = (document.getElementById(`${prefix}_riotMain`)?.value || '').trim();
             const rolPrincipal = (document.getElementById(`${prefix}_rolPrincipal`)?.value || '').trim();
             const rolSecundario = (document.getElementById(`${prefix}_rolSecundario`)?.value || '').trim();
@@ -1471,6 +1526,14 @@
                 el?.classList.add('error-field');
                 el?.focus();
                 mostrarToastLan(`⚠️ En ${labelSlot}: el Riot ID main debe incluir #TAG (o dejarse vacío).`);
+                return false;
+            }
+
+            if (riotMain && !regionMain) {
+                const regEl = document.getElementById(`${prefix}_regionMain`);
+                regEl?.classList.add('error-field');
+                regEl?.focus();
+                mostrarToastLan(`⚠️ En ${labelSlot}: selecciona la región de tu cuenta main (LAS, LAN, BR, EUW, etc.).`);
                 return false;
             }
 
@@ -1809,7 +1872,9 @@
             const whapp = (document.getElementById(`${prefix}_whapp`)?.value || '').trim();
             const discord = (document.getElementById(`${prefix}_discord`)?.value || '').trim();
             const riotIdTorneo = (document.getElementById(`${prefix}_riotTorneo`)?.value || '').trim();
+            const regionMainRaw = (document.getElementById(`${prefix}_regionMain`)?.value || '').trim();
             const riotIdMain = (document.getElementById(`${prefix}_riotMain`)?.value || '').trim();
+            const regionMain = riotIdMain ? (normalizarRegionOpgg(regionMainRaw) || inferirRegionOpggDeRiotId(riotIdMain) || 'las') : '';
             const rolPrincipal = (document.getElementById(`${prefix}_rolPrincipal`)?.value || '').trim();
             const rolSecundario = (document.getElementById(`${prefix}_rolSecundario`)?.value || '').trim();
             const rangoMax = (document.getElementById(`${prefix}_rangoMax`)?.value || '').trim();
@@ -1830,7 +1895,8 @@
                     riotIdTorneo,
                     opggTorneo: construirUrlOpgg(riotIdTorneo),
                     riotIdMain,
-                    opggMain: construirUrlOpgg(riotIdMain),
+                    regionMain,
+                    opggMain: riotIdMain ? construirUrlOpgg(riotIdMain, regionMain) : '',
                     rolPrincipal,
                     rolSecundario,
                     rangoMax,
@@ -2115,7 +2181,10 @@
             const esCocha = eq.sedeDepartamento === 'Cochabamba';
             const badgeClass = esCocha ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40';
 
-            const renderFilaJug = (j) => `
+            const renderFilaJug = (j) => {
+                const regMain = j.riotIdMain ? resolverRegionMainJugador(j) : '';
+                const opMainUrl = j.riotIdMain ? resolverUrlOpggMainJugador(j) : '';
+                return `
                 <div class="p-3.5 rounded-2xl bg-black border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
@@ -2126,15 +2195,16 @@
                         </div>
                         <div class="text-base font-black text-white mt-1.5 flex items-center gap-2 flex-wrap">
                             <span>${j.riotIdTorneo}</span>
-                            ${j.riotIdMain ? `<span class="text-xs font-bold text-purple-300">(Main: ${j.riotIdMain})</span>` : ''}
+                            ${j.riotIdMain ? `<span class="text-xs font-bold text-purple-300">(Main ${regMain ? `[${regMain.toUpperCase()}] ` : ''}: ${j.riotIdMain})</span>` : ''}
                         </div>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                         ${j.opggTorneo ? `<a href="${j.opggTorneo}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-blue-600/20 border border-blue-500/40 text-blue-300 text-xs font-black uppercase">OP.GG Torneo</a>` : ''}
-                        ${j.opggMain ? `<a href="${j.opggMain}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300 text-xs font-black uppercase">OP.GG Main</a>` : ''}
+                        ${opMainUrl ? `<a href="${opMainUrl}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300 text-xs font-black uppercase">OP.GG Main${regMain ? ` (${regMain.toUpperCase()})` : ''}</a>` : ''}
                     </div>
                 </div>
             `;
+            };
 
             body.innerHTML = `
                 <div class="flex items-center gap-4 pb-4 border-b border-white/10">

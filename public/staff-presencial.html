@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" href="/assets/pwa-icon-192.png">
     <meta name="theme-color" content="#e11d48">
 
-    <link rel="stylesheet" href="/dist/output.css?v=297">
+    <link rel="stylesheet" href="/dist/output.css?v=299">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #030712; color: #e5e7eb; }
@@ -984,14 +984,18 @@
             TORNEO_LAN_COLLECTION,
             TORNEO_LAN_PUBLIC_DOC,
             RANGOS_SOLOQ_TORNEO_LAN,
+            REGIONES_OPGG_TORNEO_LAN,
             construirUrlOpgg,
+            normalizarRegionOpgg,
+            resolverRegionMainJugador,
+            resolverUrlOpggMainJugador,
             cargarIndiceHistoricoGlobal,
             auditarEquipoTorneoLan,
             buscarEnPadronForenseGlobal,
             sanitizarEquipoTorneoLanPublico,
             extraerCiLimpio,
             normalizarRiotId
-        } from "/anti-smurf-core.js?v=295";
+        } from "/anti-smurf-core.js?v=299";
 
         const ROLES_POSICIONES = ['TOP', 'JG', 'MID', 'ADC', 'SUPP'];
         const ROLE_ICONS = {
@@ -1811,8 +1815,9 @@
             const riotTorneo = (j.riotIdTorneo || '').trim();
             const riotMain = (j.riotIdMain || '').trim();
             const tieneMain = Boolean(riotMain && riotMain.toLowerCase() !== riotTorneo.toLowerCase() && riotMain.toLowerCase() !== 'misma');
+            const regMain = tieneMain ? resolverRegionMainJugador(j) : '';
             const opT = j.opggTorneo || construirUrlOpgg(riotTorneo);
-            const opM = j.opggMain || construirUrlOpgg(riotMain);
+            const opM = tieneMain ? resolverUrlOpggMainJugador(j) : '';
             const waDigits = String(j.whapp || '').replace(/[^0-9]/g, '');
             const waHref = waDigits ? `https://wa.me/${waDigits.startsWith('591') ? waDigits : (waDigits.length === 8 ? `591${waDigits}` : waDigits)}` : '';
 
@@ -1844,8 +1849,9 @@
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] uppercase font-black text-amber-400 tracking-wider flex items-center gap-1.5">
                                     <i class="fas fa-globe-americas"></i> Cuenta Main / Secundaria
+                                    <span class="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-200 text-[9px] font-black">${escapeHTML(regMain.toUpperCase())}</span>
                                 </span>
-                                ${opM ? `<a href="${escapeHTML(opM)}" target="_blank" rel="noopener noreferrer" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG Main</a>` : ''}
+                                ${opM ? `<a href="${escapeHTML(opM)}" target="_blank" rel="noopener noreferrer" class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-2.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i> OP.GG ${escapeHTML(regMain.toUpperCase())}</a>` : ''}
                             </div>
                             <div class="flex items-center justify-between gap-2">
                                 <p class="text-xs sm:text-sm font-black font-mono leading-tight break-all text-amber-200">${escapeHTML(riotMain)}</p>
@@ -2085,6 +2091,11 @@
             return `<select id="${id}" class="w-full bg-[#0c111b] border border-gray-700 rounded-lg px-2 py-1.5 text-xs text-white">${RANGOS_SOLOQ_TORNEO_LAN.map(r => `<option value="${escapeHTML(r.value)}" ${current === r.value ? 'selected' : ''}>${escapeHTML(r.label)}</option>`).join('')}</select>`;
         }
 
+        function construirSelectRegionHTML(id, current) {
+            const norm = normalizarRegionOpgg(current) || 'las';
+            return `<select id="${id}" title="Región OP.GG de Cuenta Main" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2 py-1.5 text-xs font-bold text-amber-300 shrink-0">${REGIONES_OPGG_TORNEO_LAN.map(r => `<option value="${escapeHTML(r.value)}" ${norm === r.value ? 'selected' : ''}>${escapeHTML(r.value.toUpperCase())}</option>`).join('')}</select>`;
+        }
+
         function poblarEditorCompleto(eq) {
             document.getElementById('e-nombre').value = eq.equipo?.nombre || '';
             document.getElementById('e-tag').value = eq.equipo?.tag || '';
@@ -2121,7 +2132,10 @@
                         <input id="${s.prefix}_whapp" value="${escapeHTML(s.data.whapp || '')}" oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Whapp" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
                         <input id="${s.prefix}_discord" value="${escapeHTML(s.data.discord || '')}" placeholder="Discord" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
                         <input id="${s.prefix}_riotTorneo" value="${escapeHTML(s.data.riotIdTorneo || '')}" placeholder="Riot ID Torneo" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-sky-300">
-                        <input id="${s.prefix}_riotMain" value="${escapeHTML(s.data.riotIdMain || '')}" placeholder="Riot ID Main" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-purple-300">
+                        <div class="flex gap-1.5 min-w-0">
+                            ${construirSelectRegionHTML(`${s.prefix}_regionMain`, resolverRegionMainJugador(s.data))}
+                            <input id="${s.prefix}_riotMain" value="${escapeHTML(s.data.riotIdMain || '')}" placeholder="Riot ID Main" class="flex-1 min-w-0 bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-purple-300">
+                        </div>
                         <input id="${s.prefix}_rolSec" value="${escapeHTML(s.data.rolSecundario || '')}" placeholder="Rol Secundario" class="bg-[#0c111b] border border-gray-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
                         ${construirSelectRangoHTML(`${s.prefix}_rango`, s.data.rangoMax || '')}
                     </div>
@@ -2134,6 +2148,8 @@
                 const el = document.getElementById(`E_SUP_1_${k}`);
                 if (el) el.value = '';
             });
+            const regSup = document.getElementById('E_SUP_1_regionMain');
+            if (regSup) regSup.value = 'las';
         };
 
         document.getElementById('e-logo-file')?.addEventListener('change', async (e) => {
@@ -2181,6 +2197,7 @@
                 const p = `E_TIT_${rol}`;
                 const riotT = document.getElementById(`${p}_riotTorneo`).value.trim();
                 const riotM = document.getElementById(`${p}_riotMain`).value.trim();
+                const regM = riotM ? (normalizarRegionOpgg(document.getElementById(`${p}_regionMain`)?.value || '') || 'las') : '';
                 return {
                     nombre: document.getElementById(`${p}_nombre`).value.trim(),
                     ci: document.getElementById(`${p}_ci`).value.trim(),
@@ -2189,7 +2206,8 @@
                     riotIdTorneo: riotT,
                     opggTorneo: construirUrlOpgg(riotT),
                     riotIdMain: riotM,
-                    opggMain: construirUrlOpgg(riotM),
+                    regionMain: regM,
+                    opggMain: riotM ? construirUrlOpgg(riotM, regM) : '',
                     rolPrincipal: rol,
                     rolSecundario: document.getElementById(`${p}_rolSec`).value.trim(),
                     rangoMax: document.getElementById(`${p}_rango`).value
@@ -2198,6 +2216,8 @@
 
             const supNom = document.getElementById('E_SUP_1_nombre').value.trim();
             const supRiot = document.getElementById('E_SUP_1_riotTorneo').value.trim();
+            const supRiotMain = document.getElementById('E_SUP_1_riotMain').value.trim();
+            const supRegMain = supRiotMain ? (normalizarRegionOpgg(document.getElementById('E_SUP_1_regionMain')?.value || '') || 'las') : '';
             const suplentes = (supNom || supRiot) ? [{
                 nombre: supNom,
                 ci: document.getElementById('E_SUP_1_ci').value.trim(),
@@ -2205,8 +2225,9 @@
                 discord: document.getElementById('E_SUP_1_discord').value.trim(),
                 riotIdTorneo: supRiot,
                 opggTorneo: construirUrlOpgg(supRiot),
-                riotIdMain: document.getElementById('E_SUP_1_riotMain').value.trim(),
-                opggMain: construirUrlOpgg(document.getElementById('E_SUP_1_riotMain').value.trim()),
+                riotIdMain: supRiotMain,
+                regionMain: supRegMain,
+                opggMain: supRiotMain ? construirUrlOpgg(supRiotMain, supRegMain) : '',
                 rolPrincipal: 'SUP',
                 rolSecundario: document.getElementById('E_SUP_1_rolSec').value.trim(),
                 rangoMax: document.getElementById('E_SUP_1_rango').value
@@ -2454,7 +2475,7 @@
                         </div>
                         <div class="font-black text-white text-sm">${escapeHTML(r.nombre || '--')} <span class="text-cyan-400 text-[10px] font-bold">(${escapeHTML(r.rol || 'Titular')})</span></div>
                         <div class="text-[11px] text-gray-300 font-mono">CI: ${escapeHTML(r.ci || '--')} • Whapp: ${escapeHTML(r.celular || '--')} • Discord: ${escapeHTML(r.discord || '--')}</div>
-                        <div class="text-[11px] text-gray-400">Equipo: <strong class="text-white">${escapeHTML(r.equipoNombre)}</strong> • Riot ID: <strong class="text-sky-300">${escapeHTML(r.riotId || '--')}</strong> ${r.opgg ? `<a href="${escapeHTML(r.opgg)}" target="_blank" class="ml-1 text-sky-400 underline">OP.GG</a>` : ''}</div>
+                        <div class="text-[11px] text-gray-400">Equipo: <strong class="text-white">${escapeHTML(r.equipoNombre)}</strong> • Riot ID: <strong class="text-sky-300">${escapeHTML(r.riotId || '--')}</strong> ${r.opgg ? `<a href="${escapeHTML(r.opgg)}" target="_blank" class="ml-1 text-sky-400 underline">OP.GG</a>` : ''}${r.riotIdMain ? ` • Main (${escapeHTML((r.regionMain || 'las').toUpperCase())}): <strong class="text-amber-300">${escapeHTML(r.riotIdMain)}</strong>${r.opggMain ? ` <a href="${escapeHTML(r.opggMain)}" target="_blank" class="text-amber-400 underline">OP.GG</a>` : ''}` : ''}</div>
                     </div>
                 `;
             }).join('');

@@ -50,6 +50,49 @@ export const RANGOS_SOLOQ_TORNEO_LAN = [
     { value: 'Esmeralda 1', label: 'Esmeralda I', tierNum: 7, excedeEsmeralda1: false }
 ];
 
+export const REGIONES_OPGG_TORNEO_LAN = [
+    { value: 'las', label: 'LAS (Latam Sur)' },
+    { value: 'lan', label: 'LAN (Latam Norte)' },
+    { value: 'br', label: 'BR (Brasil)' },
+    { value: 'na', label: 'NA (Norteamérica)' },
+    { value: 'euw', label: 'EUW (Europa W)' },
+    { value: 'eune', label: 'EUNE (Europa N/E)' },
+    { value: 'kr', label: 'KR (Corea)' },
+    { value: 'jp', label: 'JP (Japón)' },
+    { value: 'oce', label: 'OCE (Oceanía)' },
+    { value: 'tr', label: 'TR (Turquía)' },
+    { value: 'ru', label: 'RU (Rusia)' },
+    { value: 'sea', label: 'SEA (Asia SE)' },
+    { value: 'tw', label: 'TW (Taiwán)' },
+    { value: 'vn', label: 'VN (Vietnam)' },
+    { value: 'me', label: 'ME (Medio Oriente)' }
+];
+
+const REGION_OPGG_SET = new Set(REGIONES_OPGG_TORNEO_LAN.map(r => r.value));
+const REGION_OPGG_ALIAS = {
+    eu: 'euw',
+    sg: 'sea',
+    sg2: 'sea',
+    ph: 'sea',
+    ph2: 'sea',
+    th: 'sea',
+    th2: 'sea',
+    oc: 'oce',
+    oc1: 'oce',
+    la1: 'lan',
+    la2: 'las',
+    br1: 'br',
+    na1: 'na',
+    euw1: 'euw',
+    eun1: 'eune',
+    kr1: 'kr',
+    jp1: 'jp',
+    tr1: 'tr',
+    tw2: 'tw',
+    vn2: 'vn',
+    me1: 'me'
+};
+
 // ============================================================================
 // 1. FUNCIONES DE NORMALIZACIÓN DE IDENTIDAD (CELULAR, C.I., NOMBRE, RIOT ID)
 // ============================================================================
@@ -192,14 +235,63 @@ export function normalizarDiscord(raw) {
     return s;
 }
 
+export function normalizarRegionOpgg(rawRegion) {
+    if (!rawRegion || typeof rawRegion !== 'string') return '';
+    const clean = rawRegion.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!clean) return '';
+    if (REGION_OPGG_SET.has(clean)) return clean;
+    return REGION_OPGG_ALIAS[clean] || '';
+}
+
+export function extraerRegionDeUrlOpgg(url) {
+    if (!url || typeof url !== 'string') return '';
+    const m = url.match(/op\.gg\/(?:[a-z]{2}\/lol\/)?summoners\/([a-z0-9]+)/i);
+    return m ? normalizarRegionOpgg(m[1]) : '';
+}
+
+export function inferirRegionOpggDeRiotId(riotId) {
+    if (!riotId || typeof riotId !== 'string' || !riotId.includes('#')) return '';
+    const tagPart = riotId.split('#').slice(1).join('#').trim().toLowerCase().replace(/\s+/g, '');
+    return normalizarRegionOpgg(tagPart);
+}
+
+export function resolverRegionMainJugador(jugador) {
+    if (!jugador || typeof jugador !== 'object') return 'las';
+    const explicita = normalizarRegionOpgg(jugador.regionMain || jugador.servidorMain || '');
+    if (explicita) return explicita;
+
+    const regDeUrl = extraerRegionDeUrlOpgg(jugador.opggMain || '');
+    if (regDeUrl && regDeUrl !== 'las') return regDeUrl;
+
+    const regDeTag = inferirRegionOpggDeRiotId(jugador.riotIdMain || '');
+    if (regDeTag) return regDeTag;
+
+    return regDeUrl || 'las';
+}
+
+export function resolverUrlOpggMainJugador(jugador) {
+    const riotMain = String(jugador?.riotIdMain || '').trim();
+    if (!riotMain || IGNORE_RIOT_VALUES.has(riotMain.toLowerCase())) return '';
+    const region = resolverRegionMainJugador(jugador);
+    const tieneRegionExplicita = Boolean(normalizarRegionOpgg(jugador?.regionMain || jugador?.servidorMain || ''));
+    if (tieneRegionExplicita || region !== 'las') {
+        return construirUrlOpgg(riotMain, region);
+    }
+    return String(jugador?.opggMain || '').trim() || construirUrlOpgg(riotMain, region);
+}
+
 export function construirUrlOpgg(riotId, region = 'las') {
     if (!riotId || typeof riotId !== 'string') return '';
     const clean = riotId.trim();
     if (!clean || IGNORE_RIOT_VALUES.has(clean.toLowerCase())) return '';
     if (clean.startsWith('http://') || clean.startsWith('https://')) return clean;
     if (!clean.includes('#')) return '';
-    const formatted = clean.replace('#', '-').replace(/\s+/g, '%20');
-    return `https://www.op.gg/summoners/${region}/${formatted}`;
+    const [rawName, ...restTag] = clean.split('#');
+    const gameName = rawName.trim();
+    const tagLine = restTag.join('#').trim();
+    if (!gameName || !tagLine) return '';
+    const regSlug = normalizarRegionOpgg(region) || 'las';
+    return `https://www.op.gg/summoners/${regSlug}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}`;
 }
 
 // ============================================================================
@@ -368,12 +460,13 @@ function registrarEnIndice(idx, rawRecord) {
         discordNorm: discord,
         riotId: (rawRecord.riotId || '').trim(),
         riotIdMain: (rawRecord.riotIdMain || '').trim(),
+        regionMain: rawRecord.riotIdMain ? resolverRegionMainJugador(rawRecord) : '',
         riot1Norm: riot1,
         riot2Norm: riot2,
         nick1Norm: nick1,
         nick2Norm: nick2,
         opgg: rawRecord.opgg || construirUrlOpgg(rawRecord.riotId),
-        opggMain: rawRecord.opggMain || construirUrlOpgg(rawRecord.riotIdMain),
+        opggMain: rawRecord.riotIdMain ? resolverUrlOpggMainJugador(rawRecord) : '',
         rango: rawRecord.rango || 'Unranked',
         evalRango,
         departamento: rawRecord.departamento || ''
@@ -530,6 +623,7 @@ function indexarEquiposLigaLBL(idx, docsLiga) {
         const registrarMiembroLiga = (p, rolLabel, esEx = false) => {
             if (!p || (!p.nombre && !p.riotId && !p.ci && !p.tel && !p.telefono)) return;
             const r2 = p.cuenta_secundaria?.riotId2 || p.riotId2 || '';
+            const reg2 = p.cuenta_secundaria?.servidor || p.cuenta_secundaria?.region2 || '';
             const opgg2 = p.cuenta_secundaria?.opgg2 || '';
             registrarEnIndice(idx, {
                 id: `${fuenteCodigo}_${data.id || dIdx}_${rolLabel}`,
@@ -548,6 +642,7 @@ function indexarEquiposLigaLBL(idx, docsLiga) {
                 discord: p.discordId || p.discord || '',
                 riotId: p.riotId || p.riotIdLas || '',
                 riotIdMain: r2,
+                regionMain: reg2,
                 opgg: p.opgg || '',
                 opggMain: opgg2,
                 rango: tierRaw,
@@ -1182,8 +1277,9 @@ export function buscarEnPadronForenseGlobal(rawQuery, idx, equiposTorneoActual =
                         discord: j.discord || '',
                         riotId: j.riotIdTorneo || '',
                         riotIdMain: j.riotIdMain || '',
+                        regionMain: j.riotIdMain ? resolverRegionMainJugador(j) : '',
                         opgg: j.opggTorneo || construirUrlOpgg(j.riotIdTorneo),
-                        opggMain: j.opggMain || construirUrlOpgg(j.riotIdMain),
+                        opggMain: resolverUrlOpggMainJugador(j),
                         rango: j.rangoMax || 'Unranked',
                         evalRango: evalR,
                         tipoMatch: 'Inscrito Torneo Actual'
@@ -1214,11 +1310,13 @@ export function sanitizarEquipoTorneoLanPublico(rawDoc) {
             !IGNORE_RIOT_VALUES.has(rMain.toLowerCase()) &&
             normalizarRiotId(rMain) !== normalizarRiotId(rTorneo)
         );
+        const regionMainResuelta = tieneMainDistinta ? resolverRegionMainJugador(j) : '';
         return {
             riotIdTorneo: rTorneo || 'Jugador',
             opggTorneo: j.opggTorneo || construirUrlOpgg(rTorneo),
             riotIdMain: tieneMainDistinta ? rMain : '',
-            opggMain: tieneMainDistinta ? (j.opggMain || construirUrlOpgg(rMain)) : '',
+            regionMain: regionMainResuelta,
+            opggMain: tieneMainDistinta ? resolverUrlOpggMainJugador(j) : '',
             rolPrincipal: String(j.rolPrincipal || 'TITULAR').toUpperCase(),
             rolSecundario: String(j.rolSecundario || 'Polivalente'),
             rangoMax: String(j.rangoMax || 'Esmeralda 1'),
