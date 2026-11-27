@@ -441,6 +441,30 @@
                 </div>
             </div>
 
+            <!-- ACCESO EXCLUSIVO: DESCUENTOS LEGION (PADRÓN NACIONAL BOLIVIA • LIGA LBL & SCOUTING 3) -->
+            <div class="glass-panel p-4 sm:p-5 rounded-3xl mb-6 sm:mb-8 border-l-4 border-red-600 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-red-950/25 via-transparent to-transparent">
+                <div>
+                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-600/20 text-red-300 border border-red-500/35">
+                            <i class="fas fa-tags mr-1"></i> Convenio Oficial • Solo Bolivia
+                        </span>
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Liga LBL &amp; Scouting Tournament 3</span>
+                    </div>
+                    <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-tags text-red-500"></i> DESCUENTOS LEGION — Padrón de Jugadores &amp; Beneficios (Bolivia)
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1 max-w-2xl">Portal exclusivo para verificar jugadores residentes en Bolivia (Nombre, C.I., Celular, Nick LoL y Equipo) y registrar descuentos de Legion Store (Descuento LBL, Promoción Especial o Black Friday). Administra sus credenciales de forma independiente.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+                    <a href="/legion" target="_blank" class="px-4 py-3 rounded-xl bg-red-950/70 hover:bg-red-900/80 border border-red-500/45 text-red-300 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fas fa-tags text-red-400"></i> Portal Descuentos Legion
+                    </a>
+                    <button type="button" onclick="abrirModalCredencialesLegion()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/25 active:scale-95 cursor-pointer">
+                        <i class="fas fa-key"></i> Credenciales Legion
+                    </button>
+                </div>
+            </div>
+
             <!-- ACCESO EXCLUSIVO: TORNEO PRESENCIAL AMQ (LA PAZ) VS SMOKELANDER (COCHABAMBA) + RASTREATOR ANTI-SMURF -->
             <div class="glass-panel p-4 sm:p-5 rounded-3xl mb-6 sm:mb-8 border-l-4 border-rose-500 shadow-xl bg-gradient-to-r from-rose-950/25 via-slate-900/40 to-emerald-950/25">
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -1041,6 +1065,102 @@
                     <i class="fas fa-info-circle text-purple-400 mr-1"></i> Los encargados de caja ingresarán directamente en su terminal asignado sin requerir cuentas de Google ni correos del Staff.
                 </span>
                 <button type="button" onclick="cerrarModalCredencialesLAN()" class="px-5 py-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white transition-colors font-bold text-xs cursor-pointer">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL EXCLUSIVO: CREDENCIALES DE DESCUENTOS LEGION             -->
+    <!-- ============================================================== -->
+    <div id="modal-credenciales-legion" onmousedown="this._mdTarget = event.target" onclick="if(event.target === this && this._mdTarget === this) cerrarModalCredencialesLegion()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-6 hidden">
+        <div class="bg-[#07090e] border border-amber-500/50 rounded-2xl sm:rounded-3xl w-full max-w-4xl max-h-[92dvh] flex flex-col shadow-2xl relative overflow-hidden animate-fadeIn">
+            <!-- Encabezado -->
+            <div class="p-4 sm:p-5 border-b border-gray-800 flex justify-between items-center bg-[#0d111a] shrink-0">
+                <div class="flex items-center gap-3.5 min-w-0">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 text-xl shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.25)]">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-tight">Credenciales Exclusivas • Descuentos Legion</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/25 text-amber-300 border border-amber-500/40">Aislado en Firestore</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-0.5">Crea, consulta y elimina usuarios y contraseñas exclusivamente para el portal de <strong>Legion Store (Descuentos LBL Bolivia)</strong>.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalCredencialesLegion()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800/60 transition-colors text-lg cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Acceso directo al Portal Legion -->
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-800 bg-[#0a0f19] flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-[10px] uppercase font-black text-gray-400">Acceso directo:</span>
+                    <a href="/legion" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/45 font-black text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-bolt text-amber-400"></i> Abrir Portal Descuentos Legion (/legion)
+                    </a>
+                </div>
+                <span class="text-[11px] text-gray-400">
+                    <i class="fas fa-database text-amber-400 mr-1"></i> Documento: <code>torneos_activos/legion_credenciales</code>
+                </span>
+            </div>
+
+            <!-- Cuerpo: Formulario + Lista exclusiva de cuentas Legion -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 bg-[#05070c]">
+                <div class="p-4 sm:p-5 rounded-2xl bg-black/60 border border-amber-950/90 shadow-md">
+                    <h4 class="text-xs font-black uppercase text-amber-300 tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fas fa-user-plus text-amber-400"></i> Crear o Actualizar Credencial de Legion
+                    </h4>
+                    <form id="form-staff-legion-cred" onsubmit="event.preventDefault(); guardarCredencialLegion();" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Usuario (Login):</label>
+                                <input type="text" id="legion-input-usuario" required placeholder="ej: legion_ventas1" class="w-full bg-black/80 border border-gray-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Contraseña:</label>
+                                <input type="text" id="legion-input-password" required placeholder="ej: legion2026" class="w-full bg-black/80 border border-gray-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-300 mb-1">Nombre / Responsable:</label>
+                                <input type="text" id="legion-input-nombre" required placeholder="ej: Encargado Ventas Legion" class="w-full bg-black/80 border border-gray-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[11px] text-gray-500">Exclusivo para `/legion` (separado de los LAN Centers AMQ y SMOK).</span>
+                            <button type="submit" id="btn-legion-guardar" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer">
+                                <i class="fas fa-save"></i> Guardar Credencial Legion
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                            <i class="fas fa-id-badge text-amber-400"></i> Cuentas Activas de Legion Store
+                        </span>
+                        <span id="badge-total-legion-cuentas" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-900/40 text-amber-300 border border-amber-500/30">0 Cuentas</span>
+                    </div>
+
+                    <div id="contenedor-tabla-legion-cuentas" class="border border-gray-800/80 rounded-2xl bg-black/50 overflow-hidden">
+                        <div class="p-6 text-center text-gray-500 text-xs">
+                            <i class="fas fa-spinner fa-spin mr-1"></i> Cargando credenciales de Legion...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-3 sm:p-4 border-t border-gray-800 bg-[#0d111a] flex justify-between items-center gap-2 shrink-0">
+                <span class="text-[11px] text-gray-400">
+                    <i class="fas fa-info-circle text-amber-400 mr-1"></i> El personal de Legion ingresa en <code>/legion</code> con estas credenciales sin mezclar accesos con AMQ o SMOK.
+                </span>
+                <button type="button" onclick="cerrarModalCredencialesLegion()" class="px-5 py-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 hover:text-white transition-colors font-bold text-xs cursor-pointer">
                     Cerrar
                 </button>
             </div>
@@ -4620,6 +4740,9 @@
                 } else if (esSmok) {
                     badgeColor = 'bg-cyan-950 text-cyan-300 border-cyan-500/40';
                     badgeTexto = 'SMOK (Cocha)';
+                } else if ((c.sede || '').toUpperCase() === 'LEGION') {
+                    badgeColor = 'bg-amber-950 text-amber-300 border-amber-500/40';
+                    badgeTexto = 'LEGION (Descuentos)';
                 }
 
                 const passVisible = !!passwordsVisiblesLAN[k];
@@ -4784,6 +4907,237 @@
                 });
                 renderizarTablaCredencialesLAN();
                 alert(`🗑️ Credencial "${k}" eliminada de Firestore.`);
+            } catch (err) {
+                alert("Error al eliminar credencial: " + err.message);
+            }
+        };
+
+        // ==============================================================
+        // GESTIÓN AISLADA DE CREDENCIALES EXCLUSIVAS DE LEGION STORE
+        // ==============================================================
+        const DOC_LEGION_CREDENCIALES = doc(db, "torneos_activos", "legion_credenciales");
+        const STORAGE_KEY_LEGION_CUENTAS = 'lbl_legion_cuentas_cache_v1';
+        const FIRESTORE_REST_LEGION_URL = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/legion_credenciales";
+        const CUENTAS_LEGION_BASE = {
+            "legion": { usuario: "legion", password: "legion2026", nombre: "Encargado Legion Store", sede: "LEGION", activo: true },
+            "legion_store": { usuario: "legion_store", password: "legion2026", nombre: "Ventas Legion Store", sede: "LEGION", activo: true },
+            "cajero_legion": { usuario: "cajero_legion", password: "legion2026", nombre: "Cajero Legion Store", sede: "LEGION", activo: true }
+        };
+        let cuentasLegionActuales = {};
+        let passwordsVisiblesLegion = {};
+
+        window.abrirModalCredencialesLegion = async function() {
+            const modal = document.getElementById('modal-credenciales-legion');
+            if (modal) modal.classList.remove('hidden');
+            await cargarCredencialesLegionFirestore();
+        };
+
+        window.cerrarModalCredencialesLegion = function() {
+            const modal = document.getElementById('modal-credenciales-legion');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.toggleLegionPassVisibility = function(key) {
+            passwordsVisiblesLegion[key] = !passwordsVisiblesLegion[key];
+            renderizarTablaCredencialesLegion();
+        };
+
+        async function cargarCredencialesLegionFirestore() {
+            const cached = localStorage.getItem(STORAGE_KEY_LEGION_CUENTAS);
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                        cuentasLegionActuales = parsed;
+                        renderizarTablaCredencialesLegion();
+                    }
+                } catch (_) {}
+            }
+
+            try {
+                const snap = await getDoc(DOC_LEGION_CREDENCIALES);
+                if (snap.exists() && snap.data().cuentas && Object.keys(snap.data().cuentas).length > 0) {
+                    cuentasLegionActuales = snap.data().cuentas;
+                    localStorage.setItem(STORAGE_KEY_LEGION_CUENTAS, JSON.stringify(cuentasLegionActuales));
+                    renderizarTablaCredencialesLegion();
+                    return;
+                }
+            } catch (_) {}
+
+            try {
+                const res = await fetch(FIRESTORE_REST_LEGION_URL);
+                if (res.ok) {
+                    const json = await res.json();
+                    const parsed = parsearCuentasFirestoreRest(json.fields);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        cuentasLegionActuales = parsed;
+                        localStorage.setItem(STORAGE_KEY_LEGION_CUENTAS, JSON.stringify(cuentasLegionActuales));
+                        renderizarTablaCredencialesLegion();
+                        return;
+                    }
+                }
+            } catch (_) {}
+
+            if (!cuentasLegionActuales || Object.keys(cuentasLegionActuales).length === 0) {
+                cuentasLegionActuales = { ...CUENTAS_LEGION_BASE };
+                localStorage.setItem(STORAGE_KEY_LEGION_CUENTAS, JSON.stringify(cuentasLegionActuales));
+                try {
+                    await setDoc(DOC_LEGION_CREDENCIALES, {
+                        cuentas: cuentasLegionActuales,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                } catch (_) {}
+            }
+            renderizarTablaCredencialesLegion();
+        }
+
+        function renderizarTablaCredencialesLegion() {
+            const container = document.getElementById('contenedor-tabla-legion-cuentas');
+            const badge = document.getElementById('badge-total-legion-cuentas');
+            const keys = Object.keys(cuentasLegionActuales || {}).sort();
+
+            if (badge) badge.textContent = `${keys.length} Cuenta${keys.length === 1 ? '' : 's'}`;
+            if (!container) return;
+
+            if (keys.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-gray-500 text-xs">No hay credenciales de Legion registradas. Usa el formulario superior para crear una.</div>`;
+                return;
+            }
+
+            let html = `
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-[10px] uppercase font-black text-gray-400 bg-black/40">
+                            <th class="p-3">Usuario (Login)</th>
+                            <th class="p-3">Contraseña</th>
+                            <th class="p-3">Responsable</th>
+                            <th class="p-3">Portal</th>
+                            <th class="p-3 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800/60">
+            `;
+
+            keys.forEach(k => {
+                const c = cuentasLegionActuales[k];
+                const passVisible = !!passwordsVisiblesLegion[k];
+                const displayPass = passVisible ? escapeHTML(c.password || '') : '••••••••';
+                const safeUsuario = escapeHTML(c.usuario || k);
+                const safeNombre = escapeHTML(c.nombre || '--');
+                const safeKey = escapeHTML(k);
+
+                html += `
+                    <tr class="hover:bg-white/[0.02] transition-colors">
+                        <td class="p-3 font-mono font-bold text-white">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-user-circle text-amber-400"></i>
+                                <span>${safeUsuario}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 font-mono text-gray-300">
+                            <div class="inline-flex items-center gap-1.5 bg-gray-900 border border-gray-800 rounded px-2 py-0.5">
+                                <span class="font-bold select-all ${passVisible ? 'text-yellow-300' : 'text-gray-400'}">${displayPass}</span>
+                                <button type="button" onclick="toggleLegionPassVisibility('${safeKey}')" class="text-gray-400 hover:text-white text-[10px] ml-1 cursor-pointer">
+                                    <i class="fas ${passVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-3 font-semibold text-gray-200">${safeNombre}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border bg-amber-950 text-amber-300 border-amber-500/40">
+                                LEGION (Descuentos)
+                            </span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            <button type="button" onclick="cargarParaEditarCredencialLegion('${safeKey}')" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold transition-colors cursor-pointer" title="Editar credencial">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" onclick="eliminarCredencialLegion('${safeKey}')" class="px-2 py-1 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 text-[11px] font-bold transition-colors cursor-pointer" title="Eliminar credencial">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        window.guardarCredencialLegion = async function() {
+            const uInput = (document.getElementById('legion-input-usuario').value || '').trim().toLowerCase().replace(/\s+/g, '_');
+            const pInput = (document.getElementById('legion-input-password').value || '').trim();
+            const nInput = (document.getElementById('legion-input-nombre').value || '').trim();
+            const btn = document.getElementById('btn-legion-guardar');
+
+            if (!uInput || !pInput || !nInput) {
+                alert("Completa usuario, contraseña y nombre del responsable.");
+                return;
+            }
+            if (!/^[a-z0-9_]{3,25}$/.test(uInput)) {
+                alert("El usuario debe tener entre 3 y 25 caracteres (letras minúsculas, números o guion bajo).");
+                return;
+            }
+            if (pInput.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
+
+            try {
+                const nickStaff = (typeof getStaffNick === 'function' ? getStaffNick(auth.currentUser?.email) : 'Staff LBL') || 'Staff LBL';
+                cuentasLegionActuales[uInput] = {
+                    usuario: uInput,
+                    password: pInput,
+                    nombre: nInput,
+                    sede: 'LEGION',
+                    activo: true,
+                    modificadoPor: nickStaff,
+                    updatedAt: new Date().toISOString()
+                };
+
+                localStorage.setItem(STORAGE_KEY_LEGION_CUENTAS, JSON.stringify(cuentasLegionActuales));
+                await setDoc(DOC_LEGION_CREDENCIALES, {
+                    cuentas: cuentasLegionActuales,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                document.getElementById('legion-input-usuario').value = '';
+                document.getElementById('legion-input-password').value = '';
+                document.getElementById('legion-input-nombre').value = '';
+
+                renderizarTablaCredencialesLegion();
+                alert(`✅ Credencial "${uInput}" guardada exclusivamente para Descuentos Legion.`);
+            } catch (err) {
+                alert("Error al guardar en Firestore: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Guardar Credencial Legion';
+            }
+        };
+
+        window.cargarParaEditarCredencialLegion = function(k) {
+            const c = cuentasLegionActuales[k];
+            if (!c) return;
+            document.getElementById('legion-input-usuario').value = c.usuario || k;
+            document.getElementById('legion-input-password').value = c.password || '';
+            document.getElementById('legion-input-nombre').value = c.nombre || '';
+            document.getElementById('legion-input-usuario').focus();
+        };
+
+        window.eliminarCredencialLegion = async function(k) {
+            if (!confirm(`¿Eliminar la credencial "${k}" de Descuentos Legion?`)) return;
+            delete cuentasLegionActuales[k];
+            localStorage.setItem(STORAGE_KEY_LEGION_CUENTAS, JSON.stringify(cuentasLegionActuales));
+            try {
+                await setDoc(DOC_LEGION_CREDENCIALES, {
+                    cuentas: cuentasLegionActuales,
+                    updatedAt: Date.now()
+                });
+                renderizarTablaCredencialesLegion();
+                alert(`🗑️ Credencial "${k}" eliminada.`);
             } catch (err) {
                 alert("Error al eliminar credencial: " + err.message);
             }

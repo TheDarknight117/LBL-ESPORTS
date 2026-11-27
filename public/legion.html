@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#060203]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TERHMJ40W1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TERHMJ40W1');
+    </script>
+    <title>LEGION STORE x LBL • Portal de Verificación &amp; Descuentos (Residentes en Bolivia)</title>
+    <meta name="description" content="Sistema de verificación de identidad, padrón de jugadores Liga LBL y Scouting Tournament 3 residentes en Bolivia para beneficios y descuentos oficiales de Legion Store.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/Logos%20Sponsor/logoLegion.png">
+
+    <!-- Tailwind CSS Compilado & FontAwesome -->
+    <link rel="stylesheet" href="/dist/output.css?v=303">
+    <script type="module" src="/app-version.js?v=303"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --legion-red: #dc2626;
+            --legion-red-light: #ef4444;
+            --legion-red-dark: #7f1d1d;
+            --legion-bg: #060203;
+        }
+
+        body {
+            background-color: var(--legion-bg);
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .legion-glass {
+            background: rgba(16, 5, 7, 0.84);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(220, 38, 38, 0.28);
+        }
+
+        .legion-border-glow {
+            box-shadow: 0 0 28px rgba(220, 38, 38, 0.20);
+        }
+
+        .bg-mural-legion {
+            background-color: #060203;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(220, 38, 38, 0.14) 0%, transparent 52%),
+                radial-gradient(circle at 80% 80%, rgba(185, 28, 28, 0.11) 0%, transparent 55%),
+                linear-gradient(rgba(220, 38, 38, 0.038) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 38, 38, 0.038) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        }
+
+        .legion-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.34);
+            border-color: rgba(239, 68, 68, 0.75);
+        }
+
+        /* Botones de filtro de competición sin bugs de contraste en iconos ni contadores */
+        .legion-filter-btn {
+            background: rgba(14, 10, 12, 0.92);
+            color: #d1d5db;
+            border: 1px solid rgba(220, 38, 38, 0.28);
+            transition: all 0.18s ease;
+        }
+        .legion-filter-btn:hover {
+            background: rgba(127, 29, 29, 0.28);
+            color: #ffffff;
+            border-color: rgba(239, 68, 68, 0.55);
+        }
+        .legion-filter-btn .filter-count-pill {
+            background: rgba(255, 255, 255, 0.09);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .legion-filter-btn.active {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #ffffff;
+            border-color: #f87171;
+            box-shadow: 0 0 18px rgba(220, 38, 38, 0.38);
+        }
+        .legion-filter-btn.active i {
+            color: #ffffff !important;
+        }
+        .legion-filter-btn.active .filter-count-pill {
+            background: rgba(0, 0, 0, 0.42);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
+        .card-jugador-lan {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 270px;
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff;
+            -webkit-box-shadow: 0 0 0px 1000px #090304 inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060203;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7f1d1d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col selection:bg-red-600 selection:text-white bg-mural-legion relative">
+
+    <!-- Patrón de Mural de Marcas de Agua LBL en el Fondo -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
+        <svg class="w-full h-full opacity-[0.055]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="mural-lbl-pattern-legion" width="180" height="220" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
+                    <image href="/assets/logo.webp" x="15" y="15" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                    <image href="/assets/logo.webp" x="105" y="125" width="70" height="85" preserveAspectRatio="xMidYMid meet"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#mural-lbl-pattern-legion)"/>
+        </svg>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 1. PANTALLA DE AUTENTICACIÓN AISLADA FIRESTORE (STAFF / LEGION) -->
+    <!-- ============================================================== -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-mural-legion flex items-center justify-center p-4 overflow-hidden select-none">
+        <div class="legion-glass max-w-md w-full rounded-3xl p-7 sm:p-8 border border-red-600/50 legion-border-glow relative overflow-hidden z-10 shadow-2xl">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-rose-700/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center mb-5 relative">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/15 border border-red-500/40 text-red-300 text-[10px] font-black uppercase tracking-widest mb-3">
+                    <i class="fas fa-tags text-red-400"></i> Convenio Oficial • Envíos Bolivia
+                </div>
+                <img src="/assets/Logos%20Sponsor/logoLegion.png" onerror="this.src='/assets/legion_store.webp'" alt="Legion Logo" class="h-20 sm:h-24 w-auto object-contain mx-auto filter drop-shadow-[0_0_18px_rgba(220,38,38,0.45)] transition-transform duration-300 hover:scale-105">
+                <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-2">LEGION X LBL</h2>
+                <p class="text-xs text-red-300/80 font-bold uppercase tracking-wider mt-1">Portal de Descuentos • Liga LBL &amp; Scouting 3 (Bolivia)</p>
+            </div>
+
+            <form id="form-login-lan" onsubmit="event.preventDefault(); procesarLoginLAN();" class="space-y-4 relative">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-user-shield text-red-500 mr-1"></i> Usuario / Correo de Staff o Encargado Legion
+                    </label>
+                    <input type="text" id="login-usuario" required placeholder="ej: tu correo Staff o legion_store"
+                        autocomplete="username" autofocus
+                        class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 tracking-wider mb-1.5">
+                        <i class="fas fa-key text-red-500 mr-1"></i> Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="login-password" required placeholder="••••••••"
+                            autocomplete="current-password"
+                            class="w-full bg-black/80 border border-red-900/60 focus:border-red-500 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-mono">
+                        <button type="button" onclick="togglePassVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white text-xs cursor-pointer">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="login-error" class="hidden p-3 rounded-xl bg-red-950/80 border border-red-600 text-red-200 text-xs font-semibold text-center">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> <span id="login-error-msg">Credenciales incorrectas.</span>
+                </div>
+
+                <button type="submit" id="btn-login" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-red-950/50 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fas fa-door-open"></i> Ingresar al Portal de Descuentos
+                </button>
+
+                <div class="relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-gray-800"></div>
+                    <span class="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-widest text-gray-500">O ingreso directo Staff LBL</span>
+                    <div class="flex-grow border-t border-gray-800"></div>
+                </div>
+
+                <button type="button" id="btn-google-staff" onclick="loginStaffConGoogle()" class="w-full py-2.5 px-4 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-white/15 text-gray-200 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fab fa-google text-red-400"></i> Acceso Rápido Staff con Google
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 2. CABECERA PRINCIPAL (NAVBAR LEGION X LBL)                     -->
+    <!-- ============================================================== -->
+    <header class="sticky top-0 z-40 bg-[#060203]/90 backdrop-blur-md border-b border-red-950/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 min-h-[64px] flex items-center justify-between gap-2">
+            <!-- Branding LEGION x LBL -->
+            <div class="flex items-center gap-2.5 min-w-0 shrink-0">
+                <img src="/assets/Logos%20Sponsor/logoLegion.png" onerror="this.src='/assets/legion_store.webp'" alt="Legion Logo" class="h-8 sm:h-9 w-auto object-contain shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-sm sm:text-base font-black tracking-wide uppercase text-white whitespace-nowrap">
+                        LEGION x LBL
+                    </span>
+                    <span class="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-600/15 border border-red-500/40 text-[10px] font-black uppercase tracking-wider text-red-300 shrink-0">
+                        <i class="fas fa-tag text-[9px] text-red-400"></i> PORTAL DE DESCUENTOS • BOLIVIA
+                    </span>
+                </div>
+            </div>
+
+            <!-- Acciones y Sesión (1 sola fila limpia) -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <span id="badge-sesion-encargado" class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 border border-red-950/80 text-[11px] font-mono text-gray-300 max-w-[210px] truncate">
+                    <i class="fas fa-user-check text-red-400 text-[10px] shrink-0"></i>
+                    <span id="display-encargado" class="truncate">Staff LBL</span>
+                </span>
+
+                <button type="button" onclick="abrirModalHistorial()" title="Ver y gestionar descuentos aplicados"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-200 bg-red-950/75 hover:bg-red-900/80 border border-red-500/45 hover:border-red-400 transition-all cursor-pointer shadow-sm whitespace-nowrap">
+                    <i class="fas fa-clipboard-list text-red-400 text-[11px]"></i>
+                    <span class="hidden sm:inline">Descuentos Aplicados</span>
+                    <span id="badge-nav-visitas" class="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-black font-mono">0</span>
+                </button>
+
+                <button type="button" onclick="cerrarSesion()" title="Cerrar sesión"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer whitespace-nowrap">
+                    <i class="fas fa-power-off text-rose-500/80 text-[11px]"></i>
+                    <span class="hidden sm:inline">Cerrar Sesión</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================== -->
+    <!-- 3. CONTENIDO PRINCIPAL (PADRÓN NACIONAL BOLIVIA)                -->
+    <!-- ============================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 relative z-10">
+
+        <!-- KPIs Rápidos -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="legion-glass rounded-2xl p-4 border border-red-900/45 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Habilitados en Bolivia</span>
+                        <h2 id="metrica-bolivia" class="text-2xl sm:text-3xl font-black text-white mt-0.5">--</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 text-base">
+                        <i class="fas fa-earth-americas"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-red-400 mt-2 font-medium">Bolivianos y residentes en Bolivia</p>
+            </div>
+
+            <div class="legion-glass rounded-2xl p-4 border border-red-900/45 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Desglose por Torneo</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-lg sm:text-xl font-black text-red-400 font-mono" id="metrica-liga-count">0</span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold">Liga</span>
+                            <span class="text-gray-600">•</span>
+                            <span class="text-lg sm:text-xl font-black text-rose-300 font-mono" id="metrica-sc3-count">0</span>
+                            <span class="text-[10px] text-gray-400 uppercase font-bold">SC3</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-red-600/15 border border-red-500/35 flex items-center justify-center text-red-400 text-base">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <p id="metrica-excluidos-label" class="text-[11px] text-gray-400 mt-2 font-medium">Cobertura nacional (9 departamentos)</p>
+            </div>
+
+            <div onclick="abrirModalHistorial()" class="legion-glass rounded-2xl p-4 border border-red-900/45 relative overflow-hidden cursor-pointer group hover:border-red-500/70 transition-all" title="Ver historial de descuentos aplicados">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
+                            Descuentos Canjeados
+                            <i class="fas fa-arrow-up-right-from-square text-[9px] text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </span>
+                        <h2 id="metrica-visitas-total" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-0.5">0</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-base group-hover:scale-110 transition-transform">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                    <p class="text-[11px] text-emerald-400/80 font-medium">Hoy: <strong id="metrica-visitas-turno">0</strong></p>
+                    <span class="text-[10px] text-red-400 font-bold underline">Ver registro &rarr;</span>
+                </div>
+            </div>
+
+            <div class="legion-glass rounded-2xl p-4 border border-red-900/45 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Equipos Acreditados</span>
+                        <h2 id="metrica-equipos" class="text-2xl sm:text-3xl font-black text-white mt-0.5">--</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-red-950/60 border border-red-800/50 flex items-center justify-center text-red-300 text-base">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p id="metrica-sync-label" class="text-[11px] text-gray-400 mt-2 font-medium">Liga LBL + Scouting 3</p>
+            </div>
+        </div>
+
+        <!-- Buscador y Filtros (Competición + Departamento de Bolivia) -->
+        <div class="legion-glass rounded-2xl p-5 sm:p-6 border border-red-900/45 space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.07]">
+                <div>
+                    <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
+                        <i class="fas fa-id-card text-red-500"></i>
+                        <span>Verificador de Jugadores &amp; Descuentos • Legion x LBL</span>
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Busca por <strong>Nombre, C.I., Número de Celular, Nick de LoL (Riot ID)</strong> o <strong>Equipo</strong>. Incluye únicamente residentes en Bolivia (Liga LBL y Scouting Tournament 3).</p>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="cargarJugadoresDesdeAPI(true)" class="px-3 py-1.5 rounded-xl bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 text-xs font-bold text-red-200 flex items-center gap-1.5 cursor-pointer transition-colors" title="Recargar bases de datos en tiempo real">
+                        <i id="sync-icon" class="fas fa-rotate text-red-400"></i> Sincronizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros combinados: Competición + Departamento -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[10px] uppercase font-black tracking-wider text-gray-400 mr-1">Competición:</span>
+                    <button type="button" onclick="cambiarFiltroTorneo('todos')" id="filtro-torneo-todos" class="legion-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-black uppercase cursor-pointer flex items-center gap-1.5">
+                        <i class="fas fa-layer-group text-[10px] text-red-400"></i> Todos <span id="conteo-filtro-todos" class="filter-count-pill px-1.5 py-0.2 rounded text-[10px] font-mono">0</span>
+                    </button>
+                    <button type="button" onclick="cambiarFiltroTorneo('liga')" id="filtro-torneo-liga" class="legion-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-black uppercase cursor-pointer flex items-center gap-1.5">
+                        <i class="fas fa-trophy text-[10px] text-red-400"></i> Liga LBL <span id="conteo-filtro-liga" class="filter-count-pill px-1.5 py-0.2 rounded text-[10px] font-mono">0</span>
+                    </button>
+                    <button type="button" onclick="cambiarFiltroTorneo('scouting')" id="filtro-torneo-scouting" class="legion-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-black uppercase cursor-pointer flex items-center gap-1.5">
+                        <i class="fas fa-users-viewfinder text-[10px] text-rose-400"></i> Scouting 3 <span id="conteo-filtro-scouting" class="filter-count-pill px-1.5 py-0.2 rounded text-[10px] font-mono">0</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="select-filtro-depto" class="text-[10px] uppercase font-black tracking-wider text-gray-400 shrink-0">
+                        <i class="fas fa-location-dot text-red-500 mr-1"></i> Departamento:
+                    </label>
+                    <select id="select-filtro-depto" onchange="aplicarFiltrosYRenderizar()" class="bg-black/90 border border-red-900/70 focus:border-red-500 rounded-xl px-3 py-1.5 text-xs font-bold text-white outline-none cursor-pointer">
+                        <option value="todos">Toda Bolivia (9 Deptos.)</option>
+                        <option value="La Paz">La Paz / El Alto</option>
+                        <option value="Cochabamba">Cochabamba</option>
+                        <option value="Santa Cruz">Santa Cruz</option>
+                        <option value="Oruro">Oruro</option>
+                        <option value="Potosí">Potosí</option>
+                        <option value="Tarija">Tarija</option>
+                        <option value="Chuquisaca">Chuquisaca (Sucre)</option>
+                        <option value="Beni">Beni</option>
+                        <option value="Pando">Pando</option>
+                        <option value="Bolivia">Bolivia (Depto. por confirmar)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Input de Búsqueda Principal -->
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-red-500 text-lg sm:text-xl">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" id="input-busqueda" placeholder="Busca por C.I. (ej: 8492011), Celular (7xxxxxxx), Nombre, Nick de LoL (Riot ID) o Equipo..."
+                    autocomplete="off" autofocus
+                    class="w-full bg-black/85 border-2 border-red-900/65 hover:border-red-600 focus:border-red-500 rounded-2xl pl-12 sm:pl-14 pr-28 py-3.5 sm:py-4 text-sm sm:text-base text-white font-semibold placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-red-600/20 transition-all font-mono">
+                <div class="absolute inset-y-0 right-2 flex items-center gap-1.5">
+                    <button type="button" onclick="limpiarBusqueda()" id="btn-limpiar" class="hidden px-2.5 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold cursor-pointer">
+                        <i class="fas fa-times mr-1"></i> Borrar
+                    </button>
+                    <span class="hidden sm:inline px-3 py-1.5 rounded-xl bg-red-950/80 border border-red-900/60 text-[11px] font-mono text-red-300 font-bold">
+                        [ENTER]
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-xs text-gray-400 pt-1 gap-2">
+                <span id="conteo-resultados">Cargando padrón de jugadores residentes en Bolivia...</span>
+                <span class="text-gray-500"><i class="fas fa-truck-fast text-red-500 mr-1"></i> Exclusivo envíos nacionales dentro de Bolivia (Liga LBL + Scouting 3)</span>
+            </div>
+        </div>
+
+        <!-- Grid de Jugadores -->
+        <div id="contenedor-jugadores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="col-span-full legion-glass rounded-3xl p-12 text-center border border-red-900/40 space-y-4">
+                <i class="fas fa-circle-notch fa-spin text-red-500 text-4xl"></i>
+                <h4 class="text-lg font-bold text-white">Sincronizando Padrón Oficial en Bolivia...</h4>
+                <p class="text-xs text-gray-400 max-w-md mx-auto">Recopilando jugadores de Liga LBL (Tier 1 &amp; Tier 2) y Scouting Tournament 3 con residencia en Bolivia.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- 4. MODAL DE FICHA DE JUGADOR & REGISTRO DE DESCUENTO LEGION     -->
+    <!-- ============================================================== -->
+    <div id="modal-canje" onclick="if(event.target===this) cerrarModalCanje()" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="legion-glass max-w-lg w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative">
+            <button type="button" onclick="cerrarModalCanje()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-base cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="flex items-center gap-3.5 mb-5 pb-4 border-b border-red-950/80">
+                <div class="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-500/50 flex items-center justify-center text-red-400 text-xl shrink-0">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">LEGION STORE x LBL • BENEFICIOS</span>
+                    <h3 class="text-lg font-black text-white uppercase tracking-tight">Ficha Oficial &amp; Registro de Descuento</h3>
+                </div>
+            </div>
+
+            <!-- Datos Completos del Jugador -->
+            <div class="p-4 rounded-2xl bg-black/75 border border-red-950 space-y-2.5 mb-4 text-xs">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Nombre Completo:</span>
+                    <span id="modal-jugador-nombre" class="text-sm font-black text-white text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Carnet de Identidad (C.I.):</span>
+                    <span id="modal-jugador-ci" class="text-sm font-black text-red-400 font-mono text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Celular / WhatsApp:</span>
+                    <div class="flex items-center gap-1.5">
+                        <span id="modal-jugador-telefono" class="text-sm font-black text-emerald-400 font-mono">--</span>
+                        <a id="modal-jugador-wa-btn" href="#" target="_blank" rel="noopener" class="hidden px-2 py-0.5 rounded bg-emerald-600/25 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-[10px] font-black uppercase">
+                            <i class="fab fa-whatsapp"></i> Chat
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Nick de LoL (Riot ID):</span>
+                    <span id="modal-jugador-riot" class="text-xs font-mono font-bold text-sky-300 text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Equipo:</span>
+                    <span id="modal-jugador-equipo" class="text-xs font-bold text-gray-200 text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Competición:</span>
+                    <span id="modal-jugador-torneo" class="text-xs font-black text-rose-300 text-right">--</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-gray-400 font-bold uppercase tracking-wider">Residencia en Bolivia:</span>
+                    <span id="modal-jugador-ciudad" class="text-xs font-bold text-red-400 text-right">--</span>
+                </div>
+            </div>
+
+            <!-- Contador de Descuentos / Compras de este Jugador -->
+            <div class="p-3.5 rounded-2xl bg-red-950/25 border border-red-900/50 space-y-2 mb-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                        <i class="fas fa-tags text-red-400"></i> Descuentos Registrados:
+                    </span>
+                    <span id="modal-jugador-contador-visitas" class="px-3 py-0.5 rounded-full bg-red-600 text-white font-mono font-black text-xs">
+                        0 Canjes
+                    </span>
+                </div>
+                <div id="modal-jugador-historial-mini" class="text-[11px] text-gray-400 space-y-1 pt-1 max-h-24 overflow-y-auto font-mono"></div>
+            </div>
+
+            <!-- Regularización de C.I. o Celular si falta en la BD -->
+            <div id="modal-alerta-sin-ci" class="hidden p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/50 text-xs mb-3 space-y-2">
+                <div class="flex items-center gap-2 text-amber-300 font-black uppercase text-[11px]">
+                    <i class="fas fa-id-card-clip text-amber-400 text-sm"></i>
+                    <span>⚠️ Completar C.I. Físico del Jugador</span>
+                </div>
+                <input type="text" id="canje-ci-manual" placeholder="Ingresa el número de C.I. presentado..." class="w-full bg-black/90 border border-amber-500/70 rounded-xl px-3 py-2 text-xs text-white font-mono placeholder-gray-500 outline-none">
+            </div>
+
+            <!-- Selector de Tipo de Descuento / Campaña + Detalle Opcional -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label for="canje-tipo-descuento" class="block text-[10px] font-black uppercase text-red-300 tracking-wider mb-1">
+                        <i class="fas fa-tag mr-1 text-red-400"></i> Tipo de Descuento / Campaña:
+                    </label>
+                    <select id="canje-tipo-descuento" class="w-full bg-black/90 border border-red-500/60 focus:border-red-400 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none cursor-pointer">
+                        <option value="DESCUENTO LBL">DESCUENTO LBL</option>
+                        <option value="PROMOCIÓN / EVENTO ESPECIAL">PROMOCIÓN / EVENTO ESPECIAL</option>
+                        <option value="BLACK FRIDAY">BLACK FRIDAY</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="canje-nota-producto" class="block text-[10px] font-black uppercase text-gray-400 tracking-wider mb-1">
+                        Producto / Detalle (Opcional):
+                    </label>
+                    <input type="text" id="canje-nota-producto" placeholder="Ej: Teclado / Mouse / Periférico"
+                        class="w-full bg-black/80 border border-gray-800 focus:border-red-500 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <button type="button" onclick="registrarVisitaJugadorDirecta()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-red-950/50 transition-all transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fas fa-check-circle text-lg"></i> Registrar Descuento
+                </button>
+                <button type="button" onclick="cerrarModalCanje()" class="w-full py-2.5 px-4 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-white font-bold text-xs uppercase transition-all cursor-pointer">
+                    Cerrar Ficha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 5. MODAL DE HISTORIAL DE DESCUENTOS LEGION                     -->
+    <!-- ============================================================== -->
+    <div id="modal-historial" onclick="if(event.target===this) cerrarModalHistorial()" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="legion-glass max-w-5xl w-full rounded-3xl p-6 sm:p-7 border border-red-600/50 shadow-2xl relative flex flex-col max-h-[90vh]">
+            <button type="button" onclick="cerrarModalHistorial()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-base cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pr-8">
+                <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600 text-white">HISTORIAL DE BENEFICIOS</span>
+                    <h3 class="text-xl font-black text-white uppercase mt-1">Registro General de Descuentos Aplicados (Legion Store)</h3>
+                    <p class="text-xs text-gray-400">Historial en tiempo real de descuentos (Normal LBL, Black Friday y promociones) otorgados a jugadores residentes en Bolivia.</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="exportarVisitasCSV()" class="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow cursor-pointer">
+                        <i class="fas fa-file-excel"></i> Exportar Canjes CSV
+                    </button>
+                    <button type="button" onclick="borrarHistorialTurno()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 text-gray-400 hover:text-red-300 border border-gray-800 font-bold text-xs uppercase cursor-pointer" title="Vaciar historial (Staff)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                    <input type="text" id="buscador-historial" oninput="filtrarTablaHistorial()" placeholder="Buscar en canjes por nombre, C.I., celular, Riot ID, equipo o encargado..."
+                        class="w-full bg-black/80 border border-red-950 focus:border-red-500 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none font-mono">
+                </div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto border border-red-950 rounded-2xl bg-black/60">
+                <table class="w-full text-left text-xs text-gray-300">
+                    <thead class="bg-red-950/80 text-[10px] font-black uppercase tracking-wider text-red-200 sticky top-0 border-b border-red-900/60 z-10 backdrop-blur-sm">
+                        <tr>
+                            <th class="p-3">Fecha / Hora</th>
+                            <th class="p-3">Jugador</th>
+                            <th class="p-3">C.I.</th>
+                            <th class="p-3">Celular</th>
+                            <th class="p-3">Nick LoL</th>
+                            <th class="p-3">Equipo</th>
+                            <th class="p-3">Detalle / Encargado</th>
+                            <th class="p-3 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-visitas-body" class="divide-y divide-red-950/50"></tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-red-950 flex items-center justify-between text-xs text-gray-400">
+                <span>Total de descuentos aplicados: <strong id="historial-total-count" class="text-red-400 font-mono">0</strong></span>
+                <span class="text-gray-500 flex items-center gap-1"><i class="fas fa-shield-halved text-red-500 text-[10px]"></i> Sincronizado en tiempo real con Firestore</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 6. LÓGICA DE NEGOCIO, FILTRO BOLIVIA Y AUTENTICACIÓN FIRESTORE  -->
+    <!-- ============================================================== -->
+    <script type="module">
+        import { db, auth } from "/firebase-config.js";
+        import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithEmailAndPassword,
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { STAFF_DIRECTORY, getStaffNick } from "/staff-config.js";
+
+        // Endpoints y claves de almacenamiento aisladas para LEGION (Exclusivo Liga LBL + Scouting Tournament 3)
+        const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbz6hv8P9i4bC7Mm-QmAI0DJHQNE7wYLZ7-RhM-C9v8moDT0UEo72Db6QsFh1VNYQCD0/exec";
+        const STORAGE_KEY_CACHE = "legion_jugadores_bolivia_sc3_liga_v1";
+        const STORAGE_KEY_VISITAS = "legion_descuentos_bf_v1";
+        const STORAGE_KEY_AUTH = "legion_lan_sesion_v1";
+        const STORAGE_KEY_LAN_CUENTAS = "lbl_legion_cuentas_cache_v1";
+        const DOC_CREDENCIALES = doc(db, "torneos_activos", "legion_credenciales");
+        const DOC_VISITAS_LEGION = doc(db, "torneos_activos", "lan_visitas_legion");
+        const FIRESTORE_REST_LAN_URL = "https://firestore.googleapis.com/v1/projects/lbl-esports/databases/(default)/documents/torneos_activos/legion_credenciales";
+
+        let todosLosJugadoresBolivia = [];
+        let jugadoresFiltrados = [];
+        let jugadorSeleccionado = null;
+        let encargadoActual = "Encargado Legion";
+        let esSesionStaffAdmin = false;
+        let historialVisitas = [];
+        let filtroTorneoActivo = "todos"; // "todos" | "liga" | "scouting"
+        let totalExcluidosExterior = 0;
+        let cuentasLANActuales = {};
+        let passwordsVisiblesLAN = {};
+
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function mostrarToastLegion(msg) {
+            let toast = document.getElementById('legion-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'legion-toast';
+                document.body.appendChild(toast);
+            }
+            toast.className = 'fixed bottom-5 right-5 z-[100] px-4 py-2.5 rounded-xl bg-black/95 border border-red-500/60 text-red-300 text-xs font-black shadow-2xl transition-opacity';
+            toast.innerHTML = `<i class="fas fa-check-circle mr-1.5 text-red-400"></i> ${escapeHTML(msg)}`;
+            toast.classList.remove('hidden');
+            clearTimeout(window._legionToastTimer);
+            window._legionToastTimer = setTimeout(() => toast.classList.add('hidden'), 2200);
+        }
+
+        window.copiarDatoJugador = function(texto, etiqueta = 'Dato') {
+            if (!texto || texto === 'S/N' || texto === 'Sin Celular' || texto === 'Verificar Físico') return;
+            navigator.clipboard?.writeText(String(texto)).then(() => {
+                mostrarToastLegion(`${etiqueta} copiado: ${texto}`);
+            }).catch(() => {});
+        };
+
+        // ==============================================================
+        // 1. AUTENTICACIÓN AISLADA + GESTOR DE CREDENCIALES FIRESTORE
+        // ==============================================================
+        const CUENTAS_FALLBACK_BASE = {
+            "legion": { usuario: "legion", password: "legion2026", nombre: "Encargado Legion Store", sede: "LEGION", activo: true },
+            "legion_store": { usuario: "legion_store", password: "legion2026", nombre: "Ventas Legion Store", sede: "LEGION", activo: true },
+            "cajero_legion": { usuario: "cajero_legion", password: "legion2026", nombre: "Cajero Legion Store", sede: "LEGION", activo: true },
+            "admin_lbl": { usuario: "admin_lbl", password: "lbl2026", nombre: "Administrador LBL", sede: "TODAS", activo: true }
+        };
+
+        function parsearCuentasFirestoreRest(fields) {
+            if (!fields || !fields.cuentas || !fields.cuentas.mapValue || !fields.cuentas.mapValue.fields) return null;
+            const cuentasRaw = fields.cuentas.mapValue.fields;
+            const res = {};
+            Object.keys(cuentasRaw).forEach(k => {
+                const cFields = cuentasRaw[k].mapValue?.fields || {};
+                res[k] = {
+                    usuario: cFields.usuario?.stringValue || k,
+                    nombre: cFields.nombre?.stringValue || '--',
+                    password: cFields.password?.stringValue || '',
+                    sede: cFields.sede?.stringValue || 'LEGION',
+                    sucursal: cFields.sucursal?.stringValue || '',
+                    activo: cFields.activo ? (cFields.activo.booleanValue !== false) : true,
+                    modificadoPor: cFields.modificadoPor?.stringValue || cFields.creadoPor?.stringValue || 'Staff',
+                    updatedAt: cFields.updatedAt?.stringValue || cFields.creadoEn?.stringValue || ''
+                };
+            });
+            return res;
+        }
+
+        async function obtenerCredencialesFirestore() {
+            try {
+                const snap = await getDoc(DOC_CREDENCIALES);
+                if (snap.exists() && snap.data().cuentas) {
+                    const c = { ...CUENTAS_FALLBACK_BASE, ...snap.data().cuentas };
+                    try { localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(c)); } catch (_) {}
+                    return c;
+                }
+            } catch (_) {}
+
+            try {
+                const res = await fetch(FIRESTORE_REST_LAN_URL);
+                if (res.ok) {
+                    const json = await res.json();
+                    const parsed = parsearCuentasFirestoreRest(json.fields);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        const merged = { ...CUENTAS_FALLBACK_BASE, ...parsed };
+                        try { localStorage.setItem(STORAGE_KEY_LAN_CUENTAS, JSON.stringify(merged)); } catch (_) {}
+                        return merged;
+                    }
+                }
+            } catch (_) {}
+
+            try {
+                const cached = localStorage.getItem(STORAGE_KEY_LAN_CUENTAS);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object') {
+                        return { ...CUENTAS_FALLBACK_BASE, ...parsed };
+                    }
+                }
+            } catch (_) {}
+
+            return { ...CUENTAS_FALLBACK_BASE };
+        }
+
+        window.procesarLoginLAN = async function() {
+            sessionStorage.removeItem('lbl_lan_manual_signout');
+            const usuarioInput = (document.getElementById('login-usuario').value || '').trim().toLowerCase();
+            const passInput = (document.getElementById('login-password').value || '').trim();
+            const btn = document.getElementById('btn-login');
+            const errDiv = document.getElementById('login-error');
+            const errMsg = document.getElementById('login-error-msg');
+
+            if (!usuarioInput || !passInput) {
+                errMsg.textContent = "Ingresa usuario y contraseña.";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando credenciales...';
+            errDiv.classList.add('hidden');
+
+            try {
+                // A) Staff LBL vía Firebase Auth (Correo o Nick + Contraseña)
+                let emailToTest = usuarioInput;
+                if (!emailToTest.includes('@')) {
+                    const matchEntry = Object.entries(STAFF_DIRECTORY).find(([mail, nick]) => {
+                        return nick.toLowerCase() === usuarioInput || mail.split('@')[0].toLowerCase() === usuarioInput;
+                    });
+                    if (matchEntry) emailToTest = matchEntry[0];
+                }
+
+                if (emailToTest.includes('@') && auth) {
+                    try {
+                        const userCred = await signInWithEmailAndPassword(auth, emailToTest, passInput);
+                        if (userCred && userCred.user) {
+                            const mailClean = (userCred.user.email || '').toLowerCase().trim();
+                            const uid = userCred.user.uid;
+                            if (STAFF_DIRECTORY[mailClean] || STAFF_DIRECTORY[uid]) {
+                                const nick = getStaffNick(mailClean) || userCred.user.displayName || 'Staff LBL';
+                                localStorage.setItem('lbl_staff_logged_in', 'true');
+                                localStorage.setItem('lbl_staff_nick', nick);
+                                desbloquearPanel(`Staff LBL (${nick})`, true);
+                                return;
+                            }
+                        }
+                    } catch (_) {}
+                }
+
+                // B) PINs Maestros de Staff LBL
+                const staffPins = ['lbl2026', 'darkcito2026', 'staff2026', 'scouting3', 'legion2026', 'leyu123'];
+                if (staffPins.includes(passInput)) {
+                    if (STAFF_DIRECTORY[usuarioInput] || usuarioInput.includes('staff') || usuarioInput.includes('admin') || usuarioInput.includes('darkcito') || usuarioInput.includes('jhonatan')) {
+                        const nick = STAFF_DIRECTORY[usuarioInput] || 'elDarkcito';
+                        localStorage.setItem('lbl_staff_logged_in', 'true');
+                        localStorage.setItem('lbl_staff_nick', nick);
+                        desbloquearPanel(`Staff LBL (${nick})`, true);
+                        return;
+                    }
+                }
+
+                // C) Cuentas en Firestore (torneos_activos/lan_credenciales)
+                const cuentas = await obtenerCredencialesFirestore();
+                const tieneCuenta = cuentas && Object.prototype.hasOwnProperty.call(cuentas, usuarioInput);
+                const cuenta = tieneCuenta ? cuentas[usuarioInput] : null;
+
+                if (!cuenta) {
+                    throw new Error("Usuario o contraseña incorrectos. Si eres Staff LBL, usa tu correo oficial o el botón de Google.");
+                }
+                if (cuenta.activo === false) {
+                    throw new Error("Esta credencial fue desactivada por el Staff de LBL.");
+                }
+
+                const sedeUser = (cuenta.sede || 'LEGION').toUpperCase();
+                if (sedeUser !== 'LEGION' && sedeUser !== 'TODAS' && sedeUser !== 'AMBAS') {
+                    throw new Error("Esta credencial no tiene permisos para acceder al portal de Legion Store.");
+                }
+                if (String(cuenta.password).trim() !== passInput) {
+                    throw new Error("Usuario o contraseña incorrectos.");
+                }
+
+                const nombreFinal = cuenta.nombre || cuenta.usuario;
+                const esAdmin = sedeUser === 'TODAS' || usuarioInput === 'admin_lbl';
+                localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify({
+                    usuario: cuenta.usuario,
+                    nombre: nombreFinal,
+                    sede: sedeUser,
+                    esAdmin,
+                    loginAt: Date.now()
+                }));
+                desbloquearPanel(nombreFinal, esAdmin);
+            } catch (err) {
+                errMsg.textContent = err.message || "Error al validar credenciales.";
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-door-open"></i> Ingresar al Portal de Descuentos';
+            }
+        };
+
+        window.loginStaffConGoogle = async function() {
+            const btn = document.getElementById('btn-google-staff');
+            const errBox = document.getElementById('login-error');
+            const errMsg = document.getElementById('login-error-msg');
+            if (errBox) errBox.classList.add('hidden');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Google...';
+            }
+
+            try {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const res = await signInWithPopup(auth, provider);
+                if (res && res.user) {
+                    const mail = (res.user.email || '').toLowerCase().trim();
+                    const uid = res.user.uid;
+                    const esStaff = Boolean(STAFF_DIRECTORY[mail] || STAFF_DIRECTORY[uid]);
+                    if (!esStaff) {
+                        throw new Error(`La cuenta ${mail} no pertenece al Directorio Oficial de Staff LBL.`);
+                    }
+                    const nick = getStaffNick(mail) || res.user.displayName || 'Staff LBL';
+                    localStorage.setItem('lbl_staff_logged_in', 'true');
+                    localStorage.setItem('lbl_staff_nick', nick);
+                    desbloquearPanel(`Staff LBL (${nick})`, true);
+                }
+            } catch (err) {
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    if (errMsg) errMsg.textContent = err.message || "Error al autenticar con Google.";
+                    if (errBox) errBox.classList.remove('hidden');
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fab fa-google text-amber-400"></i> Acceso Rápido Staff con Google';
+                }
+            }
+        };
+
+        function desbloquearPanel(nombreEncargado, esAdmin = false) {
+            encargadoActual = nombreEncargado;
+            esSesionStaffAdmin = Boolean(esAdmin || String(nombreEncargado).includes('Staff LBL'));
+            const displayEl = document.getElementById('display-encargado');
+            if (displayEl) displayEl.textContent = encargadoActual;
+            document.getElementById('auth-screen').classList.add('hidden');
+            iniciarApp();
+        }
+
+        window.cerrarSesion = async function() {
+            if (confirm("¿Cerrar la sesión actual en el portal Legion x LBL?")) {
+                sessionStorage.setItem('lbl_lan_manual_signout', 'true');
+                localStorage.removeItem(STORAGE_KEY_AUTH);
+                localStorage.removeItem('lbl_staff_logged_in');
+                localStorage.removeItem('lbl_staff_nick');
+                if (auth) {
+                    try { await signOut(auth); } catch (_) {}
+                }
+                location.reload();
+            }
+        };
+
+        window.togglePassVisibility = function(id) {
+            const input = document.getElementById(id);
+            if (input) input.type = input.type === 'password' ? 'text' : 'password';
+        };
+
+        function verificarSesionPrevia() {
+            try {
+                if (sessionStorage.getItem('lbl_lan_manual_signout') === 'true') {
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                    return;
+                }
+                if (localStorage.getItem('lbl_staff_logged_in') === 'true') {
+                    const nick = localStorage.getItem('lbl_staff_nick') || 'Staff LBL';
+                    desbloquearPanel(`Staff LBL (${nick})`, true);
+                    return;
+                }
+                const sesion = localStorage.getItem(STORAGE_KEY_AUTH);
+                if (sesion) {
+                    const data = JSON.parse(sesion);
+                    const MAX_SESSION_HOURS = 14;
+                    if (data && data.loginAt && (Date.now() - data.loginAt > MAX_SESSION_HOURS * 3600 * 1000)) {
+                        localStorage.removeItem(STORAGE_KEY_AUTH);
+                    } else if (data && data.nombre) {
+                        desbloquearPanel(data.nombre, Boolean(data.esAdmin));
+                        return;
+                    }
+                }
+            } catch (_) {}
+            document.getElementById('auth-screen').classList.remove('hidden');
+        }
+
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user && sessionStorage.getItem('lbl_lan_manual_signout') !== 'true') {
+                    const mail = (user.email || '').toLowerCase().trim();
+                    const uid = user.uid;
+                    if (STAFF_DIRECTORY[mail] || STAFF_DIRECTORY[uid]) {
+                        const nick = getStaffNick(mail) || user.displayName || 'Staff LBL';
+                        localStorage.setItem('lbl_staff_logged_in', 'true');
+                        localStorage.setItem('lbl_staff_nick', nick);
+                        desbloquearPanel(`Staff LBL (${nick})`, true);
+                    }
+                }
+            });
+        }
+
+        // ==============================================================
+        // 2. DETECTOR DE RESIDENCIA EN BOLIVIA (9 DEPARTAMENTOS + +591)
+        // ==============================================================
+        function normalizarTexto(str) {
+            return String(str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        }
+
+        function limpiarTelefonoBolivia(raw) {
+            if (!raw) return "";
+            const digits = String(raw).replace(/\D+/g, "");
+            if (!digits) return "";
+            if (digits.length === 11 && digits.startsWith("591")) {
+                return digits.slice(3);
+            }
+            if (digits.length > 8 && (digits.startsWith("5916") || digits.startsWith("5917"))) {
+                return digits.slice(3, 11);
+            }
+            return digits;
+        }
+
+        function esCelularBolivianoValido(raw) {
+            const clean = limpiarTelefonoBolivia(raw);
+            return /^[67]\d{7}$/.test(clean);
+        }
+
+        const PAISES_EXTERIOR_KEYWORDS = [
+            "argentina", "argentino", "buenos aires", "baires", "caba", "la plata", "mar del plata", "cordoba", "santa fe", "rosario", "mendoza", "tucuman", "entre rios", "salta", "jujuy", "caucete", "quilmes", "neuquen", "bariloche",
+            "chile", "chileno", "chilena", "santiago", "valparaiso", "vina del mar", "concepcion", "valdivia", "antofagasta", "temuco", "rancagua", "talca", "puerto montt", "la serena", "iquique", "arica",
+            "peru", "peruano", "peruana", "lima", "callao", "arequipa", "cusco", "cuzco", "trujillo", "chiclayo", "piura", "huancayo", "tacna", "puno", "juliaca",
+            "uruguay", "uruguayo", "uruguaya", "montevideo",
+            "paraguay", "paraguayo", "paraguaya", "asuncion",
+            "colombia", "colombiano", "colombiana", "bogota", "medellin", "cali", "barranquilla",
+            "ecuador", "ecuatoriano", "ecuatoriana", "quito", "guayaquil",
+            "mexico", "mexicano", "mexicana", "cdmx", "monterrey", "guadalajara",
+            "venezuela", "venezolano", "venezolana", "caracas", "maracaibo",
+            "brasil", "brasileno", "brasilena", "brazil", "sao paulo", "rio de janeiro",
+            "espana", "espanol", "madrid", "estados unidos", "eeuu", "usa", "miami",
+            "extranjero", "internacional", "exterior"
+        ];
+
+        /**
+         * Determina si un jugador reside en Bolivia (incluyendo extranjeros que viven en un departamento boliviano)
+         * y normaliza su departamento para envíos nacionales de Legion Store.
+         * Retorna { resideEnBolivia: boolean, departamento: string }
+         */
+        function clasificarResidenciaBolivia(ubicacionRaw, telefonoRaw = "") {
+            const norm = normalizarTexto(ubicacionRaw);
+
+            // 1. Detectar explícitamente los 9 departamentos y ciudades de Bolivia
+            if (norm) {
+                if (norm.includes("santa cruz arg") || norm.includes("rio gallegos")) {
+                    return { resideEnBolivia: false, departamento: "Exterior" };
+                }
+                if (norm.includes("la paz") || norm.includes("el alto") || norm.includes("viacha") || norm.includes("achocalla") || norm.includes("caranavi") || norm.includes("copacabana") || norm.includes("coroico") || norm === "lp" || norm === "lpz") {
+                    return { resideEnBolivia: true, departamento: "La Paz" };
+                }
+                if (norm.includes("cocha") || norm.includes("cbba") || norm.includes("cbb") || norm.includes("quillacollo") || norm.includes("sacaba") || norm.includes("tiquipaya") || norm.includes("colcapirhua") || norm.includes("vinto") || norm.includes("punata") || norm.includes("cliza") || norm.includes("tarata") || norm.includes("chimore")) {
+                    return { resideEnBolivia: true, departamento: "Cochabamba" };
+                }
+                if (norm.includes("santa cruz") || norm.includes("scz") || norm === "sc" || norm.includes("montero") || norm.includes("warnes") || norm.includes("cotoca") || norm.includes("camiri") || norm.includes("yapacani") || norm.includes("la guardia")) {
+                    return { resideEnBolivia: true, departamento: "Santa Cruz" };
+                }
+                if (norm.includes("oruro") || norm.includes("huanuni") || norm.includes("challapata")) {
+                    return { resideEnBolivia: true, departamento: "Oruro" };
+                }
+                if (norm.includes("potosi") || norm.includes("uyuni") || norm.includes("tupiza") || norm.includes("villazon") || norm.includes("llallagua")) {
+                    return { resideEnBolivia: true, departamento: "Potosí" };
+                }
+                if (norm.includes("tarija") || norm.includes("yacuiba") || norm.includes("villamontes") || norm.includes("bermejo")) {
+                    return { resideEnBolivia: true, departamento: "Tarija" };
+                }
+                if (norm.includes("chuquisaca") || norm.includes("sucre") || norm.includes("monteagudo")) {
+                    return { resideEnBolivia: true, departamento: "Chuquisaca" };
+                }
+                if (norm.includes("beni") || norm.includes("trinidad") || norm.includes("riberalta") || norm.includes("guayaramerin") || norm.includes("san borja")) {
+                    return { resideEnBolivia: true, departamento: "Beni" };
+                }
+                if (norm.includes("pando") || norm.includes("cobija")) {
+                    return { resideEnBolivia: true, departamento: "Pando" };
+                }
+
+                // 2. Si menciona un país o ciudad del exterior y ningún departamento boliviano -> Excluir
+                for (let i = 0; i < PAISES_EXTERIOR_KEYWORDS.length; i++) {
+                    if (norm.includes(PAISES_EXTERIOR_KEYWORDS[i])) {
+                        return { resideEnBolivia: false, departamento: "Exterior" };
+                    }
+                }
+
+                if (norm.includes("bolivia")) {
+                    return { resideEnBolivia: true, departamento: "Bolivia" };
+                }
+            }
+
+            // 3. Si el campo departamento/ciudad está vacío o dice "otro", verificar si tiene celular boliviano (+591 6/7xxxxxxx)
+            if (esCelularBolivianoValido(telefonoRaw)) {
+                return { resideEnBolivia: true, departamento: "Bolivia" };
+            }
+
+            return { resideEnBolivia: false, departamento: "Exterior" };
+        }
+
+        function extraerCiYNombres(texto) {
+            if (!texto) return { nombre: "Sin Nombre", ci: "S/N" };
+            const str = String(texto).trim();
+            const matchCi = str.match(/\b(\d{6,10})\b/);
+            const ci = matchCi ? matchCi[1] : "";
+            let nombre = str;
+            if (ci) {
+                nombre = str.replace(ci, "").replace(/[-—_/|,]/g, " ").replace(/\s+/g, " ").trim();
+            }
+            return {
+                nombre: nombre || "Jugador Registrado",
+                ci: ci || "Verificar Físico"
+            };
+        }
+
+        // ==============================================================
+        // 3.1 PROCESAMIENTO EXCLUSIVO DE SCOUTING TOURNAMENT 3 (BOLIVIA)
+        // ==============================================================
+        function procesarEquiposScouting3Bolivia(equipos) {
+            const lista = [];
+            let excluidos = 0;
+            if (!Array.isArray(equipos)) return { lista, excluidos };
+
+            equipos.forEach(eq => {
+                const nombreEquipo = eq.nombre || "Equipo Scouting 3";
+                const tagEquipo = eq.tag || "SC3";
+                const logoEquipo = eq.logo || eq.logoRaw || "";
+                const estadoEquipo = eq.estado || "Aceptado";
+                const capTel = eq.capitan?.telefono || eq.repPhone || "";
+                const capParsed = extraerCiYNombres(eq.capitan?.nombreCi || "");
+                const capNomNorm = normalizarTexto(capParsed.nombre);
+
+                const procesarMiembroSc3 = (m, idxSlot, esTitular) => {
+                    if (!m || (!m.nombreCi && !m.riotIdLas)) return;
+                    const parsed = extraerCiYNombres(m.nombreCi || "");
+                    const nomNorm = normalizarTexto(parsed.nombre);
+                    const telRaw = m.telefono || m.phone || ((capTel && capNomNorm && nomNorm === capNomNorm) ? capTel : "");
+                    const ubicacionRaw = m.ciudad || m.residencia || "";
+                    const evalRes = clasificarResidenciaBolivia(ubicacionRaw, telRaw);
+
+                    if (!evalRes.resideEnBolivia) {
+                        excluidos++;
+                        return;
+                    }
+
+                    const telLimpio = limpiarTelefonoBolivia(telRaw);
+                    lista.push({
+                        id: `sc3_${eq.rowId || '0'}_${esTitular ? 'tit' : 'sup'}_${idxSlot}`,
+                        nombreCompleto: parsed.nombre,
+                        ci: m.ci ? String(m.ci).trim() : parsed.ci,
+                        ciOriginal: m.nombreCi || "",
+                        ciudad: evalRes.departamento,
+                        ciudadRaw: ubicacionRaw || evalRes.departamento,
+                        posicion: m.posicion || m.rolPrincipal || (esTitular ? ["TOP", "JG", "MID", "ADC", "SUPP"][idxSlot] : "Suplente") || "TITULAR",
+                        tipoJugador: esTitular ? "Titular" : "Suplente",
+                        riotIdLas: (m.riotIdLas || "").trim(),
+                        rangoSoloQ: m.rangoSoloQ || "Unranked",
+                        telefono: telLimpio || (telRaw ? String(telRaw).trim() : ""),
+                        discord: m.discord || "",
+                        equipoNombre: nombreEquipo,
+                        equipoTag: tagEquipo,
+                        equipoLogo: logoEquipo,
+                        equipoEstado: estadoEquipo,
+                        esLigaLBL: false,
+                        tipoTorneo: "Scouting 3"
+                    });
+                };
+
+                if (Array.isArray(eq.titulares)) {
+                    eq.titulares.forEach((t, i) => procesarMiembroSc3(t, i, true));
+                }
+                if (Array.isArray(eq.suplentes)) {
+                    eq.suplentes.forEach((s, j) => procesarMiembroSc3(s, j, false));
+                }
+            });
+
+            return { lista, excluidos };
+        }
+
+        // ==============================================================
+        // 3.2 PROCESAMIENTO DE LIGA LBL OFICIAL TIER 1 Y TIER 2 (BOLIVIA)
+        // ==============================================================
+        function procesarEquiposLigaLBLBolivia(equiposFirestore) {
+            const lista = [];
+            let excluidos = 0;
+            if (!Array.isArray(equiposFirestore)) return { lista, excluidos };
+
+            equiposFirestore.forEach((eq, eqIdx) => {
+                const eqData = eq.equipo || {};
+                const nombreEquipo = eqData.nombre || eq.nombre || "Equipo Liga LBL";
+                const tagEquipo = eqData.tag || eq.tag || "LBL";
+                const tierEquipo = eqData.tier || eq.tier || "Tier 1";
+                const logoEquipo = eqData.logo || eq.logo || "";
+
+                const procesarJugador = (jData, rol, tipo) => {
+                    if (!jData || (!jData.nombre && !jData.riotId)) return;
+                    const deptoRaw = jData.departamentoOtros || jData.departamento || "";
+                    const telRaw = jData.tel || jData.telefono || "";
+                    const evalRes = clasificarResidenciaBolivia(deptoRaw, telRaw);
+
+                    if (!evalRes.resideEnBolivia) {
+                        excluidos++;
+                        return;
+                    }
+
+                    const parsed = extraerCiYNombres(jData.nombre || "");
+                    const ciFinal = jData.ci
+                        ? (String(jData.ci).trim() + (jData.ci_complemento ? '-' + String(jData.ci_complemento).trim() : ''))
+                        : (parsed.ci || "Verificar Físico");
+                    const telLimpio = limpiarTelefonoBolivia(telRaw);
+
+                    lista.push({
+                        id: `lbl_eq_${eq.id || eqIdx}_${rol}_${lista.length}`,
+                        nombreCompleto: parsed.nombre || jData.nombre,
+                        ci: ciFinal,
+                        ciOriginal: jData.ci || jData.nombre || "",
+                        ciudad: evalRes.departamento,
+                        ciudadRaw: deptoRaw || evalRes.departamento,
+                        posicion: rol,
+                        tipoJugador: tipo,
+                        riotIdLas: (jData.riotId || "").trim(),
+                        rangoSoloQ: tierEquipo,
+                        telefono: telLimpio || (telRaw ? String(telRaw).trim() : ""),
+                        discord: jData.discordId || "",
+                        equipoNombre: nombreEquipo,
+                        equipoTag: tagEquipo,
+                        equipoLogo: logoEquipo,
+                        equipoEstado: "Aceptado",
+                        esLigaLBL: true,
+                        divisionLiga: tierEquipo,
+                        tipoTorneo: `Liga LBL (${tierEquipo})`
+                    });
+                };
+
+                if (eq.roster && typeof eq.roster === 'object') {
+                    ['TOP', 'JG', 'MID', 'ADC', 'SUPP'].forEach(pos => {
+                        if (eq.roster[pos]) procesarJugador(eq.roster[pos], pos, 'Titular');
+                    });
+                }
+                if (Array.isArray(eq.suplentes)) {
+                    eq.suplentes.forEach((sup, sIdx) => {
+                        procesarJugador(sup, sup.rol_seleccionado || sup.posicion || `Suplente ${sIdx + 1}`, 'Suplente');
+                    });
+                }
+            });
+
+            return { lista, excluidos };
+        }
+
+        /**
+         * Enriquecimiento cruzado Liga LBL <-> Scouting 3:
+         * Si un mismo jugador figura en ambas bases y en una le falta celular o C.I., rescata el dato válido.
+         */
+        function enriquecerDatosCruzados(listaTotal) {
+            const porCi = new Map();
+            const porRiot = new Map();
+
+            listaTotal.forEach(j => {
+                const ciValido = (j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico') ? String(j.ci).replace(/\D+/g, '') : '';
+                const riotNorm = normalizarTexto(j.riotIdLas).replace(/\s+/g, '');
+                if (ciValido.length >= 6) {
+                    if (!porCi.has(ciValido)) porCi.set(ciValido, []);
+                    porCi.get(ciValido).push(j);
+                }
+                if (riotNorm.length >= 4) {
+                    if (!porRiot.has(riotNorm)) porRiot.set(riotNorm, []);
+                    porRiot.get(riotNorm).push(j);
+                }
+            });
+
+            const sincronizarGrupo = (grupo) => {
+                if (grupo.length < 2) return;
+                const mejorTel = grupo.find(x => x.telefono && x.telefono.length >= 7)?.telefono || '';
+                const mejorCi = grupo.find(x => x.ci && x.ci !== 'S/N' && x.ci !== 'Verificar Físico')?.ci || '';
+                const mejorDepto = grupo.find(x => x.ciudad && x.ciudad !== 'Bolivia')?.ciudad || '';
+                grupo.forEach(x => {
+                    if (!x.telefono && mejorTel) x.telefono = mejorTel;
+                    if ((!x.ci || x.ci === 'S/N' || x.ci === 'Verificar Físico') && mejorCi) x.ci = mejorCi;
+                    if (x.ciudad === 'Bolivia' && mejorDepto) x.ciudad = mejorDepto;
+                });
+            };
+
+            porCi.forEach(sincronizarGrupo);
+            porRiot.forEach(sincronizarGrupo);
+        }
+
+        // ==============================================================
+        // 4. CARGA Y SINCRONIZACIÓN (EXCLUSIVO LIGA LBL + SCOUTING 3)
+        // ==============================================================
+        async function cargarJugadoresDesdeAPI(forzar = false) {
+            const icon = document.getElementById('sync-icon');
+            if (icon) icon.classList.add('fa-spin');
+
+            if (!forzar) {
+                const cached = localStorage.getItem(STORAGE_KEY_CACHE);
+                if (cached) {
+                    try {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            todosLosJugadoresBolivia = parsed;
+                            totalExcluidosExterior = Number(localStorage.getItem(STORAGE_KEY_CACHE + '_excl') || 0);
+                            aplicarFiltrosYRenderizar();
+                            actualizarMetricas();
+                            if (icon) icon.classList.remove('fa-spin');
+                            setTimeout(() => cargarJugadoresDesdeAPI(true), 1800);
+                            return;
+                        }
+                    } catch (_) {}
+                }
+            }
+
+            let jugadoresSC3 = [];
+            let jugadoresLiga = [];
+            let exclSc3 = 0;
+            let exclLiga = 0;
+
+            // 1. Scouting Tournament 3 desde API Oficial
+            try {
+                const sep = DEFAULT_API_URL.includes('?') ? '&' : '?';
+                const res = await fetch(`${DEFAULT_API_URL}${sep}_t=${Date.now()}`);
+                const data = await res.json();
+                if (data.success && Array.isArray(data.equipos)) {
+                    const outSc3 = procesarEquiposScouting3Bolivia(data.equipos);
+                    jugadoresSC3 = outSc3.lista;
+                    exclSc3 = outSc3.excluidos;
+                }
+            } catch (err) {
+                console.warn("Aviso Scouting 3 API:", err);
+            }
+
+            // 2. Liga LBL Oficial (Tier 1 y Tier 2 aceptados en Firestore)
+            try {
+                const q = query(collection(db, "inscripciones_pendientes"), where("estado", "==", "Aceptado"));
+                const snap = await getDocs(q);
+                const equiposLiga = [];
+                snap.forEach(d => equiposLiga.push({ id: d.id, ...d.data() }));
+                if (equiposLiga.length > 0) {
+                    try { localStorage.setItem('lbl_equipos_aceptados_cache', JSON.stringify(equiposLiga)); } catch (_) {}
+                    const outLiga = procesarEquiposLigaLBLBolivia(equiposLiga);
+                    jugadoresLiga = outLiga.lista;
+                    exclLiga = outLiga.excluidos;
+                }
+            } catch (errFS) {
+                try {
+                    const cachedEquipos = JSON.parse(localStorage.getItem('lbl_equipos_aceptados_cache') || '[]');
+                    if (Array.isArray(cachedEquipos) && cachedEquipos.length > 0) {
+                        const outLiga = procesarEquiposLigaLBLBolivia(cachedEquipos);
+                        jugadoresLiga = outLiga.lista;
+                        exclLiga = outLiga.excluidos;
+                    }
+                } catch (_) {}
+            }
+
+            if (jugadoresSC3.length > 0 || jugadoresLiga.length > 0) {
+                todosLosJugadoresBolivia = [...jugadoresLiga, ...jugadoresSC3];
+                enriquecerDatosCruzados(todosLosJugadoresBolivia);
+                totalExcluidosExterior = exclLiga + exclSc3;
+                try {
+                    localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresBolivia));
+                    localStorage.setItem(STORAGE_KEY_CACHE + '_excl', String(totalExcluidosExterior));
+                } catch (_) {}
+                actualizarMetricas();
+                const horaStr = new Date().toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+                const syncEl = document.getElementById('metrica-sync-label');
+                if (syncEl) syncEl.textContent = `Sync ${horaStr} (${jugadoresLiga.length} Liga • ${jugadoresSC3.length} SC3)`;
+            }
+
+            if (icon) icon.classList.remove('fa-spin');
+            aplicarFiltrosYRenderizar();
+        }
+        window.cargarJugadoresDesdeAPI = cargarJugadoresDesdeAPI;
+
+        // ==============================================================
+        // 5. INDEXACIÓN Y BÚSQUEDA POR C.I., CELULAR, NOMBRE, NICK O EQUIPO
+        // ==============================================================
+        function indexarJugador(j) {
+            if (!j) return;
+            const ciClean = String(j.ci || '').replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+            const telClean = String(j.telefono || '').replace(/\D+/g, '');
+            const nomClean = normalizarTexto(j.nombreCompleto || '');
+            const riotClean = normalizarTexto(j.riotIdLas || '').replace(/\s+/g, '');
+            const eqClean = normalizarTexto(j.equipoNombre || '');
+            const tagClean = (j.equipoTag || '').toLowerCase().trim();
+            const deptoClean = normalizarTexto(j.ciudad || '');
+            const torneoTag = j.esLigaLBL ? 'liga lbl t1 t2' : 'scouting 3 sc3';
+            j._ciClean = ciClean;
+            j._telClean = telClean;
+            j._searchTokens = `${nomClean} ${ciClean} ${telClean} ${riotClean} ${eqClean} ${tagClean} ${deptoClean} ${torneoTag}`;
+        }
+
+        function asegurarIndexacion() {
+            for (let i = 0; i < todosLosJugadoresBolivia.length; i++) {
+                if (!todosLosJugadoresBolivia[i]._searchTokens) {
+                    indexarJugador(todosLosJugadoresBolivia[i]);
+                }
+            }
+        }
+
+        const mapaVisitasCache = new Map();
+        function recalcularMapaVisitas() {
+            mapaVisitasCache.clear();
+            for (let i = 0; i < historialVisitas.length; i++) {
+                const v = historialVisitas[i];
+                if (v.ci && v.ci !== 'Sin C.I.' && v.ci !== 'S/N' && v.ci !== 'Verificar Físico') {
+                    const c = String(v.ci).trim();
+                    mapaVisitasCache.set(c, (mapaVisitasCache.get(c) || 0) + 1);
+                }
+                if (v.jugadorId) {
+                    mapaVisitasCache.set(v.jugadorId, (mapaVisitasCache.get(v.jugadorId) || 0) + 1);
+                }
+            }
+        }
+
+        window.cambiarFiltroTorneo = function(tipo) {
+            filtroTorneoActivo = tipo;
+            ['todos', 'liga', 'scouting'].forEach(k => {
+                const btn = document.getElementById(`filtro-torneo-${k}`);
+                if (btn) btn.classList.toggle('active', k === tipo);
+            });
+            aplicarFiltrosYRenderizar();
+        };
+
+        window.aplicarFiltrosYRenderizar = function() {
+            asegurarIndexacion();
+            recalcularMapaVisitas();
+
+            const cntTotal = todosLosJugadoresBolivia.length;
+            const cntLiga = todosLosJugadoresBolivia.filter(j => j.esLigaLBL).length;
+            const cntScouting = cntTotal - cntLiga;
+
+            const elTodos = document.getElementById('conteo-filtro-todos');
+            const elLiga = document.getElementById('conteo-filtro-liga');
+            const elScout = document.getElementById('conteo-filtro-scouting');
+            if (elTodos) elTodos.textContent = cntTotal;
+            if (elLiga) elLiga.textContent = cntLiga;
+            if (elScout) elScout.textContent = cntScouting;
+
+            let universo = todosLosJugadoresBolivia;
+            if (filtroTorneoActivo === 'liga') {
+                universo = universo.filter(j => j.esLigaLBL === true);
+            } else if (filtroTorneoActivo === 'scouting') {
+                universo = universo.filter(j => !j.esLigaLBL);
+            }
+
+            const deptoSel = document.getElementById('select-filtro-depto')?.value || 'todos';
+            if (deptoSel !== 'todos') {
+                universo = universo.filter(j => j.ciudad === deptoSel);
+            }
+
+            const rawQuery = (document.getElementById('input-busqueda')?.value || '').trim();
+            const queryNorm = normalizarTexto(rawQuery);
+            const tokens = queryNorm ? queryNorm.split(/\s+/).filter(Boolean) : [];
+            const queryDigits = rawQuery.replace(/\D+/g, '');
+
+            if (tokens.length === 0) {
+                jugadoresFiltrados = universo;
+            } else {
+                jugadoresFiltrados = universo.filter(j => {
+                    const s = j._searchTokens || '';
+                    if (queryDigits.length >= 4 && ((j._ciClean && j._ciClean.includes(queryDigits)) || (j._telClean && j._telClean.includes(queryDigits)))) {
+                        return true;
+                    }
+                    for (let i = 0; i < tokens.length; i++) {
+                        if (!s.includes(tokens[i])) return false;
+                    }
+                    return true;
+                });
+            }
+
+            renderizarTarjetas();
+        };
+
+        window.limpiarBusqueda = function() {
+            const input = document.getElementById('input-busqueda');
+            if (input) input.value = "";
+            document.getElementById('btn-limpiar')?.classList.add('hidden');
+            aplicarFiltrosYRenderizar();
+            input?.focus();
+        };
+
+        let searchFrame = null;
+        document.getElementById('input-busqueda')?.addEventListener('input', (e) => {
+            const btnLimpiar = document.getElementById('btn-limpiar');
+            if (btnLimpiar) btnLimpiar.classList.toggle('hidden', !e.target.value.trim());
+            if (searchFrame) cancelAnimationFrame(searchFrame);
+            searchFrame = requestAnimationFrame(() => aplicarFiltrosYRenderizar());
+        });
+
+        // ==============================================================
+        // 6. RENDERIZADO DE TARJETAS CON NOMBRE, CI, CELULAR, NICK LOL Y EQUIPO
+        // ==============================================================
+        function contarVisitasDeJugador(j) {
+            if (!j) return 0;
+            if (j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico') {
+                const c = String(j.ci).trim();
+                if (mapaVisitasCache.has(c)) return mapaVisitasCache.get(c);
+            }
+            if (j.id && mapaVisitasCache.has(j.id)) return mapaVisitasCache.get(j.id);
+            return 0;
+        }
+
+        function renderizarTarjetas() {
+            const container = document.getElementById('contenedor-jugadores');
+            const conteo = document.getElementById('conteo-resultados');
+            if (!container) return;
+
+            const total = jugadoresFiltrados.length;
+            const deptoSel = document.getElementById('select-filtro-depto')?.value || 'todos';
+            const deptoLabel = deptoSel === 'todos' ? 'en toda Bolivia' : `en ${deptoSel}`;
+            const subtituloFiltro = filtroTorneoActivo === 'liga' ? 'de Liga LBL' : (filtroTorneoActivo === 'scouting' ? 'de Scouting 3' : 'habilitados');
+            if (conteo) conteo.textContent = `Mostrando ${total} jugadores ${subtituloFiltro} ${deptoLabel}`;
+
+            if (total === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full legion-glass rounded-3xl p-12 text-center border border-amber-900/30 space-y-3">
+                        <i class="fas fa-search text-gray-600 text-4xl mb-1 block"></i>
+                        <h4 class="text-base font-bold text-white">No se encontró ningún jugador residente en Bolivia con ese criterio</h4>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto">Verifica el C.I., número de celular, Nombre, Nick de LoL (Riot ID) o filtro de departamento.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = jugadoresFiltrados.map(j => {
+                const tieneCiValido = Boolean(j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico');
+                const tieneTelValido = Boolean(j.telefono && j.telefono.length >= 7);
+                const telWaDigits = tieneTelValido ? (j.telefono.startsWith('591') ? j.telefono : `591${j.telefono}`) : '';
+                const totalVisitas = contarVisitasDeJugador(j);
+
+                const safeNombre = escapeHTML(j.nombreCompleto);
+                const safeCi = escapeHTML(j.ci);
+                const safeTel = escapeHTML(tieneTelValido ? j.telefono : 'Sin Celular');
+                const safePos = escapeHTML(j.posicion);
+                const safeTag = escapeHTML(j.equipoTag);
+                const safeEquipo = escapeHTML(j.equipoNombre);
+                const safeRiot = escapeHTML(j.riotIdLas || 'No registrado');
+                const safeDepto = escapeHTML(j.ciudad || 'Bolivia');
+                const safeId = escapeHTML(j.id);
+
+                const badgeTorneo = j.esLigaLBL ? `
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600/20 text-red-300 border border-red-500/45 flex items-center gap-1">
+                        <i class="fas fa-trophy text-[9px] text-red-400"></i> ${escapeHTML(j.divisionLiga || 'Liga LBL')}
+                    </span>
+                ` : `
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-zinc-900 border border-red-900/50 text-gray-300">
+                        Scouting 3
+                    </span>
+                `;
+
+                const borderClass = j.esLigaLBL
+                    ? 'border-red-500/45 bg-gradient-to-b from-red-950/20 via-[#0b0305] to-black'
+                    : 'border-red-900/45';
+
+                return `
+                    <div class="card-jugador-lan legion-glass rounded-2xl p-5 border ${borderClass} legion-glow-hover transition-all flex flex-col justify-between gap-3.5 relative overflow-hidden group">
+                        <div class="space-y-3">
+                            <!-- Cabecera: C.I., Competición y Departamento -->
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    ${tieneCiValido ? `
+                                    <button type="button" onclick="copiarDatoJugador('${safeCi}', 'C.I.')" class="px-2.5 py-1 rounded-lg bg-black hover:bg-zinc-900 border border-red-500/60 text-red-300 font-mono font-black text-xs tracking-wider flex items-center gap-1.5 shadow-sm cursor-pointer" title="Clic para copiar C.I.">
+                                        <i class="fas fa-id-card text-red-400"></i> ${safeCi}
+                                    </button>` : `
+                                    <span class="px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500 text-amber-300 font-mono font-black text-xs tracking-wider flex items-center gap-1.5">
+                                        <i class="fas fa-triangle-exclamation text-amber-400"></i> Sin C.I.
+                                    </span>`}
+                                    ${badgeTorneo}
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-600/20 border border-red-500/40 text-red-300">
+                                    <i class="fas fa-location-dot text-[9px] mr-0.5 text-red-400"></i> ${safeDepto}
+                                </span>
+                            </div>
+
+                            <!-- Nombre del Jugador y Equipo -->
+                            <div>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h4 class="text-base font-black text-white group-hover:text-red-400 transition-colors leading-snug">
+                                        ${safeNombre}
+                                    </h4>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-black/70 border border-red-950 text-gray-400 font-bold uppercase shrink-0">
+                                        ${safePos}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span class="text-xs font-mono font-black text-red-400">[${safeTag}]</span>
+                                    <span class="text-xs font-semibold text-gray-200 truncate">${safeEquipo}</span>
+                                </div>
+                            </div>
+
+                            <!-- Caja de Datos Clave: Nick de LoL (Riot ID) + Número de Celular -->
+                            <div class="p-3 rounded-xl bg-black/75 border border-red-950/80 space-y-2 text-xs">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-gray-400 text-[11px] font-semibold flex items-center gap-1.5 shrink-0">
+                                        <i class="fas fa-gamepad text-red-400"></i> Nick LoL:
+                                    </span>
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <span class="font-mono font-black text-gray-100 truncate">${safeRiot}</span>
+                                        ${j.riotIdLas ? `<button type="button" onclick="copiarDatoJugador('${escapeHTML(j.riotIdLas).replace(/'/g, "\\'")}', 'Nick LoL')" class="px-1.5 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer shrink-0" title="Copiar Nick de LoL"><i class="fas fa-copy"></i></button>` : ''}
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-red-950/60">
+                                    <span class="text-gray-400 text-[11px] font-semibold flex items-center gap-1.5 shrink-0">
+                                        <i class="fab fa-whatsapp text-emerald-400"></i> Celular:
+                                    </span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-mono font-black ${tieneTelValido ? 'text-emerald-400' : 'text-gray-500'}">${safeTel}</span>
+                                        ${tieneTelValido ? `
+                                            <button type="button" onclick="copiarDatoJugador('${safeTel}', 'Celular')" class="px-1.5 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-[10px] cursor-pointer" title="Copiar número de celular"><i class="fas fa-copy"></i></button>
+                                            <a href="https://wa.me/${telWaDigits}" target="_blank" rel="noopener" class="px-2 py-0.5 rounded bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-[10px] font-black uppercase transition-colors" title="Contactar por WhatsApp">WA</a>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer: Contador de Canjes y Botón -->
+                        <div class="pt-2.5 border-t border-red-950/70 flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold ${totalVisitas > 0 ? 'text-emerald-400' : 'text-gray-400'}">
+                                <i class="fas fa-tags mr-1"></i> ${totalVisitas} Canje${totalVisitas === 1 ? '' : 's'}
+                            </span>
+                            <button type="button" onclick="abrirModalJugador('${safeId}')"
+                                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-red-950/50 transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer">
+                                <i class="fas fa-tags"></i> Validar Descuento
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==============================================================
+        // 7. MODAL DE FICHA INDIVIDUAL Y REGISTRO DE DESCUENTO
+        // ==============================================================
+        window.abrirModalJugador = function(jugadorId) {
+            const j = todosLosJugadoresBolivia.find(item => item.id === jugadorId);
+            if (!j) return;
+            jugadorSeleccionado = j;
+
+            const tieneCi = Boolean(j.ci && j.ci !== 'S/N' && j.ci !== 'Verificar Físico');
+            const tieneTel = Boolean(j.telefono && j.telefono.length >= 7);
+            const totalVisitas = contarVisitasDeJugador(j);
+
+            document.getElementById('modal-jugador-nombre').textContent = j.nombreCompleto;
+            document.getElementById('modal-jugador-ci').textContent = tieneCi ? j.ci : '⚠️ Sin C.I. (Solicitar carnet físico)';
+            document.getElementById('modal-jugador-ci').className = tieneCi ? 'text-sm font-black text-red-400 font-mono text-right' : 'text-sm font-black text-amber-400 font-mono text-right';
+            document.getElementById('modal-jugador-telefono').textContent = tieneTel ? j.telefono : 'No registrado';
+            const waBtn = document.getElementById('modal-jugador-wa-btn');
+            if (waBtn) {
+                if (tieneTel) {
+                    const digits = j.telefono.startsWith('591') ? j.telefono : `591${j.telefono}`;
+                    waBtn.href = `https://wa.me/${digits}`;
+                    waBtn.classList.remove('hidden');
+                } else {
+                    waBtn.classList.add('hidden');
+                }
+            }
+
+            document.getElementById('modal-jugador-riot').textContent = j.riotIdLas || 'No registrado';
+            document.getElementById('modal-jugador-equipo').textContent = `[${j.equipoTag}] ${j.equipoNombre}`;
+            document.getElementById('modal-jugador-torneo').textContent = j.esLigaLBL ? `Liga LBL (${j.divisionLiga || 'Oficial'})` : 'Scouting Tournament 3';
+            document.getElementById('modal-jugador-ciudad').textContent = `${j.ciudad || 'Bolivia'} (Bolivia)`;
+            document.getElementById('modal-jugador-contador-visitas').textContent = `${totalVisitas} Canje${totalVisitas === 1 ? '' : 's'}`;
+            document.getElementById('canje-nota-producto').value = '';
+
+            const visitasDeEste = historialVisitas.filter(v => (tieneCi && v.ci === j.ci) || v.jugadorId === j.id);
+            const miniHistDiv = document.getElementById('modal-jugador-historial-mini');
+            if (visitasDeEste.length > 0) {
+                miniHistDiv.innerHTML = visitasDeEste.slice(0, 3).map(v => `
+                    <div class="flex items-center justify-between py-0.5 border-b border-amber-950/40">
+                        <span><i class="fas fa-check text-emerald-400 mr-1"></i> ${escapeHTML(v.fechaHora || '--')} • <strong class="text-amber-300">${escapeHTML(v.tipoDescuento || 'Descuento LBL')}</strong>${v.nota ? ` (${escapeHTML(v.nota)})` : ''}</span>
+                        <span class="text-gray-500">${escapeHTML(v.encargado || 'Legion')}</span>
+                    </div>
+                `).join('');
+            } else {
+                miniHistDiv.innerHTML = '<span class="text-gray-500 italic">Sin descuentos registrados aún para este jugador.</span>';
+            }
+
+            const alertaSinCi = document.getElementById('modal-alerta-sin-ci');
+            const inputCiManual = document.getElementById('canje-ci-manual');
+            if (alertaSinCi) {
+                alertaSinCi.classList.toggle('hidden', tieneCi);
+                if (!tieneCi && inputCiManual) inputCiManual.value = '';
+            }
+
+            document.getElementById('modal-canje').classList.remove('hidden');
+        };
+
+        window.cerrarModalCanje = function() {
+            document.getElementById('modal-canje').classList.add('hidden');
+            jugadorSeleccionado = null;
+        };
+
+        window.registrarVisitaJugadorDirecta = async function() {
+            if (!jugadorSeleccionado) return;
+
+            let ciFinal = jugadorSeleccionado.ci;
+            const inputCiManual = document.getElementById('canje-ci-manual');
+            if (inputCiManual && inputCiManual.value.trim()) {
+                ciFinal = inputCiManual.value.trim();
+                jugadorSeleccionado.ci = ciFinal;
+                try { localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify(todosLosJugadoresBolivia)); } catch (_) {}
+            }
+
+            const tipoDesc = (document.getElementById('canje-tipo-descuento')?.value || 'DESCUENTO LBL').trim();
+            const notaProd = (document.getElementById('canje-nota-producto')?.value || '').trim();
+
+            const nuevoCanje = {
+                id: 'leg_' + Date.now(),
+                jugadorId: jugadorSeleccionado.id,
+                nombre: jugadorSeleccionado.nombreCompleto,
+                ci: ciFinal || 'Sin C.I.',
+                telefono: jugadorSeleccionado.telefono || 'S/N',
+                riotId: jugadorSeleccionado.riotIdLas || '--',
+                equipo: `[${jugadorSeleccionado.equipoTag}] ${jugadorSeleccionado.equipoNombre}`,
+                ciudad: jugadorSeleccionado.ciudad || 'Bolivia',
+                tipoDescuento: tipoDesc,
+                nota: notaProd,
+                fechaHora: new Date().toLocaleString('es-BO'),
+                timestamp: Date.now(),
+                encargado: encargadoActual,
+                sede: 'LEGION STORE'
+            };
+
+            historialVisitas.unshift(nuevoCanje);
+            try { localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas)); } catch (_) {}
+
+            try {
+                await setDoc(DOC_VISITAS_LEGION, {
+                    sede: "LEGION STORE",
+                    campana: "Portal Descuentos LBL Bolivia",
+                    visitas: historialVisitas.slice(0, 500),
+                    totalHistorico: historialVisitas.length,
+                    updatedAt: Date.now()
+                });
+            } catch (err) {
+                console.warn("Aviso sincronizando canje Legion en Firestore:", err);
+            }
+
+            actualizarMetricas();
+            renderizarTarjetas();
+            cerrarModalCanje();
+            mostrarToastLegion(`${tipoDesc} registrado para ${nuevoCanje.nombre}`);
+        };
+
+        // ==============================================================
+        // 8. HISTORIAL DE DESCUENTOS Y EXPORTACIÓN CSV (PADRÓN + CANJES)
+        // ==============================================================
+        window.abrirModalHistorial = function() {
+            const inputBusq = document.getElementById('buscador-historial');
+            if (inputBusq) inputBusq.value = '';
+            renderizarTablaHistorial();
+            document.getElementById('modal-historial').classList.remove('hidden');
+        };
+
+        window.cerrarModalHistorial = function() {
+            document.getElementById('modal-historial').classList.add('hidden');
+        };
+
+        window.filtrarTablaHistorial = function() {
+            const term = (document.getElementById('buscador-historial')?.value || '').trim().toLowerCase();
+            renderizarTablaHistorial(term);
+        };
+
+        function renderizarTablaHistorial(filtro = '') {
+            const tbody = document.getElementById('tabla-visitas-body');
+            const totalCountEl = document.getElementById('historial-total-count');
+            if (totalCountEl) totalCountEl.textContent = historialVisitas.length;
+            if (!tbody) return;
+
+            let lista = historialVisitas;
+            if (filtro) {
+                lista = historialVisitas.filter(v => {
+                    const blob = `${v.nombre || ''} ${v.ci || ''} ${v.telefono || ''} ${v.riotId || ''} ${v.equipo || ''} ${v.tipoDescuento || ''} ${v.nota || ''} ${v.encargado || ''}`.toLowerCase();
+                    return blob.includes(filtro);
+                });
+            }
+
+            if (lista.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-gray-500 font-medium">
+                            <i class="fas fa-inbox text-2xl mb-2 block opacity-40"></i>
+                            ${filtro ? `Sin coincidencias para "${escapeHTML(filtro)}".` : 'Aún no se han registrado descuentos en el portal.'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = lista.map((v, i) => {
+                const safeId = escapeHTML(v.id || ('leg_legacy_' + (v.timestamp || i)));
+                const tipoBadge = escapeHTML(v.tipoDescuento || 'Descuento LBL');
+                const detalleTxt = v.nota ? ` • ${escapeHTML(v.nota)}` : '';
+                return `
+                    <tr class="hover:bg-amber-950/20 transition-colors">
+                        <td class="p-3 font-mono font-bold text-gray-400 whitespace-nowrap">${escapeHTML(v.fechaHora || '--')}</td>
+                        <td class="p-3 font-bold text-white">${escapeHTML(v.nombre || '--')}</td>
+                        <td class="p-3 font-mono font-black text-amber-400 whitespace-nowrap">${escapeHTML(v.ci || 'S/N')}</td>
+                        <td class="p-3 font-mono font-bold text-emerald-400 whitespace-nowrap">${escapeHTML(v.telefono || 'S/N')}</td>
+                        <td class="p-3 font-mono text-sky-300 whitespace-nowrap">${escapeHTML(v.riotId || '--')}</td>
+                        <td class="p-3 text-gray-300">${escapeHTML(v.equipo || '--')}</td>
+                        <td class="p-3 text-gray-300"><span class="text-amber-300 font-bold">${tipoBadge}</span><span class="text-gray-300">${detalleTxt}</span> <span class="block text-[10px] font-mono text-gray-500">${escapeHTML(v.encargado || 'Legion')}</span></td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            <button type="button" onclick="eliminarRegistroVisita('${safeId}')" class="px-2.5 py-1 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-500/40 text-[11px] font-bold cursor-pointer">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.eliminarRegistroVisita = async function(visitaId) {
+            const idx = historialVisitas.findIndex(v => v.id === visitaId);
+            if (idx === -1) return;
+            if (!confirm(`¿Anular el registro de descuento de "${historialVisitas[idx].nombre}"?`)) return;
+
+            historialVisitas.splice(idx, 1);
+            try { localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas)); } catch (_) {}
+            try {
+                await setDoc(DOC_VISITAS_LEGION, {
+                    sede: "LEGION STORE",
+                    campana: "Black Friday Bolivia",
+                    visitas: historialVisitas.slice(0, 500),
+                    totalHistorico: historialVisitas.length,
+                    updatedAt: Date.now()
+                });
+            } catch (_) {}
+
+            actualizarMetricas();
+            filtrarTablaHistorial();
+            renderizarTarjetas();
+        };
+
+        window.borrarHistorialTurno = async function() {
+            if (!confirm("⚠️ ¿Vaciar todo el historial de descuentos Black Friday de Legion?")) return;
+            historialVisitas = [];
+            localStorage.removeItem(STORAGE_KEY_VISITAS);
+            try {
+                await setDoc(DOC_VISITAS_LEGION, {
+                    sede: "LEGION STORE",
+                    campana: "Black Friday Bolivia",
+                    visitas: [],
+                    totalHistorico: 0,
+                    updatedAt: Date.now()
+                });
+            } catch (_) {}
+            actualizarMetricas();
+            renderizarTablaHistorial();
+            renderizarTarjetas();
+        };
+
+        window.exportarVisitasCSV = function() {
+            if (historialVisitas.length === 0) {
+                alert("No hay descuentos registrados para exportar.");
+                return;
+            }
+            let csv = "ID,FechaHora,Jugador,CI,Celular,NickLoL,Equipo,Departamento,TipoDescuento,Detalle,Encargado\n";
+            historialVisitas.forEach(v => {
+                csv += [
+                    v.id,
+                    `"${(v.fechaHora || '').replace(/"/g, '""')}"`,
+                    `"${(v.nombre || '').replace(/"/g, '""')}"`,
+                    `"${(v.ci || '').replace(/"/g, '""')}"`,
+                    `"${(v.telefono || '').replace(/"/g, '""')}"`,
+                    `"${(v.riotId || '').replace(/"/g, '""')}"`,
+                    `"${(v.equipo || '').replace(/"/g, '""')}"`,
+                    `"${(v.ciudad || 'Bolivia').replace(/"/g, '""')}"`,
+                    `"${(v.tipoDescuento || 'DESCUENTO LBL').replace(/"/g, '""')}"`,
+                    `"${(v.nota || '').replace(/"/g, '""')}"`,
+                    `"${(v.encargado || '').replace(/"/g, '""')}"`
+                ].join(",") + "\n";
+            });
+            const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `descuentos_legion_lbl_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        // ==============================================================
+        // 9. MÉTRICAS Y LISTENER REAL-TIME FIRESTORE
+        // ==============================================================
+        function actualizarMetricas() {
+            const totalBol = todosLosJugadoresBolivia.length;
+            const ligaCount = todosLosJugadoresBolivia.filter(j => j.esLigaLBL).length;
+            const sc3Count = totalBol - ligaCount;
+
+            document.getElementById('metrica-bolivia').textContent = totalBol;
+            document.getElementById('metrica-liga-count').textContent = ligaCount;
+            document.getElementById('metrica-sc3-count').textContent = sc3Count;
+            const exclEl = document.getElementById('metrica-excluidos-label');
+            if (exclEl) exclEl.textContent = `Excluidos exterior (sin envío): ${totalExcluidosExterior}`;
+
+            const totalVisitas = historialVisitas.length;
+            document.getElementById('metrica-visitas-total').textContent = totalVisitas;
+            const badgeNav = document.getElementById('badge-nav-visitas');
+            if (badgeNav) badgeNav.textContent = totalVisitas;
+
+            const hoyStr = new Date().toLocaleDateString('es-BO');
+            const visitasHoy = historialVisitas.filter(v => (v.fechaHora || '').includes(hoyStr)).length;
+            document.getElementById('metrica-visitas-turno').textContent = visitasHoy;
+
+            const eqsUnicos = new Set(todosLosJugadoresBolivia.map(j => j.equipoNombre)).size;
+            document.getElementById('metrica-equipos').textContent = eqsUnicos || "--";
+        }
+
+        function iniciarListenerFirestoreVisitas() {
+            try {
+                onSnapshot(DOC_VISITAS_LEGION, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (Array.isArray(data.visitas)) {
+                            historialVisitas = data.visitas;
+                            try { localStorage.setItem(STORAGE_KEY_VISITAS, JSON.stringify(historialVisitas)); } catch (_) {}
+                            actualizarMetricas();
+                            renderizarTarjetas();
+                        }
+                    }
+                });
+            } catch (_) {}
+        }
+
+        function iniciarApp() {
+            try {
+                const localVisitas = localStorage.getItem(STORAGE_KEY_VISITAS);
+                if (localVisitas) historialVisitas = JSON.parse(localVisitas);
+            } catch (_) {}
+
+            cargarJugadoresDesdeAPI(false);
+            actualizarMetricas();
+            iniciarListenerFirestoreVisitas();
+        }
+
+        verificarSesionPrevia();
+    </script>
+</body>
+</html>
